@@ -282,10 +282,13 @@ class DatasetPreprocessor:
         return self.label_encoder.fit_transform(df["label"].values)
 
     # ── Step 5: Load & Preprocess Images ─────────────────────────────────────
-    def load_images(self, df: pd.DataFrame, augment: bool = False) -> np.ndarray:
-        """Load and preprocess all images in a DataFrame."""
+    def load_images(self, df: pd.DataFrame, augment: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+        """Load and preprocess all images in a DataFrame, returning aligned images and labels."""
         images = []
-        for _, row in df.iterrows():
+        labels = []
+        encoded_labels = self.label_encoder.transform(df["label"].values)
+
+        for (_, row), label in zip(df.iterrows(), encoded_labels):
             img = cv2.imread(row["image_path"])
             if img is not None:
                 img = self.preprocessor.clean_image(img)
@@ -293,11 +296,14 @@ class DatasetPreprocessor:
                 img_norm = img_resized.astype(np.float32) / 255.0
                 img_norm = (img_norm - MEAN) / STD
                 images.append(img_norm)
+                labels.append(label)
 
                 if augment:
-                    images.extend(self._augment(img_norm))
+                    augmented = self._augment(img_norm)
+                    images.extend(augmented)
+                    labels.extend([label] * len(augmented))
 
-        return np.array(images)
+        return np.array(images), np.array(labels)
 
     # ── Step 6: Augmentation ──────────────────────────────────────────────────
     def _augment(self, img: np.ndarray) -> List[np.ndarray]:
@@ -325,9 +331,63 @@ class DatasetPreprocessor:
 
         return augmented
 
+    # ── Memory-efficient generator ──────────────────────────────────────────
+    def _image_generator(self, df: pd.DataFrame, augment: bool = False):
+        """Yield (image, label) tuples one at a time to avoid loading all into RAM."""
+        encoded_labels = self.label_encoder.transform(df["label"].values)
+        for (_, row), label in zip(df.iterrows(), encoded_labels):
+            img = cv2.imread(row["image_path"])
+            if img is None:
+                continue
+            img = self.preprocessor.clean_image(img)
+            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
+            img_norm = img_resized.astype(np.float32) / 255.0
+            img_norm = (img_norm - MEAN) / STD
+            yield img_norm, label
+
+            if augment:
+                for aug_img in self._augment(img_norm):
+                    yield aug_img, label
+
+    def _count_samples(self, df: pd.DataFrame, augment: bool = False) -> int:
+        """Estimate total sample count (original + augmented)."""
+        n = len(df)
+        if augment:
+            n *= 5  # 1 original + 4 augmented per image
+        return n
+
+    def create_tf_dataset(
+        self, df: pd.DataFrame, batch_size: int, augment: bool = False, shuffle: bool = False
+    ):
+        """Build a tf.data.Dataset that streams images from disk in batches."""
+        import tensorflow as tf
+
+        def gen():
+            return self._image_generator(df, augment=augment)
+
+        ds = tf.data.Dataset.from_generator(
+            gen,
+            output_signature=(
+                tf.TensorSpec(shape=(*self.target_size, 3), dtype=tf.float32),
+                tf.TensorSpec(shape=(), dtype=tf.int64),
+            ),
+        )
+        if shuffle:
+            ds = ds.shuffle(buffer_size=min(2000, self._count_samples(df, augment)))
+        ds = ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+        return ds
+
     # ── Full Pipeline ─────────────────────────────────────────────────────────
-    def run(self) -> Dict:
-        """Execute the full preprocessing pipeline."""
+
+    RAM_THRESHOLD = 10_000  # Switch to tf.data streaming above this many images
+
+    def run(self, batch_size: int = 32) -> Dict:
+        """Execute the full preprocessing pipeline.
+
+        For small datasets the data is loaded entirely into NumPy arrays (fast,
+        simple). For datasets larger than RAM_THRESHOLD images the pipeline
+        returns tf.data.Dataset objects that stream from disk.
+        """
         logger.info("=== Starting Data Preprocessing Pipeline ===")
 
         df = self.scan_dataset()
@@ -335,25 +395,42 @@ class DatasetPreprocessor:
 
         train_df, val_df, test_df = self.split_dataset(df)
 
-        logger.info("Loading and preprocessing training images (with augmentation)...")
-        X_train = self.load_images(train_df, augment=True)
-        X_val   = self.load_images(val_df,   augment=False)
-        X_test  = self.load_images(test_df,  augment=False)
-
         self.label_encoder.fit(df["label"])
-        y_train = self.label_encoder.transform(train_df["label"].values)
-        y_val   = self.label_encoder.transform(val_df["label"].values)
-        y_test  = self.label_encoder.transform(test_df["label"].values)
 
-        logger.info(f"X_train shape: {X_train.shape}")
-        logger.info(f"X_val shape:   {X_val.shape}")
-        logger.info(f"X_test shape:  {X_test.shape}")
+        use_streaming = len(train_df) > self.RAM_THRESHOLD
+        if use_streaming:
+            logger.info(
+                f"Large dataset ({len(train_df)} training images) — using tf.data streaming."
+            )
+            return {
+                "train_ds": self.create_tf_dataset(train_df, batch_size, augment=True, shuffle=True),
+                "val_ds":   self.create_tf_dataset(val_df,   batch_size, augment=False),
+                "test_ds":  self.create_tf_dataset(test_df,  batch_size, augment=False),
+                "X_test": None, "y_test": None,
+                "streaming": True,
+                "class_names": list(self.label_encoder.classes_),
+                "label_encoder": self.label_encoder,
+                "train_df": train_df, "val_df": val_df, "test_df": test_df,
+                "train_samples": self._count_samples(train_df, augment=True),
+                "val_samples": len(val_df),
+                "test_samples": len(test_df),
+            }
+
+        logger.info("Loading and preprocessing training images (with augmentation)...")
+        X_train, y_train = self.load_images(train_df, augment=True)
+        X_val,   y_val   = self.load_images(val_df,   augment=False)
+        X_test,  y_test  = self.load_images(test_df,  augment=False)
+
+        logger.info(f"X_train shape: {X_train.shape}, y_train shape: {y_train.shape}")
+        logger.info(f"X_val shape:   {X_val.shape},   y_val shape:   {y_val.shape}")
+        logger.info(f"X_test shape:  {X_test.shape},  y_test shape:  {y_test.shape}")
         logger.info("=== Preprocessing Complete ===")
 
         return {
             "X_train": X_train, "y_train": y_train,
             "X_val":   X_val,   "y_val":   y_val,
             "X_test":  X_test,  "y_test":  y_test,
+            "streaming": False,
             "class_names": list(self.label_encoder.classes_),
             "label_encoder": self.label_encoder,
             "train_df": train_df, "val_df": val_df, "test_df": test_df

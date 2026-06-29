@@ -8,19 +8,28 @@ GET  /api/v1/model-metrics    — Training metrics comparison
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
+from pathlib import Path
 import uuid
-from datetime import datetime
+import aiofiles
+from datetime import datetime, timezone
 
 from database.connection import get_db, Prediction, LungScan, Patient
 from ml.inference import InferenceEngine
 from utils.logger import setup_logger
 
+UPLOADS_DIR = Path("uploads")
+UPLOADS_DIR.mkdir(exist_ok=True)
+
 logger = setup_logger(__name__)
 router = APIRouter()
-engine = InferenceEngine()
+
+
+def get_engine() -> InferenceEngine:
+    """Return the singleton InferenceEngine (already initialized at startup)."""
+    return InferenceEngine()
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/bmp", "image/tiff", "image/webp"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
@@ -53,6 +62,46 @@ class PredictionResponse(BaseModel):
     created_at: str
 
 
+class PredictionDetail(BaseModel):
+    """Full prediction detail returned from GET /predictions/{id}."""
+    id: int
+    prediction_id: str
+    scan_id: int
+    model_used: str
+    selected_model: Optional[str] = None
+    cnn_primary_condition: Optional[str] = None
+    cnn_confidence: Optional[float] = None
+    cnn_accuracy: Optional[float] = None
+    cnn_all_probabilities: Optional[Dict[str, float]] = None
+    resnet_primary_condition: Optional[str] = None
+    resnet_confidence: Optional[float] = None
+    resnet_accuracy: Optional[float] = None
+    resnet_all_probabilities: Optional[Dict[str, float]] = None
+    final_condition: str
+    final_confidence: float
+    urgency_level: str
+    alternative_conditions: Optional[List[str]] = None
+    key_findings: Optional[List[Dict[str, str]]] = None
+    precautions: Optional[List[str]] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class PredictionSummary(BaseModel):
+    prediction_id: str
+    final_condition: str
+    final_confidence: float
+    urgency_level: str
+    selected_model: Optional[str] = None
+    created_at: str
+
+
+class PredictionListResponse(BaseModel):
+    total: int
+    predictions: List[PredictionSummary]
+
+
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
 @router.post("/predict", response_model=PredictionResponse, summary="Analyze a lung image")
@@ -83,23 +132,59 @@ async def predict(
         raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
 
     # Run inference
+    engine = get_engine()
     try:
         results = engine.predict(image_bytes)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid image: {str(e)}")
     except Exception as e:
         logger.error(f"Inference error: {e}")
         raise HTTPException(status_code=500, detail=f"Model inference failed: {str(e)}")
 
-    # Save to DB
-    scan_id = str(uuid.uuid4())[:12]
-    pred_id = str(uuid.uuid4())[:12]
-    image_path = f"uploads/{scan_id}_{file.filename}"
+    # Resolve patient: look up by patient_id string, or create a default patient
+    db_patient_id: int
+    if patient_id:
+        result = await db.execute(
+            select(Patient).where(Patient.patient_id == patient_id)
+        )
+        patient = result.scalar_one_or_none()
+        if not patient:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Patient '{patient_id}' not found. Register the patient first."
+            )
+        db_patient_id = patient.id
+    else:
+        result = await db.execute(
+            select(Patient).where(Patient.patient_id == "DEFAULT")
+        )
+        default_patient = result.scalar_one_or_none()
+        if not default_patient:
+            default_patient = Patient(
+                patient_id="DEFAULT",
+                name="Unregistered Patient",
+                age=0,
+                gender="Unknown",
+            )
+            db.add(default_patient)
+            await db.flush()
+        db_patient_id = default_patient.id
+
+    # Save uploaded image to disk
+    scan_id = str(uuid.uuid4())
+    pred_id = str(uuid.uuid4())
+    image_filename = file.filename or "upload.jpg"
+    image_path = UPLOADS_DIR / f"{scan_id}_{image_filename}"
+
+    async with aiofiles.open(image_path, "wb") as f_out:
+        await f_out.write(image_bytes)
 
     # Create scan record
     scan = LungScan(
         scan_id=scan_id,
-        patient_id=1,           # Default patient; link properly via patient_id in prod
-        image_path=image_path,
-        image_filename=file.filename or "upload.jpg",
+        patient_id=db_patient_id,
+        image_path=str(image_path),
+        image_filename=image_filename,
         image_size_bytes=len(image_bytes),
         scan_type=scan_type or "X-Ray",
         notes=notes,
@@ -142,37 +227,40 @@ async def predict(
         cnn=ModelResult(**cnn_r) if cnn_r else None,
         resnet=ModelResult(**rn_r) if rn_r else None,
         final=FinalResult(**final),
-        created_at=datetime.utcnow().isoformat()
+        created_at=datetime.now(timezone.utc).isoformat()
     )
 
 
-@router.get("/predictions", summary="List all predictions")
+@router.get("/predictions", response_model=PredictionListResponse, summary="List all predictions")
 async def list_predictions(
     skip: int = 0,
     limit: int = 20,
     db: AsyncSession = Depends(get_db)
 ):
+    total_result = await db.execute(select(func.count(Prediction.id)))
+    total = total_result.scalar()
+
     result = await db.execute(
         select(Prediction).offset(skip).limit(limit).order_by(Prediction.created_at.desc())
     )
     preds = result.scalars().all()
-    return {
-        "total": len(preds),
-        "predictions": [
-            {
-                "prediction_id": p.prediction_id,
-                "final_condition": p.final_condition,
-                "final_confidence": p.final_confidence,
-                "urgency_level": p.urgency_level,
-                "selected_model": p.selected_model,
-                "created_at": p.created_at.isoformat()
-            }
+    return PredictionListResponse(
+        total=total,
+        predictions=[
+            PredictionSummary(
+                prediction_id=p.prediction_id,
+                final_condition=p.final_condition,
+                final_confidence=p.final_confidence,
+                urgency_level=p.urgency_level,
+                selected_model=p.selected_model,
+                created_at=p.created_at.isoformat()
+            )
             for p in preds
         ]
-    }
+    )
 
 
-@router.get("/predictions/{prediction_id}", summary="Get a single prediction")
+@router.get("/predictions/{prediction_id}", response_model=PredictionDetail, summary="Get a single prediction")
 async def get_prediction(prediction_id: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Prediction).where(Prediction.prediction_id == prediction_id)
@@ -185,7 +273,7 @@ async def get_prediction(prediction_id: str, db: AsyncSession = Depends(get_db))
 
 @router.get("/model-metrics", summary="Get training metrics for both models")
 async def get_model_metrics():
-    metrics = engine.get_model_metrics()
+    metrics = get_engine().get_model_metrics()
     if not metrics:
         return {
             "message": "Models not yet trained. Run training script first.",

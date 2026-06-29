@@ -22,6 +22,10 @@ class InferenceEngine:
     """
     Singleton inference engine.
     Loads both CNN and ResNet, uses the best-performing model by default.
+
+    Models are loaded lazily on the first call to ``initialize()`` (called
+    during the FastAPI lifespan) so that importing this module does NOT
+    trigger TensorFlow model loading at import time.
     """
     _instance = None
 
@@ -37,11 +41,14 @@ class InferenceEngine:
         self.preprocessor = ImagePreprocessor()
         self.cnn_model    = None
         self.resnet_model = None
-        self.selected_model_name = "ResNet"  # Default; overridden after training
+        self.selected_model_name = "ResNet"
         self.class_names  = DISEASE_CLASSES
         self.training_results: Optional[Dict] = None
-        self._load_models()
         self._initialized = True
+
+    def initialize(self):
+        """Load model weights from disk. Call once during app startup."""
+        self._load_models()
 
     def _load_models(self):
         """Load saved model weights from disk."""
@@ -66,6 +73,18 @@ class InferenceEngine:
             with open(RESULTS_FILE) as f:
                 self.training_results = json.load(f)
                 self.selected_model_name = self.training_results.get("selected_model", "ResNet")
+
+            # Use the exact class list the models were trained on (label-encoder
+            # order), so prediction indices map to the correct disease names.
+            trained_classes = (
+                self.training_results.get("class_names")
+                or self.training_results.get("cnn", {}).get("class_names")
+                or self.training_results.get("resnet", {}).get("class_names")
+            )
+            if trained_classes:
+                self.class_names = trained_classes
+                logger.info(f"Using trained class names: {self.class_names}")
+
             logger.info(f"Selected model from training: {self.selected_model_name}")
 
     def _get_model(self, model_name: str):

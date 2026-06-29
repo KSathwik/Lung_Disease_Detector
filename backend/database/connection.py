@@ -6,7 +6,7 @@ Uses SQLite for development, easily switchable to PostgreSQL for production.
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, Float, Integer, DateTime, Text, ForeignKey, Boolean, JSON
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 import os
 
@@ -14,10 +14,11 @@ import os
 # SQLite for development. For production PostgreSQL, use:
 # DATABASE_URL = "postgresql+asyncpg://user:password@localhost/lung_db"
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./lung_disease.db")
+SQL_ECHO = os.getenv("SQL_ECHO", "false").lower() in ("true", "1", "yes")
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True,          # Set False in production
+    echo=SQL_ECHO,
     future=True
 )
 
@@ -47,8 +48,8 @@ class Patient(Base):
     contact: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     email: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     medical_history: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     scans: Mapped[List["LungScan"]] = relationship("LungScan", back_populates="patient")
@@ -65,7 +66,7 @@ class LungScan(Base):
     image_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     image_size_bytes: Mapped[int] = mapped_column(Integer, nullable=True)
     scan_type: Mapped[str] = mapped_column(String(50), default="X-Ray")  # X-Ray, CT, MRI
-    scan_date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    scan_date: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     preprocessed: Mapped[bool] = mapped_column(Boolean, default=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
@@ -106,7 +107,7 @@ class Prediction(Base):
     key_findings: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
     precautions: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     scan: Mapped["LungScan"] = relationship("LungScan", back_populates="predictions")
@@ -132,7 +133,7 @@ class ModelMetrics(Base):
     training_samples: Mapped[int] = mapped_column(Integer, nullable=True)
     test_samples: Mapped[int] = mapped_column(Integer, nullable=True)
     epochs: Mapped[int] = mapped_column(Integer, nullable=True)
-    trained_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    trained_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
@@ -148,7 +149,7 @@ class Report(Base):
     reviewed_by: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     review_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_reviewed: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     prediction: Mapped["Prediction"] = relationship("Prediction", back_populates="report")

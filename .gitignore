@@ -10,9 +10,10 @@ venv/
 models/*.h5
 models/*.keras
 
-# Data (large - do not commit raw images)
+# Data (large - do not commit raw images / dataset archives)
 data/raw/
 data/processed/
+data/downloads/
 
 # Database
 *.db

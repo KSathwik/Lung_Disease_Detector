@@ -86,7 +86,7 @@ def main():
         test_size=0.15,
         val_size=0.15
     )
-    data = preprocessor.run()
+    data = preprocessor.run(batch_size=args.batch_size)
 
     # Train both models & select best
     results = train_and_select(

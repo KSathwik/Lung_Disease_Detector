@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { analyzeLungImage, generateReport } from "../services/api";
 
@@ -17,11 +17,20 @@ export default function AnalyzePage() {
   const [reportMsg,   setReportMsg]   = useState(null);
   const [scanType,    setScanType]    = useState("X-Ray");
 
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
   const onDrop = useCallback((accepted) => {
     const f = accepted[0];
     if (!f) return;
     setFile(f);
-    setPreview(URL.createObjectURL(f));
+    setPreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(f);
+    });
     setResult(null);
     setError(null);
     setReportMsg(null);
@@ -60,6 +69,7 @@ export default function AnalyzePage() {
   };
 
   const reset = () => {
+    if (preview) URL.revokeObjectURL(preview);
     setFile(null); setPreview(null);
     setResult(null); setError(null); setReportMsg(null);
   };

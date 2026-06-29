@@ -3,15 +3,21 @@ Lung Disease Detection API - Main Application Entry Point
 Academic Project | FastAPI Backend
 """
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, Depends
+from dotenv import load_dotenv
+load_dotenv()
+
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 import uvicorn
+import os
 import logging
 from contextlib import asynccontextmanager
 
 from api.routes import predictions, patients, reports, health
 from database.connection import init_db, get_db
+from ml.inference import InferenceEngine
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -23,6 +29,9 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Lung Disease Detection API...")
     await init_db()
     logger.info("Database initialized successfully.")
+    engine = InferenceEngine()
+    engine.initialize()
+    logger.info("Inference engine initialized.")
     yield
     logger.info("Shutting down Lung Disease Detection API...")
 
@@ -48,14 +57,32 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+CORS_ORIGINS = os.getenv(
+    "CORS_ORIGINS", "http://localhost:3000,http://localhost:3001"
+).split(",")
+
 # CORS middleware - allow frontend connections
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Cache-Control"] = "no-store"
+        return response
+
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Register routers
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])

@@ -130,6 +130,21 @@ class LungCNN:
         logger.info("CNN model saved.")
         return self.history
 
+    def train_ds(self, train_ds, val_ds, epochs: int = 50):
+        """Train from tf.data.Dataset objects (memory-efficient for large datasets)."""
+        logger.info("Training CNN model (streaming)...")
+        callbacks = _get_callbacks("CNN")
+        self.history = self.model.fit(
+            train_ds,
+            validation_data=val_ds,
+            epochs=epochs,
+            callbacks=callbacks,
+            verbose=1
+        )
+        self.model.save(MODELS_DIR / "cnn_model.h5")
+        logger.info("CNN model saved.")
+        return self.history
+
     def predict(self, X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         probs = self.model.predict(X)
         preds = np.argmax(probs, axis=1)
@@ -191,6 +206,24 @@ class LungResNet:
         )
         return base, model
 
+    def _unfreeze_and_compile(self):
+        """Unfreeze top 30 ResNet layers for fine-tuning phase."""
+        self.base_model.trainable = True
+        for layer in self.base_model.layers[:-30]:
+            layer.trainable = False
+        self.model.compile(
+            optimizer=keras.optimizers.Adam(learning_rate=1e-5),
+            loss="sparse_categorical_crossentropy",
+            metrics=["accuracy"]
+        )
+
+    def _merge_histories(self, h1, h2):
+        combined = {}
+        for key in h1.history:
+            combined[key] = h1.history[key] + h2.history[key]
+        self.history = type("History", (), {"history": combined})()
+        return self.history
+
     def train(
         self,
         X_train: np.ndarray, y_train: np.ndarray,
@@ -198,8 +231,6 @@ class LungResNet:
         epochs: int = 50, batch_size: int = 32
     ):
         logger.info("Training ResNet50 — Phase 1 (frozen base)...")
-
-        # Phase 1: Train head only
         callbacks = _get_callbacks("ResNet_phase1")
         h1 = self.model.fit(
             X_train, y_train,
@@ -210,18 +241,8 @@ class LungResNet:
             verbose=1
         )
 
-        # Phase 2: Unfreeze top 30 layers and fine-tune
         logger.info("ResNet50 — Phase 2 (fine-tuning top layers)...")
-        self.base_model.trainable = True
-        for layer in self.base_model.layers[:-30]:
-            layer.trainable = False
-
-        self.model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=1e-5),
-            loss="sparse_categorical_crossentropy",
-            metrics=["accuracy"]
-        )
-
+        self._unfreeze_and_compile()
         callbacks = _get_callbacks("ResNet_phase2")
         h2 = self.model.fit(
             X_train, y_train,
@@ -232,12 +253,29 @@ class LungResNet:
             verbose=1
         )
 
-        # Merge histories
-        combined = {}
-        for key in h1.history:
-            combined[key] = h1.history[key] + h2.history[key]
-        self.history = type("History", (), {"history": combined})()
+        self._merge_histories(h1, h2)
+        self.model.save(MODELS_DIR / "resnet_model.h5")
+        logger.info("ResNet model saved.")
+        return self.history
 
+    def train_ds(self, train_ds, val_ds, epochs: int = 50):
+        """Train from tf.data.Dataset objects (memory-efficient for large datasets)."""
+        logger.info("Training ResNet50 (streaming) — Phase 1 (frozen base)...")
+        callbacks = _get_callbacks("ResNet_phase1")
+        h1 = self.model.fit(
+            train_ds, validation_data=val_ds,
+            epochs=10, callbacks=callbacks, verbose=1
+        )
+
+        logger.info("ResNet50 (streaming) — Phase 2 (fine-tuning top layers)...")
+        self._unfreeze_and_compile()
+        callbacks = _get_callbacks("ResNet_phase2")
+        h2 = self.model.fit(
+            train_ds, validation_data=val_ds,
+            epochs=epochs - 10, callbacks=callbacks, verbose=1
+        )
+
+        self._merge_histories(h1, h2)
         self.model.save(MODELS_DIR / "resnet_model.h5")
         logger.info("ResNet model saved.")
         return self.history
@@ -431,6 +469,18 @@ class ModelEvaluator:
 # Training Orchestrator
 # ══════════════════════════════════════════════════════════════════════════════
 
+def _collect_test_data(data: Dict) -> Tuple[np.ndarray, np.ndarray]:
+    """Gather test arrays from either streaming or in-memory data dict."""
+    if data.get("streaming"):
+        import tensorflow as tf
+        X_parts, y_parts = [], []
+        for xb, yb in data["test_ds"]:
+            X_parts.append(xb.numpy())
+            y_parts.append(yb.numpy())
+        return np.concatenate(X_parts), np.concatenate(y_parts)
+    return data["X_test"], data["y_test"]
+
+
 def train_and_select(data: Dict, epochs: int = 50, batch_size: int = 32) -> Dict:
     """
     Full training pipeline:
@@ -439,23 +489,38 @@ def train_and_select(data: Dict, epochs: int = 50, batch_size: int = 32) -> Dict
     3. Evaluate both on test set
     4. Select best model
     5. Return metrics + winner
-    """
-    X_train, y_train = data["X_train"], data["y_train"]
-    X_val,   y_val   = data["X_val"],   data["y_val"]
-    X_test,  y_test  = data["X_test"],  data["y_test"]
-    class_names       = data["class_names"]
 
-    evaluator = ModelEvaluator(class_names)
+    Supports both in-memory arrays and tf.data.Dataset streaming.
+    """
+    class_names = data["class_names"]
+    streaming   = data.get("streaming", False)
+    evaluator   = ModelEvaluator(class_names)
+
+    if streaming:
+        train_source = data["train_ds"]
+        val_source   = data["val_ds"]
+    else:
+        train_source = (data["X_train"], data["y_train"])
+        val_source   = (data["X_val"],   data["y_val"])
 
     # ── Train CNN ─────────────────────────────────────────────────────────────
     cnn = LungCNN(num_classes=len(class_names))
-    cnn_history = cnn.train(X_train, y_train, X_val, y_val, epochs, batch_size)
+    if streaming:
+        cnn_history = cnn.train_ds(train_source, val_source, epochs)
+    else:
+        cnn_history = cnn.train(*train_source, *val_source, epochs, batch_size)
+
+    X_test, y_test = _collect_test_data(data)
     cnn_preds, cnn_probs = cnn.predict(X_test)
     cnn_metrics = evaluator.evaluate("CNN", y_test, cnn_preds, cnn_probs, cnn_history)
 
     # ── Train ResNet ──────────────────────────────────────────────────────────
     resnet = LungResNet(num_classes=len(class_names))
-    resnet_history = resnet.train(X_train, y_train, X_val, y_val, epochs, batch_size)
+    if streaming:
+        resnet_history = resnet.train_ds(train_source, val_source, epochs)
+    else:
+        resnet_history = resnet.train(*train_source, *val_source, epochs, batch_size)
+
     resnet_preds, resnet_probs = resnet.predict(X_test)
     resnet_metrics = evaluator.evaluate("ResNet", y_test, resnet_preds, resnet_probs, resnet_history)
 
@@ -472,10 +537,11 @@ def train_and_select(data: Dict, epochs: int = 50, batch_size: int = 32) -> Dict
     results = {
         "cnn": cnn_metrics,
         "resnet": resnet_metrics,
-        "selected_model": winner
+        "selected_model": winner,
+        "class_names": class_names
     }
     with open("models/training_results.json", "w") as f:
         json.dump(results, f, indent=2)
 
-    logger.info(f"\n✅ Training complete. Best model: {winner}")
+    logger.info(f"\n Training complete. Best model: {winner}")
     return results
