@@ -69,10 +69,18 @@ async def save_metrics_to_db(results: dict):
 
 def main():
     parser = argparse.ArgumentParser(description="Train Lung Disease Detection Models")
-    parser.add_argument("--data_dir",   type=str, default="data/raw",  help="Path to raw dataset directory")
-    parser.add_argument("--epochs",     type=int, default=50,           help="Number of training epochs")
-    parser.add_argument("--batch_size", type=int, default=32,           help="Training batch size")
+    parser.add_argument("--data_dir",    type=str, default="data/raw",  help="Path to raw dataset directory")
+    parser.add_argument("--epochs",      type=int, default=50,           help="Number of training epochs")
+    parser.add_argument("--batch_size",  type=int, default=32,           help="Training batch size")
+    parser.add_argument("--max_samples", type=int, default=None,        help="Max train samples for CPU optimization")
     args = parser.parse_args()
+
+    import tensorflow as tf
+    try:
+        tf.config.threading.set_intra_op_parallelism_threads(8)
+        tf.config.threading.set_inter_op_parallelism_threads(8)
+    except Exception:
+        pass
 
     data_dir = Path(args.data_dir)
     if not data_dir.exists():
@@ -86,7 +94,7 @@ def main():
         test_size=0.15,
         val_size=0.15
     )
-    data = preprocessor.run(batch_size=args.batch_size)
+    data = preprocessor.run(batch_size=args.batch_size, max_train_samples=args.max_samples)
 
     # Train both models & select best
     results = train_and_select(

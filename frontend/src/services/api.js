@@ -16,7 +16,19 @@ const api = axios.create({
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    const msg = err.response?.data?.detail || err.message || "An error occurred";
+    const detail = err.response?.data?.detail;
+    let msg;
+    if (Array.isArray(detail)) {
+      // FastAPI validation errors (422) come back as a list of objects
+      msg = detail
+        .map((d) => {
+          const field = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : "";
+          return field ? `${field}: ${d.msg}` : d.msg;
+        })
+        .join("; ");
+    } else {
+      msg = detail || err.message || "An error occurred";
+    }
     return Promise.reject(new Error(msg));
   }
 );
@@ -55,6 +67,11 @@ export const getModelMetrics = async () => {
 
 export const createPatient = async (data) => {
   const res = await api.post("/patients", data);
+  return res.data;
+};
+
+export const updatePatient = async (patientId, data) => {
+  const res = await api.put(`/patients/${patientId}`, data);
   return res.data;
 };
 

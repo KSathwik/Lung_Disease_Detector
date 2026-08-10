@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { listPatients, createPatient } from "../services/api";
+import { listPatients, createPatient, updatePatient } from "../services/api";
+
+const EMPTY_FORM = { name:"", age:"", gender:"Male", contact:"", email:"", medical_history:"" };
+
+const Field = ({ label, onChange, ...props }) => (
+  <div className="form-field">
+    <label className="field-label">{label}</label>
+    <input className="text-input" {...props} onChange={onChange} />
+  </div>
+);
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState([]);
@@ -7,7 +16,8 @@ export default function PatientsPage() {
   const [error,    setError]    = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [saving,   setSaving]   = useState(false);
-  const [form, setForm] = useState({ name:"", age:"", gender:"Male", contact:"", email:"", medical_history:"" });
+  const [editingId, setEditingId] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
 
   const load = () => {
     setLoading(true);
@@ -19,13 +29,44 @@ export default function PatientsPage() {
 
   useEffect(() => { load(); }, []);
 
+  const openCreate = () => {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setError(null);
+    setShowForm(true);
+  };
+
+  const openEdit = (p) => {
+    setEditingId(p.patient_id);
+    setForm({
+      name: p.name || "",
+      age: p.age != null ? String(p.age) : "",
+      gender: p.gender || "Male",
+      contact: p.contact || "",
+      email: p.email || "",
+      medical_history: p.medical_history || "",
+    });
+    setError(null);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+  };
+
   const handleSubmit = async () => {
     if (!form.name || !form.age) return;
     setSaving(true);
     try {
-      await createPatient({ ...form, age: parseInt(form.age) });
-      setShowForm(false);
-      setForm({ name:"", age:"", gender:"Male", contact:"", email:"", medical_history:"" });
+      const payload = { ...form, age: parseInt(form.age) };
+      if (editingId) {
+        await updatePatient(editingId, payload);
+      } else {
+        await createPatient(payload);
+      }
+      closeForm();
       load();
     } catch(e) {
       setError(e.message);
@@ -34,12 +75,8 @@ export default function PatientsPage() {
     }
   };
 
-  const Field = ({ label, ...props }) => (
-    <div className="form-field">
-      <label className="field-label">{label}</label>
-      <input className="text-input" {...props} onChange={e => setForm(f => ({...f, [props.name]: e.target.value}))} />
-    </div>
-  );
+  const handleField = (e) =>
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
   return (
     <div className="page">
@@ -48,7 +85,7 @@ export default function PatientsPage() {
           <h1 className="page-title">Patients</h1>
           <p className="page-subtitle">{patients.length} patients registered.</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowForm(v => !v)}>
+        <button className="btn-primary" onClick={() => (showForm ? closeForm() : openCreate())}>
           {showForm ? "Cancel" : "+ Register Patient"}
         </button>
       </div>
@@ -57,18 +94,20 @@ export default function PatientsPage() {
 
       {showForm && (
         <div className="card" style={{marginBottom:"1.5rem"}}>
-          <p className="section-label" style={{marginBottom:"1rem"}}>New Patient</p>
+          <p className="section-label" style={{marginBottom:"1rem"}}>
+            {editingId ? "Edit Patient" : "New Patient"}
+          </p>
           <div className="form-grid">
-            <Field label="Full name *"    name="name"    value={form.name}    placeholder="e.g. Ravi Kumar" />
-            <Field label="Age *"          name="age"     value={form.age}     placeholder="e.g. 45" type="number" />
+            <Field label="Full name *"    name="name"    value={form.name}    placeholder="e.g. Ravi Kumar" onChange={handleField} />
+            <Field label="Age *"          name="age"     value={form.age}     placeholder="e.g. 45" type="number" onChange={handleField} />
             <div className="form-field">
               <label className="field-label">Gender</label>
               <select className="select-input" value={form.gender} onChange={e => setForm(f => ({...f, gender: e.target.value}))}>
                 <option>Male</option><option>Female</option><option>Other</option>
               </select>
             </div>
-            <Field label="Contact"        name="contact" value={form.contact} placeholder="+91 98765 43210" />
-            <Field label="Email"          name="email"   value={form.email}   placeholder="patient@email.com" />
+            <Field label="Contact"        name="contact" value={form.contact} placeholder="+91 98765 43210" onChange={handleField} />
+            <Field label="Email"          name="email"   value={form.email}   placeholder="patient@email.com" onChange={handleField} />
           </div>
           <div className="form-field">
             <label className="field-label">Medical history</label>
@@ -83,7 +122,7 @@ export default function PatientsPage() {
             />
           </div>
           <button className="btn-primary" onClick={handleSubmit} disabled={saving}>
-            {saving ? "Saving…" : "Register Patient"}
+            {saving ? "Saving…" : editingId ? "Save Changes" : "Register Patient"}
           </button>
         </div>
       )}
@@ -106,6 +145,13 @@ export default function PatientsPage() {
                 {p.email   && <p className="patient-meta">{p.email}</p>}
               </div>
               <span className="patient-id-badge">{p.patient_id}</span>
+              <button
+                className="btn-secondary"
+                style={{position:"absolute", bottom:"12px", right:"12px", padding:"5px 14px", fontSize:"12px"}}
+                onClick={() => openEdit(p)}
+              >
+                Edit
+              </button>
             </div>
           ))}
         </div>

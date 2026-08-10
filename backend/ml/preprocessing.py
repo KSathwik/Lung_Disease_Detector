@@ -128,8 +128,9 @@ class ImagePreprocessor:
 
         # Step 4: CLAHE on luminance channel for X-ray enhancement
         lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
+        l_channel = np.ascontiguousarray(lab[:, :, 0], dtype=np.uint8)
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-        lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+        lab[:, :, 0] = clahe.apply(l_channel)
         img = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
 
         return img
@@ -150,6 +151,9 @@ class ImagePreprocessor:
 
         # ImageNet normalization
         img = (img - MEAN) / STD
+
+        # Ensure float32 dtype
+        img = img.astype(np.float32)
 
         # Add batch dimension: (H, W, C) → (1, H, W, C)
         img = np.expand_dims(img, axis=0)
@@ -232,9 +236,8 @@ class DatasetPreprocessor:
         """
         Data cleaning steps:
         1. Remove duplicate file paths
-        2. Remove corrupted / unreadable images
-        3. Remove images that are too small (< 50x50)
-        4. Log cleaning statistics
+        2. Remove corrupted / zero-byte images (file size check)
+        3. Log cleaning statistics
         """
         original_count = len(df)
 
@@ -242,21 +245,16 @@ class DatasetPreprocessor:
         df = df.drop_duplicates(subset=["image_path"])
         logger.info(f"After dedup: {len(df)} (removed {original_count - len(df)})")
 
-        # Validate images
+        # Validate images via fast file size check (> 1KB)
         valid_indices = []
         for idx, row in df.iterrows():
             try:
-                img = cv2.imread(row["image_path"])
-                if img is None:
-                    logger.warning(f"Corrupted: {row['image_path']}")
-                    continue
-                h, w = img.shape[:2]
-                if h < 50 or w < 50:
-                    logger.warning(f"Too small ({h}x{w}): {row['image_path']}")
-                    continue
-                valid_indices.append(idx)
+                if os.path.getsize(row["image_path"]) > 1024:
+                    valid_indices.append(idx)
+                else:
+                    logger.warning(f"Too small file size: {row['image_path']}")
             except Exception as e:
-                logger.error(f"Error reading {row['image_path']}: {e}")
+                logger.error(f"Error checking {row['image_path']}: {e}")
 
         df = df.loc[valid_indices].reset_index(drop=True)
         logger.info(f"After cleaning: {len(df)} valid images (removed {original_count - len(df)} total)")
@@ -283,27 +281,36 @@ class DatasetPreprocessor:
 
     # ── Step 5: Load & Preprocess Images ─────────────────────────────────────
     def load_images(self, df: pd.DataFrame, augment: bool = False) -> Tuple[np.ndarray, np.ndarray]:
-        """Load and preprocess all images in a DataFrame, returning aligned images and labels."""
-        images = []
-        labels = []
+        """Load and preprocess all images using multi-threading for maximum speed."""
+        from concurrent.futures import ThreadPoolExecutor
+
         encoded_labels = self.label_encoder.transform(df["label"].values)
+        items = list(zip(df["image_path"].values, encoded_labels))
 
-        for (_, row), label in zip(df.iterrows(), encoded_labels):
-            img = cv2.imread(row["image_path"])
-            if img is not None:
-                img = self.preprocessor.clean_image(img)
-                img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
-                img_norm = img_resized.astype(np.float32) / 255.0
-                img_norm = (img_norm - MEAN) / STD
-                images.append(img_norm)
-                labels.append(label)
+        def _process_one(item):
+            path, label = item
+            img = cv2.imread(path)
+            if img is None:
+                return []
+            img = self.preprocessor.clean_image(img)
+            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LINEAR)
+            img_norm = img_resized.astype(np.float32) / 255.0
+            img_norm = (img_norm - MEAN) / STD
+            res = [(img_norm, label)]
+            if augment:
+                res.append((np.fliplr(img_norm), label))
+            return res
 
-                if augment:
-                    augmented = self._augment(img_norm)
-                    images.extend(augmented)
-                    labels.extend([label] * len(augmented))
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            results = list(ex.map(_process_one, items))
 
-        return np.array(images), np.array(labels)
+        images, labels = [], []
+        for batch in results:
+            for img, lbl in batch:
+                images.append(img)
+                labels.append(lbl)
+
+        return np.array(images, dtype=np.float32), np.array(labels, dtype=np.int64)
 
     # ── Step 6: Augmentation ──────────────────────────────────────────────────
     def _augment(self, img: np.ndarray) -> List[np.ndarray]:
@@ -353,7 +360,7 @@ class DatasetPreprocessor:
         """Estimate total sample count (original + augmented)."""
         n = len(df)
         if augment:
-            n *= 5  # 1 original + 4 augmented per image
+            n *= 2
         return n
 
     def create_tf_dataset(
@@ -379,15 +386,10 @@ class DatasetPreprocessor:
 
     # ── Full Pipeline ─────────────────────────────────────────────────────────
 
-    RAM_THRESHOLD = 10_000  # Switch to tf.data streaming above this many images
+    RAM_THRESHOLD = 50_000  # Load dataset into in-memory array for fast training
 
-    def run(self, batch_size: int = 32) -> Dict:
-        """Execute the full preprocessing pipeline.
-
-        For small datasets the data is loaded entirely into NumPy arrays (fast,
-        simple). For datasets larger than RAM_THRESHOLD images the pipeline
-        returns tf.data.Dataset objects that stream from disk.
-        """
+    def run(self, batch_size: int = 32, max_train_samples: Optional[int] = None) -> Dict:
+        """Execute the full preprocessing pipeline."""
         logger.info("=== Starting Data Preprocessing Pipeline ===")
 
         df = self.scan_dataset()
@@ -396,6 +398,13 @@ class DatasetPreprocessor:
         train_df, val_df, test_df = self.split_dataset(df)
 
         self.label_encoder.fit(df["label"])
+
+        if max_train_samples and len(train_df) > max_train_samples:
+            train_df, _ = train_test_split(
+                train_df, train_size=max_train_samples,
+                stratify=train_df["label"], random_state=self.random_state
+            )
+            logger.info(f"Subsampled train set for CPU optimization: {len(train_df)} images")
 
         use_streaming = len(train_df) > self.RAM_THRESHOLD
         if use_streaming:

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { analyzeLungImage, generateReport } from "../services/api";
+import { analyzeLungImage, generateReport, listPatients } from "../services/api";
 
 const URGENCY_CONFIG = {
   routine:   { color: "#0F6E56", bg: "#E1F5EE", label: "Routine" },
@@ -16,6 +16,14 @@ export default function AnalyzePage() {
   const [error,       setError]       = useState(null);
   const [reportMsg,   setReportMsg]   = useState(null);
   const [scanType,    setScanType]    = useState("X-Ray");
+  const [patients,    setPatients]    = useState([]);
+  const [patientId,   setPatientId]   = useState("");
+
+  useEffect(() => {
+    listPatients()
+      .then(d => setPatients((d.patients || []).filter(p => p.patient_id !== "DEFAULT")))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -49,7 +57,7 @@ export default function AnalyzePage() {
     setError(null);
     setResult(null);
     try {
-      const data = await analyzeLungImage(file, { scanType });
+      const data = await analyzeLungImage(file, { scanType, patientId: patientId || undefined });
       setResult(data);
     } catch (err) {
       setError(err.message);
@@ -88,7 +96,17 @@ export default function AnalyzePage() {
         {/* ── Left: Upload panel ─────────────────────────────────── */}
         <div className="upload-panel">
           <div className="card">
-            <label className="field-label">Scan type</label>
+            <label className="field-label">Patient</label>
+            <select className="select-input" value={patientId} onChange={e => setPatientId(e.target.value)}>
+              <option value="">Unregistered (default)</option>
+              {patients.map(p => (
+                <option key={p.patient_id} value={p.patient_id}>
+                  {p.name} · {p.age} yrs · {p.gender}
+                </option>
+              ))}
+            </select>
+
+            <label className="field-label" style={{marginTop:"1rem"}}>Scan type</label>
             <select className="select-input" value={scanType} onChange={e => setScanType(e.target.value)}>
               <option>X-Ray</option>
               <option>CT Scan</option>

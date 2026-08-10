@@ -230,24 +230,26 @@ class LungResNet:
         X_val: np.ndarray,   y_val: np.ndarray,
         epochs: int = 50, batch_size: int = 32
     ):
-        logger.info("Training ResNet50 — Phase 1 (frozen base)...")
+        p1_epochs = max(1, min(4, epochs // 3))
+        p2_epochs = max(1, epochs - p1_epochs)
+        logger.info(f"Training ResNet50 — Phase 1 (frozen base, {p1_epochs} epochs)...")
         callbacks = _get_callbacks("ResNet_phase1")
         h1 = self.model.fit(
             X_train, y_train,
             validation_data=(X_val, y_val),
-            epochs=10,
+            epochs=p1_epochs,
             batch_size=batch_size,
             callbacks=callbacks,
             verbose=1
         )
 
-        logger.info("ResNet50 — Phase 2 (fine-tuning top layers)...")
+        logger.info(f"ResNet50 — Phase 2 (fine-tuning top layers, {p2_epochs} epochs)...")
         self._unfreeze_and_compile()
         callbacks = _get_callbacks("ResNet_phase2")
         h2 = self.model.fit(
             X_train, y_train,
             validation_data=(X_val, y_val),
-            epochs=epochs - 10,
+            epochs=p2_epochs,
             batch_size=batch_size,
             callbacks=callbacks,
             verbose=1
@@ -260,19 +262,21 @@ class LungResNet:
 
     def train_ds(self, train_ds, val_ds, epochs: int = 50):
         """Train from tf.data.Dataset objects (memory-efficient for large datasets)."""
-        logger.info("Training ResNet50 (streaming) — Phase 1 (frozen base)...")
+        p1_epochs = max(1, min(4, epochs // 3))
+        p2_epochs = max(1, epochs - p1_epochs)
+        logger.info(f"Training ResNet50 (streaming) — Phase 1 (frozen base, {p1_epochs} epochs)...")
         callbacks = _get_callbacks("ResNet_phase1")
         h1 = self.model.fit(
             train_ds, validation_data=val_ds,
-            epochs=10, callbacks=callbacks, verbose=1
+            epochs=p1_epochs, callbacks=callbacks, verbose=1
         )
 
-        logger.info("ResNet50 (streaming) — Phase 2 (fine-tuning top layers)...")
+        logger.info(f"ResNet50 (streaming) — Phase 2 (fine-tuning top layers, {p2_epochs} epochs)...")
         self._unfreeze_and_compile()
         callbacks = _get_callbacks("ResNet_phase2")
         h2 = self.model.fit(
             train_ds, validation_data=val_ds,
-            epochs=epochs - 10, callbacks=callbacks, verbose=1
+            epochs=p2_epochs, callbacks=callbacks, verbose=1
         )
 
         self._merge_histories(h1, h2)
@@ -294,14 +298,14 @@ def _get_callbacks(model_name: str) -> List:
     return [
         EarlyStopping(
             monitor="val_loss",
-            patience=7,
+            patience=3,
             restore_best_weights=True,
             verbose=1
         ),
         ReduceLROnPlateau(
             monitor="val_loss",
             factor=0.5,
-            patience=4,
+            patience=2,
             min_lr=1e-7,
             verbose=1
         ),

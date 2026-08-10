@@ -30,6 +30,37 @@ class PatientCreate(BaseModel):
     email: Optional[str] = Field(None, max_length=100)
     medical_history: Optional[str] = None
 
+    @field_validator("contact", "email", "medical_history", mode="before")
+    @classmethod
+    def empty_str_to_none(cls, v):
+        # Treat blank/whitespace-only optional fields as "not provided"
+        if isinstance(v, str) and v.strip() == "":
+            return None
+        return v
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", v):
+            raise ValueError("Invalid email format")
+        return v
+
+
+class PatientUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    age: Optional[int] = Field(None, ge=0, le=150)
+    gender: Optional[Gender] = None
+    contact: Optional[str] = Field(None, max_length=20)
+    email: Optional[str] = Field(None, max_length=100)
+    medical_history: Optional[str] = None
+
+    @field_validator("contact", "email", "medical_history", mode="before")
+    @classmethod
+    def empty_str_to_none(cls, v):
+        if isinstance(v, str) and v.strip() == "":
+            return None
+        return v
+
     @field_validator("email")
     @classmethod
     def validate_email(cls, v: Optional[str]) -> Optional[str]:
@@ -87,4 +118,23 @@ async def get_patient(patient_id: str, db: AsyncSession = Depends(get_db)):
     patient = result.scalar_one_or_none()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found.")
+    return patient
+
+
+@router.put("/patients/{patient_id}", response_model=PatientResponse, summary="Update a patient")
+async def update_patient(
+    patient_id: str, data: PatientUpdate, db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(Patient).where(Patient.patient_id == patient_id))
+    patient = result.scalar_one_or_none()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found.")
+
+    # Apply only the fields that were provided in the request
+    updates = data.model_dump(exclude_unset=True)
+    for key, value in updates.items():
+        setattr(patient, key, value)
+
+    await db.commit()
+    await db.refresh(patient)
     return patient
