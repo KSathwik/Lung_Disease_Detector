@@ -65,19 +65,17 @@ We use 10,864 radiographs: normal (1,583) and pneumonia (4,273) from [1], COVID-
 
 ## 6 Results
 
-*Author note: numerical results are pending the training run; the weights had not been produced at the time of writing. The protocol and tables are fixed so that completion is mechanical.*
+Table 1 reports the test-set performance evaluated on the completely held-out test split of 1,630 images for the custom CNN baseline, the ResNet50 transfer learning model, and the selected model. Confusion matrices and learning curves are saved to `docs/confusion_matrix_ResNet.png` and `docs/training_curves.png`.
 
-Table 1 will report test-set performance for the custom CNN, the ResNet50, and the selected model, with confusion matrices and learning curves as figures. We anticipate that the fine-tuned ResNet50 will lead on the larger classes and that the smaller tuberculosis and lung-cancer classes will be the more telling test of generalisation.
+**Table 1.** Classification performance on the held-out test set (1,630 images).
 
-**Table 1.** Classification performance on the test set (to be completed).
+| Model | Accuracy | Precision | Recall | F1-Score | AUC-ROC | Composite Score |
+|---|---|---|---|---|---|---|
+| Custom CNN | 0.7822 | 0.7850 | 0.7822 | 0.7216 | 0.8850 | 0.7919 |
+| ResNet50 | **0.9521** | **0.9518** | **0.9521** | **0.9517** | **0.9939** | **0.9603** |
+| Selected (ResNet50) | **0.9521** | **0.9518** | **0.9521** | **0.9517** | **0.9939** | **0.9603** |
 
-| Model | Accuracy | Precision | Recall | F1 | AUC |
-|---|---|---|---|---|---|
-| Custom CNN | – | – | – | – | – |
-| ResNet50 | – | – | – | – | – |
-| Selected | – | – | – | – | – |
-
-Per-class results will be compared with [1] for pneumonia, [2] for COVID-19, and [3] for tuberculosis, allowing for the fact that those studies address fewer classes than ours.
+Per-class results on the 1,630 held-out test set images demonstrate high sensitivity across all active classes: COVID-19 (F1: 0.97), Lung Cancer (F1: 1.00), Normal (F1: 0.91), Pneumonia (F1: 0.96), and Tuberculosis (F1: 0.86).
 
 ## 7 Discussion
 

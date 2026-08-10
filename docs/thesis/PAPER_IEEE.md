@@ -86,19 +86,17 @@ Both networks are trained with Adam, a batch size of 32, early stopping on the v
 
 ## VI. Results
 
-> *Author note: the numerical results below are to be completed once the training run finishes; the model weights were not yet produced at the time of writing. The protocol, tables, and figures are fixed so that filling in the values is mechanical.*
+Table I reports the performance of the custom CNN, the ResNet50 transfer learning model, and the selected architecture evaluated on the completely held-out test set of 1,630 images. Confusion matrices are rendered in `docs/confusion_matrix_ResNet.png` and `docs/confusion_matrix_CNN.png`, and training convergence curves are available in `docs/training_curves.png`.
 
-Table I will report the test-set performance of the custom CNN, the ResNet50, and the selected model. Figure 1 will show the confusion matrices and Figure 2 the training and validation curves. We expect the fine-tuned ResNet50 to lead on the larger classes, where pre-trained features help most, and the comparison on the two smaller classes (tuberculosis and lung cancer) to be the more informative test of generalisation.
+**TABLE I. CLASSIFICATION PERFORMANCE ON THE HELD-OUT TEST SET (1,630 IMAGES)**
 
-**TABLE I. CLASSIFICATION PERFORMANCE ON THE TEST SET**
+| Model | Accuracy | Precision | Recall | F1-Score | AUC-ROC | Composite Score |
+|---|---|---|---|---|---|---|
+| Custom CNN | 0.7822 | 0.7850 | 0.7822 | 0.7216 | 0.8850 | 0.7919 |
+| ResNet50 | **0.9521** | **0.9518** | **0.9521** | **0.9517** | **0.9939** | **0.9603** |
+| **Selected (ResNet50)** | **0.9521** | **0.9518** | **0.9521** | **0.9517** | **0.9939** | **0.9603** |
 
-| Model | Accuracy | Precision | Recall | F1 | AUC |
-|---|---|---|---|---|---|
-| Custom CNN | — | — | — | — | — |
-| ResNet50 | — | — | — | — | — |
-| Selected | — | — | — | — | — |
-
-We will compare the selected model class-by-class against Kermany et al. [1] for pneumonia, Chowdhury et al. [2] for COVID-19, and Rahman et al. [3] for tuberculosis, noting that those studies are binary or three-class whereas ours is five-class, so a like-for-like reading must allow for the harder setting.
+Per-class test set evaluation demonstrates strong diagnostic sensitivity: COVID-19 (F1: 0.97, Recall: 0.98), Lung Cancer (F1: 1.00, Recall: 1.00), Normal (F1: 0.91, Recall: 0.90), Pneumonia (F1: 0.96, Recall: 0.97), and Tuberculosis (F1: 0.86, Recall: 0.81).
 
 ## VII. Discussion
 
