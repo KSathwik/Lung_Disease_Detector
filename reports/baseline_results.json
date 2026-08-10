@@ -1,0 +1,59 @@
+{
+  "project": "Lung Disease Detection System",
+  "evaluation_date": "2026-08-10",
+  "dataset_split": {
+    "train_samples": 7604,
+    "val_samples": 1630,
+    "test_samples": 1630,
+    "random_seed": 42
+  },
+  "selected_primary_model": "ResNet50",
+  "resnet50_test_metrics": {
+    "accuracy": 0.9521,
+    "precision": 0.9518,
+    "recall": 0.9521,
+    "f1_score": 0.9517,
+    "auc_roc": 0.9939,
+    "composite_score": 0.9603
+  },
+  "custom_cnn_test_metrics": {
+    "accuracy": 0.7822,
+    "precision": 0.7850,
+    "recall": 0.7822,
+    "f1_score": 0.7216,
+    "auc_roc": 0.8850,
+    "composite_score": 0.7919
+  },
+  "per_class_resnet50_metrics": {
+    "COVID-19": {
+      "precision": 0.96,
+      "recall": 0.98,
+      "f1_score": 0.97,
+      "support": 543
+    },
+    "Lung Cancer": {
+      "precision": 1.00,
+      "recall": 1.00,
+      "f1_score": 1.00,
+      "support": 104
+    },
+    "Normal": {
+      "precision": 0.91,
+      "recall": 0.90,
+      "f1_score": 0.91,
+      "support": 237
+    },
+    "Pneumonia": {
+      "precision": 0.96,
+      "recall": 0.97,
+      "f1_score": 0.96,
+      "support": 641
+    },
+    "Tuberculosis": {
+      "precision": 0.92,
+      "recall": 0.81,
+      "f1_score": 0.86,
+      "support": 105
+    }
+  }
+}

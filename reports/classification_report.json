@@ -1,0 +1,45 @@
+{
+  "COVID-19": {
+    "precision": 0.96,
+    "recall": 0.98,
+    "f1-score": 0.97,
+    "support": 543
+  },
+  "Lung Cancer": {
+    "precision": 1.00,
+    "recall": 1.00,
+    "f1-score": 1.00,
+    "support": 104
+  },
+  "Normal": {
+    "precision": 0.91,
+    "recall": 0.90,
+    "f1-score": 0.91,
+    "support": 237
+  },
+  "Pneumonia": {
+    "precision": 0.96,
+    "recall": 0.97,
+    "f1-score": 0.96,
+    "support": 641
+  },
+  "Tuberculosis": {
+    "precision": 0.92,
+    "recall": 0.81,
+    "f1-score": 0.86,
+    "support": 105
+  },
+  "accuracy": 0.9521,
+  "macro avg": {
+    "precision": 0.95,
+    "recall": 0.93,
+    "f1-score": 0.94,
+    "support": 1630
+  },
+  "weighted avg": {
+    "precision": 0.95,
+    "recall": 0.95,
+    "f1-score": 0.95,
+    "support": 1630
+  }
+}
