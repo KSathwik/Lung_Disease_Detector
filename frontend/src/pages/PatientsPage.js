@@ -11,13 +11,14 @@ const Field = ({ label, onChange, ...props }) => (
 );
 
 export default function PatientsPage() {
-  const [patients, setPatients] = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [saving,   setSaving]   = useState(false);
+  const [patients,  setPatients]  = useState([]);
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState(null);
+  const [search,    setSearch]    = useState("");
+  const [showForm,  setShowForm]  = useState(false);
+  const [saving,    setSaving]    = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form,      setForm]      = useState(EMPTY_FORM);
 
   const load = () => {
     setLoading(true);
@@ -78,16 +79,37 @@ export default function PatientsPage() {
   const handleField = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
+  const filteredPatients = patients.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    (p.contact && p.contact.toLowerCase().includes(search.toLowerCase())) ||
+    (p.email && p.email.toLowerCase().includes(search.toLowerCase())) ||
+    (p.patient_id && p.patient_id.toLowerCase().includes(search.toLowerCase()))
+  );
+
   return (
     <div className="page">
-      <div className="page-header" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start"}}>
+      <div className="page-header" style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:"12px"}}>
         <div>
-          <h1 className="page-title">Patients</h1>
-          <p className="page-subtitle">{patients.length} patients registered.</p>
+          <h1 className="page-title">Patient Directory</h1>
+          <p className="page-subtitle">{patients.length} patients registered in the clinical database.</p>
         </div>
-        <button className="btn-primary" onClick={() => (showForm ? closeForm() : openCreate())}>
+        <button className="btn-primary" onClick={() => (showForm ? closeForm() : openCreate())} style={{maxWidth:"200px"}}>
           {showForm ? "Cancel" : "+ Register Patient"}
         </button>
+      </div>
+
+      {/* ── Search Bar (Item 3) ──────────────────────────────────── */}
+      <div className="toolbar-row">
+        <div className="search-input-wrapper">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search patients by name, contact, email or ID…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       {error && <div className="alert-error">{error}</div>}
@@ -95,7 +117,7 @@ export default function PatientsPage() {
       {showForm && (
         <div className="card" style={{marginBottom:"1.5rem"}}>
           <p className="section-label" style={{marginBottom:"1rem"}}>
-            {editingId ? "Edit Patient" : "New Patient"}
+            {editingId ? "Edit Patient Details" : "Register New Patient"}
           </p>
           <div className="form-grid">
             <Field label="Full name *"    name="name"    value={form.name}    placeholder="e.g. Ravi Kumar" onChange={handleField} />
@@ -116,38 +138,51 @@ export default function PatientsPage() {
               rows={3}
               name="medical_history"
               value={form.medical_history}
-              placeholder="Existing conditions, allergies, medications..."
+              placeholder="Existing pulmonary conditions, allergies, medications..."
               onChange={e => setForm(f => ({...f, medical_history: e.target.value}))}
               style={{resize:"vertical"}}
             />
           </div>
-          <button className="btn-primary" onClick={handleSubmit} disabled={saving}>
-            {saving ? "Saving…" : editingId ? "Save Changes" : "Register Patient"}
-          </button>
+          <div style={{display:"flex", gap:"10px", marginTop:"8px"}}>
+            <button className="btn-primary" onClick={handleSubmit} disabled={saving}>
+              {saving ? "Saving…" : editingId ? "Save Changes" : "Register Patient"}
+            </button>
+            <button className="btn-ghost" onClick={closeForm}>Cancel</button>
+          </div>
         </div>
       )}
 
+      {/* ── Skeleton Loaders (Item 2) ────────────────────────────── */}
       {loading ? (
-        <p className="loading-text">Loading patients…</p>
-      ) : patients.length === 0 ? (
-        <div className="card empty-state"><p>No patients registered yet.</p></div>
+        <div className="patient-grid">
+          {[1, 2, 3, 4, 5, 6].map(n => (
+            <div key={n} className="card skeleton skeleton-card" style={{height:"110px"}} />
+          ))}
+        </div>
+      ) : filteredPatients.length === 0 ? (
+        <div className="card empty-state"><p>No matching patient records found.</p></div>
       ) : (
         <div className="patient-grid">
-          {patients.map(p => (
-            <div key={p.id} className="card patient-card">
+          {filteredPatients.map(p => (
+            <div key={p.patient_id || p.id} className="card patient-card">
               <div className="patient-avatar">
                 {p.name.split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase()}
               </div>
               <div className="patient-info">
                 <p className="patient-name">{p.name}</p>
                 <p className="patient-meta">{p.age} yrs · {p.gender}</p>
-                {p.contact && <p className="patient-meta">{p.contact}</p>}
-                {p.email   && <p className="patient-meta">{p.email}</p>}
+                {p.contact && <p className="patient-meta">📞 {p.contact}</p>}
+                {p.email   && <p className="patient-meta">✉️ {p.email}</p>}
+                {p.medical_history && (
+                  <p className="patient-meta" style={{marginTop:"4px", fontStyle:"italic", color:"var(--text-muted)"}}>
+                    "{p.medical_history.length > 50 ? p.medical_history.slice(0, 50) + "…" : p.medical_history}"
+                  </p>
+                )}
               </div>
               <span className="patient-id-badge">{p.patient_id}</span>
               <button
                 className="btn-secondary"
-                style={{position:"absolute", bottom:"12px", right:"12px", padding:"5px 14px", fontSize:"12px"}}
+                style={{position:"absolute", bottom:"12px", right:"12px", padding:"4px 12px", fontSize:"12px"}}
                 onClick={() => openEdit(p)}
               >
                 Edit

@@ -27,8 +27,8 @@ export default function MetricsPage() {
   if (!data?.cnn) return (
     <div className="page">
       <div className="page-header">
-        <h1 className="page-title">Model Metrics</h1>
-        <p className="page-subtitle">No training results found.</p>
+        <h1 className="page-title">Model Performance</h1>
+        <p className="page-subtitle">No model evaluation metrics found.</p>
       </div>
       <div className="card">
         <p style={{color:"var(--color-text-secondary)"}}>Train models first:</p>
@@ -88,10 +88,10 @@ export default function MetricsPage() {
   return (
     <div className="page">
       <div className="page-header">
-        <h1 className="page-title">Model Metrics</h1>
+        <h1 className="page-title">Model Performance</h1>
         <p className="page-subtitle">
-          Training results for CNN and ResNet50. Selected model:&nbsp;
-          <strong style={{color:"#1D9E75"}}>{selected_model}</strong>
+          Training and evaluation metrics for CNN and ResNet50 models. Selected ensemble model:&nbsp;
+          <strong style={{color:"var(--brand-color)"}}>{selected_model === "ResNet" ? "ResNet50" : selected_model}</strong>
         </p>
       </div>
 

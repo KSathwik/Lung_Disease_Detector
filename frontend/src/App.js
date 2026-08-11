@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import AnalyzePage from "./pages/AnalyzePage";
 import HistoryPage from "./pages/HistoryPage";
@@ -7,9 +7,22 @@ import PatientsPage from "./pages/PatientsPage";
 import "./App.css";
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("lungai_theme") || "light";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("lungai_theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
     <BrowserRouter>
-      <div className="app">
+      <div className="app" data-theme={theme}>
         {/* ── Sidebar ─────────────────────────────────────────── */}
         <aside className="sidebar">
           <div className="sidebar-logo">
@@ -19,10 +32,14 @@ function App() {
               <path d="M8 14v4a6 6 0 0012 0v-4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
               <circle cx="14" cy="12" r="1.5" fill="white"/>
             </svg>
-            <span className="logo-text">LungAI</span>
+            <div className="logo-badge-container">
+              <span className="logo-text">LungAI</span>
+              <span className="badge-tag">Academic</span>
+            </div>
           </div>
 
           <nav className="sidebar-nav">
+            <div className="sidebar-section-header">WORKSPACE</div>
             <NavLink to="/" end className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -35,24 +52,31 @@ function App() {
               </svg>
               History
             </NavLink>
+
+            <div className="sidebar-section-header" style={{ marginTop: "1rem" }}>INSIGHTS</div>
             <NavLink to="/metrics" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 3v18h18M8 17l4-4 4 4 4-8"/>
               </svg>
-              Model Metrics
+              Model Performance
             </NavLink>
             <NavLink to="/patients" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                <path d="M23 21v-2a4 4 0 010 7.75"/>
               </svg>
               Patients
             </NavLink>
           </nav>
 
           <div className="sidebar-footer">
-            <p className="disclaimer-badge">Academic use only</p>
-            <p className="version-text">LungAI v1.0 · Not a medical device</p>
+            <button className="theme-toggle-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode">
+              <span>{theme === "light" ? "🌙 Dark Theme" : "☀️ Light Theme"}</span>
+            </button>
+            <div className="sidebar-disclaimer-wrapper">
+              <span className="disclaimer-badge">Academic Prototype</span>
+              <p className="version-text">LungAI v1.0 · Not for clinical diagnosis</p>
+            </div>
           </div>
         </aside>
 
