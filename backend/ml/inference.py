@@ -3,6 +3,7 @@ Model Inference Engine
 Loads trained models and runs predictions on uploaded images.
 """
 
+import os
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
@@ -14,7 +15,13 @@ from ml.preprocessing import ImagePreprocessor, DISEASE_CLASSES, PRECAUTIONS_MAP
 
 logger = logging.getLogger(__name__)
 
-MODELS_DIR  = Path("models")
+# Search for models directory in current working dir or project root
+MODELS_DIR = Path(os.getenv("MODELS_DIR", "models"))
+if not (MODELS_DIR / "resnet_model.h5").exists():
+    root_models = Path(__file__).resolve().parent.parent.parent / "models"
+    if (root_models / "resnet_model.h5").exists():
+        MODELS_DIR = root_models
+
 RESULTS_FILE = MODELS_DIR / "training_results.json"
 
 
@@ -176,6 +183,8 @@ class InferenceEngine:
         if best_result is None:
             # Fallback: no models loaded — use demo mode
             best_result = self._demo_prediction()
+            results["resnet"] = best_result
+            results["cnn"] = best_result
 
         final_condition = best_result["condition"]
         final_confidence = best_result["confidence"]

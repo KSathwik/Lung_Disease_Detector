@@ -7,6 +7,11 @@ import requests
 from pathlib import Path
 import json
 import sys
+import io
+
+# Ensure UTF-8 stdout encoding on Windows
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 BASE_URL = "http://127.0.0.1:8000"
 
@@ -45,8 +50,9 @@ def run_tests():
     assert pred_res["resnet"]["condition"] in ["Pneumonia", "COVID-19", "Normal", "Tuberculosis", "Lung Cancer"]
     print(f"✅ POST /api/v1/predict (Pneumonia scan) -> 200 OK")
     print(f"   Selected Model: {pred_res['selected_model']}")
-    print(f"   Predicted Condition: {pred_res['resnet']['condition']} ({pred_res['resnet']['confidence']*100:.1f}%)")
-    print(f"   Urgency Level: {pred_res['resnet']['urgency']}")
+    print(f"   Predicted Condition: {pred_res['resnet']['condition']} ({pred_res['resnet']['confidence']:.1f}%)")
+    print(f"   Urgency Level: {pred_res['final']['urgency']}")
+
 
     # 4. Input Validation (Invalid File Type)
     invalid_files = {"file": ("test.txt", b"This is not an image", "text/plain")}

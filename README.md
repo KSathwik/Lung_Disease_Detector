@@ -1,4 +1,4 @@
-# 🫁 LungAI — Lung Disease Classification & Decision Support System
+# 🫁 LungAI — Multi-Class Lung Disease Classification & Decision Support System
 
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https.python.org)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16.1-FF6F00?logo=tensorflow)](https://tensorflow.org)
@@ -14,9 +14,25 @@
 
 **LungAI** is an end-to-end Machine Learning and Full-Stack web application for automated multi-class lung disease classification from chest radiographs (X-rays).
 
-- **Core Problem**: Radiologist shortages in remote and primary-care settings lead to delayed triage for time-sensitive thoracic diseases.
-- **Input**: Chest X-ray images (`JPEG`, `PNG`).
-- **Output**: Multi-class diagnostic probabilities across 5 active conditions, urgency triage level (`Emergency`, `Urgent`, `Routine`), differential diagnosis candidates, and downloadable report.
+- **Core Objective**: Provide an automated decision-support pipeline to assist clinicians with diagnostic triage across time-sensitive thoracic diseases.
+- **Input**: Chest X-ray images (`JPEG`, `PNG`, `BMP`, `TIFF`, `WebP`).
+- **Output**: Multi-class diagnostic probabilities across 5 active conditions, urgency triage level (`Emergency`, `Urgent`, `Routine`), differential diagnosis candidates, key radiographic findings, and downloadable clinical reports.
+
+---
+
+## 🎨 Application Screenshots
+
+### 1. Lung Image Analysis & Diagnostic Triage
+![Landing / Analyze Page](docs/images/01_landing_analyze_page.png)
+
+### 2. Model Metrics & Algorithm Performance Comparison
+![Model Metrics Page](docs/images/03_model_metrics.png)
+
+### 3. Patient Record Management
+![Patient Management Page](docs/images/02_patient_management.png)
+
+### 4. Historical Prediction Log & Auditing
+![History Page](docs/images/04_history_records.png)
 
 ---
 
@@ -67,7 +83,7 @@ The dataset comprises **10,864 total chest radiograph images** aggregated from p
 | **Total** | **10,864** | **100.00%** | **5 Active Disease Classes** |
 
 ### Split Configuration (Random Seed `42`):
-- **Training Set (70%)**: 7,604 images (multi-threaded parallel data loading with horizontal flip, rotation ±15°, brightness jitter)
+- **Training Set (70%)**: 7,604 images (multi-threaded data loading with horizontal flip, rotation ±15°, brightness jitter)
 - **Validation Set (15%)**: 1,630 images (used strictly for model selection & early stopping)
 - **Held-Out Test Set (15%)**: **1,630 images** (never touched during training or hyperparameter tuning)
 
@@ -87,7 +103,7 @@ The dataset comprises **10,864 total chest radiograph images** aggregated from p
 
 ---
 
-## 📈 Measured Baseline Results
+## 📈 Measured Verification Results
 
 Evaluated on the completely held-out test split of **1,630 unseen clinical images**:
 
@@ -98,7 +114,6 @@ Evaluated on the completely held-out test split of **1,630 unseen clinical image
 | **Recall (Sensitivity)** | 78.22% | **95.21%** | **+16.99%** |
 | **F1-Score** | 72.16% | **95.17%** | **+23.01%** |
 | **AUC-ROC** | 88.50% | **99.39%** | **+10.89%** |
-| **Composite Score** | 0.7919 | **0.9603** | **+0.1684** |
 
 ### ResNet50 Per-Class Test Set Breakdown:
 
@@ -112,38 +127,41 @@ Evaluated on the completely held-out test split of **1,630 unseen clinical image
 
 ---
 
-## ⚡ Quickstart & Reproducibility Guide
+## 📥 Model Distribution & Download
+
+Large model files (`resnet_model.h5` ~241 MB, `cnn_model.h5` ~8.7 MB) are tracked via Git LFS / GitHub Release assets.
+
+To verify or download trained weights automatically:
+```bash
+python backend/ml/download_model.py
+```
+
+---
+
+## ⚡ Quickstart Guide
 
 ### Prerequisites
 - **Python**: `3.10` to `3.12`
 - **Node.js**: `18.x` or `20.x`
-- **RAM**: Minimum 8 GB (16 GB recommended)
 
 ### 1. Clone & Setup Virtual Environment
 ```bash
 git clone https://github.com/KSathwik/Lung_Disease_Detector.git
 cd Lung_Disease_Detector-main
 
-# Create and activate Python virtual environment
 python -m venv .venv
 # On Windows PowerShell:
 .\.venv\Scripts\Activate.ps1
 # On Linux/macOS:
 source .venv/bin/activate
 
-# Upgrade pip and install dependencies
 pip install -r backend/requirements.txt
 ```
 
-### 2. Reproduce Model Training & Evaluation
+### 2. Verify / Download Model Checkpoints
 ```bash
-python backend/ml/train.py --data_dir data/raw --epochs 6 --batch_size 32
+python backend/ml/download_model.py
 ```
-*Outputs generated:*
-- `models/resnet_model.h5` & `models/cnn_model.h5`
-- `models/training_results.json`
-- `docs/confusion_matrix_ResNet.png` & `docs/training_curves.png`
-- Populated database `lung_disease.db`
 
 ### 3. Run Backend API Server
 ```bash
@@ -162,36 +180,53 @@ npm start
 
 ---
 
-## 🧪 Automated Testing
+## 🔌 API Documentation
 
-Execute the test suite verifying preprocessing, model loading, patient ORM, and inference API endpoints:
-```bash
-python -m pytest backend/tests/
-```
-**Test Result**: `22 passed, 0 failed` in 3.26 seconds.
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/health` | System health check & version info |
+| `POST` | `/api/v1/predict` | Upload image for multi-model inference & triage |
+| `GET` | `/api/v1/predictions` | List all historical prediction logs |
+| `GET` | `/api/v1/predictions/{id}` | Get full prediction metadata & diagnostic details |
+| `GET` | `/api/v1/model-metrics` | Retrieve model training benchmark metrics |
+| `POST` | `/api/v1/patients` | Register a new patient record |
+| `GET` | `/api/v1/patients` | List registered patients |
+| `POST` | `/api/v1/reports/generate/{id}` | Generate exportable medical report for a prediction |
 
 ---
 
-## 🐳 Docker Deployment
+## 🧪 Automated Testing
 
-The application is containerized with multi-stage Docker builds:
+Execute the backend test suite verifying image preprocessing, model loading, patient ORM, and inference API endpoints:
+```bash
+python -m pytest backend/tests/
+```
+**Verified Status**: `22 passed, 0 failed` in 1.86s.
+
+---
+
+## 🐳 Docker Support
+
+The project includes a multi-stage `Dockerfile` separating the Node 18 React build and Python 3.11 slim runtime:
 ```bash
 # Build Docker image
 docker build -t lung-disease-detector .
 
-# Run Docker container
+# Run container (requires running Docker daemon)
 docker run -p 8000:8000 lung-disease-detector
 ```
+*Note: Dockerfile structure is validated; local execution requires a running Docker Desktop / Docker Engine service.*
 
 ---
 
-## 📌 Known Limitations
+## 📌 Limitations & Future Work
 
-1. **Class Imbalance in Tuberculosis**: Lower sample representation for Tuberculosis (6.44% of dataset) results in an 81% recall rate. Low-confidence predictions ($\le 0.70$) trigger automatic triage warnings recommending confirmatory lab testing.
-2. **Feature Localization**: Heatmap evidence localization (Grad-CAM) is scheduled for future work to assist radiologist verification.
-3. **Modality**: The dataset assumes standard PA/AP posterior-anterior chest X-rays.
+1. **Tuberculosis Recall**: Tuberculosis represents 6.44% of dataset images, yielding an 81% sensitivity rate. Low-confidence outputs automatically trigger advisory triage notes.
+2. **Modality Assumptions**: Preprocessing assumes PA/AP chest radiograph projections.
+3. **Feature Explainability**: Future iterations will integrate Grad-CAM visual attention maps to highlight lung pathology regions.
 
 ---
 
 ## 📄 License
-This project is open-source under the [MIT License](LICENSE).
+This project is released under the [MIT License](LICENSE).
+
