@@ -1,0 +1,27 @@
+{
+  "external_cohort": "Montgomery County (Quarantined External Benchmark)",
+  "model": "DenseNet-121 + Deep CORAL",
+  "selected_lambda": 0.01,
+  "total_scans": 138,
+  "tb_cases": 58,
+  "normal_cases": 80,
+  "exact_tb_recall": 0.0172,
+  "exact_normal_specificity": 0.0,
+  "binary_abnormal_sensitivity": 1.0,
+  "confidence_metrics": {
+    "mean_max_prob": 0.7487,
+    "median_max_prob": 0.7736,
+    "mean_margin": 0.5378,
+    "mean_entropy": 0.8797
+  },
+  "tb_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 42,
+    "Pleural Effusion": 15,
+    "Tuberculosis": 1
+  },
+  "normal_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 72,
+    "Tuberculosis": 6,
+    "Pleural Effusion": 2
+  }
+}

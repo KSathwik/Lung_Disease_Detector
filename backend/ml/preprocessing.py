@@ -21,13 +21,12 @@ MEAN = np.array([0.485, 0.456, 0.406])   # ImageNet normalization mean
 STD  = np.array([0.229, 0.224, 0.225])   # ImageNet normalization std
 
 DISEASE_CLASSES = [
-    "Normal",
-    "Pneumonia",
-    "Tuberculosis",
     "COVID-19",
-    "Lung Cancer",
-    "COPD",
-    "Pleural Effusion"
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
 ]
 
 PRECAUTIONS_MAP = {
@@ -58,6 +57,13 @@ PRECAUTIONS_MAP = {
         "Stay hydrated and rest adequately.",
         "Follow local health authority guidelines."
     ],
+    "Pulmonary Nodule / Mass": [
+        "Consult a pulmonologist or thoracic specialist for high-resolution CT evaluation.",
+        "Compare with prior chest imaging to evaluate nodule growth rate and doubling time.",
+        "Consider PET-CT or tissue biopsy if recommended by clinical risk stratifications.",
+        "Avoid tobacco smoke and respiratory carcinogen exposure.",
+        "Adhere strictly to recommended imaging follow-up intervals."
+    ],
     "Lung Cancer": [
         "Consult an oncologist immediately for staging and treatment plan.",
         "Quit smoking completely — this is critical.",
@@ -82,13 +88,22 @@ PRECAUTIONS_MAP = {
 }
 
 
+def apply_gaussian_lp(img: np.ndarray, sigma: float = 1.0) -> np.ndarray:
+    """Applies Gaussian low-pass spatial filtering with deterministic kernel sizing."""
+    ksize = int(2 * np.ceil(3 * sigma) + 1)
+    if ksize % 2 == 0:
+        ksize += 1
+    return cv2.GaussianBlur(img, (ksize, ksize), sigma)
+
+
 # ─── Single Image Preprocessing ───────────────────────────────────────────────
 
 class ImagePreprocessor:
-    """Preprocesses a single lung image for model inference."""
+    """Preprocesses a single lung image for model inference reproducing Model D."""
 
-    def __init__(self, target_size: Tuple[int, int] = IMAGE_SIZE):
+    def __init__(self, target_size: Tuple[int, int] = IMAGE_SIZE, sigma: float = 1.0):
         self.target_size = target_size
+        self.sigma = sigma
 
     def load_image(self, image_path: str) -> Optional[np.ndarray]:
         """Load image from path, return None on failure."""
@@ -96,69 +111,70 @@ class ImagePreprocessor:
         if img is None:
             logger.error(f"Failed to load image: {image_path}")
             return None
+        h, w = img.shape[:2]
+        if h < 32 or w < 32:
+            raise ValueError(f"Image dimensions ({w}x{h}) are too small. Minimum is 32x32 pixels.")
         return img
 
     def load_from_bytes(self, image_bytes: bytes) -> np.ndarray:
-        """Load image directly from raw bytes (for API uploads)."""
+        """Load image directly from raw bytes with strict input validation."""
+        if not image_bytes or len(image_bytes) == 0:
+            raise ValueError("Uploaded file is empty (0 bytes).")
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img is None:
-            raise ValueError("Could not decode image from bytes.")
+            raise ValueError("Could not decode image from bytes. Corrupted or unreadable image file.")
+        h, w = img.shape[:2]
+        if h < 32 or w < 32:
+            raise ValueError(f"Image dimensions ({w}x{h}) are too small for diagnostic analysis. Minimum dimensions are 32x32 pixels.")
         return img
 
     def clean_image(self, img: np.ndarray) -> np.ndarray:
         """
-        Data Cleaning Steps:
-        1. Convert BGR → RGB
-        2. Remove noise with Gaussian blur
-        3. Apply CLAHE for contrast enhancement (important for X-rays)
-        4. Handle grayscale X-rays by converting to 3-channel
+        Exact Model D Preprocessing (Steps 1 to 6):
+        1. Convert grayscale or 4-channel to 3-channel
+        2. BGR → RGB
+        3. Initial Gaussian blur (kernel=(3,3), sigma=0.8)
+        4. CIE LAB conversion & CLAHE on L channel (clip limit=2.0, tileGridSize=(8,8))
+        5. Convert back to RGB
+        6. Frequency filtering: Gaussian low-pass (sigma=1.0)
         """
-        # Step 1: Handle grayscale images (most X-rays are grayscale)
+        # Step 1: Ensure 3 channels
         if len(img.shape) == 2:
             img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         elif img.shape[2] == 4:
             img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+        else:
+            img = img.copy()
 
         # Step 2: BGR → RGB
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        # Step 3: Denoise
-        img = cv2.GaussianBlur(img, (3, 3), 0)
+        # Step 3: Initial Gaussian blur (3,3), sigma=0.8
+        img = cv2.GaussianBlur(img, (3, 3), 0.8)
 
-        # Step 4: CLAHE on luminance channel for X-ray enhancement
+        # Step 4: CLAHE on L channel in CIE LAB
         lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
         l_channel = np.ascontiguousarray(lab[:, :, 0], dtype=np.uint8)
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         lab[:, :, 0] = clahe.apply(l_channel)
         img = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
 
+        # Step 5 & 6: Frequency Preprocessing — Gaussian Low-Pass (sigma=1.0)
+        img = apply_gaussian_lp(img, sigma=self.sigma)
+
         return img
 
     def resize_and_normalize(self, img: np.ndarray) -> np.ndarray:
         """
         Normalization Steps:
-        1. Resize to target size
-        2. Normalize to [0,1]
-        3. Apply ImageNet mean/std normalization
-        4. Add batch dimension
+        7. Resize to 224x224 using Lanczos-4
+        8. ImageNet normalization: (img / 255.0 - MEAN) / STD
+        9. Add batch dimension: (224, 224, 3) → (1, 224, 224, 3)
         """
-        # Resize
-        img = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
-
-        # Normalize to [0, 1]
-        img = img.astype(np.float32) / 255.0
-
-        # ImageNet normalization
-        img = (img - MEAN) / STD
-
-        # Ensure float32 dtype
-        img = img.astype(np.float32)
-
-        # Add batch dimension: (H, W, C) → (1, H, W, C)
-        img = np.expand_dims(img, axis=0)
-
-        return img
+        img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
+        img_norm = (img_resized.astype(np.float32) / 255.0 - MEAN) / STD
+        return np.expand_dims(img_norm.astype(np.float32), axis=0)
 
     def preprocess(self, image_input) -> np.ndarray:
         """Full preprocessing pipeline: load → clean → normalize."""
@@ -169,9 +185,26 @@ class ImagePreprocessor:
         else:
             img = image_input  # Already numpy array
 
-        img = self.clean_image(img)
-        img = self.resize_and_normalize(img)
-        return img
+        cleaned = self.clean_image(img)
+        return self.resize_and_normalize(cleaned)
+
+    def preprocess_with_display(self, image_input) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Returns both:
+        - normalized batch tensor for model inference (1, 224, 224, 3)
+        - unnormalized resized RGB image (224, 224, 3) uint8 for Grad-CAM overlay
+        """
+        if isinstance(image_input, bytes):
+            img = self.load_from_bytes(image_input)
+        elif isinstance(image_input, str):
+            img = self.load_image(image_input)
+        else:
+            img = image_input
+
+        cleaned = self.clean_image(img)
+        display_rgb = cv2.resize(cleaned, self.target_size, interpolation=cv2.INTER_LANCZOS4)
+        norm_tensor = self.resize_and_normalize(cleaned)
+        return norm_tensor, display_rgb
 
 
 # ─── Dataset Preprocessing (for Training) ─────────────────────────────────────

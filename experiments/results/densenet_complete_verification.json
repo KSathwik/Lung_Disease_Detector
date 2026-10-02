@@ -1,0 +1,315 @@
+{
+  "model_architecture": "DenseNet121",
+  "model_checkpoint": "models\\densenet_model.h5",
+  "class_names": [
+    "COVID-19",
+    "Lung Cancer",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Tuberculosis"
+  ],
+  "internal_test_evaluation": {
+    "sample_count": 1963,
+    "accuracy": 0.7937,
+    "macro_precision": 0.7428,
+    "macro_recall": 0.7566,
+    "macro_f1": 0.7152,
+    "weighted_precision": 0.8622,
+    "weighted_recall": 0.7937,
+    "weighted_f1": 0.8119,
+    "macro_auc_roc": 0.9692,
+    "macro_pr_auc": 0.8054,
+    "confusion_matrix": [
+      [
+        461,
+        4,
+        12,
+        3,
+        4,
+        21
+      ],
+      [
+        0,
+        105,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        0,
+        41,
+        258,
+        0,
+        9,
+        0
+      ],
+      [
+        0,
+        101,
+        0,
+        50,
+        0,
+        0
+      ],
+      [
+        0,
+        57,
+        61,
+        22,
+        517,
+        6
+      ],
+      [
+        1,
+        39,
+        6,
+        6,
+        4,
+        167
+      ]
+    ],
+    "per_class": {
+      "COVID-19": {
+        "samples": 505,
+        "precision": 0.9978,
+        "recall": 0.9129,
+        "f1": 0.9535,
+        "roc_auc": 0.9989,
+        "pr_auc": 0.9972
+      },
+      "Lung Cancer": {
+        "samples": 113,
+        "precision": 0.3026,
+        "recall": 0.9292,
+        "f1": 0.4565,
+        "roc_auc": 0.9554,
+        "pr_auc": 0.5311
+      },
+      "Normal": {
+        "samples": 308,
+        "precision": 0.7656,
+        "recall": 0.8377,
+        "f1": 0.8,
+        "roc_auc": 0.9678,
+        "pr_auc": 0.8848
+      },
+      "Pleural Effusion": {
+        "samples": 151,
+        "precision": 0.5618,
+        "recall": 0.3311,
+        "f1": 0.4167,
+        "roc_auc": 0.9519,
+        "pr_auc": 0.5773
+      },
+      "Pneumonia": {
+        "samples": 663,
+        "precision": 0.9682,
+        "recall": 0.7798,
+        "f1": 0.8638,
+        "roc_auc": 0.9621,
+        "pr_auc": 0.9506
+      },
+      "Tuberculosis": {
+        "samples": 223,
+        "precision": 0.8608,
+        "recall": 0.7489,
+        "f1": 0.801,
+        "roc_auc": 0.9791,
+        "pr_auc": 0.8914
+      }
+    }
+  },
+  "montgomery_external_validation": {
+    "total_scans": 138,
+    "abnormal_tb_cohort_size": 58,
+    "normal_cohort_size": 80,
+    "abnormal_pred_distribution": {
+      "Lung Cancer": 54,
+      "Pleural Effusion": 4
+    },
+    "normal_pred_distribution": {
+      "Lung Cancer": 80
+    },
+    "metrics": {
+      "exact_tb_recall": 0.0,
+      "exact_tb_detected_count": 0,
+      "abnormal_pathology_detection_sensitivity": 1.0,
+      "abnormal_pathology_detected_count": 58,
+      "normal_exact_specificity": 0.0,
+      "normal_exact_detected_count": 0,
+      "mean_tb_prob_in_abnormal": 0.0011,
+      "mean_tb_prob_in_normal": 0.0048,
+      "mean_normal_prob_in_abnormal": 0.0107,
+      "mean_normal_prob_in_normal": 0.0203
+    },
+    "sample_predictions": [
+      {
+        "study_id": "MCUCXR_0001_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 84.1747055053711,
+        "prob_Tuberculosis": 0.0005046326550655067,
+        "prob_Normal": 0.023010583594441414,
+        "prob_Pleural Effusion": 0.1343715488910675,
+        "prob_Pneumonia": 0.00035719305742532015
+      },
+      {
+        "study_id": "MCUCXR_0002_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 92.95225524902344,
+        "prob_Tuberculosis": 0.0004226460005156696,
+        "prob_Normal": 0.033008236438035965,
+        "prob_Pleural Effusion": 0.036647774279117584,
+        "prob_Pneumonia": 0.0003861424047499895
+      },
+      {
+        "study_id": "MCUCXR_0003_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 87.3266372680664,
+        "prob_Tuberculosis": 0.00033675265149213374,
+        "prob_Normal": 0.007268514484167099,
+        "prob_Pleural Effusion": 0.1189371645450592,
+        "prob_Pneumonia": 0.00018864618323277682
+      },
+      {
+        "study_id": "MCUCXR_0004_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 72.09520721435547,
+        "prob_Tuberculosis": 0.001490307622589171,
+        "prob_Normal": 0.014666309580206871,
+        "prob_Pleural Effusion": 0.2623412311077118,
+        "prob_Pneumonia": 0.0005284547223709524
+      },
+      {
+        "study_id": "MCUCXR_0005_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 91.00440216064453,
+        "prob_Tuberculosis": 7.92449718574062e-05,
+        "prob_Normal": 0.011067087762057781,
+        "prob_Pleural Effusion": 0.07872234284877777,
+        "prob_Pneumonia": 8.671526302350685e-05
+      },
+      {
+        "study_id": "MCUCXR_0006_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 92.96385955810547,
+        "prob_Tuberculosis": 7.124958210624754e-05,
+        "prob_Normal": 0.006727687083184719,
+        "prob_Pleural Effusion": 0.06321614235639572,
+        "prob_Pneumonia": 0.0003429921343922615
+      },
+      {
+        "study_id": "MCUCXR_0008_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 84.2789077758789,
+        "prob_Tuberculosis": 6.264258990995586e-05,
+        "prob_Normal": 0.0012942473404109478,
+        "prob_Pleural Effusion": 0.1558469533920288,
+        "prob_Pneumonia": 6.64633626001887e-06
+      },
+      {
+        "study_id": "MCUCXR_0011_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 82.979736328125,
+        "prob_Tuberculosis": 0.00339026702567935,
+        "prob_Normal": 0.039627812802791595,
+        "prob_Pleural Effusion": 0.12587420642375946,
+        "prob_Pneumonia": 0.0012747423024848104
+      },
+      {
+        "study_id": "MCUCXR_0013_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 96.32823944091797,
+        "prob_Tuberculosis": 4.481319774640724e-05,
+        "prob_Normal": 0.02069697342813015,
+        "prob_Pleural Effusion": 0.01585269533097744,
+        "prob_Pneumonia": 0.00012182070349808782
+      },
+      {
+        "study_id": "MCUCXR_0015_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 90.38822937011719,
+        "prob_Tuberculosis": 8.501818956574425e-05,
+        "prob_Normal": 0.06432680785655975,
+        "prob_Pleural Effusion": 0.03026880882680416,
+        "prob_Pneumonia": 0.001434037578292191
+      },
+      {
+        "study_id": "MCUCXR_0016_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 88.59861755371094,
+        "prob_Tuberculosis": 0.0006660411600023508,
+        "prob_Normal": 0.04590197652578354,
+        "prob_Pleural Effusion": 0.06714281439781189,
+        "prob_Pneumonia": 0.0002887938462663442
+      },
+      {
+        "study_id": "MCUCXR_0017_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 71.69662475585938,
+        "prob_Tuberculosis": 0.041508857160806656,
+        "prob_Normal": 0.07268894463777542,
+        "prob_Pleural Effusion": 0.16044698655605316,
+        "prob_Pneumonia": 0.007505967281758785
+      },
+      {
+        "study_id": "MCUCXR_0019_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 84.40790557861328,
+        "prob_Tuberculosis": 0.00019880769832525402,
+        "prob_Normal": 0.0066497973166406155,
+        "prob_Pleural Effusion": 0.14903505146503448,
+        "prob_Pneumonia": 3.6268913390813395e-05
+      },
+      {
+        "study_id": "MCUCXR_0020_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 93.8081283569336,
+        "prob_Tuberculosis": 8.947878814069554e-05,
+        "prob_Normal": 0.047451723366975784,
+        "prob_Pleural Effusion": 0.014117665588855743,
+        "prob_Pneumonia": 0.00025570113211870193
+      },
+      {
+        "study_id": "MCUCXR_0021_0.png",
+        "findings": "normal",
+        "cohort_class": "Normal",
+        "predicted_class": "Lung Cancer",
+        "confidence": 93.75244140625,
+        "prob_Tuberculosis": 0.00019032243289984763,
+        "prob_Normal": 0.004272825550287962,
+        "prob_Pleural Effusion": 0.05793722718954086,
+        "prob_Pneumonia": 7.381218165392056e-05
+      }
+    ]
+  }
+}

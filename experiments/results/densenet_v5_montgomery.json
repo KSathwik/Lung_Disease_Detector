@@ -1,0 +1,17 @@
+{
+  "external_cohort": "Montgomery County (Quarantined External Benchmark)",
+  "total_scans": 138,
+  "tb_cases": 58,
+  "normal_cases": 80,
+  "exact_tb_recall": 0.0,
+  "exact_normal_specificity": 0.0,
+  "binary_abnormal_sensitivity": 1.0,
+  "tb_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 48,
+    "Pleural Effusion": 10
+  },
+  "normal_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 79,
+    "Pleural Effusion": 1
+  }
+}

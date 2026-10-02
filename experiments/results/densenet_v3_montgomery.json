@@ -1,0 +1,26 @@
+{
+  "external_cohort": "Montgomery_County_CXR (Quarantined)",
+  "total_scans": 138,
+  "exact_six_class_metrics": {
+    "tuberculosis_recall": 0.0,
+    "normal_specificity": 0.0,
+    "tb_detected": 0,
+    "tb_total": 58,
+    "norm_detected": 0,
+    "norm_total": 80
+  },
+  "binary_pathology_detection_metrics": {
+    "abnormal_sensitivity": 1.0,
+    "normal_specificity": 0.0,
+    "abnormal_detected": 58,
+    "abnormal_total": 58
+  },
+  "tb_cases_predicted_distribution": {
+    "Pulmonary Nodule / Mass": 56,
+    "Pleural Effusion": 2
+  },
+  "normal_cases_predicted_distribution": {
+    "Pulmonary Nodule / Mass": 77,
+    "Tuberculosis": 3
+  }
+}

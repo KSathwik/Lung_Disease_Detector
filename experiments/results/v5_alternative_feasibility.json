@@ -1,0 +1,47 @@
+{
+  "plan_title": "Dataset V5 Alternative Reconstruction & External Validation Plan",
+  "objective": "Integrate locally verified NIH scans to strengthen cross-source balance and prepare external COVID evaluation",
+  "current_v4_images": 10336,
+  "v5_expanded_local_images": 10630,
+  "cramers_v_v4": 0.7698,
+  "cramers_v_v5_projected": 0.7638,
+  "cramers_v_delta": -0.006,
+  "immediate_local_expansion": {
+    "source": "NIH_ChestX-ray14 (Extracted in data/raw/NIH_ChestX-ray14/)",
+    "additional_images": 294,
+    "breakdown": {
+      "Normal": 118,
+      "Pleural Effusion": 70,
+      "Pulmonary Nodule / Mass": 96,
+      "Pneumonia": 10
+    },
+    "scientific_benefit": "Expands NIH Pleural Effusion by 81.4% (from 86 to 156) and Nodule/Mass by 137.1% (from 70 to 166), significantly mitigating the severe sample size imbalance observed during Diagnostic B4."
+  },
+  "covid_domain_strategy": {
+    "training_cohort": "Retain Existing_COVID-19 (1,942 verified scans)",
+    "external_testing_cohort": "Stony Brook University COVID-19 (TCIA, 1,384 scans)",
+    "rationale": "Because Kaggle and Cohen datasets overlap with Existing_COVID-19, true COVID domain generalization cannot be proven by internal cross-validation. Evaluating on Stony Brook University CXR provides an unconfounded, independent clinical hospital test benchmark."
+  },
+  "actionable_checklist": [
+    {
+      "step": 1,
+      "action": "Integrate 294 local NIH scans into V5 manifest with view metadata",
+      "status": "READY_IMMEDIATE"
+    },
+    {
+      "step": 2,
+      "action": "Enforce patient-level splitting (seed 42, 0 leakage)",
+      "status": "VERIFIED_READY"
+    },
+    {
+      "step": 3,
+      "action": "Download Stony Brook COVID-19 metadata via TCIA API/curl",
+      "status": "PENDING_USER_APPROVAL"
+    },
+    {
+      "step": 4,
+      "action": "Execute controlled DenseNet-121 baseline on V5",
+      "status": "PENDING_V5_CONSTRUCTION"
+    }
+  ]
+}

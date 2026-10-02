@@ -1,0 +1,348 @@
+{
+  "model": "DenseNet-121",
+  "dataset_version": "V3 (unified_manifest_v3.csv)",
+  "total_test_samples": 1514,
+  "overall_metrics": {
+    "accuracy": 0.8025,
+    "macro_precision": 0.7603,
+    "weighted_precision": 0.8548,
+    "macro_recall": 0.7778,
+    "weighted_recall": 0.8025,
+    "macro_f1": 0.751,
+    "weighted_f1": 0.8201,
+    "macro_roc_auc": 0.9713,
+    "macro_pr_auc": 0.8199
+  },
+  "per_class_metrics": {
+    "COVID-19": {
+      "support": 292,
+      "precision": 1.0,
+      "recall": 0.8493,
+      "specificity": 1.0,
+      "f1_score": 0.9185
+    },
+    "Normal": {
+      "support": 370,
+      "precision": 0.9224,
+      "recall": 0.9,
+      "specificity": 0.9755,
+      "f1_score": 0.9111
+    },
+    "Pleural Effusion": {
+      "support": 142,
+      "precision": 0.5263,
+      "recall": 0.5634,
+      "specificity": 0.9475,
+      "f1_score": 0.5442
+    },
+    "Pneumonia": {
+      "support": 420,
+      "precision": 0.905,
+      "recall": 0.7714,
+      "specificity": 0.9689,
+      "f1_score": 0.8329
+    },
+    "Pulmonary Nodule / Mass": {
+      "support": 89,
+      "precision": 0.3286,
+      "recall": 0.7865,
+      "specificity": 0.8996,
+      "f1_score": 0.4636
+    },
+    "Tuberculosis": {
+      "support": 201,
+      "precision": 0.8791,
+      "recall": 0.796,
+      "specificity": 0.9832,
+      "f1_score": 0.8355
+    }
+  },
+  "calibration_confidence": {
+    "mean_confidence_correct": 0.8285,
+    "mean_confidence_incorrect": 0.5835
+  },
+  "confusion_matrix": [
+    [
+      248,
+      4,
+      4,
+      20,
+      5,
+      11
+    ],
+    [
+      0,
+      333,
+      3,
+      10,
+      21,
+      3
+    ],
+    [
+      0,
+      0,
+      80,
+      0,
+      62,
+      0
+    ],
+    [
+      0,
+      19,
+      34,
+      324,
+      35,
+      8
+    ],
+    [
+      0,
+      0,
+      19,
+      0,
+      70,
+      0
+    ],
+    [
+      0,
+      5,
+      12,
+      4,
+      20,
+      160
+    ]
+  ],
+  "normalized_confusion_matrix": [
+    [
+      0.8493150684931506,
+      0.0136986301369863,
+      0.0136986301369863,
+      0.0684931506849315,
+      0.017123287671232876,
+      0.03767123287671233
+    ],
+    [
+      0.0,
+      0.9,
+      0.008108108108108109,
+      0.02702702702702703,
+      0.05675675675675676,
+      0.008108108108108109
+    ],
+    [
+      0.0,
+      0.0,
+      0.5633802816901409,
+      0.0,
+      0.43661971830985913,
+      0.0
+    ],
+    [
+      0.0,
+      0.04523809523809524,
+      0.08095238095238096,
+      0.7714285714285715,
+      0.08333333333333333,
+      0.01904761904761905
+    ],
+    [
+      0.0,
+      0.0,
+      0.21348314606741572,
+      0.0,
+      0.7865168539325843,
+      0.0
+    ],
+    [
+      0.0,
+      0.024875621890547265,
+      0.05970149253731343,
+      0.01990049751243781,
+      0.09950248756218906,
+      0.7960199004975125
+    ]
+  ],
+  "top_confusion_pairs": [
+    [
+      "Pleural Effusion -> Pulmonary Nodule / Mass",
+      62
+    ],
+    [
+      "Pneumonia -> Pulmonary Nodule / Mass",
+      35
+    ],
+    [
+      "Pneumonia -> Pleural Effusion",
+      34
+    ],
+    [
+      "Normal -> Pulmonary Nodule / Mass",
+      21
+    ],
+    [
+      "COVID-19 -> Pneumonia",
+      20
+    ],
+    [
+      "Tuberculosis -> Pulmonary Nodule / Mass",
+      20
+    ],
+    [
+      "Pneumonia -> Normal",
+      19
+    ],
+    [
+      "Pulmonary Nodule / Mass -> Pleural Effusion",
+      19
+    ],
+    [
+      "Tuberculosis -> Pleural Effusion",
+      12
+    ],
+    [
+      "COVID-19 -> Tuberculosis",
+      11
+    ]
+  ],
+  "sample_error_index": [
+    {
+      "image_id": "existing_COVID-19_COVID-1015.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.9294,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1091.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pleural Effusion",
+      "confidence": 0.4891,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1137.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.9298,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1142.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.8727,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-121.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Normal",
+      "confidence": 0.3086,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1225.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.9291,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-127.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.6021,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1271.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.8344,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-143.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.5244,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1534.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.498,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1536.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.3093,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1605.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Normal",
+      "confidence": 0.3966,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1611.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.6476,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1621.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pneumonia",
+      "confidence": 0.4309,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-175.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pulmonary Nodule / Mass",
+      "confidence": 0.5447,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1755.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.5368,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1783.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pleural Effusion",
+      "confidence": 0.5481,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1821.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Pleural Effusion",
+      "confidence": 0.3125,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1961.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.6878,
+      "source": "Existing_COVID-19"
+    },
+    {
+      "image_id": "existing_COVID-19_COVID-1963.png",
+      "true_label": "COVID-19",
+      "predicted_label": "Tuberculosis",
+      "confidence": 0.4778,
+      "source": "Existing_COVID-19"
+    }
+  ]
+}

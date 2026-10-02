@@ -1,0 +1,55 @@
+{
+  "Existing_COVID-19": {
+    "total_samples": 292,
+    "accuracy": 0.8493,
+    "class_distribution": {
+      "COVID-19": 292
+    }
+  },
+  "Existing_Normal": {
+    "total_samples": 180,
+    "accuracy": 0.9333,
+    "class_distribution": {
+      "Normal": 180
+    }
+  },
+  "Existing_Pneumonia": {
+    "total_samples": 210,
+    "accuracy": 0.9,
+    "class_distribution": {
+      "Pneumonia": 210
+    }
+  },
+  "Existing_Tuberculosis": {
+    "total_samples": 99,
+    "accuracy": 0.9192,
+    "class_distribution": {
+      "Tuberculosis": 99
+    }
+  },
+  "TBX11K": {
+    "total_samples": 492,
+    "accuracy": 0.75,
+    "class_distribution": {
+      "Pneumonia": 210,
+      "Normal": 180,
+      "Tuberculosis": 102
+    }
+  },
+  "JSRT": {
+    "total_samples": 21,
+    "accuracy": 0.5238,
+    "class_distribution": {
+      "Pulmonary Nodule / Mass": 11,
+      "Normal": 10
+    }
+  },
+  "VinBigData_VinDr_CXR": {
+    "total_samples": 220,
+    "accuracy": 0.6318,
+    "class_distribution": {
+      "Pleural Effusion": 142,
+      "Pulmonary Nodule / Mass": 78
+    }
+  }
+}

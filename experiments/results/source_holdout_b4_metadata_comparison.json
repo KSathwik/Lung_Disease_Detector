@@ -1,0 +1,32 @@
+{
+  "VinBigData_VinDr_CXR": {
+    "institution": "108 Military Central Hospital & Hanoi Medical University Hospital, Vietnam",
+    "total_archive_images": 4394,
+    "pleural_effusion_images_in_v4": 931,
+    "unique_patients_in_v4": 891,
+    "image_format": "PNG (Downscaled from DICOM)",
+    "native_resolution": "High resolution DICOM downscaled 3x to ~1024x1024",
+    "projections": "100% PA frontal chest radiographs",
+    "annotation_style": "Bounding box localized by 17 board-certified radiologists with 3-radiologist consensus per image",
+    "label_provenance": "Direct radiologist visual inspection and consensus bounding boxes",
+    "dataset_prevalence": "23.5% of archive scans contain pleural effusion"
+  },
+  "NIH_ChestX-ray14": {
+    "institution": "National Institutes of Health (NIH) Clinical Center, Bethesda, MD, USA",
+    "total_archive_images": 112120,
+    "pleural_effusion_images_in_v4": 86,
+    "unique_patients_in_v4": 48,
+    "image_format": "PNG (1024x1024 8-bit grayscale)",
+    "native_resolution": "1024x1024",
+    "projections": "60% PA, 40% AP frontal chest radiographs",
+    "annotation_style": "Image-level pathology labels without bounding boxes",
+    "label_provenance": "Automated text-mining from diagnostic radiology reports via NegBio NLP (10-18% noise)",
+    "dataset_prevalence": "11.9% of full archive scans contain pleural effusion"
+  },
+  "metadata_differences_analysis": {
+    "demographics": "Vietnamese adult hospital inpatient cohort vs US National Institutes of Health research hospital cohort",
+    "projections": "VinDr is 100% PA frontal; NIH contains mixed PA and AP bedside views",
+    "label_precision": "VinDr has direct visual consensus ground truth; NIH has NLP text-mined report labels with known false positive/negative noise",
+    "resolution_aspect_ratio": "Both normalized to standard square 1024x1024 representations in preprocessing"
+  }
+}

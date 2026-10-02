@@ -102,6 +102,7 @@ export default function AnalyzePage() {
   const [zoomLevel,   setZoomLevel]   = useState(1);
   const [highContrast,setHighContrast]= useState(false);
   const [showHeatmap, setShowHeatmap] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const [copied,      setCopied]      = useState(false);
 
   useEffect(() => {
@@ -130,6 +131,7 @@ export default function AnalyzePage() {
     setZoomLevel(1);
     setHighContrast(false);
     setShowHeatmap(false);
+    setShowExplanation(false);
     setInferTime(null);
   };
 
@@ -181,7 +183,7 @@ export default function AnalyzePage() {
   const reset = () => {
     if (preview) URL.revokeObjectURL(preview);
     setFile(null); setPreview(null);
-    setResult(null); setError(null); setReportData(null); setShowReport(false); setInferTime(null);
+    setResult(null); setError(null); setReportData(null); setShowReport(false); setShowExplanation(false); setInferTime(null);
   };
 
   const copyReportText = () => {
@@ -343,12 +345,32 @@ export default function AnalyzePage() {
 
             {result && (
               <>
+                {/* Research-Stage Important Medical Disclaimer Banner (Section 9) */}
+                <div className="card medical-disclaimer-card" style={{
+                  background: "#fffbeb",
+                  borderColor: "#fde68a",
+                  borderLeft: "4px solid #d97706",
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                    <span style={{ fontSize: "18px" }}>⚠️</span>
+                    <div>
+                      <p style={{ margin: "0 0 2px 0", fontWeight: "700", color: "#92400e", fontSize: "13px" }}>
+                        Research-Stage System Notice
+                      </p>
+                      <p style={{ margin: 0, fontSize: "12.5px", color: "#78350f", lineHeight: "1.4" }}>
+                        Research-stage chest X-ray classification result. This output is not a medical diagnosis and should not replace evaluation by a qualified healthcare professional.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Prediction Result Hero */}
                 <div className="card result-hero">
                   <div className="result-hero-top">
                     <div>
-                      <p className="result-label">Predicted Classification</p>
-                      <h2 className="result-condition">{result.final.condition}</h2>
+                      <p className="result-label">Predicted Condition</p>
+                      <h2 className="result-condition">{result.predicted_class || result.final.condition}</h2>
                     </div>
                     <span className="urgency-badge" style={{ color: urg.color, background: urg.bg }}>
                       {urg.label}
@@ -357,16 +379,23 @@ export default function AnalyzePage() {
 
                   <div className="confidence-row">
                     <div className="confidence-bar-track">
-                      <div className="confidence-bar-fill" style={{ width: `${result.final.confidence}%` }} />
+                      <div
+                        className="confidence-bar-fill"
+                        style={{
+                          width: `${(result.confidence !== undefined && result.confidence <= 1 ? result.confidence * 100 : result.final.confidence)}%`
+                        }}
+                      />
                     </div>
-                    <span className="confidence-pct">{result.final.confidence.toFixed(1)}%</span>
+                    <span className="confidence-pct">
+                      {((result.confidence !== undefined && result.confidence <= 1 ? result.confidence * 100 : result.final.confidence)).toFixed(1)}%
+                    </span>
                   </div>
 
                   {/* Metadata Row */}
                   <div className="meta-info-row">
                     <div className="meta-item">
                       <span className="meta-label">Selected Model</span>
-                      <span className="meta-val">{result.selected_model === "ResNet" ? "ResNet50" : result.selected_model}</span>
+                      <span className="meta-val">{result.selected_model || "DenseNet-121 Frequency V5"}</span>
                     </div>
                     {inferTime && (
                       <div className="meta-item">
@@ -392,31 +421,176 @@ export default function AnalyzePage() {
                   )}
                 </div>
 
-                {/* Model Comparison */}
+                {/* Six-Class Probability Distribution (Section 7) */}
                 <div className="card">
-                  <p className="section-label">Model Ensemble Comparison</p>
-                  <div className="model-compare-grid">
-                    {[
-                      { name: "CNN", data: result.cnn,    selected: result.selected_model === "CNN" },
-                      { name: "ResNet50", data: result.resnet, selected: result.selected_model === "ResNet" },
-                    ].map(({ name, data, selected }) => (
-                      <div key={name} className={`model-card ${selected ? "model-selected" : ""}`}>
-                        <div className="model-card-header">
-                          <span className="model-name">{name}</span>
-                          {selected && <span className="selected-badge">Selected ✓</span>}
-                        </div>
-                        {data ? (
-                          <>
-                            <p className="model-condition">{data.condition}</p>
-                            <p className="model-conf">{data.confidence.toFixed(1)}% confidence</p>
-                            {data.accuracy && <p className="model-acc">Train Accuracy: {(data.accuracy * 100).toFixed(1)}%</p>}
-                          </>
-                        ) : (
-                          <p className="model-na">Model not available</p>
-                        )}
-                      </div>
-                    ))}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
+                    <div>
+                      <p className="section-label" style={{ margin: 0 }}>Probability Distribution</p>
+                      <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Six-class diagnostic probability outputs</span>
+                    </div>
+                    <span style={{
+                      fontSize: "11px",
+                      fontWeight: "600",
+                      padding: "2px 8px",
+                      borderRadius: "6px",
+                      background: "var(--brand-light-bg)",
+                      color: "var(--brand-color)"
+                    }}>
+                      Model D (DenseNet-121)
+                    </span>
                   </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
+                    {[
+                      "Normal",
+                      "Pneumonia",
+                      "COVID-19",
+                      "Tuberculosis",
+                      "Pleural Effusion",
+                      "Pulmonary Nodule / Mass"
+                    ].map(cls => {
+                      const probVal = result.probabilities?.[cls] !== undefined
+                        ? result.probabilities[cls] * 100
+                        : (result.probabilities_pct?.[cls] ?? (result.densenet?.all_probabilities?.[cls] ?? 0));
+                      const isPredicted = (result.predicted_class || result.final.condition) === cls;
+
+                      return (
+                        <div
+                          key={cls}
+                          style={{
+                            padding: "8px 12px",
+                            borderRadius: "8px",
+                            background: isPredicted ? "rgba(13, 148, 136, 0.08)" : "var(--bg-primary)",
+                            border: isPredicted ? "1.5px solid var(--brand-color)" : "1px solid var(--border-color)",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px", alignItems: "center" }}>
+                            <span style={{
+                              fontWeight: isPredicted ? "700" : "500",
+                              color: isPredicted ? "var(--brand-color)" : "var(--text-primary)",
+                              fontSize: "13.5px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px"
+                            }}>
+                              {cls}
+                              {isPredicted && (
+                                <span style={{
+                                  fontSize: "10.5px",
+                                  fontWeight: "700",
+                                  background: "var(--brand-color)",
+                                  color: "#fff",
+                                  padding: "1px 6px",
+                                  borderRadius: "10px",
+                                  textTransform: "uppercase"
+                                }}>
+                                  Predicted
+                                </span>
+                              )}
+                            </span>
+                            <span style={{
+                              fontWeight: "700",
+                              fontSize: "13.5px",
+                              color: isPredicted ? "var(--brand-color)" : "var(--text-secondary)"
+                            }}>
+                              {probVal.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div style={{ width: "100%", height: "7px", background: "rgba(0,0,0,0.06)", borderRadius: "4px", overflow: "hidden" }}>
+                            <div style={{
+                              width: `${Math.max(probVal, 1.2)}%`,
+                              height: "100%",
+                              borderRadius: "4px",
+                              background: isPredicted ? "var(--brand-color)" : "#64748b",
+                              transition: "width 0.4s ease"
+                            }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Grad-CAM Model Attention Visualization (Section 8) */}
+                <div className="card">
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <p className="section-label" style={{ margin: 0 }}>Model Attention Visualization</p>
+                      <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                        Grad-CAM gradient-weighted class activation mapping
+                      </span>
+                    </div>
+                    <button
+                      className="btn-secondary"
+                      style={{ padding: "6px 14px", fontSize: "13px" }}
+                      onClick={() => setShowExplanation(s => !s)}
+                    >
+                      {showExplanation ? "Hide Explanation" : "🔍 View Explanation"}
+                    </button>
+                  </div>
+
+                  {showExplanation && (
+                    <div style={{ marginTop: "1rem" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                        <div style={{ textAlign: "center" }}>
+                          <p style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-secondary)", marginBottom: "6px" }}>
+                            Filtered Chest X-Ray
+                          </p>
+                          <img
+                            src={result.gradcam?.original_image || preview}
+                            alt="Preprocessed X-ray"
+                            style={{
+                              width: "100%",
+                              maxHeight: "220px",
+                              objectFit: "contain",
+                              borderRadius: "8px",
+                              border: "1px solid var(--border-color)",
+                              background: "#000"
+                            }}
+                          />
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <p style={{ fontSize: "12px", fontWeight: "600", color: "var(--brand-color)", marginBottom: "6px" }}>
+                            Grad-CAM Visualization
+                          </p>
+                          <img
+                            src={result.gradcam?.overlay_image || preview}
+                            alt="Grad-CAM Overlay"
+                            style={{
+                              width: "100%",
+                              maxHeight: "220px",
+                              objectFit: "contain",
+                              borderRadius: "8px",
+                              border: "1px solid var(--border-color)",
+                              background: "#000"
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <p style={{
+                        fontSize: "11.5px",
+                        color: "var(--text-muted)",
+                        marginTop: "10px",
+                        background: "var(--bg-primary)",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        lineHeight: 1.4
+                      }}>
+                        <strong>Model attention visualization:</strong> Grad-CAM highlights image regions that contributed most strongly to the model's output activations. It does not represent verified biological or radiological reasoning.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* External Generalization Limitation Boundary (Section 14) */}
+                <div className="card" style={{ borderLeft: "4px solid #f59e0b", background: "var(--bg-card)" }}>
+                  <p className="section-label" style={{ color: "#d97706", marginBottom: "4px" }}>
+                    ⚠️ External Generalization Boundary
+                  </p>
+                  <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.45, margin: 0 }}>
+                    Model D achieved peak internal diagnostic performance on multi-source digital radiographs (<strong>82.93% accuracy, 78.35% Macro F1</strong>). However, zero-shot evaluation on quarantined film-digitized radiographs (Montgomery County) demonstrated scanner sensor-shift vulnerability (0% TB recall, 100% binary abnormal sensitivity). This model does not claim robust cross-hardware generalization without site-specific calibration.
+                  </p>
                 </div>
 
                 {/* Key Radiological Findings */}

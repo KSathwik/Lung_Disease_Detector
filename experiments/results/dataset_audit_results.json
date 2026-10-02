@@ -1,0 +1,412 @@
+{
+  "dataset_summary": {
+    "total_images": 13102,
+    "total_sources": 7,
+    "total_classes": 6,
+    "cramers_v_source_label_association": 0.8331,
+    "statistical_significance_p_value": 0.0
+  },
+  "source_by_class_matrix": {
+    "counts": {
+      "COVID-19": {
+        "Existing_COVID-19": 3366,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Lung Cancer": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 153,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 613
+      },
+      "Normal": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 1469,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 92,
+        "TBX11K": 492,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Pleural Effusion": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 1016
+      },
+      "Pneumonia": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 3927,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 492,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Tuberculosis": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 686,
+        "JSRT": 0,
+        "TBX11K": 796,
+        "VinBigData_VinDr_CXR": 0
+      }
+    },
+    "percentage_by_class_column": {
+      "COVID-19": {
+        "Existing_COVID-19": 100.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Lung Cancer": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 19.97,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 80.03
+      },
+      "Normal": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 71.55,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 4.48,
+        "TBX11K": 23.96,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Pleural Effusion": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 100.0
+      },
+      "Pneumonia": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 88.87,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 11.13,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Tuberculosis": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 46.29,
+        "JSRT": 0.0,
+        "TBX11K": 53.71,
+        "VinBigData_VinDr_CXR": 0.0
+      }
+    },
+    "percentage_by_source_row": {
+      "COVID-19": {
+        "Existing_COVID-19": 100.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Lung Cancer": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 62.45,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 37.63
+      },
+      "Normal": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 100.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 37.55,
+        "TBX11K": 27.64,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Pleural Effusion": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 62.37
+      },
+      "Pneumonia": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 100.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 27.64,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Tuberculosis": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 100.0,
+        "JSRT": 0.0,
+        "TBX11K": 44.72,
+        "VinBigData_VinDr_CXR": 0.0
+      }
+    }
+  },
+  "acquisition_characteristics_by_source": {
+    "Existing_COVID-19": {
+      "sample_profiled": 150,
+      "common_resolutions": {
+        "299x299": 150
+      },
+      "mean_height": 299.0,
+      "mean_width": 299.0,
+      "mean_aspect_ratio": 1.0,
+      "std_aspect_ratio": 0.0,
+      "channels_distribution": {
+        "1": 150
+      },
+      "file_extensions": {
+        ".png": 150
+      },
+      "mean_tissue_intensity": 149.8,
+      "mean_tissue_std": 45.5,
+      "mean_dynamic_range": 142.64,
+      "mean_corner_intensity": 57.2,
+      "black_border_percentage": 12.7
+    },
+    "Existing_Normal": {
+      "sample_profiled": 150,
+      "common_resolutions": {
+        "758x994": 1,
+        "1410x1624": 1,
+        "1422x1642": 1
+      },
+      "mean_height": 1333.1,
+      "mean_width": 1652.8,
+      "mean_aspect_ratio": 1.265,
+      "std_aspect_ratio": 0.151,
+      "channels_distribution": {
+        "1": 150
+      },
+      "file_extensions": {
+        ".jpeg": 150
+      },
+      "mean_tissue_intensity": 137.96,
+      "mean_tissue_std": 43.79,
+      "mean_dynamic_range": 138.4,
+      "mean_corner_intensity": 26.74,
+      "black_border_percentage": 36.7
+    },
+    "Existing_Pneumonia": {
+      "sample_profiled": 150,
+      "common_resolutions": {
+        "680x1120": 2,
+        "241x462": 1,
+        "976x1192": 1
+      },
+      "mean_height": 859.9,
+      "mean_width": 1219.9,
+      "mean_aspect_ratio": 1.474,
+      "std_aspect_ratio": 0.233,
+      "channels_distribution": {
+        "1": 143,
+        "3": 7
+      },
+      "file_extensions": {
+        ".jpeg": 150
+      },
+      "mean_tissue_intensity": 139.83,
+      "mean_tissue_std": 40.09,
+      "mean_dynamic_range": 125.18,
+      "mean_corner_intensity": 42.58,
+      "black_border_percentage": 19.3
+    },
+    "Existing_Tuberculosis": {
+      "sample_profiled": 150,
+      "common_resolutions": {
+        "512x512": 150
+      },
+      "mean_height": 512.0,
+      "mean_width": 512.0,
+      "mean_aspect_ratio": 1.0,
+      "std_aspect_ratio": 0.0,
+      "channels_distribution": {
+        "3": 80,
+        "1": 70
+      },
+      "file_extensions": {
+        ".png": 150
+      },
+      "mean_tissue_intensity": 128.64,
+      "mean_tissue_std": 43.39,
+      "mean_dynamic_range": 127.54,
+      "mean_corner_intensity": 82.05,
+      "black_border_percentage": 18.0
+    },
+    "JSRT": {
+      "sample_profiled": 242,
+      "common_resolutions": {
+        "2048x2048": 242
+      },
+      "mean_height": 2048.0,
+      "mean_width": 2048.0,
+      "mean_aspect_ratio": 1.0,
+      "std_aspect_ratio": 0.0,
+      "channels_distribution": {
+        "1": 242
+      },
+      "file_extensions": {
+        ".png": 242
+      },
+      "mean_tissue_intensity": 157.08,
+      "mean_tissue_std": 60.78,
+      "mean_dynamic_range": 183.24,
+      "mean_corner_intensity": 81.72,
+      "black_border_percentage": 9.1
+    },
+    "TBX11K": {
+      "sample_profiled": 450,
+      "common_resolutions": {
+        "512x512": 450
+      },
+      "mean_height": 512.0,
+      "mean_width": 512.0,
+      "mean_aspect_ratio": 1.0,
+      "std_aspect_ratio": 0.0,
+      "channels_distribution": {
+        "3": 450
+      },
+      "file_extensions": {
+        ".png": 450
+      },
+      "mean_tissue_intensity": 148.31,
+      "mean_tissue_std": 51.84,
+      "mean_dynamic_range": 155.75,
+      "mean_corner_intensity": 36.21,
+      "black_border_percentage": 48.0
+    },
+    "VinBigData_VinDr_CXR": {
+      "sample_profiled": 300,
+      "common_resolutions": {
+        "960x768": 83,
+        "1024x1024": 27,
+        "1024x846": 16
+      },
+      "mean_height": 953.6,
+      "mean_width": 831.5,
+      "mean_aspect_ratio": 0.873,
+      "std_aspect_ratio": 0.092,
+      "channels_distribution": {
+        "1": 300
+      },
+      "file_extensions": {
+        ".jpg": 300
+      },
+      "mean_tissue_intensity": 152.38,
+      "mean_tissue_std": 50.13,
+      "mean_dynamic_range": 151.38,
+      "mean_corner_intensity": 22.11,
+      "black_border_percentage": 56.7
+    }
+  },
+  "acquisition_characteristics_by_class": {
+    "COVID-19": {
+      "sample_profiled": 150,
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 149.8,
+      "mean_tissue_std": 45.5,
+      "mean_corner_intensity": 57.2,
+      "black_border_percentage": 12.7
+    },
+    "Lung Cancer": {
+      "sample_profiled": 300,
+      "mean_aspect_ratio": 0.941,
+      "mean_tissue_intensity": 153.23,
+      "mean_tissue_std": 55.42,
+      "mean_corner_intensity": 50.26,
+      "black_border_percentage": 30.3
+    },
+    "Normal": {
+      "sample_profiled": 392,
+      "mean_aspect_ratio": 1.102,
+      "mean_tissue_intensity": 141.64,
+      "mean_tissue_std": 50.6,
+      "mean_corner_intensity": 34.52,
+      "black_border_percentage": 49.5
+    },
+    "Pleural Effusion": {
+      "sample_profiled": 150,
+      "mean_aspect_ratio": 0.865,
+      "mean_tissue_intensity": 156.8,
+      "mean_tissue_std": 49.75,
+      "mean_corner_intensity": 19.14,
+      "black_border_percentage": 62.7
+    },
+    "Pneumonia": {
+      "sample_profiled": 300,
+      "mean_aspect_ratio": 1.237,
+      "mean_tissue_intensity": 151.03,
+      "mean_tissue_std": 44.4,
+      "mean_corner_intensity": 41.54,
+      "black_border_percentage": 23.0
+    },
+    "Tuberculosis": {
+      "sample_profiled": 300,
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 137.03,
+      "mean_tissue_std": 49.75,
+      "mean_corner_intensity": 71.55,
+      "black_border_percentage": 23.7
+    }
+  },
+  "identified_leakage_pathways": [
+    {
+      "target_class": "COVID-19",
+      "leakage_type": "100% Single-Source Confounding",
+      "severity": "CRITICAL",
+      "details": "100.0% of all COVID-19 images (3,366/3,366) originate exclusively from 'Existing_COVID-19'. Zero COVID-19 samples exist in any other dataset. Any model trained on this label learns the acquisition artifacts of 'Existing_COVID-19' rather than COVID-19 pathology."
+    },
+    {
+      "target_class": "Pleural Effusion",
+      "leakage_type": "100% Single-Source Confounding",
+      "severity": "CRITICAL",
+      "details": "100.0% of all Pleural Effusion images (1,016/1,016) originate exclusively from 'VinBigData_VinDr_CXR'. Zero Pleural Effusion samples exist in any other dataset."
+    },
+    {
+      "target_class": "Lung Cancer",
+      "leakage_type": "Dual-Source Isolation (VinDr + JSRT)",
+      "severity": "HIGH",
+      "details": "Lung Cancer (766 total) is restricted strictly to VinBigData_VinDr_CXR (80.0%) and JSRT (20.0%). No Lung Cancer cases exist in COVID, Pneumonia, or TB datasets."
+    },
+    {
+      "target_class": "Pneumonia",
+      "leakage_type": "88.9% Single-Source Dominance",
+      "severity": "HIGH",
+      "details": "88.9% of Pneumonia cases (3,927/4,419) originate from 'Existing_Pneumonia', with only 11.1% from TBX11K."
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "experiment_comparison": {
+    "training_samples": {
+      "balanced_subset": 2931,
+      "full_v3": 7061
+    },
+    "validation_samples": {
+      "balanced_subset": 594,
+      "full_v3": 1515
+    },
+    "internal_test_samples": {
+      "balanced_subset": 1514,
+      "full_v3": 1514
+    },
+    "accuracy": {
+      "balanced_subset": 0.8025,
+      "full_v3": 0.7853,
+      "delta": -0.0172
+    },
+    "macro_f1": {
+      "balanced_subset": 0.751,
+      "full_v3": 0.7328,
+      "delta": -0.0182
+    },
+    "weighted_f1": {
+      "balanced_subset": 0.8201,
+      "full_v3": 0.8054,
+      "delta": -0.0147
+    },
+    "macro_roc_auc": {
+      "balanced_subset": 0.9713,
+      "full_v3": 0.9677,
+      "delta": -0.0036
+    },
+    "macro_pr_auc": {
+      "balanced_subset": 0.8199,
+      "full_v3": 0.8015,
+      "delta": -0.0184
+    }
+  },
+  "per_class_f1_comparison": {
+    "COVID-19": {
+      "balanced_subset_f1": 0.9185,
+      "full_v3_f1": 0.9185,
+      "delta": 0.0
+    },
+    "Normal": {
+      "balanced_subset_f1": 0.9111,
+      "full_v3_f1": 0.9,
+      "delta": -0.0111
+    },
+    "Pleural Effusion": {
+      "balanced_subset_f1": 0.5442,
+      "full_v3_f1": 0.5824,
+      "delta": 0.0382
+    },
+    "Pneumonia": {
+      "balanced_subset_f1": 0.8329,
+      "full_v3_f1": 0.7984,
+      "delta": -0.0345
+    },
+    "Pulmonary Nodule / Mass": {
+      "balanced_subset_f1": 0.4636,
+      "full_v3_f1": 0.3623,
+      "delta": -0.1013
+    },
+    "Tuberculosis": {
+      "balanced_subset_f1": 0.8355,
+      "full_v3_f1": 0.8355,
+      "delta": 0.0
+    }
+  },
+  "montgomery_comparison": {
+    "exact_tb_recall": {
+      "balanced_subset": 0.0,
+      "full_v3": 0.0
+    },
+    "exact_normal_specificity": {
+      "balanced_subset": 0.0,
+      "full_v3": 0.0
+    },
+    "binary_abnormal_sensitivity": {
+      "balanced_subset": 1.0,
+      "full_v3": 1.0
+    }
+  }
+}

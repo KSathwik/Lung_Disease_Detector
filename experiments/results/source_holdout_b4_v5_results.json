@@ -1,0 +1,94 @@
+{
+  "diagnostic_experiment": "Phase 3B - Experiment B4 Re-Evaluation on Dataset V5",
+  "protocol": "Binary Classification (Pleural Effusion vs Non-Effusion Thoracic Lesion)",
+  "isolation_verified": true,
+  "patient_overlap": 0,
+  "v5_cohort_composition": {
+    "vindr_effusion": 931,
+    "vindr_non_effusion": 536,
+    "nih_effusion": 131,
+    "nih_non_effusion": 140,
+    "nih_total_v5": 271,
+    "nih_total_v4": 156,
+    "nih_expansion_delta": 115
+  },
+  "B4_A_VinDr_to_NIH_v5": {
+    "direction": "B4-A (V5)",
+    "train_source": "VinBigData_VinDr_CXR",
+    "test_source": "NIH_ChestX-ray14",
+    "train_samples": 1024,
+    "val_samples": 220,
+    "test_samples": 271,
+    "accuracy": 0.5793,
+    "precision": 0.6049,
+    "recall_sensitivity": 0.374,
+    "specificity": 0.7714,
+    "f1_score": 0.4623,
+    "roc_auc": 0.6064,
+    "pr_auc": 0.6188,
+    "confusion_matrix": [
+      [
+        108,
+        32
+      ],
+      [
+        82,
+        49
+      ]
+    ],
+    "mean_confidence_correct": 0.7102,
+    "mean_confidence_incorrect": 0.6823
+  },
+  "B4_B_NIH_to_VinDr_v5": {
+    "direction": "B4-B (V5)",
+    "train_source": "NIH_ChestX-ray14",
+    "test_source": "VinBigData_VinDr_CXR",
+    "train_samples": 166,
+    "val_samples": 40,
+    "test_samples": 223,
+    "accuracy": 0.4126,
+    "precision": 0.6364,
+    "recall_sensitivity": 0.15,
+    "specificity": 0.8554,
+    "f1_score": 0.2428,
+    "roc_auc": 0.5207,
+    "pr_auc": 0.6508,
+    "confusion_matrix": [
+      [
+        71,
+        12
+      ],
+      [
+        119,
+        21
+      ]
+    ],
+    "mean_confidence_correct": 0.8207,
+    "mean_confidence_incorrect": 0.8318
+  },
+  "cross_source_gap_v5": {
+    "accuracy_gap": 0.1667,
+    "f1_gap": 0.2195,
+    "recall_gap": 0.224,
+    "roc_auc_gap": 0.0857,
+    "is_symmetric": false
+  },
+  "comparison_v4_vs_v5": {
+    "B4_A": {
+      "v4_roc_auc": 0.5738,
+      "v5_roc_auc": 0.6064,
+      "v4_f1": 0.4409,
+      "v5_f1": 0.4623,
+      "v4_recall": 0.3256,
+      "v5_recall": 0.374
+    },
+    "B4_B": {
+      "v4_roc_auc": 0.505,
+      "v5_roc_auc": 0.5207,
+      "v4_f1": 0.7713,
+      "v5_f1": 0.2428,
+      "v4_specificity": 0.0,
+      "v5_specificity": 0.8554
+    }
+  }
+}

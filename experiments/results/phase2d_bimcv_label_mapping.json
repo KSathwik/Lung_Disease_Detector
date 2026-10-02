@@ -1,0 +1,52 @@
+{
+  "dataset_name": "BIMCV-COVID19+ (Valencian Region Medical Image Bank)",
+  "governing_body": "Regional Ministry of Universal Health and Public Health, Generalitat Valenciana, Spain",
+  "data_license": "BIMCV Open Research License / Academic DUA required",
+  "access_status": "ACCESS_PENDING",
+  "access_requirements": [
+    "Formal user registration on the BIMCV Portal (https://bimcv.cipf.es/)",
+    "Institutional affiliation and signed Data Use Agreement (DUA)",
+    "Authorized WebDAV / SFTP access credentials issued by BIMCV governance",
+    "Adherence to No-Blind-Download policy prohibiting automated unverified scraping"
+  ],
+  "label_mapping_specifications": {
+    "target_class": "COVID-19",
+    "ground_truth_requirement": "RT-PCR molecular laboratory confirmation linked to patient EHR encounter",
+    "eligible_modalities": [
+      "DX (Digital Radiography)",
+      "CR (Computed Radiography)"
+    ],
+    "excluded_modalities": [
+      "CT (Computed Tomography)",
+      "MG (Mammography)",
+      "US (Ultrasound)"
+    ],
+    "eligible_projections": [
+      "PA (Posteroanterior erect)",
+      "AP (Anteroposterior semi-erect/supine)"
+    ],
+    "excluded_projections": [
+      "LL (Left Lateral)",
+      "RL (Right Lateral)",
+      "Lateral Unspecified"
+    ],
+    "inclusion_criteria": [
+      "Planar chest radiograph (DX or CR)",
+      "Documented positive RT-PCR SARS-CoV-2 test within +/- 7 days of imaging encounter",
+      "Patient age >= 15 years (adult cohort)",
+      "Full thoracic cage visible without severe motion truncation"
+    ],
+    "exclusion_criteria": [
+      "Non-planar imaging (axial CT slices or 3D volumes)",
+      "Lateral projections",
+      "COVID-negative or unconfirmed clinical suspicion without RT-PCR confirmation",
+      "Severe hardware artifacts or corrupt pixel data"
+    ]
+  },
+  "target_v5_ingestion_quota": {
+    "target_images": 1000,
+    "target_unique_patients": 800,
+    "expected_view_distribution": "approx. 60% PA / 40% AP (consistent with hospital inpatient COVID cohorts)",
+    "source_role": "Provides independent second COVID source to decouple Existing_COVID-19"
+  }
+}

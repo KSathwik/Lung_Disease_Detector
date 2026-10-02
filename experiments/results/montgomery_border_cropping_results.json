@@ -1,0 +1,69 @@
+{
+  "experiment_name": "Montgomery_Border_Cropping_Investigation",
+  "model_file": "models\\densenet_model.h5",
+  "class_names": [
+    "COVID-19",
+    "Lung Cancer",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Tuberculosis"
+  ],
+  "montgomery_comparison": {
+    "sample_count": 138,
+    "abnormal_tb_count": 58,
+    "normal_count": 80,
+    "pipeline_a_original": {
+      "abnormal_prediction_distribution": {
+        "Lung Cancer": 54,
+        "Pleural Effusion": 4
+      },
+      "normal_prediction_distribution": {
+        "Lung Cancer": 80
+      },
+      "exact_tb_recall": 0.0,
+      "exact_tb_count": 0,
+      "abnormal_detection_sensitivity": 1.0,
+      "normal_specificity": 0.0,
+      "normal_correct_count": 0,
+      "lung_cancer_pred_count_in_normal": 80,
+      "mean_tb_prob_abnormal": 0.0011,
+      "mean_tb_prob_normal": 0.0048
+    },
+    "pipeline_b_cropped": {
+      "abnormal_prediction_distribution": {
+        "Lung Cancer": 57,
+        "Pleural Effusion": 1
+      },
+      "normal_prediction_distribution": {
+        "Lung Cancer": 80
+      },
+      "exact_tb_recall": 0.0,
+      "exact_tb_count": 0,
+      "abnormal_detection_sensitivity": 1.0,
+      "normal_specificity": 0.0,
+      "normal_correct_count": 0,
+      "lung_cancer_pred_count_in_normal": 80,
+      "mean_tb_prob_abnormal": 0.0018,
+      "mean_tb_prob_normal": 0.0053
+    }
+  },
+  "internal_test_comparison": {
+    "sample_count": 600,
+    "pipeline_a_original": {
+      "accuracy": 0.7583,
+      "weighted_f1": 0.7586,
+      "macro_f1": 0.7586,
+      "macro_roc_auc": 0.9645
+    },
+    "pipeline_b_cropped": {
+      "accuracy": 0.73,
+      "weighted_f1": 0.7335,
+      "macro_f1": 0.7335,
+      "macro_roc_auc": 0.9558
+    },
+    "accuracy_delta": -0.0283,
+    "weighted_f1_delta": -0.0252
+  },
+  "decision": "CASE C - Cropping does not meaningfully improve Montgomery. Simple border removal is insufficient; scanner gamma/frequency domain shift must be addressed."
+}

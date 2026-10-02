@@ -1,0 +1,95 @@
+{
+  "audit_version": "Phase 2B Feasibility v1.0",
+  "taxonomy": {
+    "classes": [
+      "Normal",
+      "Pneumonia",
+      "COVID-19",
+      "Tuberculosis",
+      "Pleural Effusion",
+      "Pulmonary Nodule / Mass"
+    ],
+    "critical_rules": [
+      "'Pulmonary Nodule / Mass' is a radiological opacity category, NOT histologically confirmed lung cancer.",
+      "Benign nodules (granulomas, hamartomas, tuberculomas) must NOT be labeled as cancer.",
+      "Montgomery dataset is strictly quarantined (0 images in training/validation/test)."
+    ]
+  },
+  "candidates": {
+    "NIH_ChestX-ray14": {
+      "dataset_name": "NIH ChestX-ray14",
+      "candidate_classes": [
+        "Pleural Effusion",
+        "Pulmonary Nodule / Mass",
+        "Normal",
+        "Pneumonia"
+      ],
+      "patients": 30805,
+      "images": 112120,
+      "label_provenance": "NLP text-mined from diagnostic reports using NegBio / pattern-matching (10-18% noise rate)",
+      "patient_ids": "Available (integer ID in metadata and filename prefix XXXXXXXX_YYY.png)",
+      "view_info": "Frontal chest radiographs only (67,310 PA, 44,810 AP, 0 lateral)",
+      "format": "PNG (1024x1024 8-bit grayscale)",
+      "access_license": "Creative Commons CC0 / Public Domain for biomedical research with attribution",
+      "source_independence": "High (NIH Clinical Center, Bethesda, MD, USA; independent US hospital)",
+      "mapping_confidence": "High for isolated Effusion & Nodule/Mass; Moderate for No Finding & Pneumonia",
+      "acquisition_status": "Staged verified acquisition active; single-finding scans extracted from batch 001",
+      "decision": "PARTIALLY READY"
+    },
+    "BIMCV_COVID19+": {
+      "dataset_name": "BIMCV-COVID19+",
+      "candidate_classes": [
+        "COVID-19"
+      ],
+      "patients": 1311,
+      "images": 2460,
+      "label_provenance": "Gold-standard RT-PCR molecular diagnostic test confirmation linked to EMR/DICOM",
+      "patient_ids": "Available (Anonymized UUID session identifiers in DICOM metadata)",
+      "view_info": "Mixed projections (PA, AP, Lateral, plus axial CT slice volumes)",
+      "format": "DICOM (CR, DX, CT)",
+      "access_license": "BIMCV Open Research License (Academic research only, requires user registration and signed DUA)",
+      "source_independence": "Critical (Valencian Region Hospital Network, Spain; sole independent COVID source)",
+      "mapping_confidence": "High for RT-PCR confirmed cases",
+      "acquisition_status": "Blocked under No-Blind-Download rule; requires credentialed registration and WebDAV authentication",
+      "decision": "NEEDS VERIFICATION"
+    },
+    "PadChest": {
+      "dataset_name": "PadChest (BIMCV-PadChest)",
+      "candidate_classes": [
+        "Normal",
+        "Pneumonia",
+        "Pleural Effusion",
+        "Pulmonary Nodule / Mass"
+      ],
+      "patients": 67000,
+      "images": 160000,
+      "label_provenance": "Hierarchical UMLS concepts (27% physician-read, 73% deep-learning NLP)",
+      "patient_ids": "Available in DICOM metadata and CSV",
+      "view_info": "6 radiographic positions (PA, AP, Lateral, Oblique, etc.)",
+      "format": "DICOM",
+      "access_license": "BIMCV-PadChest Research Agreement (Formal application required, redistribution prohibited)",
+      "source_independence": "High (Hospital San Juan de Alicante, Spain)",
+      "mapping_confidence": "Moderate (requires filtering multi-label co-occurrences)",
+      "acquisition_status": "Blocked under No-Blind-Download rule; requires formal research application and approval",
+      "decision": "NEEDS VERIFICATION"
+    },
+    "Montgomery_County_CXR": {
+      "dataset_name": "Montgomery County Chest X-ray Set",
+      "candidate_classes": [
+        "Tuberculosis",
+        "Normal"
+      ],
+      "patients": 138,
+      "images": 138,
+      "label_provenance": "Clinical mycobacterial culture and public health clinic diagnostic records",
+      "patient_ids": "Available (MCUCXR_XXXX_0/1)",
+      "view_info": "100% PA frontal chest radiographs",
+      "format": "PNG",
+      "access_license": "Public Access for Research (NLM/Montgomery County)",
+      "source_independence": "Department of Health and Human Services, Montgomery County, MD, USA",
+      "mapping_confidence": "High",
+      "acquisition_status": "Strictly quarantined external benchmark (0 scans in training/validation/test)",
+      "decision": "REJECTED"
+    }
+  }
+}

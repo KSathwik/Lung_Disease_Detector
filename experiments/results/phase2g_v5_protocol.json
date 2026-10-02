@@ -1,0 +1,260 @@
+{
+  "protocol_title": "LungAI Dataset V5 & Domain Generalization Research Protocol",
+  "governance_status": "FROZEN_WAITING_FOR_BIMCV",
+  "primary_research_question": "Can a multi-source six-class chest X-ray classifier learn disease-relevant representations that generalize across independent acquisition sources, and can a domain-generalization strategy improve cross-source performance compared with a standard DenseNet-121 baseline?",
+  "target_classes": [
+    "Normal",
+    "Pneumonia",
+    "COVID-19",
+    "Tuberculosis",
+    "Pleural Effusion",
+    "Pulmonary Nodule / Mass"
+  ],
+  "class_source_strategy": {
+    "Normal": {
+      "verified_current_sources": [
+        "Existing_Normal (1,199)",
+        "TBX11K (1,199)",
+        "JSRT (67)",
+        "NIH (82)"
+      ],
+      "prospective_bimcv_role": "None (Preserve current multi-source cohort)",
+      "label_requirements": "Clear lung fields, absence of acute/chronic cardiopulmonary abnormalities",
+      "source_holdout_pairs": [
+        [
+          "Existing_Normal + JSRT",
+          "TBX11K"
+        ],
+        [
+          "TBX11K",
+          "Existing_Normal + JSRT"
+        ]
+      ],
+      "view_controlled_capability": "PA vs PA available across TBX11K, JSRT, and NIH",
+      "exclusion_rules": "Exclude cases with subtle apical scarring or non-pulmonary thoracic artifacts"
+    },
+    "Pneumonia": {
+      "verified_current_sources": [
+        "Existing_Pneumonia (1,395)",
+        "TBX11K (1,395)",
+        "NIH (8)"
+      ],
+      "prospective_bimcv_role": "None (Preserve current multi-source cohort)",
+      "label_requirements": "Consolidation, bronchopneumonic opacities, or alveolar infiltrates",
+      "source_holdout_pairs": [
+        [
+          "Existing_Pneumonia (Guangzhou)",
+          "TBX11K (Beijing)"
+        ],
+        [
+          "TBX11K (Beijing)",
+          "Existing_Pneumonia (Guangzhou)"
+        ]
+      ],
+      "view_controlled_capability": "PA vs PA available in TBX11K; AP available in Kermany pediatric cohort",
+      "exclusion_rules": "Exclude non-infectious alveolar hemorrhage or pulmonary edema"
+    },
+    "COVID-19": {
+      "verified_current_sources": [
+        "Existing_COVID-19 (1,942)"
+      ],
+      "prospective_bimcv_role": "Target 1,000 RT-PCR molecular confirmed scans from Valencian Health Authority (BIMCV)",
+      "label_requirements": "Mandatory positive RT-PCR SARS-CoV-2 confirmation within +/- 7 days of imaging encounter",
+      "source_holdout_pairs": [
+        [
+          "Existing_COVID-19",
+          "BIMCV_COVID19+"
+        ],
+        [
+          "BIMCV_COVID19+",
+          "Existing_COVID-19"
+        ]
+      ],
+      "view_controlled_capability": "PA vs PA and AP vs AP enabled by prospective BIMCV DICOM view tagging",
+      "exclusion_rules": "Exclude cases lacking molecular RT-PCR confirmation, CT slices, and lateral projections"
+    },
+    "Tuberculosis": {
+      "verified_current_sources": [
+        "TBX11K (683)",
+        "Existing_Tuberculosis (665)"
+      ],
+      "prospective_bimcv_role": "None (Preserve current multi-source cohort)",
+      "label_requirements": "Active pulmonary tuberculosis with cavitary, infiltrative, or nodular lesions",
+      "source_holdout_pairs": [
+        [
+          "Existing_Tuberculosis (Shenzhen)",
+          "TBX11K (Beijing)"
+        ],
+        [
+          "TBX11K (Beijing)",
+          "Existing_Tuberculosis (Shenzhen)"
+        ]
+      ],
+      "view_controlled_capability": "100% PA erect across both Shenzhen and Beijing cohorts",
+      "exclusion_rules": "Exclude isolated calcified granulomas without active infiltrates"
+    },
+    "Pleural Effusion": {
+      "verified_current_sources": [
+        "VinBigData_VinDr_CXR (931)",
+        "NIH_ChestX-ray14 (86)"
+      ],
+      "prospective_bimcv_role": "None (Preserve current multi-source cohort)",
+      "label_requirements": "Costophrenic angle blunting or fluid layering in the pleural space",
+      "source_holdout_pairs": [
+        [
+          "VinBigData_VinDr_CXR",
+          "NIH_ChestX-ray14"
+        ],
+        [
+          "NIH_ChestX-ray14",
+          "VinBigData_VinDr_CXR"
+        ]
+      ],
+      "view_controlled_capability": "PA vs PA strictly isolated by filtering NIH subset (41 PA vs 45 AP)",
+      "exclusion_rules": "Exclude subpulmonic effusion without visible costophrenic blunting on PA"
+    },
+    "Pulmonary Nodule / Mass": {
+      "verified_current_sources": [
+        "VinBigData_VinDr_CXR (536)",
+        "JSRT (78)",
+        "NIH_ChestX-ray14 (70)"
+      ],
+      "prospective_bimcv_role": "None (Preserve current multi-source cohort)",
+      "label_requirements": "Discrete opacity <=3cm (nodule) or >3cm (mass) pathologically or radiologically verified",
+      "source_holdout_pairs": [
+        [
+          "VinBigData_VinDr_CXR",
+          "NIH_ChestX-ray14 + JSRT"
+        ],
+        [
+          "NIH_ChestX-ray14 + JSRT",
+          "VinBigData_VinDr_CXR"
+        ]
+      ],
+      "view_controlled_capability": "PA vs PA verified across VinDr, JSRT, and NIH",
+      "exclusion_rules": "Exclude benign non-neoplastic granulomas (purged in Dataset V3)"
+    }
+  },
+  "data_splitting_policy": {
+    "isolation_principle": "Patient-level partitioning with complete decoupling across splits",
+    "proportions": {
+      "train": 0.7,
+      "val": 0.15,
+      "test": 0.15
+    },
+    "random_seed": 42,
+    "leakage_guarantees": [
+      "Train intersect Val = 0 patients",
+      "Train intersect Test = 0 patients",
+      "Val intersect Test = 0 patients",
+      "Duplicate purging (MD5 bitwise and dHash <= 3) strictly precedes splitting"
+    ],
+    "freeze_condition": "Split partition is locked before any model training; post-hoc split adjustment is prohibited"
+  },
+  "view_policy": {
+    "evaluation_cohort_a": {
+      "name": "Broad Frontal CXR Cohort",
+      "projections_included": [
+        "PA",
+        "AP",
+        "Frontal Unspecified"
+      ],
+      "clinical_purpose": "Evaluates operational generalization across real-world hospital emergency/bedside admission conditions"
+    },
+    "evaluation_cohort_b": {
+      "name": "View-Controlled Cohort",
+      "projections_included": [
+        "Strictly Posteroanterior (PA) erect frontal"
+      ],
+      "clinical_purpose": "Controls projection physics as a confounder to directly isolate institutional/scanner domain shift"
+    }
+  },
+  "densenet_baseline_specification": {
+    "architecture": "DenseNet-121 (pretrained on ImageNet, standard classification head)",
+    "preprocessing": [
+      "BGR to RGB color conversion",
+      "Gaussian blur (kernel 3x3, sigma 0.8)",
+      "CIE LAB L-channel CLAHE (clip limit 2.0, tileGridSize 8x8)",
+      "Lanczos-4 interpolation resize to 224x224 pixels",
+      "ImageNet channel-wise standardization (mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])"
+    ],
+    "augmentation": [
+      "Random horizontal flip (p=0.5)",
+      "Random affine rotation (+/- 10 degrees, border reflect)"
+    ],
+    "training_hyperparameters": {
+      "optimizer": "Adam",
+      "initial_learning_rate": 0.0001,
+      "learning_rate_schedule": "ReduceLROnPlateau(factor=0.5, patience=2, min_lr=1e-6)",
+      "batch_size": 32,
+      "epochs": 20,
+      "early_stopping": "EarlyStopping(patience=5, restore_best_weights=True)",
+      "class_weighting": "Inverse frequency weighting to balance six diagnostic classes",
+      "random_seed": 42
+    },
+    "freeze_rule": "Hyperparameters are locked; post-hoc hyperparameter tuning on test splits is strictly forbidden"
+  },
+  "evaluation_protocol": {
+    "internal_test_suite": [
+      "Accuracy",
+      "Macro Precision",
+      "Macro Recall",
+      "Macro F1",
+      "Weighted F1",
+      "Macro ROC-AUC",
+      "Macro PR-AUC",
+      "Confusion Matrix"
+    ],
+    "source_held_out_suite": [
+      "Directional Accuracy",
+      "Sensitivity / Recall",
+      "Specificity",
+      "Precision",
+      "F1-Score",
+      "ROC-AUC",
+      "PR-AUC",
+      "Directional Asymmetry Gap"
+    ],
+    "external_validation_suite": [
+      "Montgomery County TB exact sensitivity (quarantined benchmark)",
+      "Montgomery County Normal specificity"
+    ]
+  },
+  "baseline_failure_analysis_framework": [
+    "Source-dependent performance disparity calculation",
+    "Directional asymmetry quantification (|Sens(A->B) - Sens(B->A)|)",
+    "Projection sensitivity analysis (Performance gap between Cohort A and Cohort B)",
+    "Confidence collapse evaluation (Confidence distribution on incorrect vs correct predictions)",
+    "Cross-source confusion pattern shifts (Off-diagonal misclassification drift)"
+  ],
+  "domain_generalization_comparison_framework": {
+    "control": "Standard Empirical Risk Minimization DenseNet-121",
+    "proposed_candidates": [
+      "Domain-Adversarial Neural Networks (DANN) with gradient reversal",
+      "Correlation Alignment (CORAL) feature covariance regularization",
+      "Maximum Mean Discrepancy (MMD) distribution alignment"
+    ],
+    "selection_gate": "Selected method must directly target the failure modes revealed by the V5 baseline analysis",
+    "fair_comparison_invariants": [
+      "Identical V5 train, validation, and internal test partitions",
+      "Identical source-held-out evaluation cohorts",
+      "Identical view-controlled cohorts",
+      "Identical preprocessing and evaluation metrics",
+      "Zero exposure to external test sets during training"
+    ],
+    "primary_success_criteria": [
+      "Improvement in source-held-out macro F1",
+      "Improvement in balanced cross-source sensitivity and specificity",
+      "Reduction in directional cross-source asymmetry gap",
+      "Improvement in worst-performing hospital domain",
+      "Consistency of classification performance across independent sources"
+    ]
+  },
+  "avoidable_failure_modes_safeguards": [
+    "Source Leakage: Strict patient and institutional separation across comparative partitions",
+    "Test-Set Tuning: Zero hyperparameter adjustments after observing holdout results",
+    "Projection Confounding: Dual evaluation via Cohort A (real-world) and Cohort B (view-controlled)",
+    "Montgomery Contamination: Permanent quarantine (zero images admitted into training or validation)",
+    "Hypothesis Drift: Research question and success criteria frozen prior to data release"
+  ]
+}

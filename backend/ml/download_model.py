@@ -19,8 +19,7 @@ MODELS_DIR.mkdir(exist_ok=True)
 
 # Release URL endpoints (Replace with active release assets on deployment)
 MODEL_URLS = {
-    "resnet_model.h5": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/resnet_model.h5",
-    "cnn_model.h5": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/cnn_model.h5",
+    "densenet121_frequency_v5.h5": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/densenet121_frequency_v5.h5",
     "training_results.json": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/training_results.json",
 }
 

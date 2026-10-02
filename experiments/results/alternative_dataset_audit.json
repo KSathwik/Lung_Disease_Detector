@@ -1,0 +1,92 @@
+{
+  "audit_phase": "LungAI Alternative Dataset Audit",
+  "current_v4_state": {
+    "manifest": "experiments/data/unified_manifest_v4.csv",
+    "total_images": 10336,
+    "total_patients": 10140,
+    "cramers_v": 0.7698,
+    "covid_images": 1942,
+    "covid_source_breakdown": {
+      "SIRM (Italy)": 38,
+      "Cohen ieee8023 (GitHub)": 143,
+      "BIMCV (Spain)": 1622,
+      "Other / Unknown": 139
+    }
+  },
+  "candidate_evaluations": {
+    "Candidate_A_Kaggle_COVID19_Radiography_Database": {
+      "name": "COVID-19 Radiography Database (Tawsifur Rahman et al., Kaggle)",
+      "url": "https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database",
+      "decision": "REJECTED",
+      "justification": "Candidate A is ALREADY the exact parent collection from which 'Existing_COVID-19' in V1, V2, V3, and V4 was derived (verified by bitwise MD5 matching). Ingesting it as a new dataset would create 100% duplicate redundancy and zero independent domain diversity.",
+      "total_archive_images": 3616,
+      "images_already_in_v4": 1942,
+      "overlap_with_v4": "100% of V4 COVID-19 images originated from this collection",
+      "suitability": "Current baseline data only; completely unsuitable as an independent evaluation source"
+    },
+    "Candidate_B_IEEE8023_Cohen_COVID_Dataset": {
+      "name": "COVID-19 Image Data Collection (Joseph Paul Cohen et al., GitHub)",
+      "url": "https://github.com/ieee8023/covid-chestxray-dataset",
+      "decision": "REJECTED",
+      "justification": "Forensic URL metadata audit revealed that 143 images from ieee8023/covid-chestxray-dataset were already scraped into the Kaggle database and are currently present in V4 (e.g. COVID-961 to COVID-1043). Because original patient IDs were stripped during Kaggle aggregation, introducing Candidate B would cause uncontrolled patient leakage and data contamination between training and test sets.",
+      "total_archive_images": 930,
+      "images_already_in_v4": 143,
+      "overlap_with_v4": "143 images verified in V4",
+      "suitability": "Unsuitable due to unresolvable patient leakage with Existing_COVID-19"
+    },
+    "Candidate_C_Additional_NIH_ChestXray14": {
+      "name": "NIH ChestX-ray14 Additional Unseen Single-Finding Scans",
+      "url": "https://nihcc.app.box.com/v/ChestXray-NIHCC",
+      "decision": "ELIGIBLE_FOR_TRAINING",
+      "justification": "NIH ChestX-ray14 contains 112,120 verified scans with explicit Patient IDs and PA/AP view metadata. V4 currently contains only 246 NIH scans. Exactly 294 verified single-finding scans (118 Normal, 70 Effusion, 96 Nodule/Mass, 10 Pneumonia) are ALREADY extracted locally on disk in data/raw/NIH_ChestX-ray14/ with ZERO overlap. Integrating these locally verified scans immediately expands the NIH cohort from 246 to 540 scans, directly addressing the sample-size disparity observed in Diagnostic Experiment B4 without web downloads.",
+      "total_archive_images": 112120,
+      "images_already_in_v4": 246,
+      "unintegrated_local_images_on_disk": 294,
+      "local_breakdown": {
+        "No Finding": 118,
+        "Effusion": 70,
+        "Nodule": 68,
+        "Mass": 28,
+        "Pneumonia": 10
+      },
+      "overlap_with_v4": "0 patient overlap between unintegrated scans and V4 partitions",
+      "suitability": "Highly eligible for balancing Pleural Effusion, Nodule/Mass, Pneumonia, and Normal cohorts"
+    },
+    "Candidate_D_Stony_Brook_COVID19_TCIA": {
+      "name": "Stony Brook University COVID-19 Chest X-ray Collection (TCIA)",
+      "url": "https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=89096917",
+      "decision": "ELIGIBLE_FOR_EXTERNAL_TESTING",
+      "justification": "An open-access clinical collection of 1,384 chest radiographs of COVID-19 patients admitted to Stony Brook University Hospital, NY, USA. Fully documented RT-PCR confirmation, DICOM format, open Creative Commons Attribution 4.0 (CC BY 4.0) license with NO Data Use Agreement or credential gating. Provenance is completely independent from Kaggle, Cohen, and BIMCV collections, providing a true North American hospital COVID domain.",
+      "total_archive_images": 1384,
+      "images_already_in_v4": 0,
+      "overlap_with_v4": "Zero overlap (Hospitalized North American patient cohort)",
+      "suitability": "Ideal external test domain to prove COVID-19 cross-hospital generalization"
+    },
+    "Candidate_E_MIDRC_RICORD_1a": {
+      "name": "MIDRC-RICORD-1a: RSNA International COVID-19 Open Radiology Database",
+      "url": "https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=70226449",
+      "decision": "ELIGIBLE_FOR_EXTERNAL_TESTING",
+      "justification": "Peer-reviewed multi-national cohort hosted by RSNA and TCIA. Contains 120 verified COVID-19 positive CXRs with expert radiologist annotations and molecular confirmation. Free academic access without DUA gating.",
+      "total_archive_images": 120,
+      "images_already_in_v4": 0,
+      "overlap_with_v4": "Zero overlap",
+      "suitability": "Eligible for secondary external clinical benchmark"
+    }
+  },
+  "local_data_findings": {
+    "kaggle_zip_present": true,
+    "kaggle_zip_path": "data/downloads/covid19-radiography-database.zip",
+    "nih_local_extracted": 540,
+    "nih_in_v4": 246,
+    "nih_unintegrated_ready_on_disk": 294,
+    "nih_unintegrated_breakdown": {
+      "No Finding": 118,
+      "Effusion": 70,
+      "Nodule": 68,
+      "Mass": 28,
+      "Pneumonia": 10
+    }
+  },
+  "final_decision": "PARTIAL_DATA_READY",
+  "conclusion": "Candidate A and Candidate B are REJECTED due to heavy overlap and unidentifiable patient leakage with Existing_COVID-19. Candidate C (Additional NIH ChestX-ray14) is immediately ELIGIBLE_FOR_TRAINING using 294 verified scans already sitting on local disk. Candidate D (Stony Brook TCIA) is ELIGIBLE_FOR_EXTERNAL_TESTING as a genuine independent COVID cohort."
+}

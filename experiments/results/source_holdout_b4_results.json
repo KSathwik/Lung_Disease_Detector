@@ -1,0 +1,214 @@
+{
+  "diagnostic_experiment": "Phase 2C - Experiment B4: Source-Held-Out Pleural Effusion",
+  "protocol": "Binary Classification (Pleural Effusion vs Non-Effusion Thoracic Lesion)",
+  "isolation_verified": true,
+  "patient_overlap": 0,
+  "data_quality_verification": {
+    "total_candidates": 1623,
+    "accepted_images": 1623,
+    "excluded_images": 0,
+    "duplicate_count": 0,
+    "near_duplicate_count": 0,
+    "patient_overlap_count": 0,
+    "vindr_patient_count": 1345,
+    "nih_patient_count": 95,
+    "total_unique_patients": 1440,
+    "class_count": 2,
+    "classes": [
+      "Non_Effusion",
+      "Pleural_Effusion"
+    ],
+    "vindr_composition": {
+      "Pleural_Effusion": 931,
+      "Non_Effusion": 536
+    },
+    "nih_composition": {
+      "Pleural_Effusion": 86,
+      "Non_Effusion": 70
+    }
+  },
+  "B4_A_VinDr_to_NIH": {
+    "direction": "B4-A",
+    "train_source": "VinBigData_VinDr_CXR",
+    "test_source": "NIH_ChestX-ray14",
+    "train_samples": 1024,
+    "val_samples": 220,
+    "test_samples": 156,
+    "accuracy": 0.5449,
+    "precision": 0.6829,
+    "recall_sensitivity": 0.3256,
+    "specificity": 0.8143,
+    "f1_score": 0.4409,
+    "roc_auc": 0.5738,
+    "pr_auc": 0.6738,
+    "confusion_matrix": [
+      [
+        57,
+        13
+      ],
+      [
+        58,
+        28
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.7208,
+      "mean_confidence_incorrect": 0.7297
+    },
+    "training_history": {
+      "loss": [
+        0.7279019951820374,
+        0.5349631905555725,
+        0.4694851040840149
+      ],
+      "val_loss": [
+        0.7418655157089233,
+        0.9708831310272217,
+        0.8295270204544067
+      ],
+      "accuracy": [
+        0.6474609375,
+        0.7392578125,
+        0.7705078125
+      ],
+      "val_accuracy": [
+        0.5954545736312866,
+        0.5,
+        0.5636363625526428
+      ]
+    }
+  },
+  "B4_B_NIH_to_VinDr": {
+    "direction": "B4-B",
+    "train_source": "NIH_ChestX-ray14",
+    "test_source": "VinBigData_VinDr_CXR",
+    "train_samples": 102,
+    "val_samples": 20,
+    "test_samples": 223,
+    "accuracy": 0.6278,
+    "precision": 0.6278,
+    "recall_sensitivity": 1.0,
+    "specificity": 0.0,
+    "f1_score": 0.7713,
+    "roc_auc": 0.505,
+    "pr_auc": 0.6351,
+    "confusion_matrix": [
+      [
+        0,
+        83
+      ],
+      [
+        0,
+        140
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.9977,
+      "mean_confidence_incorrect": 0.9976
+    },
+    "training_history": {
+      "loss": [
+        0.8340104222297668,
+        0.5629463791847229,
+        0.39639416337013245
+      ],
+      "val_loss": [
+        0.9673517346382141,
+        1.901521921157837,
+        2.2874960899353027
+      ],
+      "accuracy": [
+        0.5686274766921997,
+        0.7549019455909729,
+        0.8333333134651184
+      ],
+      "val_accuracy": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ]
+    }
+  },
+  "cross_source_gap": {
+    "accuracy_gap": 0.0829,
+    "f1_gap": 0.3304,
+    "recall_gap": 0.6744,
+    "roc_auc_gap": 0.0688,
+    "is_symmetric": false
+  },
+  "consolidated_benchmarks": {
+    "B1_A_Pneumonia_Guangzhou_to_TBX11K": {
+      "accuracy": 0.7256,
+      "precision": 0.9813,
+      "recall": 0.5,
+      "specificity": 0.9889,
+      "f1": 0.6625,
+      "roc_auc": 0.842
+    },
+    "B1_B_Pneumonia_TBX11K_to_Guangzhou": {
+      "accuracy": 0.5872,
+      "precision": 0.5668,
+      "recall": 0.9905,
+      "specificity": 0.1167,
+      "f1": 0.721,
+      "roc_auc": 0.761
+    },
+    "B2_A_Normal_Existing_to_TBX11K": {
+      "accuracy": 0.5306,
+      "precision": 0.5162,
+      "recall": 0.9722,
+      "specificity": 0.0889,
+      "f1": 0.6744,
+      "roc_auc": 0.621
+    },
+    "B2_B_Normal_TBX11K_to_Existing": {
+      "accuracy": 0.55,
+      "precision": 0.7021,
+      "recall": 0.1737,
+      "specificity": 0.9263,
+      "f1": 0.2785,
+      "roc_auc": 0.643
+    },
+    "B3_A_TB_Shenzhen_to_TBX11K": {
+      "accuracy": 0.7128,
+      "precision": 0.92,
+      "recall": 0.2255,
+      "specificity": 0.9889,
+      "f1": 0.3622,
+      "roc_auc": 0.804
+    },
+    "B3_B_TB_TBX11K_to_Shenzhen": {
+      "accuracy": 0.7814,
+      "precision": 0.6338,
+      "recall": 0.9091,
+      "specificity": 0.7111,
+      "f1": 0.7469,
+      "roc_auc": 0.881
+    },
+    "B4_A_Effusion_VinDr_to_NIH": {
+      "accuracy": 0.5449,
+      "precision": 0.6829,
+      "recall": 0.3256,
+      "specificity": 0.8143,
+      "f1": 0.4409,
+      "roc_auc": 0.5738
+    },
+    "B4_B_Effusion_NIH_to_VinDr": {
+      "accuracy": 0.6278,
+      "precision": 0.6278,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "f1": 0.7713,
+      "roc_auc": 0.505
+    }
+  },
+  "bimcv_access_status": {
+    "status": "ACCESS_PENDING",
+    "required_actions": [
+      "User registration on Valencian Medical Image Bank portal (https://bimcv.cipf.es/)",
+      "Signed Data Use Agreement (DUA) for academic/non-commercial research",
+      "WebDAV / SFTP user credentials issued by BIMCV governance team",
+      "Adherence to No-Blind-Download policy prohibiting automated unverified ingestion"
+    ]
+  }
+}

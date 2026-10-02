@@ -1,0 +1,34 @@
+{
+  "experiment_name": "Phase 4C \u2014 Domain-Adversarial Neural Network (DANN)",
+  "architecture": "DenseNet121 + DANN",
+  "backbone": "DenseNet-121 (ImageNet pretrained)",
+  "feature_layer": "dense_features (256-D, ReLU)",
+  "domain_head": "GRL -> Dense(128) -> Dense(8)",
+  "selected_lambda_d": 0.1,
+  "lambda_grid_evaluated": [
+    0.01,
+    0.1,
+    1.0
+  ],
+  "manifest_path": "experiments\\data\\unified_manifest_v5.csv",
+  "manifest_md5": "762d49913995aaff0e975fb0e0b4f239",
+  "random_seed": 42,
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "batch_size": 32,
+  "phase1": {
+    "epochs": 2,
+    "learning_rate": 0.001,
+    "optimizer": "Adam",
+    "base_trainable": false
+  },
+  "phase2": {
+    "epochs": 2,
+    "learning_rate": 1e-05,
+    "optimizer": "Adam",
+    "unfrozen_layers": 30
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "manifest_file": "experiments\\data\\unified_manifest_v3.csv",
+  "decision_gate": "READY FOR TRAINING",
+  "summary": {
+    "total_images": 10090,
+    "total_patients": 9968,
+    "cramer_v": 0.776,
+    "cramer_v_reduction_from_v1": 0.0572,
+    "sources_count": 7,
+    "classes_count": 6,
+    "montgomery_contamination": 0,
+    "patient_leakage_across_splits": 0
+  },
+  "splits": {
+    "images": {
+      "train": 7061,
+      "val": 1515,
+      "test": 1514
+    },
+    "patients": {
+      "train": 6977,
+      "val": 1495,
+      "test": 1496
+    }
+  },
+  "class_metrics": {
+    "COVID-19": {
+      "total_images": 1942,
+      "total_patients": 1942,
+      "source_count": 1,
+      "sources": {
+        "Existing_COVID-19": 1942
+      },
+      "max_single_source_pct": 100.0
+    },
+    "Normal": {
+      "total_images": 2465,
+      "total_patients": 2465,
+      "source_count": 3,
+      "sources": {
+        "Existing_Normal": 1199,
+        "TBX11K": 1199,
+        "JSRT": 67
+      },
+      "max_single_source_pct": 48.6
+    },
+    "Pleural Effusion": {
+      "total_images": 931,
+      "total_patients": 891,
+      "source_count": 1,
+      "sources": {
+        "VinBigData_VinDr_CXR": 931
+      },
+      "max_single_source_pct": 100.0
+    },
+    "Pneumonia": {
+      "total_images": 2790,
+      "total_patients": 2790,
+      "source_count": 2,
+      "sources": {
+        "Existing_Pneumonia": 1395,
+        "TBX11K": 1395
+      },
+      "max_single_source_pct": 50.0
+    },
+    "Pulmonary Nodule / Mass": {
+      "total_images": 614,
+      "total_patients": 590,
+      "source_count": 2,
+      "sources": {
+        "VinBigData_VinDr_CXR": 536,
+        "JSRT": 78
+      },
+      "max_single_source_pct": 87.3
+    },
+    "Tuberculosis": {
+      "total_images": 1348,
+      "total_patients": 1348,
+      "source_count": 2,
+      "sources": {
+        "TBX11K": 683,
+        "Existing_Tuberculosis": 665
+      },
+      "max_single_source_pct": 50.7
+    }
+  },
+  "contingency_table": {
+    "COVID-19": {
+      "Existing_COVID-19": 1942,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 0,
+      "TBX11K": 0,
+      "VinBigData_VinDr_CXR": 0
+    },
+    "Normal": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 1199,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 67,
+      "TBX11K": 1199,
+      "VinBigData_VinDr_CXR": 0
+    },
+    "Pleural Effusion": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 0,
+      "TBX11K": 0,
+      "VinBigData_VinDr_CXR": 931
+    },
+    "Pneumonia": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 1395,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 0,
+      "TBX11K": 1395,
+      "VinBigData_VinDr_CXR": 0
+    },
+    "Pulmonary Nodule / Mass": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 78,
+      "TBX11K": 0,
+      "VinBigData_VinDr_CXR": 536
+    },
+    "Tuberculosis": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 665,
+      "JSRT": 0,
+      "TBX11K": 683,
+      "VinBigData_VinDr_CXR": 0
+    }
+  },
+  "source_percentages_per_class": {
+    "COVID-19": {
+      "Existing_COVID-19": {
+        "count": 1942,
+        "percentage": 100.0
+      },
+      "Existing_Normal": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Pneumonia": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "JSRT": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "TBX11K": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    },
+    "Normal": {
+      "Existing_COVID-19": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Normal": {
+        "count": 1199,
+        "percentage": 48.6
+      },
+      "Existing_Pneumonia": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "JSRT": {
+        "count": 67,
+        "percentage": 2.7
+      },
+      "TBX11K": {
+        "count": 1199,
+        "percentage": 48.6
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    },
+    "Pleural Effusion": {
+      "Existing_COVID-19": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Normal": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Pneumonia": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "JSRT": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "TBX11K": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 931,
+        "percentage": 100.0
+      }
+    },
+    "Pneumonia": {
+      "Existing_COVID-19": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Normal": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Pneumonia": {
+        "count": 1395,
+        "percentage": 50.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "JSRT": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "TBX11K": {
+        "count": 1395,
+        "percentage": 50.0
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    },
+    "Pulmonary Nodule / Mass": {
+      "Existing_COVID-19": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Normal": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Pneumonia": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "JSRT": {
+        "count": 78,
+        "percentage": 12.7
+      },
+      "TBX11K": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 536,
+        "percentage": 87.3
+      }
+    },
+    "Tuberculosis": {
+      "Existing_COVID-19": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Normal": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Pneumonia": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "Existing_Tuberculosis": {
+        "count": 665,
+        "percentage": 49.3
+      },
+      "JSRT": {
+        "count": 0,
+        "percentage": 0.0
+      },
+      "TBX11K": {
+        "count": 683,
+        "percentage": 50.7
+      },
+      "VinBigData_VinDr_CXR": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    }
+  },
+  "exclusions_summary": {
+    "total_excluded_in_v3_reconstruction": 1608,
+    "breakdown": {
+      "PERCEPTUAL_NEAR_DUPLICATE": 1541,
+      "QUALITY_FILTER_FAILED": 60,
+      "EXACT_DUPLICATE_MD5": 7
+    }
+  },
+  "source_held_out_validation_scenarios": [
+    {
+      "clinical_class": "Pneumonia",
+      "train_source": "Existing_Pneumonia (1,800 images)",
+      "held_out_internal_test": "TBX11K Sick Non-TB (1,800 images)",
+      "purpose": "Verify model detects genuine pneumonia infiltrate without relying on Guangzhou pediatric landscape shortcut"
+    },
+    {
+      "clinical_class": "Tuberculosis",
+      "train_source": "TBX11K (796 images)",
+      "held_out_internal_test": "Existing_Tuberculosis Shenzhen (686 images)",
+      "purpose": "Verify TB cross-hospital generalization prior to unblinding Montgomery"
+    },
+    {
+      "clinical_class": "Pulmonary Nodule / Mass",
+      "train_source": "VinBigData_VinDr_CXR (626 images)",
+      "held_out_internal_test": "JSRT Histologically Confirmed Malignant (100 images)",
+      "purpose": "Evaluate malignant nodule detection across independent film-digitized archives without JSRT training exposure"
+    }
+  ]
+}

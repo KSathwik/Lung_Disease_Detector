@@ -1,0 +1,78 @@
+{
+  "phase": "Phase 2E - V5 Acquisition Readiness & Reproducible Ingestion Pipeline",
+  "decision_gate": "BIMCV_ACCESS_PENDING_PIPELINE_READY",
+  "bimcv_access_status": "ACCESS_PENDING",
+  "pipeline_components": {
+    "ingestion_specification": "COMPLETE",
+    "deterministic_view_classifier": "VERIFIED",
+    "covid_label_provenance_engine": "VERIFIED",
+    "duplicate_detection_engine": "VERIFIED",
+    "zero_leakage_patient_splitter": "VERIFIED_TESTED",
+    "source_holdout_cohort_generator": "VERIFIED_TESTED",
+    "view_controlled_holdout_generator": "VERIFIED_TESTED",
+    "dynamic_v5_audit_module": "VERIFIED"
+  },
+  "v4_baseline_snapshot": {
+    "manifest_name": "unified_manifest_v4.csv",
+    "immutable_status": "LOCKED",
+    "total_images": 10336,
+    "total_patients": 10140,
+    "cramers_v": 0.7698,
+    "class_distribution": {
+      "Pneumonia": 2798,
+      "Normal": 2547,
+      "COVID-19": 1942,
+      "Tuberculosis": 1348,
+      "Pleural Effusion": 1017,
+      "Pulmonary Nodule / Mass": 684
+    },
+    "source_distribution": {
+      "TBX11K": 3277,
+      "Existing_COVID-19": 1942,
+      "VinBigData_VinDr_CXR": 1467,
+      "Existing_Pneumonia": 1395,
+      "Existing_Normal": 1199,
+      "Existing_Tuberculosis": 665,
+      "NIH_ChestX-ray14": 246,
+      "JSRT": 145
+    },
+    "view_distribution": {
+      "PA": 5712,
+      "UNKNOWN": 3141,
+      "AP": 1483
+    },
+    "sources_per_class": {
+      "COVID-19": 1,
+      "Normal": 4,
+      "Pleural Effusion": 2,
+      "Pneumonia": 3,
+      "Pulmonary Nodule / Mass": 3,
+      "Tuberculosis": 2
+    },
+    "source_entropy_per_class": {
+      "COVID-19": -0.0,
+      "Normal": 1.321,
+      "Pleural Effusion": 0.4181,
+      "Pneumonia": 1.0254,
+      "Pulmonary Nodule / Mass": 0.9694,
+      "Tuberculosis": 0.9999
+    },
+    "max_source_proportion_per_class": {
+      "COVID-19": 1.0,
+      "Normal": 0.4707,
+      "Pleural Effusion": 0.9154,
+      "Pneumonia": 0.4986,
+      "Pulmonary Nodule / Mass": 0.7836,
+      "Tuberculosis": 0.5067
+    },
+    "single_source_classes": [
+      "COVID-19"
+    ]
+  },
+  "blocked_dependencies": [
+    "BIMCV portal registration approval",
+    "Institutional signed Data Use Agreement (DUA)",
+    "WebDAV / SFTP user credentials for data fetching",
+    "Physical acquisition of 1,000 RT-PCR confirmed planar CXRs"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "specification_title": "BIMCV-COVID19+ Ingestion Schema & Verification Protocol",
+  "target_release": "Unified Dataset V5",
+  "governance_status": "ACCESS_PENDING",
+  "acceptance_criteria": [
+    "Planar chest radiograph modality (DX or CR exclusively; CT volumes/slices rejected)",
+    "Molecular confirmation of SARS-CoV-2 via laboratory RT-PCR",
+    "Temporal confirmation window within +/- 7 days of imaging study",
+    "Frontal projection (PA or AP; Lateral views strictly excluded)",
+    "Verified patient-level de-identification code",
+    "Absence of exact MD5 duplicates against V4 and Existing COVID",
+    "Absence of perceptual near-duplicates (dHash Hamming distance <= 3)",
+    "Absence of cross-source patient identity overlap",
+    "Image readability with minimum resolution 224x224 pixels"
+  ],
+  "manifest_schema_definition": {
+    "patient_id": "De-identified patient hash (BIMCV patient identifier prefixed with 'bimcv_pt_')",
+    "study_id": "De-identified imaging study identifier",
+    "image_id": "Unique file identifier prefixed with 'bimcv_'",
+    "source_dataset": "Literal string 'BIMCV_COVID19+'",
+    "original_label": "Original annotation recorded in BIMCV EMR/report",
+    "clinical_label": "Standardized LungAI class 'COVID-19'",
+    "label_provenance": "Provenance tag ('MOLECULAR_CONFIRMED' or 'DOCUMENTED_BIMCV_COVID')",
+    "rt_pcr_status": "Laboratory PCR result string ('POSITIVE')",
+    "imaging_date": "ISO-8601 date of radiograph acquisition",
+    "confirmation_date": "ISO-8601 date of PCR specimen collection",
+    "date_difference_days": "Integer difference in days between acquisition and PCR confirmation",
+    "view": "Standardized view ('PA', 'AP', 'LATERAL', 'OTHER', 'UNKNOWN')",
+    "projection": "Detailed radiographic projection ('ERECT', 'SUPINE', 'SEMI-ERECT', 'DECUBITUS')",
+    "image_modality": "DICOM modality tag ('DX' or 'CR')",
+    "image_format": "Native storage format ('PNG' 8-bit or 16-bit)",
+    "image_dimensions": "Tuple of (width, height)",
+    "acquisition_metadata": "JSON object with hospital site, scanner manufacturer, kVp, and exposure if present",
+    "exclusion_reason": "String reason code if rejected or quarantined (None if accepted)"
+  },
+  "target_quota": {
+    "target_accepted_images": 1000,
+    "target_unique_patients": 800,
+    "cohort_a_broad_allocation": "100% of accepted PA + AP scans",
+    "cohort_b_view_controlled_allocation": "PA scans exclusively"
+  }
+}

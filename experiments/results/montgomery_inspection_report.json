@@ -1,0 +1,32 @@
+{
+  "montgomery_scans_analyzed": 138,
+  "dimensions": {
+    "4020x4892": 41,
+    "4892x4020": 97
+  },
+  "aspect_ratios": {
+    "mean": 0.939,
+    "min": 0.822,
+    "max": 1.217
+  },
+  "border_black_frequency": {
+    "top": 1,
+    "bottom": 96,
+    "left": 12,
+    "right": 13,
+    "at_least_one": 97,
+    "all_four": 1
+  },
+  "mean_corner_intensity": {
+    "tl": 9.037681159420288,
+    "tr": 10.646376811594203,
+    "bl": 10.12536231884058,
+    "br": 8.284057971014493
+  },
+  "internal_comparison": {
+    "aspect_ratio_mean": 1.226,
+    "tl_corner_mean": 47.8,
+    "br_corner_mean": 49.7,
+    "area_pct_mean": 99.0
+  }
+}

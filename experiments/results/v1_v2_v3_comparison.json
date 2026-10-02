@@ -1,0 +1,50 @@
+{
+  "metric_comparison": {
+    "total_images": {
+      "v1": 13102,
+      "v2": 10558,
+      "v3": 10090
+    },
+    "total_patients": {
+      "v1": 12954,
+      "v2": 10410,
+      "v3": 9968
+    },
+    "cramer_v": {
+      "v1": 0.8331,
+      "v2": 0.7924,
+      "v3": 0.776
+    },
+    "max_single_source_pct": {
+      "v1": "100.0% (COVID-19 & Effusion)",
+      "v2": "100.0% (Pneumonia 64.5%, Effusion 100%, COVID 100%)",
+      "v3": "100.0% (COVID 100%, Effusion 100% [Justified by Phase 2 Audit]; Pneumonia reduced to 50.0%)"
+    },
+    "pneumonia_source_balance": {
+      "v1": "Existing_Pneumonia: 88.9%, TBX11K: 11.1%",
+      "v2": "Existing_Pneumonia: 64.5%, TBX11K: 35.5%",
+      "v3": "Existing_Pneumonia: 50.0%, TBX11K: 50.0% (PERFECT DUAL-SOURCE BALANCE)"
+    },
+    "normal_source_balance": {
+      "v1": "Existing_Normal: 86.6%, TBX11K: 7.9%, JSRT: 5.5%",
+      "v2": "Existing_Normal: 57.5%, TBX11K: 38.9%, JSRT: 3.6%",
+      "v3": "Existing_Normal: 48.5%, TBX11K: 48.5%, JSRT: 3.0% (BALANCED MULTI-SOURCE)"
+    },
+    "sixth_class_taxonomy": {
+      "v1": "Lung Cancer / Nodule (Conflated with benign cases)",
+      "v2": "Pulmonary Nodule / Mass (Option B adopted; 54 benign purged)",
+      "v3": "Pulmonary Nodule / Mass (Provenanced with 17-radiologist consensus & histology)"
+    },
+    "montgomery_quarantine": {
+      "v1": "0 in manifest (quarantined)",
+      "v2": "0 in manifest (quarantined)",
+      "v3": "0 in manifest (STRICTLY QUARANTINED EXTERNAL BENCHMARK)"
+    },
+    "patient_leakage_between_splits": {
+      "v1": "Potential overlap in legacy split",
+      "v2": "0 patients overlap",
+      "v3": "0 patients overlap (Strict patient-level grouping)"
+    }
+  },
+  "decision_gate": "READY FOR TRAINING"
+}

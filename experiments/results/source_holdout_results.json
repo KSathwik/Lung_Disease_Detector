@@ -1,0 +1,210 @@
+{
+  "B1_A_Existing_to_TBX11K_Pneumonia": {
+    "experiment": "B1-A: Train Existing_Pneumonia -> Test TBX11K Pneumonia",
+    "train_sources": [
+      "Existing_Normal",
+      "Existing_Pneumonia"
+    ],
+    "test_sources": [
+      "TBX11K"
+    ],
+    "train_samples": 2204,
+    "test_samples": 390,
+    "target_class": "Pneumonia",
+    "reference_class": "Normal",
+    "metrics": {
+      "accuracy": 0.7256,
+      "precision": 0.9813,
+      "recall": 0.5,
+      "f1_score": 0.6625
+    },
+    "confusion_matrix": [
+      [
+        178,
+        2
+      ],
+      [
+        105,
+        105
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.9187,
+      "mean_confidence_incorrect": 0.8358
+    }
+  },
+  "B1_B_TBX11K_to_Existing_Pneumonia": {
+    "experiment": "B1-B: Train TBX11K Pneumonia -> Test Existing_Pneumonia",
+    "train_sources": [
+      "TBX11K"
+    ],
+    "test_sources": [
+      "Existing_Normal",
+      "Existing_Pneumonia"
+    ],
+    "train_samples": 2204,
+    "test_samples": 390,
+    "target_class": "Pneumonia",
+    "reference_class": "Normal",
+    "metrics": {
+      "accuracy": 0.5872,
+      "precision": 0.5668,
+      "recall": 0.9905,
+      "f1_score": 0.721
+    },
+    "confusion_matrix": [
+      [
+        21,
+        159
+      ],
+      [
+        2,
+        208
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.9362,
+      "mean_confidence_incorrect": 0.8588
+    }
+  },
+  "B2_A_Existing_to_TBX11K_Normal": {
+    "experiment": "B2-A: Train Existing_Normal+JSRT -> Test TBX11K Normal",
+    "train_sources": [
+      "Existing_Pneumonia",
+      "Existing_Normal",
+      "Existing_Tuberculosis",
+      "JSRT"
+    ],
+    "test_sources": [
+      "TBX11K"
+    ],
+    "train_samples": 2152,
+    "test_samples": 360,
+    "target_class": "Normal",
+    "reference_class": "Abnormal",
+    "metrics": {
+      "accuracy": 0.5306,
+      "precision": 0.5162,
+      "recall": 0.9722,
+      "f1_score": 0.6744
+    },
+    "confusion_matrix": [
+      [
+        16,
+        164
+      ],
+      [
+        5,
+        175
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.8977,
+      "mean_confidence_incorrect": 0.8764
+    }
+  },
+  "B2_B_TBX11K_to_Existing_Normal": {
+    "experiment": "B2-B: Train TBX11K Normal -> Test Existing_Normal",
+    "train_sources": [
+      "TBX11K"
+    ],
+    "test_sources": [
+      "Existing_Pneumonia",
+      "Existing_Tuberculosis",
+      "Existing_Normal",
+      "JSRT"
+    ],
+    "train_samples": 2038,
+    "test_samples": 380,
+    "target_class": "Normal",
+    "reference_class": "Abnormal",
+    "metrics": {
+      "accuracy": 0.55,
+      "precision": 0.7021,
+      "recall": 0.1737,
+      "f1_score": 0.2785
+    },
+    "confusion_matrix": [
+      [
+        176,
+        14
+      ],
+      [
+        157,
+        33
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.8834,
+      "mean_confidence_incorrect": 0.826
+    }
+  },
+  "B3_A_Existing_to_TBX11K_TB": {
+    "experiment": "B3-A: Train Existing_Tuberculosis -> Test TBX11K TB",
+    "train_sources": [
+      "Existing_Normal",
+      "Existing_Tuberculosis"
+    ],
+    "test_sources": [
+      "TBX11K"
+    ],
+    "train_samples": 1585,
+    "test_samples": 282,
+    "target_class": "Tuberculosis",
+    "reference_class": "Normal",
+    "metrics": {
+      "accuracy": 0.7128,
+      "precision": 0.92,
+      "recall": 0.2255,
+      "f1_score": 0.3622
+    },
+    "confusion_matrix": [
+      [
+        178,
+        2
+      ],
+      [
+        79,
+        23
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.9687,
+      "mean_confidence_incorrect": 0.9214
+    }
+  },
+  "B3_B_TBX11K_to_Existing_TB": {
+    "experiment": "B3-B: Train TBX11K TB -> Test Existing_Tuberculosis",
+    "train_sources": [
+      "TBX11K"
+    ],
+    "test_sources": [
+      "Existing_Normal",
+      "Existing_Tuberculosis"
+    ],
+    "train_samples": 1600,
+    "test_samples": 279,
+    "target_class": "Tuberculosis",
+    "reference_class": "Normal",
+    "metrics": {
+      "accuracy": 0.7814,
+      "precision": 0.6338,
+      "recall": 0.9091,
+      "f1_score": 0.7469
+    },
+    "confusion_matrix": [
+      [
+        128,
+        52
+      ],
+      [
+        9,
+        90
+      ]
+    ],
+    "confidence_distribution": {
+      "mean_confidence_correct": 0.8502,
+      "mean_confidence_incorrect": 0.7093
+    }
+  }
+}

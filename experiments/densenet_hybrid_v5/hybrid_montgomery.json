@@ -1,0 +1,24 @@
+{
+  "external_cohort": "Montgomery County (Quarantined External Benchmark)",
+  "model": "DenseNet-121 + Hybrid Synthesis (CORAL + Gaussian LP)",
+  "total_scans": 138,
+  "tb_cases": 58,
+  "normal_cases": 80,
+  "exact_tb_recall": 0.0,
+  "exact_normal_specificity": 0.0,
+  "binary_abnormal_sensitivity": 0.9655,
+  "confidence_metrics": {
+    "mean_max_prob": 0.8984,
+    "median_max_prob": 0.9527,
+    "mean_margin": 0.8085,
+    "mean_entropy": 0.4178
+  },
+  "tb_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 53,
+    "Pleural Effusion": 3,
+    "Normal": 2
+  },
+  "normal_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 80
+  }
+}

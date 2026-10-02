@@ -1,0 +1,302 @@
+{
+  "status": "READY FOR TRAINING",
+  "manifest_v2_path": "experiments\\data\\unified_manifest_v2.csv",
+  "v1_vs_v2_comparison": {
+    "Total Images": {
+      "Current_V1": 13102,
+      "Reconstructed_V2": 10558
+    },
+    "Total Patients": {
+      "Current_V1": 12954,
+      "Reconstructed_V2": 10410
+    },
+    "Dataset Sources": {
+      "Current_V1": 7,
+      "Reconstructed_V2": 7
+    },
+    "Cram\u00e9r's V (Source-Label Coupling)": {
+      "Current_V1": 0.8331,
+      "Reconstructed_V2": 0.7924
+    },
+    "Max Single Source % per Class": {
+      "Current_V1": "100.0% (100% COVID & Effusion)",
+      "Reconstructed_V2": "100.0% (Pneumonia)"
+    },
+    "Minimum Sources per Class": {
+      "Current_V1": 1,
+      "Reconstructed_V2": 1
+    },
+    "Duplicate Images Count": {
+      "Current_V1": 0,
+      "Reconstructed_V2": 0
+    },
+    "Patient Overlap Across Splits": {
+      "Current_V1": 0,
+      "Reconstructed_V2": 0
+    },
+    "Ambiguous / Misclassified Labels": {
+      "Current_V1": "54 JSRT benign nodules mislabeled as Cancer",
+      "Reconstructed_V2": "0 (54 JSRT Benign Nodules Purged)"
+    },
+    "Quarantined Montgomery Scans": {
+      "Current_V1": "0 in manifest (quarantined)",
+      "Reconstructed_V2": "0 in manifest (QUARANTINED EXTERNAL SET)"
+    }
+  },
+  "v2_dataset_statistics": {
+    "total_images": 10558,
+    "total_patients": 10410,
+    "cramers_v": 0.7924,
+    "class_distribution": {
+      "Pneumonia": 2792,
+      "Normal": 2553,
+      "COVID-19": 2000,
+      "Tuberculosis": 1482,
+      "Pleural Effusion": 1017,
+      "Pulmonary Nodule / Mass": 714
+    },
+    "source_distribution": {
+      "TBX11K": 2780,
+      "Existing_COVID-19": 2000,
+      "Existing_Pneumonia": 1800,
+      "VinBigData_VinDr_CXR": 1631,
+      "Existing_Normal": 1469,
+      "Existing_Tuberculosis": 686,
+      "JSRT": 192
+    },
+    "split_distribution": {
+      "train": 7386,
+      "test": 1588,
+      "val": 1584
+    },
+    "source_x_class_counts": {
+      "COVID-19": {
+        "Existing_COVID-19": 2000,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Normal": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 1469,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 92,
+        "TBX11K": 992,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Pleural Effusion": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 1017
+      },
+      "Pneumonia": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 1800,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 0,
+        "TBX11K": 992,
+        "VinBigData_VinDr_CXR": 0
+      },
+      "Pulmonary Nodule / Mass": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 0,
+        "JSRT": 100,
+        "TBX11K": 0,
+        "VinBigData_VinDr_CXR": 614
+      },
+      "Tuberculosis": {
+        "Existing_COVID-19": 0,
+        "Existing_Normal": 0,
+        "Existing_Pneumonia": 0,
+        "Existing_Tuberculosis": 686,
+        "JSRT": 0,
+        "TBX11K": 796,
+        "VinBigData_VinDr_CXR": 0
+      }
+    },
+    "source_x_class_percentages": {
+      "COVID-19": {
+        "Existing_COVID-19": 100.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Normal": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 57.54,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 3.6,
+        "TBX11K": 38.86,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Pleural Effusion": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 100.0
+      },
+      "Pneumonia": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 64.47,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 0.0,
+        "TBX11K": 35.53,
+        "VinBigData_VinDr_CXR": 0.0
+      },
+      "Pulmonary Nodule / Mass": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 0.0,
+        "JSRT": 14.01,
+        "TBX11K": 0.0,
+        "VinBigData_VinDr_CXR": 85.99
+      },
+      "Tuberculosis": {
+        "Existing_COVID-19": 0.0,
+        "Existing_Normal": 0.0,
+        "Existing_Pneumonia": 0.0,
+        "Existing_Tuberculosis": 46.29,
+        "JSRT": 0.0,
+        "TBX11K": 53.71,
+        "VinBigData_VinDr_CXR": 0.0
+      }
+    }
+  },
+  "taxonomy_decision": {
+    "chosen_option": "Option B: Pulmonary Nodule / Mass",
+    "rationale": "Planar CXR detects radiological opacities; histological lung cancer requires tissue biopsy. JSRT benign nodules (54 cases) were purged from malignant subset.",
+    "jsrt_corrections": "Purged 3546 records including 54 JSRT benign nodules and V1 source cap overflows."
+  },
+  "acquisition_analysis_v2": {
+    "Existing_COVID-19": {
+      "sample_profiled": 50,
+      "common_resolutions": {
+        "299x299": 50
+      },
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 150.65,
+      "mean_corner_intensity": 66.58,
+      "black_border_percentage": 16.0
+    },
+    "Existing_Normal": {
+      "sample_profiled": 50,
+      "common_resolutions": {
+        "767x1260": 1,
+        "793x1090": 1,
+        "808x1202": 1
+      },
+      "mean_aspect_ratio": 1.27,
+      "mean_tissue_intensity": 138.32,
+      "mean_corner_intensity": 22.39,
+      "black_border_percentage": 44.0
+    },
+    "Existing_Pneumonia": {
+      "sample_profiled": 50,
+      "common_resolutions": {
+        "163x482": 1,
+        "189x490": 1,
+        "329x645": 1
+      },
+      "mean_aspect_ratio": 1.59,
+      "mean_tissue_intensity": 145.36,
+      "mean_corner_intensity": 45.43,
+      "black_border_percentage": 22.0
+    },
+    "Existing_Tuberculosis": {
+      "sample_profiled": 50,
+      "common_resolutions": {
+        "512x512": 50
+      },
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 128.64,
+      "mean_corner_intensity": 81.47,
+      "black_border_percentage": 12.0
+    },
+    "JSRT": {
+      "sample_profiled": 100,
+      "common_resolutions": {
+        "2048x2048": 100
+      },
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 156.52,
+      "mean_corner_intensity": 94.44,
+      "black_border_percentage": 6.0
+    },
+    "TBX11K": {
+      "sample_profiled": 150,
+      "common_resolutions": {
+        "512x512": 150
+      },
+      "mean_aspect_ratio": 1.0,
+      "mean_tissue_intensity": 146.71,
+      "mean_corner_intensity": 40.46,
+      "black_border_percentage": 42.7
+    },
+    "VinBigData_VinDr_CXR": {
+      "sample_profiled": 100,
+      "common_resolutions": {
+        "960x768": 29,
+        "1024x1024": 8,
+        "833x682": 6
+      },
+      "mean_aspect_ratio": 0.872,
+      "mean_tissue_intensity": 155.0,
+      "mean_corner_intensity": 16.63,
+      "black_border_percentage": 63.0
+    }
+  },
+  "source_held_out_scenarios": [
+    {
+      "class": "Pulmonary Nodule / Mass",
+      "training_sources": [
+        "VinBigData_VinDr_CXR"
+      ],
+      "held_out_test_source": "JSRT (Confirmed Malignant Subset)",
+      "purpose": "Evaluate model ability to detect genuine malignant nodules on an independent film-digitized dataset without JSRT exposure during training."
+    },
+    {
+      "class": "Pneumonia",
+      "training_sources": [
+        "Existing_Pneumonia"
+      ],
+      "held_out_test_source": "TBX11K (Sick Non-TB Pneumonia Subset)",
+      "purpose": "Evaluate whether Pneumonia detection generalizes to TBX11K square CXRs when trained only on Guangzhou landscape CXRs."
+    },
+    {
+      "class": "Tuberculosis",
+      "training_sources": [
+        "TBX11K"
+      ],
+      "held_out_test_source": "Existing_Tuberculosis (Shenzhen Dataset)",
+      "purpose": "Evaluate TB detection generalization across independent hospital acquisition systems."
+    }
+  ],
+  "excluded_records_summary": {
+    "total_excluded": 3546,
+    "reasons_breakdown": {
+      "SOURCE_CAP_REBALANCING (Cap Existing_Pneumonia at 1,800)": 2127,
+      "SOURCE_CAP_REBALANCING (Cap Existing_COVID at 2,000)": 1366,
+      "BENIGN_NODULE_EXCLUDED_FROM_MALIGNANT_CANCER (JSRT Benign Nodule)": 53
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "dataset_name": "LungAI Unified Manifest V4",
+  "total_images": 10336,
+  "total_patients": 10140,
+  "splits": {
+    "train": 7242,
+    "val": 1550,
+    "test": 1544
+  },
+  "class_distribution": {
+    "Pneumonia": 2798,
+    "Normal": 2547,
+    "COVID-19": 1942,
+    "Tuberculosis": 1348,
+    "Pleural Effusion": 1017,
+    "Pulmonary Nodule / Mass": 684
+  },
+  "source_distribution": {
+    "TBX11K": 3277,
+    "Existing_COVID-19": 1942,
+    "VinBigData_VinDr_CXR": 1467,
+    "Existing_Pneumonia": 1395,
+    "Existing_Normal": 1199,
+    "Existing_Tuberculosis": 665,
+    "NIH_ChestX-ray14": 246,
+    "JSRT": 145
+  },
+  "cross_tabulation": {
+    "Existing_COVID-19": {
+      "COVID-19": 1942,
+      "Normal": 0,
+      "Pleural Effusion": 0,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 0
+    },
+    "Existing_Normal": {
+      "COVID-19": 0,
+      "Normal": 1199,
+      "Pleural Effusion": 0,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 0
+    },
+    "Existing_Pneumonia": {
+      "COVID-19": 0,
+      "Normal": 0,
+      "Pleural Effusion": 0,
+      "Pneumonia": 1395,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 0
+    },
+    "Existing_Tuberculosis": {
+      "COVID-19": 0,
+      "Normal": 0,
+      "Pleural Effusion": 0,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 665
+    },
+    "JSRT": {
+      "COVID-19": 0,
+      "Normal": 67,
+      "Pleural Effusion": 0,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 78,
+      "Tuberculosis": 0
+    },
+    "NIH_ChestX-ray14": {
+      "COVID-19": 0,
+      "Normal": 82,
+      "Pleural Effusion": 86,
+      "Pneumonia": 8,
+      "Pulmonary Nodule / Mass": 70,
+      "Tuberculosis": 0
+    },
+    "TBX11K": {
+      "COVID-19": 0,
+      "Normal": 1199,
+      "Pleural Effusion": 0,
+      "Pneumonia": 1395,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 683
+    },
+    "VinBigData_VinDr_CXR": {
+      "COVID-19": 0,
+      "Normal": 0,
+      "Pleural Effusion": 931,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 536,
+      "Tuberculosis": 0
+    }
+  },
+  "cramers_v": 0.7698,
+  "patient_isolation_verified": true,
+  "montgomery_contamination_count": 0,
+  "exclusions_count": 294
+}

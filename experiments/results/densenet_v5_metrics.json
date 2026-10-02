@@ -1,0 +1,116 @@
+{
+  "model": "DenseNet-121 (Full V5 Cohort)",
+  "dataset_version": "V5 Full Training Set (unified_manifest_v5.csv)",
+  "train_samples": 7398,
+  "val_samples": 1579,
+  "test_samples": 1570,
+  "overall_metrics": {
+    "accuracy": 0.7618,
+    "macro_precision": 0.7482,
+    "weighted_precision": 0.841,
+    "macro_recall": 0.7462,
+    "weighted_recall": 0.7618,
+    "macro_f1": 0.7263,
+    "weighted_f1": 0.7879,
+    "macro_roc_auc": 0.96,
+    "macro_pr_auc": 0.7927
+  },
+  "per_class_metrics": {
+    "COVID-19": {
+      "support": 292,
+      "precision": 1.0,
+      "recall": 0.8219,
+      "specificity": 1.0,
+      "f1_score": 0.9023
+    },
+    "Normal": {
+      "support": 394,
+      "precision": 0.8922,
+      "recall": 0.8401,
+      "specificity": 0.966,
+      "f1_score": 0.8654
+    },
+    "Pleural Effusion": {
+      "support": 152,
+      "precision": 0.4774,
+      "recall": 0.625,
+      "specificity": 0.9267,
+      "f1_score": 0.5413
+    },
+    "Pneumonia": {
+      "support": 423,
+      "precision": 0.9216,
+      "recall": 0.695,
+      "specificity": 0.9782,
+      "f1_score": 0.7925
+    },
+    "Pulmonary Nodule / Mass": {
+      "support": 108,
+      "precision": 0.283,
+      "recall": 0.6944,
+      "specificity": 0.87,
+      "f1_score": 0.4021
+    },
+    "Tuberculosis": {
+      "support": 201,
+      "precision": 0.9148,
+      "recall": 0.801,
+      "specificity": 0.989,
+      "f1_score": 0.8541
+    }
+  },
+  "calibration_confidence": {
+    "mean_confidence_correct": 0.8674,
+    "mean_confidence_incorrect": 0.6583
+  },
+  "confusion_matrix": [
+    [
+      240,
+      7,
+      6,
+      16,
+      13,
+      10
+    ],
+    [
+      0,
+      331,
+      5,
+      6,
+      51,
+      1
+    ],
+    [
+      0,
+      0,
+      95,
+      0,
+      57,
+      0
+    ],
+    [
+      0,
+      29,
+      49,
+      294,
+      47,
+      4
+    ],
+    [
+      0,
+      0,
+      32,
+      1,
+      75,
+      0
+    ],
+    [
+      0,
+      4,
+      12,
+      2,
+      22,
+      161
+    ]
+  ]
+}

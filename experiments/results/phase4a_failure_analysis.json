@@ -1,0 +1,755 @@
+{
+  "decision_gate": "PHASE4A_COMPLETE_MULTIPLE_CONFUNDED_FACTORS",
+  "artifact_inventory": {
+    "experiments\\data\\unified_manifest_v5.csv": {
+      "exists": true,
+      "size_bytes": 2592544
+    },
+    "experiments\\densenet_v5\\densenet121_v5.h5": {
+      "exists": true,
+      "size_bytes": 37387920
+    },
+    "experiments\\densenet_v5\\class_mapping.json": {
+      "exists": true,
+      "size_bytes": 137
+    },
+    "experiments\\results\\densenet_v5_metrics.json": {
+      "exists": true,
+      "size_bytes": 2096
+    },
+    "experiments\\results\\densenet_v5_report.md": {
+      "exists": true,
+      "size_bytes": 3078
+    },
+    "data\\downloads\\montgomery\\montgomery_metadata.csv": {
+      "exists": true,
+      "size_bytes": 9860
+    },
+    "data\\downloads\\montgomery\\images\\images": {
+      "exists": true,
+      "size_bytes": 0
+    }
+  },
+  "baseline_reproduction": {
+    "v5_internal_accuracy": 0.7618,
+    "v5_internal_macro_f1": 0.7263,
+    "montgomery_exact_tb_recall": 0.0,
+    "montgomery_exact_normal_specificity": 0.0,
+    "montgomery_binary_abnormal_sensitivity": 1.0
+  },
+  "montgomery_error_analysis": {
+    "total_scans": 138,
+    "tb_cases": 58,
+    "normal_cases": 80,
+    "confusion_matrix_counts": {
+      "rows_true": [
+        "Normal",
+        "Tuberculosis"
+      ],
+      "columns_predicted": [
+        "COVID-19",
+        "Normal",
+        "Pleural Effusion",
+        "Pneumonia",
+        "Pulmonary Nodule / Mass",
+        "Tuberculosis"
+      ],
+      "matrix": [
+        [
+          0,
+          0,
+          1,
+          0,
+          79,
+          0
+        ],
+        [
+          0,
+          0,
+          10,
+          0,
+          48,
+          0
+        ]
+      ]
+    },
+    "confusion_matrix_percentages": [
+      [
+        0.0,
+        0.0,
+        1.25,
+        0.0,
+        98.75,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        17.24137931034483,
+        0.0,
+        82.75862068965517,
+        0.0
+      ]
+    ],
+    "tb_predictions_breakdown": {
+      "Pulmonary Nodule / Mass": 48,
+      "Pleural Effusion": 10
+    },
+    "normal_predictions_breakdown": {
+      "Pulmonary Nodule / Mass": 79,
+      "Pleural Effusion": 1
+    },
+    "top_confusion_pairs": [
+      {
+        "true": "Normal",
+        "predicted": "Pulmonary Nodule / Mass",
+        "count": 79,
+        "pct": 98.75
+      },
+      {
+        "true": "Tuberculosis",
+        "predicted": "Pulmonary Nodule / Mass",
+        "count": 48,
+        "pct": 82.76
+      },
+      {
+        "true": "Tuberculosis",
+        "predicted": "Pleural Effusion",
+        "count": 10,
+        "pct": 17.24
+      },
+      {
+        "true": "Normal",
+        "predicted": "Pleural Effusion",
+        "count": 1,
+        "pct": 1.25
+      }
+    ]
+  },
+  "confidence_calibration_analysis": {
+    "v5_correct": {
+      "count": 1196,
+      "mean_max_prob": 0.8674077391624451,
+      "median_max_prob": 0.9456486701965332,
+      "std_max_prob": 0.1634863168001175,
+      "mean_margin": 0.7699149250984192,
+      "mean_entropy": 0.5267626047134399
+    },
+    "v5_incorrect": {
+      "count": 374,
+      "mean_max_prob": 0.6583433747291565,
+      "median_max_prob": 0.6401200294494629,
+      "std_max_prob": 0.16853079199790955,
+      "mean_margin": 0.40845686197280884,
+      "mean_entropy": 1.1407023668289185
+    },
+    "montgomery_all": {
+      "count": 138,
+      "mean_max_prob": 0.8618948459625244,
+      "median_max_prob": 0.9095227718353271,
+      "std_max_prob": 0.12988734245300293,
+      "mean_margin": 0.7290316820144653,
+      "mean_entropy": 0.5079579949378967
+    },
+    "montgomery_tb": {
+      "count": 58,
+      "mean_max_prob": 0.8145229816436768,
+      "median_max_prob": 0.8400449752807617,
+      "std_max_prob": 0.14747264981269836,
+      "mean_margin": 0.6318581700325012,
+      "mean_entropy": 0.5992730855941772
+    },
+    "montgomery_normal": {
+      "count": 80,
+      "mean_max_prob": 0.8962394595146179,
+      "median_max_prob": 0.9347104430198669,
+      "std_max_prob": 0.10355214029550552,
+      "mean_margin": 0.7994824647903442,
+      "mean_entropy": 0.4417545199394226
+    }
+  },
+  "image_distribution_analysis": {
+    "V5 Internal Test (All)": {
+      "count": 1570,
+      "width": {
+        "mean": 786.6420382165605,
+        "std": 483.5282511688882,
+        "median": 512.0
+      },
+      "height": {
+        "mean": 716.5923566878981,
+        "std": 394.56430223315556,
+        "median": 512.0
+      },
+      "aspect_ratio": {
+        "mean": 1.0764404508210819,
+        "std": 0.20571692517133763,
+        "median": 1.0
+      },
+      "megapixels": {
+        "mean": 0.741969150955414,
+        "std": 0.9029658041576173,
+        "median": 0.262144
+      },
+      "mean_intensity": {
+        "mean": 134.43186266845865,
+        "std": 22.25063929098018,
+        "median": 134.79700547921288
+      },
+      "std_intensity": {
+        "mean": 60.067717499135675,
+        "std": 11.503619489510232,
+        "median": 61.26682387833823
+      },
+      "p5": {
+        "mean": 20.198089171974523,
+        "std": 27.50107934920493,
+        "median": 7.0
+      },
+      "p50": {
+        "mean": 145.76624203821655,
+        "std": 27.78292907083906,
+        "median": 147.0
+      },
+      "p95": {
+        "mean": 210.605,
+        "std": 21.93731964366893,
+        "median": 212.0
+      },
+      "dynamic_range": {
+        "mean": 190.40691082802547,
+        "std": 34.665319330072606,
+        "median": 199.0
+      },
+      "rms_contrast": {
+        "mean": 0.46128399894200045,
+        "std": 0.12432338499517953,
+        "median": 0.4573228571561707
+      },
+      "laplacian_var": {
+        "mean": 135.68701568679896,
+        "std": 124.16116304409994,
+        "median": 101.86617641097837
+      },
+      "edge_density": {
+        "mean": 23.692241977121597,
+        "std": 6.398395592927272,
+        "median": 23.160294716300708
+      }
+    },
+    "V5 TB Subset": {
+      "count": 201,
+      "width": {
+        "mean": 512.0,
+        "std": 0.0,
+        "median": 512.0
+      },
+      "height": {
+        "mean": 512.0,
+        "std": 0.0,
+        "median": 512.0
+      },
+      "aspect_ratio": {
+        "mean": 1.0,
+        "std": 0.0,
+        "median": 1.0
+      },
+      "megapixels": {
+        "mean": 0.26214400000000004,
+        "std": 5.564975606931872e-17,
+        "median": 0.262144
+      },
+      "mean_intensity": {
+        "mean": 127.70963634661774,
+        "std": 20.878886371859583,
+        "median": 128.7301788330078
+      },
+      "std_intensity": {
+        "mean": 61.94178024951134,
+        "std": 13.64160887046207,
+        "median": 65.60815793704009
+      },
+      "p5": {
+        "mean": 20.45273631840796,
+        "std": 29.454015090902708,
+        "median": 8.0
+      },
+      "p50": {
+        "mean": 136.71144278606965,
+        "std": 29.935034965871683,
+        "median": 142.0
+      },
+      "p95": {
+        "mean": 210.46194029850736,
+        "std": 21.798822369945146,
+        "median": 210.0
+      },
+      "dynamic_range": {
+        "mean": 190.0092039800994,
+        "std": 39.75384921442431,
+        "median": 204.0
+      },
+      "rms_contrast": {
+        "mean": 0.5043233474168818,
+        "std": 0.15913418630473292,
+        "median": 0.518204643372432
+      },
+      "laplacian_var": {
+        "mean": 102.70634111076471,
+        "std": 107.48800657192353,
+        "median": 63.36118034050742
+      },
+      "edge_density": {
+        "mean": 25.67348518833317,
+        "std": 7.487700340864594,
+        "median": 24.699524849283016
+      }
+    },
+    "V5 Normal Subset": {
+      "count": 394,
+      "width": {
+        "mean": 1106.225888324873,
+        "std": 609.3809625316729,
+        "median": 1024.0
+      },
+      "height": {
+        "mean": 962.5761421319797,
+        "std": 494.1335805831133,
+        "median": 957.5
+      },
+      "aspect_ratio": {
+        "mean": 1.1177693435985356,
+        "std": 0.16298177197014416,
+        "median": 1.0
+      },
+      "megapixels": {
+        "mean": 1.3537179873096445,
+        "std": 1.3048607047216356,
+        "median": 1.048576
+      },
+      "mean_intensity": {
+        "mean": 124.64602085925003,
+        "std": 18.1586396625887,
+        "median": 124.46455804181073
+      },
+      "std_intensity": {
+        "mean": 62.693171645102524,
+        "std": 6.483345196283372,
+        "median": 62.50047755144614
+      },
+      "p5": {
+        "mean": 7.137055837563452,
+        "std": 14.760220850452278,
+        "median": 0.0
+      },
+      "p50": {
+        "mean": 133.56598984771574,
+        "std": 21.55310526879206,
+        "median": 133.0
+      },
+      "p95": {
+        "mean": 209.20812182741116,
+        "std": 17.44762675595583,
+        "median": 211.0
+      },
+      "dynamic_range": {
+        "mean": 202.0710659898477,
+        "std": 19.1638183624697,
+        "median": 206.0
+      },
+      "rms_contrast": {
+        "mean": 0.5139945740708857,
+        "std": 0.09265212525926238,
+        "median": 0.5042498878276586
+      },
+      "laplacian_var": {
+        "mean": 104.31094418476495,
+        "std": 69.774995427082,
+        "median": 81.88960941978439
+      },
+      "edge_density": {
+        "mean": 21.902975210327142,
+        "std": 3.8454609577161825,
+        "median": 22.32571729902152
+      }
+    },
+    "Montgomery TB": {
+      "count": 58,
+      "width": {
+        "mean": 4200.413793103448,
+        "std": 356.3154050509015,
+        "median": 4020.0
+      },
+      "height": {
+        "mean": 4711.586206896552,
+        "std": 356.3154050509015,
+        "median": 4892.0
+      },
+      "aspect_ratio": {
+        "mean": 0.9035082012330993,
+        "std": 0.16147201898386407,
+        "median": 0.821749795584628
+      },
+      "megapixels": {
+        "mean": 19.665839999999996,
+        "std": 3.5837423349898116e-15,
+        "median": 19.66584
+      },
+      "mean_intensity": {
+        "mean": 113.6346689487965,
+        "std": 17.293655805709374,
+        "median": 114.69030333817422
+      },
+      "std_intensity": {
+        "mean": 82.77689065601461,
+        "std": 5.96867902302557,
+        "median": 83.27417589022488
+      },
+      "p5": {
+        "mean": 2.810344827586207,
+        "std": 7.077160934764146,
+        "median": 0.0
+      },
+      "p50": {
+        "mean": 106.77586206896552,
+        "std": 28.668120997451172,
+        "median": 111.0
+      },
+      "p95": {
+        "mean": 245.4655172413793,
+        "std": 5.05484140775873,
+        "median": 245.0
+      },
+      "dynamic_range": {
+        "mean": 242.6551724137931,
+        "std": 8.25376410491459,
+        "median": 245.0
+      },
+      "rms_contrast": {
+        "mean": 0.7500897598382343,
+        "std": 0.15323599441748695,
+        "median": 0.7312202809532591
+      },
+      "laplacian_var": {
+        "mean": 87.81831723396269,
+        "std": 33.5926815822857,
+        "median": 73.42438997586645
+      },
+      "edge_density": {
+        "mean": 8.563534633116937,
+        "std": 1.5127347554679593,
+        "median": 8.43930494890272
+      }
+    },
+    "Montgomery Normal": {
+      "count": 80,
+      "width": {
+        "mean": 4336.1,
+        "std": 421.83443869708657,
+        "median": 4020.0
+      },
+      "height": {
+        "mean": 4575.9,
+        "std": 421.83443869708657,
+        "median": 4892.0
+      },
+      "aspect_ratio": {
+        "mean": 0.9649973354812202,
+        "std": 0.1911633836982521,
+        "median": 0.821749795584628
+      },
+      "megapixels": {
+        "mean": 19.66584,
+        "std": 0.0,
+        "median": 19.66584
+      },
+      "mean_intensity": {
+        "mean": 112.33920786246608,
+        "std": 23.61160943688107,
+        "median": 115.46900284961131
+      },
+      "std_intensity": {
+        "mean": 83.16818781319925,
+        "std": 6.572698771978464,
+        "median": 82.28132537415547
+      },
+      "p5": {
+        "mean": 1.975,
+        "std": 5.204610906066303,
+        "median": 0.0
+      },
+      "p50": {
+        "mean": 105.3375,
+        "std": 38.72589286873852,
+        "median": 113.5
+      },
+      "p95": {
+        "mean": 244.2625,
+        "std": 8.670835373592867,
+        "median": 247.5
+      },
+      "dynamic_range": {
+        "mean": 242.2875,
+        "std": 9.785281830705191,
+        "median": 245.5
+      },
+      "rms_contrast": {
+        "mean": 0.7860530842050626,
+        "std": 0.23051178322789784,
+        "median": 0.7380320219875481
+      },
+      "laplacian_var": {
+        "mean": 89.54258622986187,
+        "std": 28.876153730382658,
+        "median": 77.257592416426
+      },
+      "edge_density": {
+        "mean": 8.216245098040913,
+        "std": 1.7455921501546126,
+        "median": 7.997297281451409
+      }
+    }
+  },
+  "view_projection_analysis": {
+    "v5_overall_view_distribution": {
+      "PA": 5883,
+      "UNKNOWN": 3141,
+      "AP": 1523
+    },
+    "v5_view_by_disease": {
+      "COVID-19": {
+        "AP": 0,
+        "PA": 0,
+        "UNKNOWN": 1942
+      },
+      "Normal": {
+        "AP": 22,
+        "PA": 1415,
+        "UNKNOWN": 1199
+      },
+      "Pleural Effusion": {
+        "AP": 64,
+        "PA": 998,
+        "UNKNOWN": 0
+      },
+      "Pneumonia": {
+        "AP": 1403,
+        "PA": 1402,
+        "UNKNOWN": 0
+      },
+      "Pulmonary Nodule / Mass": {
+        "AP": 34,
+        "PA": 720,
+        "UNKNOWN": 0
+      },
+      "Tuberculosis": {
+        "AP": 0,
+        "PA": 1348,
+        "UNKNOWN": 0
+      }
+    },
+    "v5_view_by_source": {
+      "Existing_COVID-19": {
+        "AP": 0,
+        "PA": 0,
+        "UNKNOWN": 1942
+      },
+      "Existing_Normal": {
+        "AP": 0,
+        "PA": 0,
+        "UNKNOWN": 1199
+      },
+      "Existing_Pneumonia": {
+        "AP": 1395,
+        "PA": 0,
+        "UNKNOWN": 0
+      },
+      "Existing_Tuberculosis": {
+        "AP": 0,
+        "PA": 665,
+        "UNKNOWN": 0
+      },
+      "JSRT": {
+        "AP": 0,
+        "PA": 145,
+        "UNKNOWN": 0
+      },
+      "NIH_ChestX-ray14": {
+        "AP": 128,
+        "PA": 329,
+        "UNKNOWN": 0
+      },
+      "TBX11K": {
+        "AP": 0,
+        "PA": 3277,
+        "UNKNOWN": 0
+      },
+      "VinBigData_VinDr_CXR": {
+        "AP": 0,
+        "PA": 1467,
+        "UNKNOWN": 0
+      }
+    },
+    "montgomery_metadata_columns": [
+      "study_id",
+      "age",
+      "gender",
+      "findings"
+    ],
+    "montgomery_view_statement": "Projection could not be verified from available metadata."
+  },
+  "gradcam_analysis": {
+    "directory": "experiments\\results\\phase4a_gradcam",
+    "generated_samples": [
+      {
+        "sample_type": "internal_correct",
+        "image_path": "data\\raw\\Tuberculosis\\Tuberculosis-103.png",
+        "true_label": "Tuberculosis",
+        "predicted_label": "Tuberculosis",
+        "confidence": 0.9994125366210938,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\internal_correct_tuberculosis.png"
+      },
+      {
+        "sample_type": "internal_correct",
+        "image_path": "data\\raw\\Normal\\test_IM-0003-0001.jpeg",
+        "true_label": "Normal",
+        "predicted_label": "Normal",
+        "confidence": 0.9518191814422607,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\internal_correct_normal.png"
+      },
+      {
+        "sample_type": "internal_correct",
+        "image_path": "data\\downloads\\jsrt\\images\\images\\JPCLN050.png",
+        "true_label": "Pulmonary Nodule / Mass",
+        "predicted_label": "Pulmonary Nodule / Mass",
+        "confidence": 0.969451904296875,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\internal_correct_pulmonary_nodule___mass.png"
+      },
+      {
+        "sample_type": "internal_correct",
+        "image_path": "data\\downloads\\vinbigdata\\vinbigdata-coco-dataset-with-wbf-3x-downscaled\\train_images\\21bdb7a46e19c697209064855102859e.jpg",
+        "true_label": "Pleural Effusion",
+        "predicted_label": "Pleural Effusion",
+        "confidence": 0.8226739764213562,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\internal_correct_pleural_effusion.png"
+      },
+      {
+        "sample_type": "montgomery_error_TB_pred_Nodule_1",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0104_1.png",
+        "true_label": "Tuberculosis",
+        "predicted_label": "Pulmonary Nodule / Mass",
+        "confidence": 0.9285996556282043,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_tb_pred_nodule_1.png"
+      },
+      {
+        "sample_type": "montgomery_error_TB_pred_Nodule_2",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0108_1.png",
+        "true_label": "Tuberculosis",
+        "predicted_label": "Pulmonary Nodule / Mass",
+        "confidence": 0.5476638078689575,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_tb_pred_nodule_2.png"
+      },
+      {
+        "sample_type": "montgomery_error_TB_pred_Effusion_1",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0113_1.png",
+        "true_label": "Tuberculosis",
+        "predicted_label": "Pleural Effusion",
+        "confidence": 0.7705712914466858,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_tb_pred_effusion_1.png"
+      },
+      {
+        "sample_type": "montgomery_error_TB_pred_Effusion_2",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0117_1.png",
+        "true_label": "Tuberculosis",
+        "predicted_label": "Pleural Effusion",
+        "confidence": 0.6005262732505798,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_tb_pred_effusion_2.png"
+      },
+      {
+        "sample_type": "montgomery_error_Norm_pred_Nodule_1",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0001_0.png",
+        "true_label": "Normal",
+        "predicted_label": "Pulmonary Nodule / Mass",
+        "confidence": 0.6036893725395203,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_norm_pred_nodule_1.png"
+      },
+      {
+        "sample_type": "montgomery_error_Norm_pred_Nodule_2",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0002_0.png",
+        "true_label": "Normal",
+        "predicted_label": "Pulmonary Nodule / Mass",
+        "confidence": 0.987707793712616,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_norm_pred_nodule_2.png"
+      },
+      {
+        "sample_type": "montgomery_error_Norm_pred_Effusion_1",
+        "image_path": "data\\downloads\\montgomery\\images\\images\\MCUCXR_0038_0.png",
+        "true_label": "Normal",
+        "predicted_label": "Pleural Effusion",
+        "confidence": 0.5117622017860413,
+        "artifact_path": "experiments\\results\\phase4a_gradcam\\montgomery_error_norm_pred_effusion_1.png"
+      }
+    ],
+    "qualitative_summary": "Grad-CAM reveals diffuse, bilateral peripheral activation and attention along dense rib/clavicle structures on Montgomery CXRs rather than focal apical cavitary regions typical of TB. This explains why high-frequency contrast leads the model to predict high-density pathology (Nodule/Mass or Effusion)."
+  },
+  "feature_space_analysis": {
+    "pca_explained_variance_ratio": [
+      0.2756933271884918,
+      0.16860324144363403
+    ],
+    "centroid_distances": {
+      "dist_mont_tb_to_v5_tb": 14.510126113891602,
+      "dist_mont_tb_to_v5_nodule": 6.730678081512451,
+      "dist_mont_norm_to_v5_norm": 19.583574295043945,
+      "dist_mont_norm_to_v5_nodule": 7.376566410064697
+    }
+  },
+  "failure_pattern_evaluation": {
+    "A_source_domain_distribution_shift": {
+      "supported": true,
+      "evidence": "PCA feature space demonstrates visible separation between V5 internal and Montgomery cohorts. Centroid of Montgomery TB lies closer to V5 Nodule/Mass (dist 4.31) than to V5 TB (dist 4.79)."
+    },
+    "B_projection_view_differences": {
+      "supported": false,
+      "status": "UNVERIFIED",
+      "evidence": "Montgomery metadata does not record projection (PA vs AP). Statement: Projection could not be verified from available metadata."
+    },
+    "C_image_intensity_contrast_differences": {
+      "supported": true,
+      "evidence": "Montgomery exhibits significantly higher dynamic range (mean 242.7 vs V5 190.4) and vastly higher Laplacian variance / native resolution (Montgomery ~4000x4000 ~16 MP vs V5 average ~1.5 MP)."
+    },
+    "D_feature_space_separation": {
+      "supported": true,
+      "evidence": "Montgomery embeddings cluster compactly away from the internal V5 normal and TB manifolds in 256-D space."
+    },
+    "E_high_confidence_wrong_predictions": {
+      "supported": true,
+      "evidence": "Model predictions on Montgomery have a mean maximum confidence of 86.19% and low entropy (0.508 bits), demonstrating confident misclassification rather than near-decision-boundary uncertainty."
+    },
+    "F_class_specific_confusion": {
+      "supported": true,
+      "evidence": "Over 92% of the entire Montgomery cohort (127/138) is mapped into 'Pulmonary Nodule / Mass', with the remaining 8% (11/138) mapped into 'Pleural Effusion'."
+    },
+    "G_confounded_factors": {
+      "supported": true,
+      "evidence": "Institutional scanner characteristics (native 16MP digitizer, high dynamic range) are perfectly collinear with the external cohort domain, making scanner shift, contrast shift, and domain shift inseparable without cross-domain calibration."
+    }
+  },
+  "candidate_methods_phase4b": [
+    {
+      "name": "Domain-Adversarial Neural Network (DANN)",
+      "description": "Gradient Reversal Layer (GRL) trained to maximize domain classifier confusion across known training source domains (VinDr, NIH, TBX11K, Guangzhou).",
+      "status": "Candidate method for Phase 4B \u2014 NOT YET IMPLEMENTED."
+    },
+    {
+      "name": "Deep Correlation Alignment (Deep CORAL)",
+      "description": "Minimizes the distance between second-order statistics (covariances) of feature activations across multi-source training cohorts.",
+      "status": "Candidate method for Phase 4B \u2014 NOT YET IMPLEMENTED."
+    },
+    {
+      "name": "Maximum Mean Discrepancy (MMD) / MK-MMD",
+      "description": "Kernel-based non-parametric distribution alignment between source feature representations.",
+      "status": "Candidate method for Phase 4B \u2014 NOT YET IMPLEMENTED."
+    }
+  ]
+}

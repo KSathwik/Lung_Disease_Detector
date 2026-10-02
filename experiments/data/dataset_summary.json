@@ -1,0 +1,26 @@
+{
+  "total_images": 13102,
+  "classes": {
+    "Pneumonia": 4419,
+    "COVID-19": 3366,
+    "Normal": 2053,
+    "Tuberculosis": 1482,
+    "Pleural Effusion": 1016,
+    "Lung Cancer": 766
+  },
+  "splits": {
+    "train": 9171,
+    "val": 1968,
+    "test": 1963
+  },
+  "sources": {
+    "Existing_Pneumonia": 3927,
+    "Existing_COVID-19": 3366,
+    "TBX11K": 1780,
+    "VinBigData_VinDr_CXR": 1629,
+    "Existing_Normal": 1469,
+    "Existing_Tuberculosis": 686,
+    "JSRT": 245
+  },
+  "duplicate_hashes_removed": 13102
+}

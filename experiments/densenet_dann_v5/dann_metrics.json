@@ -1,0 +1,114 @@
+{
+  "model": "DenseNet-121 + DANN (V5 Full)",
+  "selected_lambda_d": 0.1,
+  "dataset_version": "V5 Full Training Set (unified_manifest_v5.csv)",
+  "overall_metrics": {
+    "accuracy": 0.7624,
+    "macro_precision": 0.7578,
+    "weighted_precision": 0.8518,
+    "macro_recall": 0.753,
+    "weighted_recall": 0.7624,
+    "macro_f1": 0.7299,
+    "weighted_f1": 0.7912,
+    "macro_roc_auc": 0.9603,
+    "macro_pr_auc": 0.7915
+  },
+  "per_class_metrics": {
+    "COVID-19": {
+      "support": 292,
+      "precision": 0.992,
+      "recall": 0.8493,
+      "specificity": 0.9984,
+      "f1_score": 0.9151
+    },
+    "Normal": {
+      "support": 394,
+      "precision": 0.9162,
+      "recall": 0.8325,
+      "specificity": 0.9745,
+      "f1_score": 0.8723
+    },
+    "Pleural Effusion": {
+      "support": 152,
+      "precision": 0.4892,
+      "recall": 0.5987,
+      "specificity": 0.933,
+      "f1_score": 0.5385
+    },
+    "Pneumonia": {
+      "support": 423,
+      "precision": 0.9293,
+      "recall": 0.6832,
+      "specificity": 0.9808,
+      "f1_score": 0.7875
+    },
+    "Pulmonary Nodule / Mass": {
+      "support": 108,
+      "precision": 0.2795,
+      "recall": 0.7685,
+      "specificity": 0.8536,
+      "f1_score": 0.4099
+    },
+    "Tuberculosis": {
+      "support": 201,
+      "precision": 0.9405,
+      "recall": 0.7861,
+      "specificity": 0.9927,
+      "f1_score": 0.8564
+    }
+  },
+  "calibration_confidence": {
+    "mean_confidence_correct": 0.8594,
+    "mean_confidence_incorrect": 0.642
+  },
+  "confusion_matrix": [
+    [
+      248,
+      6,
+      6,
+      13,
+      10,
+      9
+    ],
+    [
+      0,
+      328,
+      9,
+      7,
+      50,
+      0
+    ],
+    [
+      0,
+      0,
+      91,
+      0,
+      61,
+      0
+    ],
+    [
+      0,
+      22,
+      44,
+      289,
+      67,
+      1
+    ],
+    [
+      0,
+      0,
+      25,
+      0,
+      83,
+      0
+    ],
+    [
+      2,
+      2,
+      11,
+      2,
+      26,
+      158
+    ]
+  ]
+}

@@ -1,0 +1,239 @@
+{
+  "is_modality_mismatch": true,
+  "modality_explanation": "The 692 images in data/raw/Lung Cancer were sourced from chest-ctscan-images.zip (axial thoracic CT slices), whereas COVID-19, Normal, Pneumonia, and Tuberculosis are 2D planar projection chest radiographs (CXRs). Because an axial CT slice possesses a distinct elliptical cross-section, dark perimeter, and completely different spatial anatomy compared to standard CXRs, the ResNet50 and CNN models trivially achieved near 100% class separability by recognizing CT scan artifacts and geometry rather than learning genuine radiographic lung cancer pathology.",
+  "class_statistics": {
+    "COVID-19": {
+      "total_files": 3616,
+      "sample_files": [
+        "COVID-1.png",
+        "COVID-10.png",
+        "COVID-100.png",
+        "COVID-1000.png",
+        "COVID-1001.png"
+      ],
+      "sample_shapes": [
+        [
+          299,
+          299,
+          1.0
+        ],
+        [
+          299,
+          299,
+          1.0
+        ],
+        [
+          299,
+          299,
+          1.0
+        ],
+        [
+          299,
+          299,
+          1.0
+        ],
+        [
+          299,
+          299,
+          1.0
+        ]
+      ],
+      "avg_corner_intensity": 73.45,
+      "avg_center_intensity": 182.54
+    },
+    "Lung Cancer": {
+      "total_files": 692,
+      "sample_files": [
+        "test_000108 (3).png",
+        "test_000108 (6).png",
+        "test_000108.png",
+        "test_000109 (2).png",
+        "test_000109 (4).png"
+      ],
+      "sample_shapes": [
+        [
+          282,
+          381,
+          1.35
+        ],
+        [
+          339,
+          488,
+          1.44
+        ],
+        [
+          285,
+          411,
+          1.44
+        ],
+        [
+          335,
+          486,
+          1.45
+        ],
+        [
+          357,
+          483,
+          1.35
+        ]
+      ],
+      "avg_corner_intensity": 0.1,
+      "avg_center_intensity": 119.04
+    },
+    "Normal": {
+      "total_files": 1583,
+      "sample_files": [
+        "test_IM-0001-0001.jpeg",
+        "test_IM-0003-0001.jpeg",
+        "test_IM-0005-0001.jpeg",
+        "test_IM-0006-0001.jpeg",
+        "test_IM-0007-0001.jpeg"
+      ],
+      "sample_shapes": [
+        [
+          1317,
+          1857,
+          1.41
+        ],
+        [
+          1509,
+          2111,
+          1.4
+        ],
+        [
+          1837,
+          2031,
+          1.11
+        ],
+        [
+          1326,
+          1663,
+          1.25
+        ],
+        [
+          1818,
+          2053,
+          1.13
+        ]
+      ],
+      "avg_corner_intensity": 12.54,
+      "avg_center_intensity": 210.42
+    },
+    "Pneumonia": {
+      "total_files": 4273,
+      "sample_files": [
+        "test_person100_bacteria_475.jpeg",
+        "test_person100_bacteria_477.jpeg",
+        "test_person100_bacteria_478.jpeg",
+        "test_person100_bacteria_479.jpeg",
+        "test_person100_bacteria_480.jpeg"
+      ],
+      "sample_shapes": [
+        [
+          762,
+          1106,
+          1.45
+        ],
+        [
+          680,
+          1024,
+          1.51
+        ],
+        [
+          624,
+          1128,
+          1.81
+        ],
+        [
+          552,
+          904,
+          1.64
+        ],
+        [
+          536,
+          880,
+          1.64
+        ]
+      ],
+      "avg_corner_intensity": 61.55,
+      "avg_center_intensity": 185.8
+    },
+    "Tuberculosis": {
+      "total_files": 700,
+      "sample_files": [
+        "Tuberculosis-1.png",
+        "Tuberculosis-10.png",
+        "Tuberculosis-100.png",
+        "Tuberculosis-101.png",
+        "Tuberculosis-102.png"
+      ],
+      "sample_shapes": [
+        [
+          512,
+          512,
+          1.0
+        ],
+        [
+          512,
+          512,
+          1.0
+        ],
+        [
+          512,
+          512,
+          1.0
+        ],
+        [
+          512,
+          512,
+          1.0
+        ],
+        [
+          512,
+          512,
+          1.0
+        ]
+      ],
+      "avg_corner_intensity": 96.12,
+      "avg_center_intensity": 178.98
+    }
+  },
+  "gradcam_analysis": {
+    "Lung Cancer": {
+      "image_path": "data\\raw\\Lung Cancer\\test_000108 (3).png",
+      "predicted_idx": 1,
+      "confidence": 100.0,
+      "all_probs": [
+        0.0,
+        100.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "Tuberculosis": {
+      "image_path": "data\\raw\\Tuberculosis\\Tuberculosis-1.png",
+      "predicted_idx": 0,
+      "confidence": 88.06,
+      "all_probs": [
+        88.06,
+        0.15,
+        0.0,
+        0.0,
+        11.79
+      ]
+    },
+    "Normal": {
+      "image_path": "data\\raw\\Normal\\test_IM-0001-0001.jpeg",
+      "predicted_idx": 2,
+      "confidence": 99.95,
+      "all_probs": [
+        0.02,
+        0.0,
+        99.95,
+        0.03,
+        0.0
+      ]
+    }
+  }
+}

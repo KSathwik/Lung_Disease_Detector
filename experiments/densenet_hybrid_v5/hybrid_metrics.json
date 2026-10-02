@@ -1,0 +1,111 @@
+{
+  "model": "DenseNet-121 + Hybrid Synthesis (Gaussian sigma=1.0 + CORAL lambda=0.01)",
+  "dataset_version": "V5 Full Training Set (unified_manifest_v5.csv)",
+  "overall_metrics": {
+    "accuracy": 0.7822,
+    "macro_precision": 0.7557,
+    "macro_recall": 0.765,
+    "macro_f1": 0.7395,
+    "weighted_f1": 0.8019,
+    "macro_roc_auc": 0.9609,
+    "macro_pr_auc": 0.7918
+  },
+  "per_class_metrics": {
+    "COVID-19": {
+      "support": 292,
+      "precision": 0.9965,
+      "recall": 0.976,
+      "specificity": 0.9992,
+      "f1_score": 0.9862
+    },
+    "Normal": {
+      "support": 394,
+      "precision": 0.8927,
+      "recall": 0.8655,
+      "specificity": 0.9651,
+      "f1_score": 0.8789
+    },
+    "Pleural Effusion": {
+      "support": 152,
+      "precision": 0.4368,
+      "recall": 0.5461,
+      "specificity": 0.9245,
+      "f1_score": 0.4854
+    },
+    "Pneumonia": {
+      "support": 423,
+      "precision": 0.9622,
+      "recall": 0.6619,
+      "specificity": 0.9904,
+      "f1_score": 0.7843
+    },
+    "Pulmonary Nodule / Mass": {
+      "support": 108,
+      "precision": 0.328,
+      "recall": 0.7593,
+      "specificity": 0.8851,
+      "f1_score": 0.4581
+    },
+    "Tuberculosis": {
+      "support": 201,
+      "precision": 0.9181,
+      "recall": 0.7811,
+      "specificity": 0.9898,
+      "f1_score": 0.8441
+    }
+  },
+  "calibration_confidence": {
+    "mean_confidence_correct": 0.8524,
+    "mean_confidence_incorrect": 0.6217
+  },
+  "confusion_matrix": [
+    [
+      285,
+      1,
+      1,
+      3,
+      0,
+      2
+    ],
+    [
+      0,
+      341,
+      2,
+      6,
+      45,
+      0
+    ],
+    [
+      0,
+      3,
+      83,
+      0,
+      66,
+      0
+    ],
+    [
+      1,
+      31,
+      57,
+      280,
+      42,
+      12
+    ],
+    [
+      0,
+      1,
+      25,
+      0,
+      82,
+      0
+    ],
+    [
+      0,
+      5,
+      22,
+      2,
+      15,
+      157
+    ]
+  ]
+}

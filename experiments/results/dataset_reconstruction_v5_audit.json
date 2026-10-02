@@ -1,0 +1,229 @@
+{
+  "status": "V5_RECONSTRUCTION_COMPLETE",
+  "dataset_name": "unified_manifest_v5.csv",
+  "total_images_v4": 10336,
+  "total_patients_v4": 10140,
+  "total_images_v5": 10547,
+  "total_patients_v5": 10270,
+  "new_images_added": 211,
+  "new_patients_added": 130,
+  "inherited_patient_scans": 67,
+  "cramers_v_v4": 0.7698,
+  "cramers_v_v5": 0.7654,
+  "split_distribution": {
+    "images": {
+      "train": 7398,
+      "val": 1579,
+      "test": 1570
+    },
+    "patients": {
+      "train": 7189,
+      "val": 1540,
+      "test": 1541
+    },
+    "percentages": {
+      "train": 70.14,
+      "val": 14.97,
+      "test": 14.89
+    }
+  },
+  "patient_leakage_across_splits": 0,
+  "montgomery_quarantine_scans_in_v5": 0,
+  "view_position_distribution": {
+    "PA": 5883,
+    "UNKNOWN": 3141,
+    "AP": 1523
+  },
+  "view_by_class": {
+    "AP": {
+      "COVID-19": 0,
+      "Normal": 22,
+      "Pleural Effusion": 64,
+      "Pneumonia": 1403,
+      "Pulmonary Nodule / Mass": 34,
+      "Tuberculosis": 0
+    },
+    "PA": {
+      "COVID-19": 0,
+      "Normal": 1415,
+      "Pleural Effusion": 998,
+      "Pneumonia": 1402,
+      "Pulmonary Nodule / Mass": 720,
+      "Tuberculosis": 1348
+    },
+    "UNKNOWN": {
+      "COVID-19": 1942,
+      "Normal": 1199,
+      "Pleural Effusion": 0,
+      "Pneumonia": 0,
+      "Pulmonary Nodule / Mass": 0,
+      "Tuberculosis": 0
+    }
+  },
+  "view_by_source": {
+    "AP": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 1395,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 0,
+      "NIH_ChestX-ray14": 128,
+      "TBX11K": 0,
+      "VinBigData_VinDr_CXR": 0
+    },
+    "PA": {
+      "Existing_COVID-19": 0,
+      "Existing_Normal": 0,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 665,
+      "JSRT": 145,
+      "NIH_ChestX-ray14": 329,
+      "TBX11K": 3277,
+      "VinBigData_VinDr_CXR": 1467
+    },
+    "UNKNOWN": {
+      "Existing_COVID-19": 1942,
+      "Existing_Normal": 1199,
+      "Existing_Pneumonia": 0,
+      "Existing_Tuberculosis": 0,
+      "JSRT": 0,
+      "NIH_ChestX-ray14": 0,
+      "TBX11K": 0,
+      "VinBigData_VinDr_CXR": 0
+    }
+  },
+  "b4_effusion_disparity_resolution": {
+    "vindr_effusion_scans": 931,
+    "nih_effusion_scans_v4": 86,
+    "nih_effusion_scans_v5": 131,
+    "nih_expansion_scans": 45,
+    "nih_growth_rate_pct": 52.33
+  },
+  "nodule_mass_expansion": {
+    "vindr_nodule_scans": 536,
+    "jsrt_nodule_scans": 78,
+    "nih_nodule_scans_v4": 70,
+    "nih_nodule_scans_v5": 140,
+    "nih_growth_rate_pct": 100.0
+  },
+  "class_breakdown": {
+    "COVID-19": {
+      "v4_total": 1942,
+      "v5_total": 1942,
+      "change": 0,
+      "sources": {
+        "Existing_COVID-19": 1942
+      },
+      "v4_sources": {
+        "Existing_COVID-19": 1942
+      },
+      "entropy_bits": -0.0,
+      "normalized_entropy": -0.0,
+      "dominant_source": "Existing_COVID-19",
+      "dominant_source_percentage": 100.0
+    },
+    "Normal": {
+      "v4_total": 2547,
+      "v5_total": 2636,
+      "change": 89,
+      "sources": {
+        "Existing_Normal": 1199,
+        "TBX11K": 1199,
+        "NIH_ChestX-ray14": 171,
+        "JSRT": 67
+      },
+      "v4_sources": {
+        "Existing_Normal": 1199,
+        "TBX11K": 1199,
+        "NIH_ChestX-ray14": 82,
+        "JSRT": 67
+      },
+      "entropy_bits": 1.4246,
+      "normalized_entropy": 0.4749,
+      "dominant_source": "Existing_Normal",
+      "dominant_source_percentage": 45.49
+    },
+    "Pleural Effusion": {
+      "v4_total": 1017,
+      "v5_total": 1062,
+      "change": 45,
+      "sources": {
+        "VinBigData_VinDr_CXR": 931,
+        "NIH_ChestX-ray14": 131
+      },
+      "v4_sources": {
+        "VinBigData_VinDr_CXR": 931,
+        "NIH_ChestX-ray14": 86
+      },
+      "entropy_bits": 0.5389,
+      "normalized_entropy": 0.1796,
+      "dominant_source": "VinBigData_VinDr_CXR",
+      "dominant_source_percentage": 87.66
+    },
+    "Pneumonia": {
+      "v4_total": 2798,
+      "v5_total": 2805,
+      "change": 7,
+      "sources": {
+        "Existing_Pneumonia": 1395,
+        "TBX11K": 1395,
+        "NIH_ChestX-ray14": 15
+      },
+      "v4_sources": {
+        "Existing_Pneumonia": 1395,
+        "TBX11K": 1395,
+        "NIH_ChestX-ray14": 8
+      },
+      "entropy_bits": 1.0427,
+      "normalized_entropy": 0.3476,
+      "dominant_source": "Existing_Pneumonia",
+      "dominant_source_percentage": 49.73
+    },
+    "Pulmonary Nodule / Mass": {
+      "v4_total": 684,
+      "v5_total": 754,
+      "change": 70,
+      "sources": {
+        "VinBigData_VinDr_CXR": 536,
+        "NIH_ChestX-ray14": 140,
+        "JSRT": 78
+      },
+      "v4_sources": {
+        "VinBigData_VinDr_CXR": 536,
+        "JSRT": 78,
+        "NIH_ChestX-ray14": 70
+      },
+      "entropy_bits": 1.1396,
+      "normalized_entropy": 0.3799,
+      "dominant_source": "VinBigData_VinDr_CXR",
+      "dominant_source_percentage": 71.09
+    },
+    "Tuberculosis": {
+      "v4_total": 1348,
+      "v5_total": 1348,
+      "change": 0,
+      "sources": {
+        "TBX11K": 683,
+        "Existing_Tuberculosis": 665
+      },
+      "v4_sources": {
+        "TBX11K": 683,
+        "Existing_Tuberculosis": 665
+      },
+      "entropy_bits": 0.9999,
+      "normalized_entropy": 0.3333,
+      "dominant_source": "TBX11K",
+      "dominant_source_percentage": 50.67
+    }
+  },
+  "source_breakdown": {
+    "TBX11K": 3277,
+    "Existing_COVID-19": 1942,
+    "VinBigData_VinDr_CXR": 1467,
+    "Existing_Pneumonia": 1395,
+    "Existing_Normal": 1199,
+    "Existing_Tuberculosis": 665,
+    "NIH_ChestX-ray14": 457,
+    "JSRT": 145
+  }
+}

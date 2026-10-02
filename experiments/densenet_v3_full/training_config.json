@@ -1,0 +1,49 @@
+{
+  "architecture": "DenseNet121",
+  "random_seed": 42,
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "batch_size": 32,
+  "classes": [
+    "COVID-19",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ],
+  "class_weights": {
+    "0": 0.8659553593328427,
+    "1": 0.6822222222222222,
+    "2": 1.8105128205128205,
+    "3": 0.6028859289617486,
+    "4": 2.7304717710750195,
+    "5": 1.2466454802259888
+  },
+  "train_samples": 7061,
+  "val_samples": 1515,
+  "test_samples": 1514,
+  "train_class_distribution": {
+    "Pneumonia": 1952,
+    "Normal": 1725,
+    "COVID-19": 1359,
+    "Tuberculosis": 944,
+    "Pleural Effusion": 650,
+    "Pulmonary Nodule / Mass": 431
+  },
+  "phase1": {
+    "epochs": 2,
+    "learning_rate": 0.001,
+    "optimizer": "Adam",
+    "loss": "sparse_categorical_crossentropy"
+  },
+  "phase2": {
+    "epochs": 2,
+    "learning_rate": 1e-05,
+    "optimizer": "Adam",
+    "fine_tune_layers": 30
+  }
+}

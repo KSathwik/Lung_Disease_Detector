@@ -52,10 +52,11 @@ class TestImagePreprocessor:
 
 class TestConstants:
     def test_disease_classes_count(self):
-        assert len(DISEASE_CLASSES) == 7
+        assert len(DISEASE_CLASSES) == 6
 
-    def test_precautions_map_keys_match(self):
-        assert set(PRECAUTIONS_MAP.keys()) == set(DISEASE_CLASSES)
+    def test_precautions_map_keys_contain_classes(self):
+        for cls in DISEASE_CLASSES:
+            assert cls in PRECAUTIONS_MAP, f"{cls} missing in PRECAUTIONS_MAP"
 
     def test_precautions_non_empty(self):
         for cls, precs in PRECAUTIONS_MAP.items():

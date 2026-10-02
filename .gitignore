@@ -9,9 +9,9 @@ venv/
 backend/.env
 *.egg-info/
 
-# Model files (large - use Git LFS or Releases)
-models/*.h5
-models/*.keras
+# Model files (large binary weights - use Git LFS or Releases)
+*.h5
+*.keras
 
 # Data (large - do not commit raw images / dataset archives)
 data/raw/
@@ -40,5 +40,22 @@ Thumbs.db
 logs/
 
 # Uploads
-uploads/
-backend/uploads/
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Build & Coverage
+dist/
+build/
+coverage/
+.cache/
+.next/
+.ipynb_checkpoints/
+
+# Temporary & Editor files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~

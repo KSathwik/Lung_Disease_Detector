@@ -1,0 +1,247 @@
+{
+  "audit_version": "Phase 2 Feasibility v1.0",
+  "taxonomy": {
+    "classes": [
+      "Normal",
+      "Pneumonia",
+      "COVID-19",
+      "Tuberculosis",
+      "Pleural Effusion",
+      "Pulmonary Nodule / Mass"
+    ],
+    "critical_rules": [
+      "'Pulmonary Nodule / Mass' is a radiological opacity category, NOT histologically confirmed lung cancer.",
+      "Benign nodules (granulomas, hamartomas, tuberculomas) must NOT be labeled as cancer.",
+      "Montgomery dataset is strictly quarantined (0 images in training/validation/test)."
+    ]
+  },
+  "candidates": {
+    "NIH_ChestX-ray14": {
+      "official_name": "NIH ChestX-ray14 (NIH Clinical Center)",
+      "official_source": "National Institutes of Health (NIH) Clinical Center, Bethesda, MD, USA (Wang et al., CVPR 2017)",
+      "license_access": "Creative Commons CC0 / Public Domain for biomedical research with attribution",
+      "total_images": 112120,
+      "total_patients": 30805,
+      "available_labels": [
+        "Atelectasis",
+        "Cardiomegaly",
+        "Effusion",
+        "Infiltration",
+        "Mass",
+        "Nodule",
+        "Pneumonia",
+        "Pneumothorax",
+        "Consolidation",
+        "Edema",
+        "Emphysema",
+        "Fibrosis",
+        "Pleural_Thickening",
+        "Hernia",
+        "No Finding"
+      ],
+      "label_definitions": "NLP text-mined from diagnostic radiology reports using NegBio and pattern-matching rules",
+      "projections": "Frontal chest radiographs (67,310 PA, 44,810 AP); 0 lateral views",
+      "patient_ids_available": true,
+      "patient_id_format": "Embedded in filename: 00000001_000.png -> Patient ID '00000001'",
+      "duplicate_detection_possible": true,
+      "metadata_available": "Data_Entry_2017.csv contains Patient ID, Findings, Age, Gender, View Position, Dimensions",
+      "is_planar_cxr": true,
+      "label_provenance": "Automated NLP extraction from text reports (Oakden-Rayner 2020 documents 10-18% label noise)",
+      "taxonomy_compatibility": {
+        "Effusion": "Directly compatible with 'Pleural Effusion' (radiological finding)",
+        "Pneumonia": "Compatible with 'Pneumonia', but subject to NLP text-mining noise",
+        "Nodule_Mass": "Nodule (<3cm) and Mass (>3cm) map defensibly to 'Pulmonary Nodule / Mass' (NOT cancer)",
+        "No_Finding": "Compatible with 'Normal' after excluding follow-up scans with active thoracic co-morbidities"
+      },
+      "potential_confounding_reduction": "High: Can supply independent 2nd source for Pleural Effusion and 3rd source for Pneumonia/Nodule/Normal",
+      "expected_usable_counts": {
+        "Pleural_Effusion": 1000,
+        "Pneumonia": 1000,
+        "Pulmonary_Nodule_Mass": 500,
+        "Normal": 1100
+      },
+      "known_limitations": [
+        "NLP-derived labels exhibit documented 10-18% noise rate relative to board radiologist consensus",
+        "Large full archive size (~45 GB) requires bandwidth-heavy staged download",
+        "Lacks COVID-19 and Tuberculosis diagnostic categories"
+      ],
+      "no_blind_download_decision": "PENDING MANUAL VERIFICATION & STAGED SUBSET ACQUISITION",
+      "decision_rationale": "High scientific value for breaking Pleural Effusion single-source reliance, but bulk download is deferred until staged sub-manifest download and label verification pipeline is active."
+    },
+    "BIMCV_COVID19+": {
+      "official_name": "BIMCV-COVID19+ (BIMCV-PADCHEST)",
+      "official_source": "Valencian Region Medical Image Bank (BIMCV), Regional Ministry of Universal Health, Spain (de la Iglesia Vay\u00e1 et al., 2020)",
+      "license_access": "BIMCV Open Research License / Academic and non-commercial research with user registration",
+      "total_images": 2460,
+      "total_patients": 1311,
+      "available_labels": [
+        "COVID-19 Positive (RT-PCR confirmed)",
+        "Non-COVID-19 pneumonia",
+        "Normal controls",
+        "Radiological findings (MeSH mapped)"
+      ],
+      "label_definitions": "Laboratory RT-PCR molecular diagnostic test confirmation linked to regional hospital EMR and DICOM",
+      "projections": "Mixed: PA, AP, Lateral, and CT axial slices (Strict filtering required: Modality == DX/CR and PatientPosition in PA/AP)",
+      "patient_ids_available": true,
+      "patient_id_format": "Anonymized UUID session identifiers in DICOM metadata",
+      "duplicate_detection_possible": true,
+      "metadata_available": "Rich DICOM metadata headers, TSV session manifests, and MeSH radiological annotations",
+      "is_planar_cxr": "Mixed (Contains planar CXR and CT; CT slices must be filtered out)",
+      "label_provenance": "Gold-standard RT-PCR laboratory confirmation (highest clinical diagnostic reliability for COVID-19)",
+      "taxonomy_compatibility": {
+        "COVID-19": "Directly compatible with 'COVID-19' clinical class"
+      },
+      "potential_confounding_reduction": "Critical: Sole medical-grade multi-hospital European cohort capable of breaking the 100% single-source dominance of COVID-19 in LungAI",
+      "expected_usable_counts": {
+        "COVID-19": 1000
+      },
+      "known_limitations": [
+        "Requires multi-stage DICOM extraction, window leveling, and axial CT filtering",
+        "Requires academic user registration and agreement to data usage governance",
+        "Contains lateral views that must be strictly quarantined"
+      ],
+      "no_blind_download_decision": "PENDING MANUAL VERIFICATION & REGISTRATION",
+      "decision_rationale": "Scientifically essential to resolve COVID-19 single-source monopoly, but requires credentialed registration and projection filter validation before downloading."
+    },
+    "TBX11K": {
+      "official_name": "TBX11K: Large Scale Dataset for Tuberculosis Detection and Localization",
+      "official_source": "Liu et al., ACM Multimedia 2020",
+      "license_access": "Academic Open Research License",
+      "total_images": 8811,
+      "total_patients": 8811,
+      "available_labels": [
+        "healthy",
+        "sick_but_no_tb",
+        "tb"
+      ],
+      "label_definitions": "Consensus radiologist annotation panel with microbiological verification for TB",
+      "projections": "100% Frontal planar chest radiographs",
+      "patient_ids_available": true,
+      "patient_id_format": "Unique study identifier in filename stem (e.g., tb_0012, healthy_0542)",
+      "duplicate_detection_possible": true,
+      "metadata_available": "data.csv with bounding boxes, disease classification, image dimensions",
+      "is_planar_cxr": true,
+      "label_provenance": "Clinical panel annotation & laboratory sputum confirmation for TB",
+      "taxonomy_compatibility": {
+        "healthy": "Directly compatible with 'Normal'",
+        "sick_but_no_tb": "Directly compatible with 'Pneumonia' (non-TB pulmonary infections)",
+        "tb": "Directly compatible with 'Tuberculosis'"
+      },
+      "potential_confounding_reduction": "Very High: Instantly breaks Pneumonia single-source monopoly and diversifies Normal and TB using verified local data",
+      "expected_usable_counts": {
+        "Normal": 1469,
+        "Pneumonia": 1800,
+        "Tuberculosis": 796
+      },
+      "known_limitations": [
+        "High square aspect ratio (1:1) from pre-processing requires standard letterboxing/aspect-ratio handling"
+      ],
+      "no_blind_download_decision": "ACCEPTED (LOCALLY VERIFIED & AUDITED)",
+      "decision_rationale": "Already present on local disk with verified annotations and zero download/license risk."
+    },
+    "VinDr-CXR_VinBigData": {
+      "official_name": "VinDr-CXR: An Open Dataset of Chest X-rays with Radiologist's Annotations",
+      "official_source": "Vingroup Big Data Institute / PhysioNet (Nguyen et al., 2021)",
+      "license_access": "PhysioNet Credentialed Health Data License",
+      "total_images": 4394,
+      "total_patients": 4394,
+      "available_labels": [
+        "Pleural_effusion",
+        "Nodule/Mass",
+        "Infiltration",
+        "Cardiomegaly",
+        "Aortic_enlargement",
+        "Pulmonary_fibrosis",
+        "Pleural_thickening"
+      ],
+      "label_definitions": "Consensus annotations by 17 board-certified radiologists with bounding box coordinates",
+      "projections": "100% Frontal chest radiographs (PA/AP)",
+      "patient_ids_available": true,
+      "patient_id_format": "Unique study UUID in filename",
+      "duplicate_detection_possible": true,
+      "metadata_available": "train_annotations.json and val_annotations.json (COCO format)",
+      "is_planar_cxr": true,
+      "label_provenance": "17 board-certified radiologists, 3 annotations per image merged via Weighted Boxes Fusion",
+      "taxonomy_compatibility": {
+        "Pleural_effusion": "Directly compatible with 'Pleural Effusion'",
+        "Nodule/Mass": "Directly compatible with 'Pulmonary Nodule / Mass' (Option B)"
+      },
+      "potential_confounding_reduction": "High: Primary local source for Pleural Effusion and Nodule/Mass findings",
+      "expected_usable_counts": {
+        "Pleural_Effusion": 1032,
+        "Pulmonary_Nodule_Mass": 626
+      },
+      "known_limitations": [
+        "Downscaled COCO version stored in local archive",
+        "Multi-label findings require filtering to prevent contradictory class assignment"
+      ],
+      "no_blind_download_decision": "ACCEPTED (LOCALLY VERIFIED & AUDITED)",
+      "decision_rationale": "Locally available, high diagnostic precision from 17 radiologist consensus."
+    },
+    "JSRT": {
+      "official_name": "Japanese Society of Radiological Technology (JSRT) Standard Database",
+      "official_source": "JSRT & Japanese Radiological Society (Shiraishi et al., AJR 2000)",
+      "license_access": "Open Academic Use for Medical Image Processing",
+      "total_images": 247,
+      "total_patients": 247,
+      "available_labels": [
+        "malignant nodule (100)",
+        "benign nodule (54)",
+        "non-nodule healthy control (93)"
+      ],
+      "label_definitions": "Histologically confirmed biopsy/resection pathology for nodules; clinical follow-up for controls",
+      "projections": "100% PA frontal chest radiographs",
+      "patient_ids_available": true,
+      "patient_id_format": "Standard study ID (JPCLN001 to JPCLN154, JPCNN001 to JPCNN093)",
+      "duplicate_detection_possible": true,
+      "metadata_available": "jsrt_metadata.csv with pathology, diagnosis, age, sex, nodule location, degree of subtlety",
+      "is_planar_cxr": true,
+      "label_provenance": "Tissue biopsy histological pathology (highest surgical ground truth)",
+      "taxonomy_compatibility": {
+        "malignant": "Compatible with 'Pulmonary Nodule / Mass' (100 cases)",
+        "benign": "PURGED / EXCLUDED: 54 cases (tuberculomas, granulomas, hamartomas) must NOT be labeled as cancer",
+        "non-nodule": "Compatible with 'Normal' (93 cases)"
+      },
+      "potential_confounding_reduction": "Moderate: Supplies high-integrity benchmark pathology for Nodule/Mass and Normal",
+      "expected_usable_counts": {
+        "Pulmonary_Nodule_Mass": 100,
+        "Normal": 92
+      },
+      "known_limitations": [
+        "Film-digitized CXR archive with characteristic digitization artifacts and high dynamic range"
+      ],
+      "no_blind_download_decision": "ACCEPTED (PATHOLOGY AUDITED & FILTERED)",
+      "decision_rationale": "54 benign cases purged; 100 malignant nodules and 92 normal controls retained."
+    },
+    "Montgomery_County_CXR": {
+      "official_name": "Montgomery County Chest X-ray Set",
+      "official_source": "Department of Health and Human Services, Montgomery County, MD, USA & NLM",
+      "license_access": "Public Access for Research",
+      "total_images": 138,
+      "total_patients": 138,
+      "available_labels": [
+        "normal (80)",
+        "tuberculosis (58)"
+      ],
+      "label_definitions": "Mycobacterial culture and clinical radiological diagnostic workup",
+      "projections": "100% PA frontal chest radiographs",
+      "patient_ids_available": true,
+      "patient_id_format": "MCUCXR_XXXX_0 / MCUCXR_XXXX_1",
+      "duplicate_detection_possible": true,
+      "metadata_available": "montgomery_metadata.csv with clinical findings",
+      "is_planar_cxr": true,
+      "label_provenance": "County public health clinic clinical and microbiological diagnostic records",
+      "taxonomy_compatibility": "Fully compatible, but strictly quarantined for external out-of-domain evaluation",
+      "potential_confounding_reduction": "N/A - Reserved strictly for external testing",
+      "expected_usable_counts": {
+        "Training": 0,
+        "Validation": 0,
+        "Internal_Test": 0,
+        "Quarantined_External": 138
+      },
+      "known_limitations": "Historic film digitization with dense black non-anatomical borders",
+      "no_blind_download_decision": "REJECTED FROM ALL INTERNAL MANIFESTS (STRICT QUARANTINE)",
+      "decision_rationale": "Reserved 100% exclusively as pristine held-out external benchmark to prevent data leakage and benchmark contamination."
+    }
+  }
+}

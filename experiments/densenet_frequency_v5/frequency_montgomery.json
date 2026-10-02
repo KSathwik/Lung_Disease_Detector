@@ -1,0 +1,36 @@
+{
+  "external_cohort": "Montgomery County (Quarantined External Benchmark)",
+  "model": "DenseNet-121 + Frequency Preprocessing (Gaussian (sigma=1.0))",
+  "filter_applied": {
+    "method": "Gaussian",
+    "filter_type": "gaussian",
+    "parameters": {
+      "sigma": 1.0
+    },
+    "display": "Gaussian (sigma=1.0)",
+    "val_accuracy": 0.8892,
+    "val_macro_f1": 0.8457,
+    "val_macro_roc_auc": 0.9849,
+    "val_macro_pr_auc": 0.8827,
+    "decision": "Selected (Top Validation Macro F1)"
+  },
+  "total_scans": 138,
+  "tb_cases": 58,
+  "normal_cases": 80,
+  "exact_tb_recall": 0.0,
+  "exact_normal_specificity": 0.0,
+  "binary_abnormal_sensitivity": 1.0,
+  "confidence_metrics": {
+    "mean_max_prob": 0.8691,
+    "median_max_prob": 0.9034,
+    "mean_margin": 0.7489,
+    "mean_entropy": 0.5382
+  },
+  "tb_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 50,
+    "Pleural Effusion": 8
+  },
+  "normal_predictions_breakdown": {
+    "Pulmonary Nodule / Mass": 80
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "phase": "Phase 2F - Final V5 Pre-Acquisition Validation",
+  "decision_gate": "V5_PIPELINE_VALIDATED_WAITING_FOR_BIMCV",
+  "all_tests_passed": true,
+  "tests": {
+    "schema_validation": {
+      "status": "PASS",
+      "missing_fields": [],
+      "total_required": 18,
+      "total_defined": 18
+    },
+    "candidate_evaluator": {
+      "status": "PASS",
+      "failures": [],
+      "cases_tested": 10
+    },
+    "view_normalization": {
+      "status": "PASS",
+      "failures": [],
+      "views_tested": 14
+    },
+    "duplicate_detection": {
+      "status": "PASS",
+      "md5_exact_match": true,
+      "md5_distinct_preserved": true,
+      "dhash_near_detected": true,
+      "dhash_distinct_preserved": true
+    },
+    "patient_splitting": {
+      "status": "PASS",
+      "deterministic": "YES",
+      "leakage": "NO",
+      "train_patients": 7095,
+      "val_patients": 1519,
+      "test_patients": 1526,
+      "overlap_counts": {
+        "train_val": 0,
+        "train_test": 0,
+        "val_test": 0
+      }
+    },
+    "source_held_out_generator": {
+      "status": "PASS",
+      "pneumonia_samples": {
+        "train_guangzhou": 1395,
+        "test_tbx11k": 1395,
+        "patient_overlap": 0
+      },
+      "effusion_samples": {
+        "train_vindr": 931,
+        "test_nih": 86,
+        "patient_overlap": 0
+      }
+    },
+    "view_controlled_generator": {
+      "status": "PASS",
+      "all_train_strictly_pa": true,
+      "all_test_strictly_pa": true,
+      "ap_images_properly_excluded": true,
+      "test_pa_count": 41,
+      "original_total_nih_effusion": 86,
+      "patient_overlap": 0
+    },
+    "v4_audit_reproducibility": {
+      "status": "PASS",
+      "total_images": 10336,
+      "total_patients": 10140,
+      "cramers_v": 0.7698,
+      "single_source_classes": [
+        "COVID-19"
+      ],
+      "expected_matches": {
+        "images": true,
+        "patients": true,
+        "cramers_v": true,
+        "covid_single_source": true
+      }
+    },
+    "prospective_v5_comparison": {
+      "status": "PASS",
+      "synthetic_fixture_label": "SYNTHETIC_TEST_ONLY",
+      "calculated_images": 10436,
+      "covid_independent_sources": 2,
+      "single_source_classes_remaining": [],
+      "cramers_v_calculated": 0.7698
+    },
+    "failure_safe_behavior": {
+      "status": "PASS",
+      "all_illegal_records_rejected": true,
+      "scenarios_tested": 7
+    },
+    "montgomery_quarantine": {
+      "status": "PASS",
+      "montgomery_in_v4": 0,
+      "montgomery_in_splits": 0,
+      "montgomery_in_holdouts": 0,
+      "quarantine_intact": true
+    }
+  },
+  "governance_statements": {
+    "v5_constructed": false,
+    "v5_cramers_v_measured": false,
+    "bimcv_acquired": false,
+    "model_trained": false,
+    "domain_generalization_implemented": false,
+    "active_ground_truth_dataset": "unified_manifest_v4.csv"
+  }
+}

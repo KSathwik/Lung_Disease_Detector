@@ -1,0 +1,88 @@
+{
+  "experiment_registry_version": "1.0",
+  "governance": "LOCKED",
+  "experiments": {
+    "V5_BASELINE": {
+      "identifier": "V5_BASELINE",
+      "objective": "Establish controlled six-class DenseNet-121 ERM baseline on Unified Dataset V5",
+      "dataset": "unified_manifest_v5.csv (Pending BIMCV Acquisition)",
+      "train_cohort": "V5 Train Partition (70% patient-isolated, all 6 classes multi-source)",
+      "val_cohort": "V5 Validation Partition (15% patient-isolated)",
+      "test_cohort": "V5 Internal Test Partition (15% patient-isolated)",
+      "model": "DenseNet-121 (Frozen backbone + Dense head, fine-tuned)",
+      "metrics": [
+        "Accuracy",
+        "Macro F1",
+        "Weighted F1",
+        "Macro ROC-AUC",
+        "Per-class Recall/Precision"
+      ],
+      "leakage_controls": "Patient-level splitting (seed 42), MD5/dHash duplicate exclusion",
+      "status": "BLOCKED_BIMCV_ACCESS"
+    },
+    "V5_SOURCE_HOLDOUT": {
+      "identifier": "V5_SOURCE_HOLDOUT",
+      "objective": "Evaluate bidirectional cross-hospital generalization across all multi-source classes",
+      "dataset": "unified_manifest_v5.csv (Pending BIMCV Acquisition)",
+      "train_cohort": "Source A independent domain",
+      "test_cohort": "Source B held-out independent hospital domain",
+      "model": "DenseNet-121 baseline",
+      "metrics": [
+        "Sensitivity",
+        "Specificity",
+        "F1-Score",
+        "ROC-AUC",
+        "Directional Asymmetry Gap"
+      ],
+      "leakage_controls": "Strict source isolation; zero cross-source patient overlap",
+      "status": "BLOCKED_BIMCV_ACCESS"
+    },
+    "V5_VIEW_CONTROLLED": {
+      "identifier": "V5_VIEW_CONTROLLED",
+      "objective": "Isolate institutional/scanner domain shift by strictly filtering cross-source evaluation to PA erect radiographs",
+      "dataset": "unified_manifest_v5.csv (Pending BIMCV Acquisition)",
+      "train_cohort": "Source A (PA strictly)",
+      "test_cohort": "Source B (PA strictly)",
+      "model": "DenseNet-121 baseline",
+      "metrics": [
+        "PA-Controlled Sensitivity",
+        "Specificity",
+        "F1-Score",
+        "ROC-AUC"
+      ],
+      "leakage_controls": "Exclusion of all AP bedside and non-PA radiographs",
+      "status": "BLOCKED_BIMCV_ACCESS"
+    },
+    "V5_MONTGOMERY_EXTERNAL": {
+      "identifier": "V5_MONTGOMERY_EXTERNAL",
+      "objective": "External zero-shot clinical validation on quarantined Montgomery County archive (N=138)",
+      "dataset": "data/downloads/montgomery (Strictly external)",
+      "train_cohort": "None (Evaluation only)",
+      "test_cohort": "Montgomery County (58 TB cases, 80 Normal controls)",
+      "model": "DenseNet-121 baseline & subsequent DG models",
+      "metrics": [
+        "Montgomery TB Exact Recall",
+        "Montgomery Normal Specificity",
+        "ROC-AUC"
+      ],
+      "leakage_controls": "Zero Montgomery images admitted into training, validation, or threshold tuning",
+      "status": "BLOCKED_BIMCV_ACCESS"
+    },
+    "V5_DOMAIN_GENERALIZATION_01": {
+      "identifier": "V5_DOMAIN_GENERALIZATION_01",
+      "objective": "Implement and evaluate proposed domain-generalization method (DANN/CORAL/MMD) against frozen baseline",
+      "dataset": "unified_manifest_v5.csv (Pending BIMCV Acquisition)",
+      "train_cohort": "V5 Train Partition with domain labels",
+      "test_cohort": "Identical V5 Internal Test, Source-Holdout, View-Controlled, and Montgomery cohorts",
+      "model": "Domain-Invariant Architecture (Backbone + Task Classifier + Domain Regularizer)",
+      "metrics": [
+        "Source-Held-Out Macro F1",
+        "Asymmetry Reduction",
+        "Worst-Source Recall",
+        "External Generalization"
+      ],
+      "leakage_controls": "Identical frozen partitions; zero test-set peeking",
+      "status": "NOT_STARTED"
+    }
+  }
+}

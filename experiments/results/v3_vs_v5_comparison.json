@@ -1,0 +1,86 @@
+{
+  "comparison": "DenseNet-121: Full V3 vs Full V5",
+  "v3_overall": {
+    "accuracy": 0.7853,
+    "macro_precision": 0.7426,
+    "weighted_precision": 0.8443,
+    "macro_recall": 0.7527,
+    "weighted_recall": 0.7853,
+    "macro_f1": 0.7328,
+    "weighted_f1": 0.8054,
+    "macro_roc_auc": 0.9677,
+    "macro_pr_auc": 0.8015
+  },
+  "v5_overall": {
+    "accuracy": 0.7618,
+    "macro_precision": 0.7482,
+    "weighted_precision": 0.841,
+    "macro_recall": 0.7462,
+    "weighted_recall": 0.7618,
+    "macro_f1": 0.7263,
+    "weighted_f1": 0.7879,
+    "macro_roc_auc": 0.96,
+    "macro_pr_auc": 0.7927
+  },
+  "metric_deltas": {
+    "accuracy": -0.0235,
+    "macro_precision": 0.0056,
+    "weighted_precision": -0.0033,
+    "macro_recall": -0.0065,
+    "weighted_recall": -0.0235,
+    "macro_f1": -0.0065,
+    "weighted_f1": -0.0175,
+    "macro_roc_auc": -0.0077,
+    "macro_pr_auc": -0.0088
+  },
+  "per_class_comparison": {
+    "COVID-19": {
+      "v3_f1": 0.9185,
+      "v5_f1": 0.9023,
+      "delta_f1": -0.0162,
+      "v3_recall": 0.8493,
+      "v5_recall": 0.8219,
+      "delta_recall": -0.0274
+    },
+    "Normal": {
+      "v3_f1": 0.9,
+      "v5_f1": 0.8654,
+      "delta_f1": -0.0346,
+      "v3_recall": 0.9,
+      "v5_recall": 0.8401,
+      "delta_recall": -0.0599
+    },
+    "Pleural Effusion": {
+      "v3_f1": 0.5824,
+      "v5_f1": 0.5413,
+      "delta_f1": -0.0411,
+      "v3_recall": 0.6972,
+      "v5_recall": 0.625,
+      "delta_recall": -0.0722
+    },
+    "Pneumonia": {
+      "v3_f1": 0.7984,
+      "v5_f1": 0.7925,
+      "delta_f1": -0.0059,
+      "v3_recall": 0.7119,
+      "v5_recall": 0.695,
+      "delta_recall": -0.0169
+    },
+    "Pulmonary Nodule / Mass": {
+      "v3_f1": 0.3623,
+      "v5_f1": 0.4021,
+      "delta_f1": 0.0398,
+      "v3_recall": 0.5618,
+      "v5_recall": 0.6944,
+      "delta_recall": 0.1326
+    },
+    "Tuberculosis": {
+      "v3_f1": 0.8355,
+      "v5_f1": 0.8541,
+      "delta_f1": 0.0186,
+      "v3_recall": 0.796,
+      "v5_recall": 0.801,
+      "delta_recall": 0.005
+    }
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "phase": "Phase 2D - BIMCV Access Verification + V5 Dataset Design/Feasibility",
+  "bimcv_access_status": "ACCESS_PENDING",
+  "governance_decision": "BIMCV_ACCESS_PENDING",
+  "current_v4_metrics": {
+    "total_images": 10336,
+    "total_patients": 10140,
+    "cramers_v": 0.7698,
+    "single_source_classes": [
+      "COVID-19"
+    ],
+    "multi_source_classes": [
+      "Normal",
+      "Pleural Effusion",
+      "Pneumonia",
+      "Tuberculosis",
+      "Pulmonary Nodule / Mass"
+    ],
+    "view_distribution_by_source": {
+      "Existing_COVID-19": {
+        "AP": 0,
+        "Frontal_Unspecified": 1942,
+        "PA": 0
+      },
+      "Existing_Normal": {
+        "AP": 0,
+        "Frontal_Unspecified": 1199,
+        "PA": 0
+      },
+      "Existing_Pneumonia": {
+        "AP": 1395,
+        "Frontal_Unspecified": 0,
+        "PA": 0
+      },
+      "Existing_Tuberculosis": {
+        "AP": 0,
+        "Frontal_Unspecified": 0,
+        "PA": 665
+      },
+      "JSRT": {
+        "AP": 0,
+        "Frontal_Unspecified": 0,
+        "PA": 145
+      },
+      "NIH_ChestX-ray14": {
+        "AP": 88,
+        "Frontal_Unspecified": 0,
+        "PA": 158
+      },
+      "TBX11K": {
+        "AP": 0,
+        "Frontal_Unspecified": 0,
+        "PA": 3277
+      },
+      "VinBigData_VinDr_CXR": {
+        "AP": 0,
+        "Frontal_Unspecified": 0,
+        "PA": 1467
+      }
+    },
+    "view_distribution_by_class": {
+      "COVID-19": {
+        "AP": 0,
+        "Frontal_Unspecified": 1942,
+        "PA": 0
+      },
+      "Normal": {
+        "AP": 16,
+        "Frontal_Unspecified": 1199,
+        "PA": 1332
+      },
+      "Pleural Effusion": {
+        "AP": 45,
+        "Frontal_Unspecified": 0,
+        "PA": 972
+      },
+      "Pneumonia": {
+        "AP": 1400,
+        "Frontal_Unspecified": 0,
+        "PA": 1398
+      },
+      "Pulmonary Nodule / Mass": {
+        "AP": 22,
+        "Frontal_Unspecified": 0,
+        "PA": 662
+      },
+      "Tuberculosis": {
+        "AP": 0,
+        "Frontal_Unspecified": 0,
+        "PA": 1348
+      }
+    }
+  },
+  "v5_candidate_projections": {
+    "projected_total_images": 11336,
+    "projected_total_patients": 10940,
+    "projected_cramers_v": 0.7698,
+    "cramers_v_improvement": 0.0,
+    "single_source_classes": [],
+    "multi_source_classes": [
+      "COVID-19",
+      "Normal",
+      "Pleural Effusion",
+      "Pneumonia",
+      "Tuberculosis",
+      "Pulmonary Nodule / Mass"
+    ],
+    "covid_source_diversity": {
+      "Existing_COVID-19": 1942,
+      "BIMCV_COVID19+": 1000,
+      "existing_covid_percentage": 66.01,
+      "bimcv_covid_percentage": 33.99
+    }
+  },
+  "v5_source_class_matrix": {
+    "COVID-19": {
+      "existing_sources": [
+        "Existing_COVID-19 (1,942)"
+      ],
+      "prospective_bimcv": "BIMCV-COVID19+ (1,000 target)",
+      "num_sources_v4": 1,
+      "num_sources_v5": 2,
+      "single_source_v4": true,
+      "single_source_v5": false,
+      "view_distribution": "Frontal_Unspecified (1,942) + BIMCV PA (~600) + BIMCV AP (~400)",
+      "ready": "PENDING_BIMCV_CREDS"
+    },
+    "Normal": {
+      "existing_sources": [
+        "Existing_Normal (1,199)",
+        "TBX11K (1,199)",
+        "JSRT (67)",
+        "NIH (82)"
+      ],
+      "prospective_bimcv": "None (Preserve current)",
+      "num_sources_v4": 4,
+      "num_sources_v5": 4,
+      "single_source_v4": false,
+      "single_source_v5": false,
+      "view_distribution": "PA: 1,348, AP: 16, Frontal_Unspec: 1,183",
+      "ready": "READY"
+    },
+    "Pleural Effusion": {
+      "existing_sources": [
+        "VinBigData_VinDr (931)",
+        "NIH (86)"
+      ],
+      "prospective_bimcv": "None (Preserve current)",
+      "num_sources_v4": 2,
+      "num_sources_v5": 2,
+      "single_source_v4": false,
+      "single_source_v5": false,
+      "view_distribution": "PA: 972, AP: 45",
+      "ready": "READY"
+    },
+    "Pneumonia": {
+      "existing_sources": [
+        "Existing_Pneumonia (1,395)",
+        "TBX11K (1,395)",
+        "NIH (8)"
+      ],
+      "prospective_bimcv": "None (Preserve current)",
+      "num_sources_v4": 3,
+      "num_sources_v5": 3,
+      "single_source_v4": false,
+      "single_source_v5": false,
+      "view_distribution": "PA: 1,398, AP: 1,400",
+      "ready": "READY"
+    },
+    "Tuberculosis": {
+      "existing_sources": [
+        "TBX11K (683)",
+        "Existing_Tuberculosis (665)"
+      ],
+      "prospective_bimcv": "None (Preserve current)",
+      "num_sources_v4": 2,
+      "num_sources_v5": 2,
+      "single_source_v4": false,
+      "single_source_v5": false,
+      "view_distribution": "PA: 1,348",
+      "ready": "READY"
+    },
+    "Pulmonary Nodule / Mass": {
+      "existing_sources": [
+        "VinBigData_VinDr (536)",
+        "JSRT (78)",
+        "NIH (70)"
+      ],
+      "prospective_bimcv": "None (Preserve current)",
+      "num_sources_v4": 3,
+      "num_sources_v5": 3,
+      "single_source_v4": false,
+      "single_source_v5": false,
+      "view_distribution": "PA: 662, AP: 22",
+      "ready": "READY"
+    }
+  },
+  "evaluation_cohorts_design": {
+    "Evaluation_A_Broad_Real_World": {
+      "objective": "Measure real-world generalizability across multi-source clinical CXRs encompassing clinical projection variations.",
+      "inclusion_criteria": "All validated planar frontal CXRs (PA, AP, and Frontal Unspecified).",
+      "target_test_size": 1544,
+      "pros": "Reflects real hospital emergency/bedside admission conditions where supine/semi-erect AP scans are prevalent.",
+      "cons": "Projection-induced domain shift (e.g. meniscus blunting on PA vs diffuse haziness on AP) is conflated with scanner/institutional shift."
+    },
+    "Evaluation_B_View_Controlled": {
+      "objective": "Isolate institutional/scanner domain shift by strictly eliminating projection variability.",
+      "inclusion_criteria": "Exclusively verified Posteroanterior (PA) erect frontal chest radiographs across all comparative splits.",
+      "pros": "Controls the geometric confounder discovered in Experiment B4 (PA vs AP fluid physics). Directly measures pure cross-site transferability.",
+      "cons": "Excludes AP bedside scans, reducing test set size for sources with high AP prevalence (e.g. NIH and Kermany pediatric)."
+    }
+  }
+}

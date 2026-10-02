@@ -1,0 +1,205 @@
+{
+  "experiment_title": "Montgomery Film-Domain Preprocessing Investigation",
+  "model_path": "models\\densenet_model.h5",
+  "model_status": "FROZEN (zero retraining, weights unchanged)",
+  "intensity_distribution_analysis": {
+    "montgomery_external": {
+      "mean_intensity": 130.22,
+      "std_intensity": 77.83,
+      "median_intensity": 129.63,
+      "percentile_5": 17.91,
+      "percentile_95": 244.01,
+      "dynamic_range_p5_p95": 226.09
+    },
+    "internal_test_subset": {
+      "mean_intensity": 144.95,
+      "std_intensity": 46.57,
+      "median_intensity": 152.43,
+      "percentile_5": 64.21,
+      "percentile_95": 205.85,
+      "dynamic_range_p5_p95": 141.64
+    },
+    "internal_training_reference": {
+      "mean_intensity": 144.43,
+      "std_intensity": 45.21,
+      "median_intensity": 150.66,
+      "percentile_5": 65.07,
+      "percentile_95": 205.16,
+      "dynamic_range_p5_p95": 140.08
+    },
+    "key_finding": "Montgomery film CXRs exhibit lower mean intensity (130.22 vs 144.43) and wider standard deviation (77.83 vs 45.21) due to legacy optical film digitized scanning characteristics."
+  },
+  "experiments": {
+    "Exp_A_Baseline": {
+      "name": "Experiment A (Baseline Production)",
+      "description": "Standard LAB luminance CLAHE, Lanczos-4 resize 224x224, ImageNet norm",
+      "montgomery_metrics": {
+        "exact_tb_recall": 0.069,
+        "exact_tb_count": "4/58",
+        "normal_specificity": 0.0375,
+        "normal_correct_count": "3/80",
+        "abnormal_detection_sensitivity": 0.9655,
+        "prediction_distribution": {
+          "abnormal_tb_cohort": {
+            "Lung Cancer": 40,
+            "Pleural Effusion": 11,
+            "Tuberculosis": 4,
+            "Normal": 2,
+            "Pneumonia": 1
+          },
+          "normal_cohort": {
+            "Lung Cancer": 66,
+            "Tuberculosis": 7,
+            "Pleural Effusion": 3,
+            "Normal": 3,
+            "Pneumonia": 1
+          }
+        },
+        "mean_tb_prob_abnormal": 0.0844,
+        "mean_tb_prob_normal": 0.1026,
+        "lung_cancer_fp_count_in_normal": 66,
+        "lung_cancer_fp_rate_in_normal": 0.825,
+        "pleural_effusion_prediction_count": 14,
+        "pleural_effusion_prediction_rate": 0.1014,
+        "tb_prediction_total_count": 11,
+        "tb_prediction_rate": 0.0797
+      },
+      "internal_test_metrics": {
+        "accuracy": 0.7583,
+        "weighted_f1": 0.7617,
+        "macro_f1": 0.7617,
+        "macro_roc_auc": 0.9584,
+        "accuracy_delta_vs_baseline": 0.0
+      }
+    },
+    "Exp_B_FilmGrainSuppression": {
+      "name": "Experiment B (Film-Grain Suppression)",
+      "description": "Edge-preserving Bilateral Filter (d=5, sigmaColor=25, sigmaSpace=25) + CLAHE + norm",
+      "montgomery_metrics": {
+        "exact_tb_recall": 0.0,
+        "exact_tb_count": "0/58",
+        "normal_specificity": 0.0125,
+        "normal_correct_count": "1/80",
+        "abnormal_detection_sensitivity": 1.0,
+        "prediction_distribution": {
+          "abnormal_tb_cohort": {
+            "Lung Cancer": 50,
+            "Pleural Effusion": 7,
+            "Pneumonia": 1
+          },
+          "normal_cohort": {
+            "Lung Cancer": 78,
+            "Pleural Effusion": 1,
+            "Normal": 1
+          }
+        },
+        "mean_tb_prob_abnormal": 0.023,
+        "mean_tb_prob_normal": 0.0259,
+        "lung_cancer_fp_count_in_normal": 78,
+        "lung_cancer_fp_rate_in_normal": 0.975,
+        "pleural_effusion_prediction_count": 8,
+        "pleural_effusion_prediction_rate": 0.058,
+        "tb_prediction_total_count": 0,
+        "tb_prediction_rate": 0.0
+      },
+      "internal_test_metrics": {
+        "accuracy": 0.655,
+        "weighted_f1": 0.6603,
+        "macro_f1": 0.6603,
+        "macro_roc_auc": 0.9356,
+        "accuracy_delta_vs_baseline": -0.1033
+      }
+    },
+    "Exp_C_HistogramMatching": {
+      "name": "Experiment C (Intensity / Histogram Matching)",
+      "description": "Empirical reference CDF specification to internal digital CXR dynamic range + CLAHE + norm",
+      "montgomery_metrics": {
+        "exact_tb_recall": 0.069,
+        "exact_tb_count": "4/58",
+        "normal_specificity": 0.0125,
+        "normal_correct_count": "1/80",
+        "abnormal_detection_sensitivity": 0.9828,
+        "prediction_distribution": {
+          "abnormal_tb_cohort": {
+            "Lung Cancer": 29,
+            "Pleural Effusion": 23,
+            "Tuberculosis": 4,
+            "Normal": 1,
+            "Pneumonia": 1
+          },
+          "normal_cohort": {
+            "Lung Cancer": 52,
+            "Pleural Effusion": 16,
+            "Tuberculosis": 9,
+            "Normal": 1,
+            "COVID-19": 1,
+            "Pneumonia": 1
+          }
+        },
+        "mean_tb_prob_abnormal": 0.0808,
+        "mean_tb_prob_normal": 0.1101,
+        "lung_cancer_fp_count_in_normal": 52,
+        "lung_cancer_fp_rate_in_normal": 0.65,
+        "pleural_effusion_prediction_count": 39,
+        "pleural_effusion_prediction_rate": 0.2826,
+        "tb_prediction_total_count": 13,
+        "tb_prediction_rate": 0.0942
+      },
+      "internal_test_metrics": {
+        "accuracy": 0.6983,
+        "weighted_f1": 0.6951,
+        "macro_f1": 0.6951,
+        "macro_roc_auc": 0.9389,
+        "accuracy_delta_vs_baseline": -0.06
+      }
+    },
+    "Exp_D_Combined": {
+      "name": "Experiment D (Combined Denoising + Histogram Matching)",
+      "description": "Bilateral filter + empirical reference CDF specification + CLAHE + norm",
+      "montgomery_metrics": {
+        "exact_tb_recall": 0.069,
+        "exact_tb_count": "4/58",
+        "normal_specificity": 0.0375,
+        "normal_correct_count": "3/80",
+        "abnormal_detection_sensitivity": 0.9138,
+        "prediction_distribution": {
+          "abnormal_tb_cohort": {
+            "Lung Cancer": 26,
+            "Pleural Effusion": 22,
+            "Normal": 5,
+            "Tuberculosis": 4,
+            "Pneumonia": 1
+          },
+          "normal_cohort": {
+            "Lung Cancer": 45,
+            "Pleural Effusion": 18,
+            "Tuberculosis": 8,
+            "COVID-19": 4,
+            "Normal": 3,
+            "Pneumonia": 2
+          }
+        },
+        "mean_tb_prob_abnormal": 0.1047,
+        "mean_tb_prob_normal": 0.1213,
+        "lung_cancer_fp_count_in_normal": 45,
+        "lung_cancer_fp_rate_in_normal": 0.5625,
+        "pleural_effusion_prediction_count": 40,
+        "pleural_effusion_prediction_rate": 0.2899,
+        "tb_prediction_total_count": 12,
+        "tb_prediction_rate": 0.087
+      },
+      "internal_test_metrics": {
+        "accuracy": 0.7533,
+        "weighted_f1": 0.7538,
+        "macro_f1": 0.7538,
+        "macro_roc_auc": 0.9513,
+        "accuracy_delta_vs_baseline": -0.005
+      }
+    }
+  },
+  "decision": {
+    "code": "CASE C",
+    "summary": "Preprocessing does not meaningfully improve Montgomery external performance.",
+    "recommendation": "Stop preprocessing experimentation. In CASE C, the next step should be a controlled DATASET/TRAINING intervention (such as fine-tuning with targeted data augmentation or multi-source training) rather than continuing to add preprocessing tricks."
+  }
+}

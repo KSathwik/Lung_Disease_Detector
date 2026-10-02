@@ -1,0 +1,41 @@
+{
+  "architecture": "DenseNet121",
+  "random_seed": 42,
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "batch_size": 32,
+  "classes": [
+    "COVID-19",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ],
+  "class_weights": {
+    "0": 0.977,
+    "1": 0.977,
+    "2": 0.977,
+    "3": 0.977,
+    "4": 1.1334106728538282,
+    "5": 0.977
+  },
+  "train_samples": 2931,
+  "val_samples": 594,
+  "test_samples": 1514,
+  "phase1": {
+    "epochs": 2,
+    "learning_rate": 0.001,
+    "optimizer": "Adam",
+    "loss": "sparse_categorical_crossentropy"
+  },
+  "phase2": {
+    "epochs": 2,
+    "learning_rate": 1e-05,
+    "optimizer": "Adam",
+    "fine_tune_layers": 30
+  }
+}

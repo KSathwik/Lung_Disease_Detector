@@ -1,0 +1,8 @@
+{
+  "COVID-19": 0,
+  "Normal": 1,
+  "Pleural Effusion": 2,
+  "Pneumonia": 3,
+  "Pulmonary Nodule / Mass": 4,
+  "Tuberculosis": 5
+}

@@ -1,0 +1,12 @@
+{
+  "pca_explained_variance_ratio": [
+    0.21186690032482147,
+    0.1754041314125061
+  ],
+  "centroid_distances": {
+    "dist_mont_tb_to_v5_tb": 13.38097095489502,
+    "dist_mont_tb_to_v5_nodule": 6.639955043792725,
+    "dist_mont_norm_to_v5_norm": 17.180221557617188,
+    "dist_mont_norm_to_v5_nodule": 7.3768391609191895
+  }
+}

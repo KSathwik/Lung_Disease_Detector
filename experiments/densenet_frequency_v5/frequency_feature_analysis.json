@@ -1,0 +1,38 @@
+{
+  "pca_explained_variance_ratio": [
+    0.2717744708061218,
+    0.191212460398674
+  ],
+  "centroid_distances": {
+    "dist_mont_tb_to_v5_tb": 17.121322631835938,
+    "dist_mont_tb_to_v5_nodule": 8.294010162353516,
+    "dist_mont_norm_to_v5_norm": 21.25271987915039,
+    "dist_mont_norm_to_v5_nodule": 8.864825248718262
+  },
+  "image_statistics": {
+    "v5_pre": {
+      "mean_dynamic_range": 227.51,
+      "mean_laplacian_variance": 103.97,
+      "median_laplacian_variance": 77.83,
+      "mean_sobel_edge_density": 0.1587
+    },
+    "mont_pre": {
+      "mean_dynamic_range": 254.98,
+      "mean_laplacian_variance": 88.91,
+      "median_laplacian_variance": 75.49,
+      "mean_sobel_edge_density": 0.0036
+    },
+    "v5_post": {
+      "mean_dynamic_range": 213.8,
+      "mean_laplacian_variance": 22.73,
+      "median_laplacian_variance": 20.61,
+      "mean_sobel_edge_density": 0.094
+    },
+    "mont_post": {
+      "mean_dynamic_range": 255.0,
+      "mean_laplacian_variance": 2.79,
+      "median_laplacian_variance": 2.53,
+      "mean_sobel_edge_density": 0.0068
+    }
+  }
+}

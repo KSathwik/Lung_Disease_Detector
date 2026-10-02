@@ -56,8 +56,14 @@ class PredictionResponse(BaseModel):
     prediction_id: str
     scan_id: str
     selected_model: str
-    cnn: Optional[ModelResult]
-    resnet: Optional[ModelResult]
+    predicted_class: Optional[str] = None
+    confidence: Optional[float] = None
+    probabilities: Optional[Dict[str, float]] = None
+    gradcam: Optional[Dict[str, Any]] = None
+    external_generalization_limitation: Optional[str] = None
+    cnn: Optional[ModelResult] = None
+    resnet: Optional[ModelResult] = None
+    densenet: Optional[ModelResult] = None
     final: FinalResult
     created_at: str
 
@@ -196,12 +202,13 @@ async def predict(
     final = results["final"]
     cnn_r = results.get("cnn")
     rn_r  = results.get("resnet")
+    dn_r  = results.get("densenet")
 
     prediction = Prediction(
         prediction_id=pred_id,
         scan_id=scan.id,
-        model_used="Both",
-        selected_model=results.get("selected_model", "ResNet"),
+        model_used="DenseNet" if dn_r else "Both",
+        selected_model=results.get("selected_model", "DenseNet"),
         cnn_primary_condition=cnn_r["condition"]  if cnn_r else None,
         cnn_confidence=cnn_r["confidence"]         if cnn_r else None,
         cnn_accuracy=cnn_r.get("accuracy")         if cnn_r else None,
@@ -223,9 +230,15 @@ async def predict(
     return PredictionResponse(
         prediction_id=pred_id,
         scan_id=scan_id,
-        selected_model=results.get("selected_model", "ResNet"),
+        selected_model=results.get("selected_model", "DenseNet-121 Frequency V5"),
+        predicted_class=results.get("predicted_class"),
+        confidence=results.get("confidence"),
+        probabilities=results.get("probabilities"),
+        gradcam=results.get("gradcam"),
+        external_generalization_limitation=results.get("external_generalization_limitation"),
         cnn=ModelResult(**cnn_r) if cnn_r else None,
         resnet=ModelResult(**rn_r) if rn_r else None,
+        densenet=ModelResult(**dn_r) if dn_r else None,
         final=FinalResult(**final),
         created_at=datetime.now(timezone.utc).isoformat()
     )

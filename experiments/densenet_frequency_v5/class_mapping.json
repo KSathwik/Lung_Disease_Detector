@@ -1,0 +1,26 @@
+{
+  "classes": [
+    "COVID-19",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ],
+  "class_to_idx": {
+    "COVID-19": 0,
+    "Normal": 1,
+    "Pleural Effusion": 2,
+    "Pneumonia": 3,
+    "Pulmonary Nodule / Mass": 4,
+    "Tuberculosis": 5
+  },
+  "idx_to_class": {
+    "0": "COVID-19",
+    "1": "Normal",
+    "2": "Pleural Effusion",
+    "3": "Pneumonia",
+    "4": "Pulmonary Nodule / Mass",
+    "5": "Tuberculosis"
+  }
+}

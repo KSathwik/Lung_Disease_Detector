@@ -1,0 +1,234 @@
+{
+  "model": "DenseNet-121 (Full V3 Cohort)",
+  "dataset_version": "V3 Full Training Set (unified_manifest_v3.csv)",
+  "train_samples": 7061,
+  "val_samples": 1515,
+  "test_samples": 1514,
+  "overall_metrics": {
+    "accuracy": 0.7853,
+    "macro_precision": 0.7426,
+    "weighted_precision": 0.8443,
+    "macro_recall": 0.7527,
+    "weighted_recall": 0.7853,
+    "macro_f1": 0.7328,
+    "weighted_f1": 0.8054,
+    "macro_roc_auc": 0.9677,
+    "macro_pr_auc": 0.8015
+  },
+  "per_class_metrics": {
+    "COVID-19": {
+      "support": 292,
+      "precision": 1.0,
+      "recall": 0.8493,
+      "specificity": 1.0,
+      "f1_score": 0.9185
+    },
+    "Normal": {
+      "support": 370,
+      "precision": 0.9,
+      "recall": 0.9,
+      "specificity": 0.9677,
+      "f1_score": 0.9
+    },
+    "Pleural Effusion": {
+      "support": 142,
+      "precision": 0.5,
+      "recall": 0.6972,
+      "specificity": 0.9278,
+      "f1_score": 0.5824
+    },
+    "Pneumonia": {
+      "support": 420,
+      "precision": 0.9088,
+      "recall": 0.7119,
+      "specificity": 0.9726,
+      "f1_score": 0.7984
+    },
+    "Pulmonary Nodule / Mass": {
+      "support": 89,
+      "precision": 0.2674,
+      "recall": 0.5618,
+      "specificity": 0.9039,
+      "f1_score": 0.3623
+    },
+    "Tuberculosis": {
+      "support": 201,
+      "precision": 0.8791,
+      "recall": 0.796,
+      "specificity": 0.9832,
+      "f1_score": 0.8355
+    }
+  },
+  "calibration_confidence": {
+    "mean_confidence_correct": 0.8843,
+    "mean_confidence_incorrect": 0.6307
+  },
+  "confusion_matrix": [
+    [
+      248,
+      1,
+      2,
+      19,
+      7,
+      15
+    ],
+    [
+      0,
+      333,
+      3,
+      6,
+      28,
+      0
+    ],
+    [
+      0,
+      0,
+      99,
+      0,
+      43,
+      0
+    ],
+    [
+      0,
+      31,
+      41,
+      299,
+      42,
+      7
+    ],
+    [
+      0,
+      0,
+      39,
+      0,
+      50,
+      0
+    ],
+    [
+      0,
+      5,
+      14,
+      5,
+      17,
+      160
+    ]
+  ],
+  "normalized_confusion_matrix": [
+    [
+      0.8493150684931506,
+      0.003424657534246575,
+      0.00684931506849315,
+      0.06506849315068493,
+      0.023972602739726026,
+      0.05136986301369863
+    ],
+    [
+      0.0,
+      0.9,
+      0.008108108108108109,
+      0.016216216216216217,
+      0.07567567567567568,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.6971830985915493,
+      0.0,
+      0.3028169014084507,
+      0.0
+    ],
+    [
+      0.0,
+      0.07380952380952381,
+      0.09761904761904762,
+      0.7119047619047619,
+      0.1,
+      0.016666666666666666
+    ],
+    [
+      0.0,
+      0.0,
+      0.43820224719101125,
+      0.0,
+      0.5617977528089888,
+      0.0
+    ],
+    [
+      0.0,
+      0.024875621890547265,
+      0.06965174129353234,
+      0.024875621890547265,
+      0.0845771144278607,
+      0.7960199004975125
+    ]
+  ],
+  "top_confusion_pairs": [
+    [
+      "Pleural Effusion -> Pulmonary Nodule / Mass",
+      43
+    ],
+    [
+      "Pneumonia -> Pulmonary Nodule / Mass",
+      42
+    ],
+    [
+      "Pneumonia -> Pleural Effusion",
+      41
+    ],
+    [
+      "Pulmonary Nodule / Mass -> Pleural Effusion",
+      39
+    ],
+    [
+      "Pneumonia -> Normal",
+      31
+    ],
+    [
+      "Normal -> Pulmonary Nodule / Mass",
+      28
+    ],
+    [
+      "COVID-19 -> Pneumonia",
+      19
+    ],
+    [
+      "Tuberculosis -> Pulmonary Nodule / Mass",
+      17
+    ],
+    [
+      "COVID-19 -> Tuberculosis",
+      15
+    ],
+    [
+      "Tuberculosis -> Pleural Effusion",
+      14
+    ]
+  ],
+  "montgomery_external_validation": {
+    "external_cohort": "Montgomery_County_CXR (Quarantined)",
+    "total_scans": 138,
+    "exact_six_class_metrics": {
+      "tuberculosis_recall": 0.0,
+      "normal_specificity": 0.0,
+      "tb_detected": 0,
+      "tb_total": 58,
+      "norm_detected": 0,
+      "norm_total": 80
+    },
+    "binary_pathology_detection_metrics": {
+      "abnormal_sensitivity": 1.0,
+      "normal_specificity": 0.0,
+      "abnormal_detected": 58,
+      "abnormal_total": 58
+    },
+    "tb_cases_predicted_distribution": {
+      "Pulmonary Nodule / Mass": 51,
+      "Pleural Effusion": 7
+    },
+    "normal_cases_predicted_distribution": {
+      "Pulmonary Nodule / Mass": 79,
+      "Tuberculosis": 1
+    }
+  }
+}

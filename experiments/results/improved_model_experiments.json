@@ -1,0 +1,269 @@
+{
+  "exp_005_densenet121": {
+    "experiment_id": "EXP-005_DenseNet121",
+    "accuracy": 0.7937,
+    "macro_precision": 0.7428,
+    "weighted_precision": 0.8622,
+    "macro_recall": 0.7566,
+    "weighted_recall": 0.7937,
+    "macro_f1": 0.7152,
+    "weighted_f1": 0.8119,
+    "macro_auc_roc": 0.9692,
+    "macro_pr_auc": 0.8054,
+    "confusion_matrix": [
+      [
+        461,
+        4,
+        12,
+        3,
+        4,
+        21
+      ],
+      [
+        0,
+        105,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        0,
+        41,
+        258,
+        0,
+        9,
+        0
+      ],
+      [
+        0,
+        101,
+        0,
+        50,
+        0,
+        0
+      ],
+      [
+        0,
+        57,
+        61,
+        22,
+        517,
+        6
+      ],
+      [
+        1,
+        39,
+        6,
+        6,
+        4,
+        167
+      ]
+    ],
+    "per_class": {
+      "COVID-19": {
+        "support": 505,
+        "precision": 0.9978,
+        "recall": 0.9129,
+        "specificity": 0.9993,
+        "f1_score": 0.9535
+      },
+      "Lung Cancer": {
+        "support": 113,
+        "precision": 0.3026,
+        "recall": 0.9292,
+        "specificity": 0.8692,
+        "f1_score": 0.4565
+      },
+      "Normal": {
+        "support": 308,
+        "precision": 0.7656,
+        "recall": 0.8377,
+        "specificity": 0.9523,
+        "f1_score": 0.8
+      },
+      "Pleural Effusion": {
+        "support": 151,
+        "precision": 0.5618,
+        "recall": 0.3311,
+        "specificity": 0.9785,
+        "f1_score": 0.4167
+      },
+      "Pneumonia": {
+        "support": 663,
+        "precision": 0.9682,
+        "recall": 0.7798,
+        "specificity": 0.9869,
+        "f1_score": 0.8638
+      },
+      "Tuberculosis": {
+        "support": 223,
+        "precision": 0.8608,
+        "recall": 0.7489,
+        "specificity": 0.9845,
+        "f1_score": 0.801
+      }
+    },
+    "class_names": [
+      "COVID-19",
+      "Lung Cancer",
+      "Normal",
+      "Pleural Effusion",
+      "Pneumonia",
+      "Tuberculosis"
+    ],
+    "external_validation": {
+      "external_cohort": "Montgomery_County_NLM_NIH",
+      "sample_count": 138,
+      "tb_external_recall": 0.0,
+      "normal_external_specificity": 0.0,
+      "tb_detected_count": 0,
+      "tb_total_count": 58,
+      "normal_detected_count": 0,
+      "normal_total_count": 80
+    }
+  },
+  "exp_004_resnet50": {
+    "experiment_id": "EXP-004_ResNet50",
+    "accuracy": 0.6388,
+    "macro_precision": 0.6149,
+    "weighted_precision": 0.777,
+    "macro_recall": 0.6336,
+    "weighted_recall": 0.6388,
+    "macro_f1": 0.5769,
+    "weighted_f1": 0.658,
+    "macro_auc_roc": 0.9321,
+    "macro_pr_auc": 0.6954,
+    "confusion_matrix": [
+      [
+        180,
+        132,
+        32,
+        71,
+        8,
+        82
+      ],
+      [
+        0,
+        50,
+        4,
+        55,
+        0,
+        4
+      ],
+      [
+        0,
+        20,
+        250,
+        2,
+        20,
+        16
+      ],
+      [
+        1,
+        40,
+        2,
+        103,
+        0,
+        5
+      ],
+      [
+        1,
+        19,
+        70,
+        56,
+        504,
+        13
+      ],
+      [
+        3,
+        18,
+        8,
+        23,
+        4,
+        167
+      ]
+    ],
+    "per_class": {
+      "COVID-19": {
+        "support": 505,
+        "precision": 0.973,
+        "recall": 0.3564,
+        "specificity": 0.9966,
+        "f1_score": 0.5217
+      },
+      "Lung Cancer": {
+        "support": 113,
+        "precision": 0.1792,
+        "recall": 0.4425,
+        "specificity": 0.8762,
+        "f1_score": 0.2551
+      },
+      "Normal": {
+        "support": 308,
+        "precision": 0.6831,
+        "recall": 0.8117,
+        "specificity": 0.9299,
+        "f1_score": 0.7418
+      },
+      "Pleural Effusion": {
+        "support": 151,
+        "precision": 0.3323,
+        "recall": 0.6821,
+        "specificity": 0.8858,
+        "f1_score": 0.4469
+      },
+      "Pneumonia": {
+        "support": 663,
+        "precision": 0.9403,
+        "recall": 0.7602,
+        "specificity": 0.9754,
+        "f1_score": 0.8407
+      },
+      "Tuberculosis": {
+        "support": 223,
+        "precision": 0.5819,
+        "recall": 0.7489,
+        "specificity": 0.931,
+        "f1_score": 0.6549
+      }
+    },
+    "class_names": [
+      "COVID-19",
+      "Lung Cancer",
+      "Normal",
+      "Pleural Effusion",
+      "Pneumonia",
+      "Tuberculosis"
+    ],
+    "external_validation": {
+      "external_cohort": "Montgomery_County_NLM_NIH",
+      "sample_count": 138,
+      "tb_external_recall": 0.0517,
+      "normal_external_specificity": 0.125,
+      "tb_detected_count": 3,
+      "tb_total_count": 58,
+      "normal_detected_count": 10,
+      "normal_total_count": 80
+    }
+  },
+  "class_names": [
+    "COVID-19",
+    "Lung Cancer",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Tuberculosis"
+  ],
+  "class_weights": {
+    "0": 1.0,
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0,
+    "5": 1.0
+  },
+  "train_samples": 3000,
+  "val_samples": 600,
+  "test_samples": 1963
+}

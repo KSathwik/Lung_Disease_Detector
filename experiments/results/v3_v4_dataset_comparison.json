@@ -1,0 +1,101 @@
+{
+  "v3_total_images": 10090,
+  "v4_total_images": 10336,
+  "v3_total_patients": 9968,
+  "v4_total_patients": 10140,
+  "v3_cramers_v": 0.776,
+  "v4_cramers_v": 0.7698,
+  "cramers_v_reduction": 0.0062,
+  "new_sources_introduced": [
+    "NIH_ChestX-ray14"
+  ],
+  "total_sources_v3": 7,
+  "total_sources_v4": 8,
+  "class_comparison": {
+    "COVID-19": {
+      "total_images": 1942,
+      "unique_patients": 1942,
+      "sources": {
+        "Existing_COVID-19": 1942
+      },
+      "source_count": 1,
+      "dominant_source": "Existing_COVID-19",
+      "source_concentration": 1.0,
+      "source_entropy": -0.0
+    },
+    "Normal": {
+      "total_images": 2547,
+      "unique_patients": 2547,
+      "sources": {
+        "Existing_Normal": 1199,
+        "TBX11K": 1199,
+        "NIH_ChestX-ray14": 82,
+        "JSRT": 67
+      },
+      "source_count": 4,
+      "dominant_source": "Existing_Normal",
+      "source_concentration": 0.4707,
+      "source_entropy": 1.321
+    },
+    "Pleural Effusion": {
+      "total_images": 1017,
+      "unique_patients": 939,
+      "sources": {
+        "VinBigData_VinDr_CXR": 931,
+        "NIH_ChestX-ray14": 86
+      },
+      "source_count": 2,
+      "dominant_source": "VinBigData_VinDr_CXR",
+      "source_concentration": 0.9154,
+      "source_entropy": 0.4181
+    },
+    "Pneumonia": {
+      "total_images": 2798,
+      "unique_patients": 2798,
+      "sources": {
+        "Existing_Pneumonia": 1395,
+        "TBX11K": 1395,
+        "NIH_ChestX-ray14": 8
+      },
+      "source_count": 3,
+      "dominant_source": "Existing_Pneumonia",
+      "source_concentration": 0.4986,
+      "source_entropy": 1.0254
+    },
+    "Pulmonary Nodule / Mass": {
+      "total_images": 684,
+      "unique_patients": 644,
+      "sources": {
+        "VinBigData_VinDr_CXR": 536,
+        "JSRT": 78,
+        "NIH_ChestX-ray14": 70
+      },
+      "source_count": 3,
+      "dominant_source": "VinBigData_VinDr_CXR",
+      "source_concentration": 0.7836,
+      "source_entropy": 0.9694
+    },
+    "Tuberculosis": {
+      "total_images": 1348,
+      "unique_patients": 1348,
+      "sources": {
+        "TBX11K": 683,
+        "Existing_Tuberculosis": 665
+      },
+      "source_count": 2,
+      "dominant_source": "TBX11K",
+      "source_concentration": 0.5067,
+      "source_entropy": 0.9999
+    }
+  },
+  "single_source_classes_remaining": [
+    "COVID-19"
+  ],
+  "multi_source_classes": [
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ]
+}

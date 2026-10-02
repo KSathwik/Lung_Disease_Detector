@@ -46,11 +46,15 @@ def run_tests():
     assert res.status_code == 200, f"Prediction failed: {res.text}"
     pred_res = res.json()
     assert "prediction_id" in pred_res
-    assert "resnet" in pred_res
-    assert pred_res["resnet"]["condition"] in ["Pneumonia", "COVID-19", "Normal", "Tuberculosis", "Lung Cancer"]
+    assert "resnet" in pred_res or "densenet" in pred_res
+    valid_conditions = ["Pneumonia", "COVID-19", "Normal", "Tuberculosis", "Lung Cancer", "Pleural Effusion"]
+    if pred_res.get("resnet"):
+        assert pred_res["resnet"]["condition"] in valid_conditions
+    if pred_res.get("densenet"):
+        assert pred_res["densenet"]["condition"] in valid_conditions
     print(f"✅ POST /api/v1/predict (Pneumonia scan) -> 200 OK")
     print(f"   Selected Model: {pred_res['selected_model']}")
-    print(f"   Predicted Condition: {pred_res['resnet']['condition']} ({pred_res['resnet']['confidence']:.1f}%)")
+    print(f"   Predicted Final Condition: {pred_res['final']['condition']} ({pred_res['final']['confidence']:.1f}%)")
     print(f"   Urgency Level: {pred_res['final']['urgency']}")
 
 
