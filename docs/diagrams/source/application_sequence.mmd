@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor Clinician as Clinician / Radiologist
+    participant React as React 18 Frontend
+    participant API as FastAPI Backend (Port 8000)
+    participant Engine as InferenceEngine (Model D)
+    participant TF as TensorFlow 2.16 DenseNet-121
+    participant DB as SQLite DB (AsyncSession)
+
+    Clinician->>React: Drop/Select Chest X-ray & click "Run Diagnostic Analysis"
+    React->>React: Validate MIME type & file size (&le; 10 MB)
+    React->>API: POST /api/v1/predict (multipart/form-data: file, patient_id, scan_type)
+    API->>DB: INSERT INTO lung_scans (scan_id, file_path, patient_id, created_at)
+    API->>Engine: predict_image(image_bytes)
+    Engine->>Engine: Preprocess image (Gaussian LP &sigma;=1.0, resize 224x224x3, norm)
+    Engine->>TF: Forward pass tensor through DenseNet-121
+    TF-->>Engine: 6-Class Logits & Softmax probabilities
+    Engine->>Engine: Compute Grad-CAM on conv5_block16_concat w.r.t top class
+    Engine->>Engine: Render saliency heatmap & encode Base64 JPEG
+    Engine->>Engine: Formulate Urgency Triage, Differential Diagnosis & Key Findings
+    Engine-->>API: Diagnostic Result Dict (class, conf, probs, gradcam, triage)
+    API->>DB: INSERT INTO predictions (prediction_id, scan_id, condition, confidence, probs)
+    API-->>React: 200 OK: PredictionResponse JSON (includes Base64 Grad-CAM)
+    React->>React: Render Diagnostic Card, Probability Bars, Urgency Badge
+    Clinician->>React: Toggle "Grad-CAM Heatmap" & "Model Explanation"
+    React-->>Clinician: Display anatomical attention overlay & differential triage

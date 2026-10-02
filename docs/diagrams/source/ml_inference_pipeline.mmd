@@ -1,0 +1,40 @@
+flowchart TD
+    RawCXR["Input Chest Radiograph<br/>(JPEG / PNG / BMP / TIFF / WebP &le; 10MB)"]
+    
+    subgraph Preprocessing_Stage ["Model D Frequency-Domain Preprocessing Pipeline"]
+        Decode["Format & Channel Normalization<br/>Ensure 3-Channel RGB (H &times; W &times; 3)"]
+        LPF["Spatial Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Attenuates High-Frequency Scanner Artifacts"]
+        Resize["ImageNet Geometry Standardization<br/>Bilinear Interpolation &rarr; 224 &times; 224 &times; 3"]
+        Norm["Intensity Scaling<br/>float32 Normalized to Range [0.0, 1.0]"]
+    end
+
+    subgraph Deep_Inference_Stage ["DenseNet-121 Deep Neural Network (Frozen Model D Checkpoint)"]
+        ConvInit["Initial 7&times;7 Conv (stride 2) + 3&times;3 MaxPool<br/>64 Feature Maps"]
+        DB1["Dense Block 1 (6 layers) + Transition Layer 1"]
+        DB2["Dense Block 2 (12 layers) + Transition Layer 2"]
+        DB3["Dense Block 3 (24 layers) + Transition Layer 3"]
+        DB4["Dense Block 4 (16 layers)<br/>Target Feature Map: conv5_block16_concat"]
+        Head["Global Average Pooling (1024-D)<br/>Dropout (p = 0.3) &bull; Dense 6 Units"]
+        Softmax["Softmax Probability Vector &bull; &sum; p_i = 1.0"]
+    end
+
+    subgraph Decision_Explainability_Stage ["Clinical Decision Support & Explainability"]
+        Classes["6 Active Disease Classes:<br/>0: COVID-19<br/>1: Normal<br/>2: Pleural Effusion<br/>3: Pneumonia<br/>4: Pulmonary Nodule / Mass<br/>5: Tuberculosis"]
+        GradCAMCalc["Grad-CAM Gradient Computation<br/>&alpha;_k = GAP(&part;y^c / &part;A^k)<br/>L^c = ReLU(&sum; &alpha;_k A^k)"]
+        Overlay["Saliency Map Generation<br/>Jet Color Map + Original CXR Alpha-Blending"]
+        Triage["Urgency Triage Determination<br/>Routine (&le;60% or Normal)<br/>Urgent (Effusion/Nodule/TB)<br/>Emergency (COVID-19 / Severe Pneumonia)"]
+        Findings["Radiological Findings & Advisory<br/>Differential Candidates &bull; Precautions &bull; Disclaimer"]
+    end
+
+    RawCXR --> Decode
+    Decode --> LPF
+    LPF --> Resize
+    Resize --> Norm
+    Norm --> ConvInit
+    ConvInit --> DB1 --> DB2 --> DB3 --> DB4 --> Head --> Softmax
+    Softmax --> Classes
+    DB4 --> GradCAMCalc
+    Softmax --> GradCAMCalc
+    GradCAMCalc --> Overlay
+    Classes --> Triage
+    Triage --> Findings

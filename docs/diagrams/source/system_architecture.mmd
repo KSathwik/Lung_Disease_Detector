@@ -1,0 +1,52 @@
+graph TD
+    subgraph Client_Presentation_Tier ["Client Presentation Tier (React 18 SPA)"]
+        UI_Analyze["Analyze Workspace<br/>• CXR Drag & Drop / Presets<br/>• Interactive Saliency & Heatmap View<br/>• Clinical Triage Alerts"]
+        UI_Metrics["Model Performance Dashboard<br/>• CNN Baseline vs ResNet50 vs Model D<br/>• Accuracy, F1, AUC Radar & Bar Charts"]
+        UI_History["History & Audit Log<br/>• Search, Severity Filter (Routine/Urgent/Emerg)<br/>• Scan Metadata & Diagnostic Details"]
+        UI_Patients["Patient Management Portal<br/>• Demographic Records<br/>• Scan Association & EMR Integration"]
+    end
+
+    subgraph API_Gateway_Tier ["API Gateway & Application Server (FastAPI + Uvicorn)"]
+        Router_Health["/api/v1/health<br/>• System Status & Version"]
+        Router_Predict["/api/v1/predict<br/>• Multipart CXR Ingestion<br/>• MIME & Size Verification (&le;10MB)"]
+        Router_History["/api/v1/predictions<br/>• Historical Record Retrieval"]
+        Router_Metrics["/api/v1/model-metrics<br/>• Benchmark Cache & Stats"]
+        Router_Patients["/api/v1/patients<br/>• Patient Record CRUD"]
+        Router_Reports["/api/v1/reports/generate/{id}<br/>• Structured PDF/JSON Report"]
+    end
+
+    subgraph ML_Inference_Tier ["ML Decision Support Pipeline (Model D Singleton)"]
+        Validation["Image Integrity & Decoupling<br/>Grayscale/RGBA &rarr; 3-Channel RGB"]
+        FreqPreproc["Model D Frequency Preprocessing<br/>Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Resize 224&times;224 &times; 3 &bull; Scale [0, 1]"]
+        DenseNet121["DenseNet-121 Deep Backbone<br/>4 Dense Blocks (6, 12, 24, 16 layers)<br/>Target Layer: conv5_block16_concat"]
+        Classifier["Dense Classification Head<br/>Global Average Pooling &bull; Dropout (0.3)<br/>6-Class Softmax Probability Distribution"]
+        DecisionSupport["Clinical Decision & Triage Engine<br/>• Severity Urgency: Routine / Urgent / Emergency<br/>• Differential Diagnosis Ranking<br/>• Key Findings & Clinical Precautions"]
+        GradCAM["Explainability Engine (Grad-CAM)<br/>Feature Map Gradient Backpropagation<br/>Jet Heatmap Alpha-Blending onto Original CXR"]
+    end
+
+    subgraph Data_Persistence_Tier ["Persistence & Storage Layer (SQLAlchemy ORM)"]
+        DB_Patient["Patient Entity<br/>ID, Demographics, History"]
+        DB_Scan["LungScan Entity<br/>File Hash, Mime, Path"]
+        DB_Prediction["Prediction Entity<br/>Class, Probabilities, Findings"]
+        Storage_Disk["Uploads Volume<br/>Raw Radiographs & Scans"]
+    end
+
+    UI_Analyze --> Router_Predict
+    UI_Metrics --> Router_Metrics
+    UI_History --> Router_History
+    UI_Patients --> Router_Patients
+
+    Router_Predict --> Validation
+    Validation --> FreqPreproc
+    FreqPreproc --> DenseNet121
+    DenseNet121 --> Classifier
+    Classifier --> DecisionSupport
+    DenseNet121 --> GradCAM
+    GradCAM --> DecisionSupport
+
+    DecisionSupport --> DB_Prediction
+    Router_Predict --> DB_Scan
+    Router_Patients --> DB_Patient
+    Router_Predict --> Storage_Disk
+
+    DecisionSupport -.->|Structured JSON + Base64 Heatmap| UI_Analyze

@@ -1,0 +1,32 @@
+graph TD
+    subgraph Client_Environment ["Client Tier"]
+        Browser["Modern Web Browser<br/>(Chrome / Edge / Firefox)<br/>Port 3000"]
+    end
+
+    subgraph Network_Gateway ["Network / Reverse Proxy Tier"]
+        Nginx["Reverse Proxy / TLS Termination<br/>Nginx / Docker Gateway<br/>Port 80 / 443"]
+    end
+
+    subgraph Application_Environment ["Application Tier (Docker / Host OS)"]
+        Uvicorn["Uvicorn ASGI Server<br/>FastAPI Runtime (Python 3.11)<br/>Port 8000"]
+        AsyncWorkers["Async Request Handlers<br/>CORS & Security Headers Middleware"]
+    end
+
+    subgraph Deep_Learning_Environment ["ML Inference Tier"]
+        TFRuntime["TensorFlow 2.16.1 C++ / OneDNN Runtime<br/>Optimized CPU Vectorization (AVX2 / AVX-512)"]
+        ModelD["Frozen Model D Checkpoint<br/>densenet121_frequency_v5.h5 (28.4 MB)"]
+    end
+
+    subgraph Persistence_Environment ["Persistence Tier"]
+        SQLiteDB[("SQLite Database<br/>lung_disease.db<br/>(Optional: PostgreSQL)")]
+        UploadsVolume[("File System Storage<br/>/uploads directory<br/>Scan Images")]
+    end
+
+    Browser -->|HTTP / HTTPS| Nginx
+    Nginx -->|Proxy Pass localhost:3000| Browser
+    Nginx -->|Proxy Pass localhost:8000| Uvicorn
+    Uvicorn --> AsyncWorkers
+    AsyncWorkers --> TFRuntime
+    TFRuntime --> ModelD
+    AsyncWorkers --> SQLiteDB
+    AsyncWorkers --> UploadsVolume

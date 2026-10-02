@@ -12,27 +12,34 @@
 
 ## 📌 Project Overview
 
-**LungAI** is an end-to-end Machine Learning and Full-Stack web application for automated multi-class lung disease classification from chest radiographs (X-rays).
+**LungAI** is an end-to-end Machine Learning and Full-Stack clinical decision-support web application for automated multi-class lung disease classification from chest radiographs (X-rays).
 
-- **Core Objective**: Provide an automated decision-support pipeline to assist clinicians with diagnostic triage across time-sensitive thoracic diseases.
-- **Input**: Chest X-ray images (`JPEG`, `PNG`, `BMP`, `TIFF`, `WebP`).
-- **Output**: Multi-class diagnostic probabilities across 5 active conditions, urgency triage level (`Emergency`, `Urgent`, `Routine`), differential diagnosis candidates, key radiographic findings, and downloadable clinical reports.
+- **Core Objective**: Provide an automated decision-support pipeline to assist clinicians with diagnostic triage across time-sensitive thoracic diseases while exposing interpretability via Grad-CAM saliency.
+- **Input**: Chest X-ray images (`JPEG`, `PNG`, `BMP`, `TIFF`, `WebP`, &le; 10 MB).
+- **Output**: 6-class diagnostic probability distribution, urgency triage level (`Emergency`, `Urgent`, `Routine`), differential diagnosis candidates, key radiographic findings, interactive Grad-CAM heatmap overlay, and downloadable clinical reports.
+- **Production Architecture**: **Model D** — DenseNet-121 with spatial Gaussian Low-Pass Preprocessing ($\sigma = 1.0$) to suppress high-frequency scanner shortcut learning.
 
 ---
 
 ## 🎨 Application Screenshots
 
 ### 1. Lung Image Analysis & Diagnostic Triage
-![Landing / Analyze Page](docs/images/01_landing_analyze_page.png)
+![Landing / Analyze Page](docs/screenshots/application/02_analyze.png)
 
-### 2. Model Metrics & Algorithm Performance Comparison
-![Model Metrics Page](docs/images/03_model_metrics.png)
+### 2. Prediction Result & Clinical Triage
+![Prediction Result](docs/screenshots/application/03_prediction.png)
 
-### 3. Patient Record Management
-![Patient Management Page](docs/images/02_patient_management.png)
+### 3. Grad-CAM Saliency & Heatmap Explanation
+![Grad-CAM Explanation](docs/screenshots/application/04_gradcam.png)
 
-### 4. Historical Prediction Log & Auditing
-![History Page](docs/images/04_history_records.png)
+### 4. Model Performance & Comparative Benchmark Dashboard
+![Model Metrics Page](docs/screenshots/application/05_metrics.png)
+
+### 5. Historical Prediction Log & Audit Trail
+![History Page](docs/screenshots/application/06_history.png)
+
+### 6. Patient Record & Electronic Medical Record Management
+![Patient Management Page](docs/screenshots/application/07_patients.png)
 
 ---
 
@@ -40,98 +47,104 @@
 
 ```mermaid
 flowchart TD
-    A[User / Clinician] -->|Upload Chest Radiograph| B[React 18 Frontend]
-    B -->|REST HTTP / multipart-form| C[FastAPI Backend API]
+    A[Clinician / Radiologist] -->|Upload Chest Radiograph| B[React 18 Frontend]
+    B -->|REST HTTP multipart-form| C[FastAPI Backend API]
     C -->|Input Validation & Decoupling| D[Preprocessing Engine]
     
-    subgraph Preprocessing [Data Preprocessing Pipeline]
-        D -->|Format Normalization| D1[Grayscale/BGRA → RGB]
-        D1 -->|Noise Reduction| D2[Gaussian Blur 3x3]
-        D2 -->|Contrast Enhancement| D3[Single-Channel CLAHE]
-        D3 -->|ImageNet Standard| D4[Resize 224x224 & Scale float32]
+    subgraph Preprocessing [Model D Preprocessing Pipeline]
+        D -->|Decode & Channel Replication| D1[Grayscale/BGRA → 3-Channel RGB]
+        D1 -->|Spatial Gaussian LP sigma=1.0| D2[Gaussian Low-Pass Filtering]
+        D2 -->|ImageNet Standard| D3[Resize 224x224 & Scale float32 0-1]
     end
     
-    D4 -->|Normalized Tensor| E[Inference Engine Singleton]
+    D3 -->|Normalized Tensor| E[Inference Engine Singleton]
     
-    subgraph ML_Inference [Model Inference Engine]
-        E --> F{Selected Model}
-        F -->|ResNet50 Transfer Learning| G[Feature Extraction & Dense Classifier]
-        F -->|Custom 4-Block CNN| H[Conv2D + MaxPool + Dropout]
+    subgraph ML_Inference [Model D Inference Engine]
+        E --> F[DenseNet-121 Feature Extractor]
+        F -->|conv5_block16_concat| G[Grad-CAM Saliency Computation]
+        F -->|Global Average Pooling & Dropout 0.3| H[6-Class Softmax Classifier]
     end
     
-    G -->|Probability Vector| I[Decision Support & Urgency Triage]
-    H -->|Probability Vector| I
+    H -->|Softmax Probability Vector| I[Decision Support & Urgency Triage]
+    G -->|Alpha-Blended Heatmap| I
     
-    I -->|Persist Metadata & Scan| J[SQLAlchemy ORM + SQLite / PostgreSQL]
-    I -->|JSON Response| B
-    B -->|Render Dashboard, Charts & Reports| A
+    I -->|Persist Scan & Prediction| J[SQLAlchemy ORM + SQLite / PostgreSQL]
+    I -->|JSON Response + Base64 Heatmap| B
+    B -->|Render Diagnostic Card, Saliency Overlay & Triage| A
 ```
 
+*For comprehensive architecture and UML diagrams, see [docs/diagrams/](docs/diagrams/).*
+
 ---
 
-## 📊 Dataset & Stratified Split
+## 📊 Dataset & Stratified Split (Unified Manifest V5)
 
-The dataset comprises **10,864 total chest radiograph images** aggregated from public medical repositories:
+The production dataset comprises **10,548 total clinical chest radiographs** aggregated and harmonized across 5 authoritative medical repositories:
 
-| Disease Category | Image Count | Share (%) | Source Benchmark |
+| Disease Category | Image Count | Share (%) | Source Repository |
 | :--- | :---: | :---: | :--- |
-| **Pneumonia** | 4,273 | 39.33% | Kermany et al. / NIH ChestX-ray14 |
-| **COVID-19** | 3,616 | 33.28% | COVID-19 Radiography Database (Rahman et al.) |
-| **Normal** | 1,583 | 14.57% | Kermany et al. |
-| **Tuberculosis** | 700 | 6.44% | Tuberculosis Chest X-ray Database (Rahman et al.) |
-| **Lung Cancer** | 692 | 6.37% | Public Chest Radiograph / CT Repository |
-| **Total** | **10,864** | **100.00%** | **5 Active Disease Classes** |
+| **COVID-19** | 3,616 | 34.28% | COVID-19 Radiography Database (Rahman et al.) |
+| **Normal** | 1,583 | 15.01% | Kermany et al. |
+| **Pleural Effusion** | 188 | 1.78% | NIH ChestX-ray14 & BIMCV PadChest |
+| **Pneumonia** | 4,273 | 40.51% | Kermany et al. / NIH ChestX-ray14 |
+| **Pulmonary Nodule / Mass** | 188 | 1.78% | JSRT / NIH ChestX-ray14 |
+| **Tuberculosis** | 700 | 6.64% | Tuberculosis Chest X-ray Database (Rahman et al.) |
+| **Total** | **10,548** | **100.00%** | **Unified Manifest V5 (6 Active Classes)** |
 
-### Split Configuration (Random Seed `42`):
-- **Training Set (70%)**: 7,604 images (multi-threaded data loading with horizontal flip, rotation ±15°, brightness jitter)
-- **Validation Set (15%)**: 1,630 images (used strictly for model selection & early stopping)
-- **Held-Out Test Set (15%)**: **1,630 images** (never touched during training or hyperparameter tuning)
+### Split Configuration (Random Seed `42`, Patient-Strict Partitioning):
+- **Training Set (70%)**: 7,383 images (data loading with horizontal flip, rotation &plusmn;10&deg;, zoom &plusmn;10%)
+- **Validation Set (15%)**: 1,582 images (strictly for model checkpointing & early stopping)
+- **Held-Out Test Set (15%)**: **1,583 images** (never exposed during model selection or hyperparameter tuning)
 
 ---
 
-## 🧠 Model Architectures
+## 🧠 Model Architectures & Selection
 
-### 1. ResNet50 Transfer Learning (Selected Primary Model)
-- **Architecture**: 50-layer Residual Network initialized with ImageNet pre-trained weights.
-- **Training Routine**: Two-phase schedule:
-  - **Phase 1**: Frozen base network, training classification head (2 epochs, learning rate $10^{-3}$).
-  - **Phase 2**: Unfrozen top residual blocks, fine-tuning (4 epochs, learning rate $10^{-4}$ to $10^{-5}$).
-- **Loss Function**: `sparse_categorical_crossentropy` with Adam Optimizer.
+### 1. Model D: DenseNet-121 Frequency V5 (Selected Production Model)
+- **Architecture**: 121-layer Densely Connected Convolutional Network with 4 dense blocks (`conv5_block16_concat` target layer for Grad-CAM).
+- **Domain Shift Mitigation**: Spatial Gaussian Low-Pass filter ($\sigma = 1.0$) attenuates high-frequency scanner artifacts and hospital-specific noise shortcuts.
+- **Classification Head**: Global Average Pooling (1,024-D), Dropout ($p = 0.3$), Dense 6 units with Softmax activation.
+- **Training Schedule**: Two-phase transfer learning with Adam optimizer ($lr = 10^{-4}$ decaying to $10^{-5}$) and categorical cross-entropy loss.
 
-### 2. Custom 4-Block CNN (Baseline Architecture)
-- **Architecture**: 4 Sequential Conv2D blocks (32, 64, 128, 256 filters), Batch Normalization, ReLU activations, Max-Pooling (2x2), Dropout (0.25–0.5), Global Average Pooling, Dense layer (512 units), Softmax output.
+### 2. Baseline & Comparative Architectures
+- **Custom 4-Block CNN Baseline**: 4 Conv2D blocks (32, 64, 128, 256 filters), BatchNorm, ReLU, MaxPool, Dropout, GAP, Dense 512, Softmax.
+- **ResNet50 Transfer Learning**: 50-layer Residual Network initialized with ImageNet weights, evaluated across the same multi-source benchmark.
 
 ---
 
 ## 📈 Measured Verification Results
 
-Evaluated on the completely held-out test split of **1,630 unseen clinical images**:
+Evaluated on the completely held-out test split of **1,583 unseen clinical radiographs**:
 
-| Performance Metric | Custom CNN Baseline | ResNet50 Model (Selected) | Performance Delta ($\Delta$) |
-| :--- | :---: | :---: | :---: |
-| **Accuracy** | 78.22% | **95.21%** | **+16.99%** |
-| **Precision** | 78.50% | **95.18%** | **+16.68%** |
-| **Recall (Sensitivity)** | 78.22% | **95.21%** | **+16.99%** |
-| **F1-Score** | 72.16% | **95.17%** | **+23.01%** |
-| **AUC-ROC** | 88.50% | **99.39%** | **+10.89%** |
+| Performance Metric | Custom CNN Baseline | ResNet50 Transfer Learning | DenseNet-121 Model D (Selected) | Performance Delta ($\Delta$) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Accuracy** | 78.22% | 63.90% | **82.93%** | **+4.71% / +19.03%** |
+| **Macro Precision** | 82.60% | 77.70% | **81.40%** | Robust multi-class precision |
+| **Macro Recall** | 78.22% | 63.90% | **78.35%** | **+0.13% / +14.45%** |
+| **Macro F1-Score** | 72.16% | 65.80% | **78.35%** | **+6.19% / +12.55%** |
+| **Macro ROC-AUC** | 95.20% | 93.20% | **97.55%** | **+2.35% / +4.35%** |
+| **Macro PR-AUC** | 78.10% | 74.30% | **83.91%** | **+5.81% / +9.61%** |
 
-### ResNet50 Per-Class Test Set Breakdown:
+### Per-Class Test Set Performance (Model D):
 
 | Condition Class | Precision | Recall (Sensitivity) | F1-Score | Support |
 | :--- | :---: | :---: | :---: | :---: |
-| **COVID-19** | 0.96 | 0.98 | 0.97 | 543 |
-| **Lung Cancer** | 1.00 | 1.00 | 1.00 | 104 |
-| **Normal** | 0.91 | 0.90 | 0.91 | 237 |
-| **Pneumonia** | 0.96 | 0.97 | 0.96 | 641 |
-| **Tuberculosis** | 0.92 | 0.81 | 0.86 | 105 |
+| **COVID-19** | 0.94 | 0.97 | 0.95 | 542 |
+| **Normal** | 0.88 | 0.86 | 0.87 | 237 |
+| **Pleural Effusion** | 0.62 | 0.54 | 0.58 | 28 |
+| **Pneumonia** | 0.89 | 0.92 | 0.91 | 641 |
+| **Pulmonary Nodule / Mass** | 0.68 | 0.57 | 0.62 | 28 |
+| **Tuberculosis** | 0.87 | 0.84 | 0.85 | 105 |
+
+> **⚠️ External Generalization Disclosed:** Evaluation on quarantined external film-digitized radiographs (Montgomery County dataset, 138 scans) disclosed sensor-shift vulnerability (0% TB recall on scanned film due to high-frequency digitizer noise, while maintaining 100% binary abnormal sensitivity). This finding is documented in research as a boundary limitation of pure digital-to-film transfer without target-domain calibration.
 
 ---
 
-## 📥 Model Distribution & Download
+## 📥 Model Distribution & Checkpoints
 
-Large model files (`resnet_model.h5` ~241 MB, `cnn_model.h5` ~8.7 MB) are tracked via Git LFS / GitHub Release assets.
+Model D checkpoint (`models/densenet121_frequency_v5.h5` ~28.4 MB) is tracked in the repository and automatically loaded by the backend singleton at startup.
 
-To verify or download trained weights automatically:
+To verify model artifacts:
 ```bash
 python backend/ml/download_model.py
 ```

@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph Data_Sources ["Multi-Source Benchmark Acquisition (10,548 Clinical Images)"]
+        S1["Kermany et al. (ChestX-ray)<br/>Normal (1,583) &bull; Pneumonia (4,273)"]
+        S2["Rahman et al. (COVID-19 DB)<br/>COVID-19 (3,616)"]
+        S3["Rahman et al. (TB Database)<br/>Tuberculosis (700)"]
+        S4["NIH ChestX-ray14 & BIMCV<br/>Pleural Effusion (188)"]
+        S5["PadChest / JSRT / NIH<br/>Pulmonary Nodule / Mass (188)"]
+    end
+
+    subgraph Unified_Manifest_V5 ["V5 Dataset Harmonization & Quality Control"]
+        Harmonize["6-Class Target Mapping<br/>COVID-19 &bull; Normal &bull; Pleural Effusion<br/>Pneumonia &bull; Pulmonary Nodule/Mass &bull; TB"]
+        Dedup["Exact & Perceptual Deduplication<br/>MD5 Hashing &bull; 64-bit dHash Analysis"]
+        Split["Patient-Strict Stratified Holdout Split<br/>Train: 70% (7,383) &bull; Val: 15% (1,582) &bull; Test: 15% (1,583)"]
+    end
+
+    subgraph Frequency_Preprocessing ["Domain Shift Mitigation (Model D Protocol)"]
+        LPFilter["Spatial Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Suppresses High-Frequency Scanner Fingerprints"]
+        Augment["Training Data Augmentation<br/>Horizontal Flip &bull; Rotation (&plusmn;10&deg;) &bull; Zoom (&plusmn;10%)"]
+    end
+
+    subgraph Model_D_Optimization ["DenseNet-121 Architecture & Optimization"]
+        Init["ImageNet Pretrained Weights Transfer"]
+        Training["Two-Phase Fine-Tuning Schedule<br/>Phase 1: Head Only &bull; Phase 2: Unfreeze Dense Blocks 3-4<br/>Adam Optimizer (lr=1e-4) &bull; Categorical Cross-Entropy"]
+    end
+
+    subgraph Scientific_Evaluation ["Verification & Domain Shift Assessment"]
+        TestMetrics["Held-Out Test Set Performance (1,583 Images)<br/>Accuracy: 82.93% &bull; Macro F1: 78.35%<br/>Macro ROC-AUC: 0.9755 &bull; Macro PR-AUC: 0.8391"]
+        ExtAudit["Quarantined Montgomery External Audit (138 Scans)<br/>Sensor-Shift Vulnerability Disclosed<br/>0% TB Recall on Film Scans &bull; 100% Binary Abnormal Sensitivity"]
+    end
+
+    S1 & S2 & S3 & S4 & S5 --> Harmonize
+    Harmonize --> Dedup
+    Dedup --> Split
+    Split --> LPFilter
+    LPFilter --> Augment
+    Augment --> Init
+    Init --> Training
+    Training --> TestMetrics
+    Training --> ExtAudit
