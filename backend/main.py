@@ -39,19 +39,22 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Lung Disease Detection API",
     description="""
-    ## Academic Lung Disease Detection System
+    ## Academic Lung Disease Detection System (LungAI)
     
-    This API provides AI-powered lung disease detection from medical images.
+    This API provides AI-powered 6-class lung disease triage and detection from chest radiographs.
+    Powered by Model D (DenseNet-121 with Frequency-Domain Preprocessing &sigma;=1.0) and Grad-CAM explainability.
     
-    **Important:** This tool is designed to assist medical professionals,
+    **Important:** This clinical decision support tool is designed to assist medical professionals,
     not replace clinical judgment. Always consult a qualified physician.
     
     ### Features:
-    - Upload chest X-rays, CT scans
-    - Two ML models (CNN + ResNet) with accuracy comparison
-    - Confidence scoring and differential diagnosis
-    - Patient record management
-    - Detailed medical reports
+    - Chest radiograph (CXR) ingestion (JPEG, PNG, WebP &le; 10MB)
+    - Model D DenseNet-121 inference across 6 active classes
+    - Interactive Grad-CAM attention heatmap overlays
+    - Confidence scoring, differential candidate ranking, and clinical precautions
+    - Three-tier urgency triage categorization (Routine, Urgent, Emergency)
+    - Patient EMR record and historical scan management
+    - Structured diagnostic report generation
     """,
     version="1.0.0",
     lifespan=lifespan

@@ -82,9 +82,11 @@ MERMAID_ML_PIPELINE = """flowchart TD
     
     subgraph Preprocessing_Stage ["Model D Frequency-Domain Preprocessing Pipeline"]
         Decode["Format & Channel Normalization<br/>Ensure 3-Channel RGB (H &times; W &times; 3)"]
-        LPF["Spatial Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Attenuates High-Frequency Scanner Artifacts"]
-        Resize["ImageNet Geometry Standardization<br/>Bilinear Interpolation &rarr; 224 &times; 224 &times; 3"]
-        Norm["Intensity Scaling<br/>float32 Normalized to Range [0.0, 1.0]"]
+        Blur["Initial Gaussian Blur (3&times;3, &sigma;=0.8)<br/>High-Frequency Spike Damping"]
+        CLAHE["CIE LAB Conversion & CLAHE<br/>Clip Limit 2.0 &bull; Tile Grid 8&times;8 on L Channel"]
+        LPF["Spatial Gaussian Low-Pass Filter (&sigma;=1.0)<br/>Attenuates Scanner Fingerprints & Textures"]
+        Resize["ImageNet Geometry Standardization<br/>Lanczos-4 Interpolation &rarr; 224 &times; 224 &times; 3"]
+        Norm["ImageNet Z-Score Normalization<br/>(Pixel/255.0 - &mu;) / &sigma; &bull; float32"]
     end
 
     subgraph Deep_Inference_Stage ["DenseNet-121 Deep Neural Network (Frozen Model D Checkpoint)"]
@@ -92,21 +94,23 @@ MERMAID_ML_PIPELINE = """flowchart TD
         DB1["Dense Block 1 (6 layers) + Transition Layer 1"]
         DB2["Dense Block 2 (12 layers) + Transition Layer 2"]
         DB3["Dense Block 3 (24 layers) + Transition Layer 3"]
-        DB4["Dense Block 4 (16 layers)<br/>Target Feature Map: conv5_block16_concat"]
-        Head["Global Average Pooling (1024-D)<br/>Dropout (p = 0.3) &bull; Dense 6 Units"]
-        Softmax["Softmax Probability Vector &bull; &sum; p_i = 1.0"]
+        DB4["Dense Block 4 (16 layers)<br/>Target Feature Map: conv5_block16_concat / relu"]
+        Head["Global Average Pooling (1024-D) &bull; BatchNorm<br/>Dense Bottleneck (256-D, ReLU) &bull; Dropout (0.3)"]
+        Softmax["Dense Output (6 Classes) + Softmax &bull; &sum; p_i = 1.0"]
     end
 
     subgraph Decision_Explainability_Stage ["Clinical Decision Support & Explainability"]
-        Classes["6 Active Disease Classes:<br/>0: COVID-19<br/>1: Normal<br/>2: Pleural Effusion<br/>3: Pneumonia<br/>4: Pulmonary Nodule / Mass<br/>5: Tuberculosis"]
-        GradCAMCalc["Grad-CAM Gradient Computation<br/>&alpha;_k = GAP(&part;y^c / &part;A^k)<br/>L^c = ReLU(&sum; &alpha;_k A^k)"]
+        Classes["6 Active Disease Classes:<br/>0: COVID-19 &bull; 1: Normal &bull; 2: Pleural Effusion<br/>3: Pneumonia &bull; 4: Pulmonary Nodule / Mass &bull; 5: Tuberculosis"]
+        GradCAMCalc["Grad-CAM Gradient Computation<br/>&alpha;_k = GAP(&part;y^c / &part;A^k)<br/>L^c = ReLU(&sum; &alpha;_k A^k) on relu"]
         Overlay["Saliency Map Generation<br/>Jet Color Map + Original CXR Alpha-Blending"]
         Triage["Urgency Triage Determination<br/>Routine (&le;60% or Normal)<br/>Urgent (Effusion/Nodule/TB)<br/>Emergency (COVID-19 / Severe Pneumonia)"]
         Findings["Radiological Findings & Advisory<br/>Differential Candidates &bull; Precautions &bull; Disclaimer"]
     end
 
     RawCXR --> Decode
-    Decode --> LPF
+    Decode --> Blur
+    Blur --> CLAHE
+    CLAHE --> LPF
     LPF --> Resize
     Resize --> Norm
     Norm --> ConvInit
@@ -226,18 +230,19 @@ MERMAID_DATABASE_ER = """erDiagram
 """
 
 MERMAID_DATASET_TRAINING = """flowchart TD
-    subgraph Data_Sources ["Multi-Source Benchmark Acquisition (10,548 Clinical Images)"]
-        S1["Kermany et al. (ChestX-ray)<br/>Normal (1,583) &bull; Pneumonia (4,273)"]
-        S2["Rahman et al. (COVID-19 DB)<br/>COVID-19 (3,616)"]
-        S3["Rahman et al. (TB Database)<br/>Tuberculosis (700)"]
-        S4["NIH ChestX-ray14 & BIMCV<br/>Pleural Effusion (188)"]
-        S5["PadChest / JSRT / NIH<br/>Pulmonary Nodule / Mass (188)"]
+    subgraph Data_Sources ["Multi-Source Benchmark Acquisition (10,547 Clinical Images)"]
+        S1["TBX11K Benchmark (3,277)<br/>Tuberculosis &bull; Normal"]
+        S2["Existing COVID-19 Cohort (1,942)<br/>COVID-19 Radiographs"]
+        S3["VinBigData VinDr-CXR (1,467)<br/>Pleural Effusion &bull; Pulmonary Nodule / Mass"]
+        S4["Existing Pneumonia Cohort (1,395)<br/>Bacterial &bull; Viral Pneumonia"]
+        S5["Existing Normal (1,199) &bull; Existing TB (665)<br/>Standard CXR Controls & Mycobacterial Scans"]
+        S6["NIH ChestX-ray14 (457) &bull; JSRT (145)<br/>Effusion &bull; Nodule/Mass Ground Truth"]
     end
 
     subgraph Unified_Manifest_V5 ["V5 Dataset Harmonization & Quality Control"]
         Harmonize["6-Class Target Mapping<br/>COVID-19 &bull; Normal &bull; Pleural Effusion<br/>Pneumonia &bull; Pulmonary Nodule/Mass &bull; TB"]
         Dedup["Exact & Perceptual Deduplication<br/>MD5 Hashing &bull; 64-bit dHash Analysis"]
-        Split["Patient-Strict Stratified Holdout Split<br/>Train: 70% (7,383) &bull; Val: 15% (1,582) &bull; Test: 15% (1,583)"]
+        Split["Patient-Strict Stratified Holdout Split (10,270 Patients)<br/>Train: 70.14% (7,398) &bull; Val: 14.97% (1,579) &bull; Test: 14.89% (1,570)"]
     end
 
     subgraph Frequency_Preprocessing ["Domain Shift Mitigation (Model D Protocol)"]
@@ -251,11 +256,11 @@ MERMAID_DATASET_TRAINING = """flowchart TD
     end
 
     subgraph Scientific_Evaluation ["Verification & Domain Shift Assessment"]
-        TestMetrics["Held-Out Test Set Performance (1,583 Images)<br/>Accuracy: 82.93% &bull; Macro F1: 78.35%<br/>Macro ROC-AUC: 0.9755 &bull; Macro PR-AUC: 0.8391"]
+        TestMetrics["Held-Out Test Set Performance (1,570 Images)<br/>Accuracy: 82.93% &bull; Macro F1: 78.35%<br/>Macro ROC-AUC: 0.9755 &bull; Macro PR-AUC: 0.8391"]
         ExtAudit["Quarantined Montgomery External Audit (138 Scans)<br/>Sensor-Shift Vulnerability Disclosed<br/>0% TB Recall on Film Scans &bull; 100% Binary Abnormal Sensitivity"]
     end
 
-    S1 & S2 & S3 & S4 & S5 --> Harmonize
+    S1 & S2 & S3 & S4 & S5 & S6 --> Harmonize
     Harmonize --> Dedup
     Dedup --> Split
     Split --> LPFilter
@@ -457,9 +462,9 @@ def render_ml_pipeline():
     ax.add_patch(summary_rect)
     ax.text(7.5, 1.5, "Active 6-Class Diagnostic Taxonomy (backend/ml/class_mapping.json)",
             fontsize=10, fontweight="bold", ha="center", va="top", color="#0F172A")
-    classes_text = "0: COVID-19 (33.3%)   |   1: Normal (14.6%)   |   2: Pleural Effusion (1.7%)   |   3: Pneumonia (39.3%)   |   4: Pulmonary Nodule / Mass (1.7%)   |   5: Tuberculosis (6.4%)"
+    classes_text = "0: COVID-19 (18.4%)   |   1: Normal (25.0%)   |   2: Pleural Effusion (10.1%)   |   3: Pneumonia (26.6%)   |   4: Nodule / Mass (7.2%)   |   5: TB (12.8%)"
     ax.text(7.5, 1.05, classes_text, fontsize=9.2, ha="center", va="top", color="#334155")
-    ax.text(7.5, 0.65, "Performance on Held-Out Test Set (1,583 Scans):  Accuracy: 82.93%  |  Macro F1: 78.35%  |  Macro ROC-AUC: 0.9755  |  Macro PR-AUC: 0.8391",
+    ax.text(7.5, 0.65, "Performance on Held-Out Test Set (1,570 Scans):  Accuracy: 82.93%  |  Macro F1: 78.35%  |  Macro ROC-AUC: 0.9755  |  Macro PR-AUC: 0.8391",
             fontsize=8.8, fontweight="bold", ha="center", va="top", color="#047857")
 
     plt.tight_layout()
@@ -683,21 +688,22 @@ def render_dataset_training_pipeline():
 
     steps = [
         ("1. Multi-Source Ingestion", [
-            "Kermany (Normal/Pneumonia)",
-            "Rahman (COVID-19 DB)",
-            "Rahman (Tuberculosis DB)",
-            "NIH ChestX-ray14 (Effusion)",
-            "PadChest/JSRT/NIH (Nodule)",
-            "Total: 10,548 Clinical Images"
+            "TBX11K Benchmark (3,277)",
+            "Existing COVID-19 (1,942)",
+            "VinBigData VinDr-CXR (1,467)",
+            "Existing Pneumonia (1,395)",
+            "Existing Normal/TB (1,864)",
+            "NIH & JSRT Scans (602)",
+            "Total: 10,547 Clinical Images"
         ], "#0284C7"),
 
         ("2. V5 Quality & Stratification", [
             "6-Class Harmonization Mapping",
             "MD5 & dHash Deduplication",
-            "Strict Patient Holdout Split",
-            "Train: 70% (7,383 Images)",
-            "Val: 15% (1,582 Images)",
-            "Test: 15% (1,583 Images)"
+            "Patient-Strict Split (10,270 Pts)",
+            "Train: 70.14% (7,398 Images)",
+            "Val: 14.97% (1,579 Images)",
+            "Test: 14.89% (1,570 Images)"
         ], "#059669"),
 
         ("3. Model D Training", [
@@ -710,7 +716,7 @@ def render_dataset_training_pipeline():
         ], "#7C3AED"),
 
         ("4. Scientific Evaluation", [
-            "Held-Out Test Set (1,583 Scans)",
+            "Held-Out Test Set (1,570 Scans)",
             "Accuracy: 82.93%",
             "Macro F1-Score: 78.35%",
             "Macro ROC-AUC: 0.9755",

@@ -82,8 +82,7 @@ This index audits, classifies, and indexes every visual, diagrammatic, photograp
 ## 🗃️ 5. Dataset Assets & Manifest Integrity
 
 | Dataset Asset | Repository Path | Count | Role | Manifest Auth | Integrity Status |
-| :--- | :--- | :---: | :--- | :---: | :---: |
-| **Unified Manifest V5** | [`experiments/data/unified_manifest_v5.csv`](file:///D:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/data/unified_manifest_v5.csv) | 10,548 rows | Authoritative V5 patient & split registry | **YES** | **FROZEN / UNTOUCHED** |
+| **Unified Manifest V5** | [`experiments/data/unified_manifest_v5.csv`](file:///D:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/data/unified_manifest_v5.csv) | 10,547 scans (10,270 patients) | Authoritative V5 patient & split registry | **YES** | **FROZEN / UNTOUCHED** |
 | **Raw COVID-19 Radiographs** | `data/raw/COVID-19/` | 3,616 | Benchmark training/val/test data | Unified V5 | **FROZEN / UNTOUCHED** |
 | **Raw Normal Radiographs** | `data/raw/Normal/` | 1,583 | Benchmark training/val/test data | Unified V5 | **FROZEN / UNTOUCHED** |
 | **Raw Pleural Effusion Scans** | `data/raw/Pleural Effusion/` | 188 | Benchmark training/val/test data | Unified V5 | **FROZEN / UNTOUCHED** |

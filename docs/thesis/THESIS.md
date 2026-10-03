@@ -1058,6 +1058,45 @@ The successful integration of deterministic urgency triage logic, comprehensive 
 
 ---
 
+# CHAPTER 17 — THESIS EXTENSION: V5 UNIFIED BENCHMARK RECONSTRUCTION, SENSOR SHIFT AUDIT, AND FREQUENCY-DOMAIN ADAPTATION (MODEL D)
+
+## 17.1 Evolution Beyond Phase 1: Motivation & Scientific Dilemma
+
+Following the completion of the Phase 1 initial baseline study (comparing Custom CNN against ResNet50 on a 5-class cohort), rigorous forensic evaluation identified three fundamental scientific challenges:
+1. **Modal Inconsistency in Pulmonary Oncology**: The initial 5-class cohort utilized 692 axial Computed Tomography (CT) slices from IQ-OTH/NCCD to represent Lung Cancer, introducing an impermissible cross-modality confounder against planar CXRs.
+2. **Patient Overlap Risk & Manifest Leakage**: Unharmonized public collections lacked patient-level de-identification metadata, creating vulnerabilities to identity leakage across train/test splits.
+3. **Hardware & Digitizer Sensor Shift**: External auditing on digitized analog radiographs (the Montgomery County TB benchmark) revealed catastrophic performance collapse caused by high-frequency scanner noise shortcuts rather than pathological lesion features.
+
+## 17.2 The Unified V5 Benchmark (10,547 Radiographs, 10,270 Patients)
+
+To address these limitations, a rigorous 6-class CXR benchmark was reconstructed under the Unified V5 Manifest (`experiments/data/unified_manifest_v5.csv`):
+- **Diagnostic Taxonomy (6 CXR Classes)**: COVID-19 (1,942), Normal (2,636), Pleural Effusion (1,062), Pneumonia (2,805), Pulmonary Nodule / Mass (754), Tuberculosis (1,348).
+- **Multi-Source Acquisition (8 Repositories)**: TBX11K (3,277), Existing COVID-19 (1,942), VinBigData VinDr-CXR (1,467), Existing Pneumonia (1,395), Existing Normal (1,199), Existing TB (665), NIH ChestX-ray14 (457), JSRT (145).
+- **Patient-Strict Partitioning**: 10,270 unique clinical patients partitioned into Train (7,398 / 70.14%), Validation (1,579 / 14.97%), and Test (1,570 / 14.89%) with 0% patient leakage.
+
+## 17.3 Biophysical Sensor-Shift Failure Analysis (The Montgomery Audit)
+
+External evaluation against the quarantined Montgomery County benchmark (N=138, 58 TB, 80 Normal) uncovered an essential clinical boundary:
+- Standard ERM networks collapsed to 0.0% TB sensitivity on Montgomery scans, despite 100% binary abnormal sensitivity.
+- Forensic edge variance analysis proved that Montgomery radiographs (digitized analog film) exhibited ~4× higher Laplacian edge variance (1,580 vs 373) compared to digital CR/DR scans, causing dense convolutional layers to activate spuriously on film grain texture.
+
+## 17.4 Model D: Frequency-Domain Gaussian Low-Pass Preprocessing
+
+To decouple neural feature extraction from high-frequency digitizer and scanner noise, Phase 4D engineered Model D (`densenet121_frequency_v5.h5`):
+- **Spatial Gaussian Low-Pass Filter**: $\sigma=1.0$ applied prior to Lanczos-4 resampling, filtering out spurious high-frequency scanner signatures while preserving anatomical lung parenchymal opacities.
+- **Deep Architecture**: DenseNet-121 backbone with Dense Bottleneck (256-D), Dropout (0.3), and 6-class Softmax.
+- **Integrated Explainability**: Gradient-weighted Class Activation Mapping (Grad-CAM) targeting the final bottleneck layer (`conv5_block16_concat`/`relu`) to generate transparent visual saliency overlays.
+
+## 17.5 Empirical Verification & Benchmark Results
+
+On the held-out test set of 1,570 clinical radiographs:
+- **Accuracy**: 82.93%
+- **Macro F1-Score**: 78.35% (COVID-19: 97.01%, Normal: 89.58%, TB: 88.66%, Pneumonia: 86.49%, Effusion: 55.32%, Nodule: 53.03%)
+- **Macro ROC-AUC**: 0.9755 (Macro PR-AUC: 0.8391)
+- **Production Integration**: Model D serves as the authoritative production inference engine in the LungAI application tier, backed by automated test suites (31 passed tests).
+
+---
+
 # REFERENCES
 
 * [1] World Health Organization, 'The top 10 causes of death,' WHO Global Health Estimates, Geneva, Switzerland, Dec. 2020. [Online]. Available: https://www.who.int/news-room/fact-sheets/detail/the-top-10-causes-of-death.
@@ -1106,9 +1145,11 @@ The successful integration of deterministic urgency triage logic, comprehensive 
 | DATABASE_URL | sqlite+aiosqlite:///./lung_disease.db | Asynchronous database connection URI (dialect-compatible with asyncpg). |
 | MODEL_RESNET_PATH | models/lung_disease_detector_final.h5 | Serialized HDF5 weights artifact for the primary ResNet50 transfer model. |
 | MODEL_CNN_PATH | models/custom_cnn_baseline.h5 | Serialized HDF5 weights artifact for the Custom 4-Stage CNN baseline. |
+| MODEL_D_PATH | models/densenet121_frequency_v5.h5 | Serialized HDF5 weights artifact for Model D (DenseNet-121 Frequency V5). |
 | MAX_UPLOAD_SIZE_BYTES | 10,485,760 (10 MB) | Defensive ceiling for multipart image payloads to prevent memory exhaustion. |
 | IMAGE_TARGET_SIZE | (224, 224) | Standardized spatial pixel resolution for tensor construction. |
-| ACTIVE_CLASSES | COVID-19, Lung Cancer, Normal, Pneumonia, Tuberculosis | Standardized alphabetical indexing mapping Softmax logits to disease categories. |
+| ACTIVE_CLASSES (Model D) | COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass, Tuberculosis | 6-Class unified diagnostic taxonomy (backend/ml/class_mapping.json). |
+| ACTIVE_CLASSES (Phase 1) | COVID-19, Lung Cancer, Normal, Pneumonia, Tuberculosis | Historical 5-class baseline indexing. |
 
 
 ## Appendix B: Core Preprocessing & Inference Implementation

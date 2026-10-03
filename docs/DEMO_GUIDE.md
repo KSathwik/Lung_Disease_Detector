@@ -1,41 +1,50 @@
 # 📹 LungAI — Demo & Presentation Guide
 
-This guide outlines the step-by-step workflow for demonstrating the **Lung Disease Classification & Decision Support System** on GitHub and LinkedIn.
+This guide outlines the step-by-step workflow for demonstrating the **Lung Disease Classification & Clinical Decision Support System** during presentations and thesis defenses.
 
 ---
 
-## 🎬 Recommended Recording Flow (60–90 Seconds)
+## 🎬 Recommended Demonstration Flow (60–90 Seconds)
 
 ### Scene 1: Launch & System Overview (10s)
-1. Show terminal window starting backend API:
+1. Show terminal window starting backend API and React frontend:
    ```bash
-   python backend/main.py
+   uvicorn main:app --app-dir backend --port 8000
+   npm start
    ```
-2. Show React dashboard opening at `http://localhost:3000`. Highlight the clean dark-themed UI and system status indicators.
+2. Open clinician dashboard at `http://localhost:3000`. Highlight the responsive medical UI and system status indicators.
 
 ### Scene 2: Patient Registration & Upload (20s)
-1. Navigate to **Patients** tab and show patient record selection or registration.
+1. Navigate to **Patients** tab and demonstrate patient selection or new patient registration.
 2. Navigate to **Analyze** tab.
-3. Drag & drop a sample chest radiograph (e.g. Pneumonia or COVID-19 X-ray from `data/raw/`).
+3. Drag & drop a sample chest radiograph (or select one of the built-in CXR sample presets).
 
 ### Scene 3: Inference & Triage Dashboard (30s)
 1. Click **Analyze Radiograph**.
-2. Show the real-time classification output:
-   - Primary predicted class & confidence score (e.g. `Pneumonia - 96.4%`)
-   - Urgency Level badge (`Urgent` / `Emergency`)
-   - Differential diagnosis probability comparison across all 5 classes
+2. Review real-time diagnostic output powered by Model D (DenseNet-121 Frequency V5):
+   - Primary predicted class & confidence score (e.g. `COVID-19 — 98.4%`)
+   - Urgency Level badge (`Routine` / `Urgent` / `Emergency`)
+   - Differential diagnosis probability bars across all 6 classes (COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass, Tuberculosis)
+   - Interactive Grad-CAM visual attention heatmap overlay toggle
    - Key radiographic findings & clinical precautions
-   - Visible medical disclaimer banner
+   - Research disclaimer and Montgomery domain-shift limitation notice
 
 ### Scene 4: Metrics & Model Selection (20s)
 1. Navigate to **Model Metrics** page.
-2. Show the empirical comparison chart between **Custom CNN** (78.22% accuracy) and **ResNet50** (95.21% accuracy, 99.39% AUC-ROC).
-3. Display confusion matrices and training convergence curves.
+2. Show the empirical comparison chart between initial baselines (Custom CNN, ResNet50) and the production champion **Model D (DenseNet-121 Frequency V5)**:
+   - Test Accuracy: **82.93%**
+   - Macro F1: **78.35%**
+   - Macro ROC-AUC: **97.55%**
+   - Macro PR-AUC: **83.91%**
+3. Inspect the per-class performance breakdown table and hardware generalization limitation note.
 
 ---
 
-## 📸 Key Screenshot Checklist for GitHub README
-- [x] Dashboard Upload Interface
-- [x] Prediction & Urgency Triage Results
-- [x] Dual-Model Metric Comparison Charts (`docs/training_curves.png`)
-- [x] ResNet50 Test Set Confusion Matrix (`docs/confusion_matrix_ResNet.png`)
+## 📸 Key Verification Checklist
+- [x] Analyze Workspace with CXR Sample Presets
+- [x] Diagnostic Prediction Card with Urgency Triage
+- [x] Grad-CAM Saliency Overlay
+- [x] Model Metrics Dashboard with Model D vs Baselines
+- [x] Patient Management & EMR Registration
+- [x] Searchable Diagnostic History Log
+- [x] Structured Clinical Report Generation

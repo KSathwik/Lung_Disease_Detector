@@ -16,7 +16,7 @@
 | 5 | CheXNet: Radiologist-Level Pneumonia Detection | Rajpurkar et al. (2017) | arXiv | DenseNet-121 | ChestX-ray14 | Radiologist-level (pneumonia) | Weak/NLP labels | Methodological benchmark (§2.5) |
 | 6 | ChestX-ray8: Hospital-scale CXR DB & Benchmarks | Wang et al. (2017) | IEEE CVPR | Multi-label CNN + localization | ChestX-ray14 (112k) | Per-class AUC varies | NLP-mined labels | Future multi-label / COPD & Effusion data (§2.5, §7.3) |
 | 7 | CheXpert: Large CXR Dataset with Uncertainty Labels | Irvin et al. (2019) | AAAI | CNN + uncertainty handling | CheXpert (224k) | AUC up to 0.93 | Label uncertainty | Motivates uncertainty modelling (§2.5, §7.3) |
-| 8 | Grad-CAM: Visual Explanations... | Selvaraju et al. (2017) | IEEE ICCV | Gradient-based class activation | — | Qualitative localization | Not quantitative | **Proposed XAI** improvement (§2.7, §7.3) |
+| 8 | Grad-CAM: Visual Explanations... | Selvaraju et al. (2017) | IEEE ICCV | Gradient-based class activation | — | Qualitative localization | Not quantitative | **Implemented XAI Engine** (`conv5_block16_concat` layer visual overlay) (§2.7, §4.3, §7.3) |
 | 9 | On Calibration of Modern Neural Networks | Guo et al. (2017) | ICML | Temperature scaling, ECE | CIFAR/ImageNet | NNs miscalibrated; T-scaling fixes | Vision-general | **Calibration** roadmap (§2.7, §3.10, §7.3) |
 | 10 | A Survey on Deep Learning in Medical Image Analysis | Litjens et al. (2017) | Medical Image Analysis 42 | Survey | — | Taxonomy of DL in med-imaging | Survey (pre-2017) | Field overview (§2.1) |
 | 11 | Dermatologist-level Classification of Skin Cancer | Esteva et al. (2017) | Nature 542 | CNN (Inception-v3) | 129k skin images | Dermatologist-level | Single domain | Clinical-grade CAD motivation (§2.1) |
@@ -39,8 +39,8 @@
 | Generalization / shortcut learning | [12] | §6.7, §7.3 |
 | Field surveys / motivation | [10], [11] | §2.1 |
 
-## Identified Research Gaps (synthesised)
-1. **Explainability** — predictions lack visual evidence localization ([8] proposed).
-2. **Calibration** — confidence used for urgency is uncalibrated ([9]).
-3. **Generalization** — multi-source/modality data risks shortcut learning ([12]).
-4. **Workflow integration** — classifiers rarely embedded in auditable clinical workflows (this project's engineering contribution).
+## Identified Research Gaps & Project Contributions
+1. **Explainability** — Addressed in LungAI via integrated Grad-CAM visual attention mapping (`conv5_block16_concat` layer), producing localized heatmaps and region focus.
+2. **Calibration** — Urgency classification leverages probability thresholds; temperature scaling roadmap documented ([9]).
+3. **Generalization & Sensor Shift** — Multi-source acquisition evaluated against external digitizer shift (Montgomery County benchmark); addressed through Phase 4D frequency-domain low-pass filtering.
+4. **Clinical Workflow Integration** — Production-ready decoupled React 18 + FastAPI architecture with ORM persistence, patient EMR linking, and automated report generation.

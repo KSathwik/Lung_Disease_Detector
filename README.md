@@ -79,22 +79,22 @@ flowchart TD
 
 ## 📊 Dataset & Stratified Split (Unified Manifest V5)
 
-The production dataset comprises **10,548 total clinical chest radiographs** aggregated and harmonized across 5 authoritative medical repositories:
+The production dataset comprises **10,547 total clinical chest radiographs** aggregated and harmonized across 8 authoritative medical repositories (10,270 unique patients with strict zero patient leakage across splits):
 
-| Disease Category | Image Count | Share (%) | Source Repository |
+| Disease Category | Image Count | Share (%) | Primary Source Repositories |
 | :--- | :---: | :---: | :--- |
-| **COVID-19** | 3,616 | 34.28% | COVID-19 Radiography Database (Rahman et al.) |
-| **Normal** | 1,583 | 15.01% | Kermany et al. |
-| **Pleural Effusion** | 188 | 1.78% | NIH ChestX-ray14 & BIMCV PadChest |
-| **Pneumonia** | 4,273 | 40.51% | Kermany et al. / NIH ChestX-ray14 |
-| **Pulmonary Nodule / Mass** | 188 | 1.78% | JSRT / NIH ChestX-ray14 |
-| **Tuberculosis** | 700 | 6.64% | Tuberculosis Chest X-ray Database (Rahman et al.) |
-| **Total** | **10,548** | **100.00%** | **Unified Manifest V5 (6 Active Classes)** |
+| **Pneumonia** | 2,805 | 26.60% | Kermany et al. (1,395) &bull; TBX11K (1,395) &bull; NIH ChestX-ray14 (15) |
+| **Normal** | 2,636 | 24.99% | Kermany et al. (1,199) &bull; TBX11K (1,199) &bull; NIH (171) &bull; JSRT (67) |
+| **COVID-19** | 1,942 | 18.41% | COVID-19 Radiography Database (Rahman et al.) |
+| **Tuberculosis** | 1,348 | 12.78% | TBX11K (683) &bull; Tuberculosis Chest X-ray DB (665) |
+| **Pleural Effusion** | 1,062 | 10.07% | VinBigData VinDr-CXR (931) &bull; NIH ChestX-ray14 (131) |
+| **Pulmonary Nodule / Mass** | 754 | 7.15% | VinBigData VinDr-CXR (536) &bull; NIH (140) &bull; JSRT (78) |
+| **Total** | **10,547** | **100.00%** | **Unified Manifest V5 (8 Sources, 6 Active Classes, 10,270 Patients)** |
 
 ### Split Configuration (Random Seed `42`, Patient-Strict Partitioning):
-- **Training Set (70%)**: 7,383 images (data loading with horizontal flip, rotation &plusmn;10&deg;, zoom &plusmn;10%)
-- **Validation Set (15%)**: 1,582 images (strictly for model checkpointing & early stopping)
-- **Held-Out Test Set (15%)**: **1,583 images** (never exposed during model selection or hyperparameter tuning)
+- **Training Set (70.14%)**: 7,398 images (7,189 unique patients; data loading with horizontal flip, rotation &plusmn;10&deg;, zoom &plusmn;10%)
+- **Validation Set (14.97%)**: 1,579 images (1,540 unique patients; strictly for model checkpointing & early stopping)
+- **Held-Out Test Set (14.89%)**: **1,570 images** (1,541 unique patients; never exposed during model selection or tuning; 0% cross-split patient overlap)
 
 ---
 
@@ -103,8 +103,8 @@ The production dataset comprises **10,548 total clinical chest radiographs** agg
 ### 1. Model D: DenseNet-121 Frequency V5 (Selected Production Model)
 - **Architecture**: 121-layer Densely Connected Convolutional Network with 4 dense blocks (`conv5_block16_concat` target layer for Grad-CAM).
 - **Domain Shift Mitigation**: Spatial Gaussian Low-Pass filter ($\sigma = 1.0$) attenuates high-frequency scanner artifacts and hospital-specific noise shortcuts.
-- **Classification Head**: Global Average Pooling (1,024-D), Dropout ($p = 0.3$), Dense 6 units with Softmax activation.
-- **Training Schedule**: Two-phase transfer learning with Adam optimizer ($lr = 10^{-4}$ decaying to $10^{-5}$) and categorical cross-entropy loss.
+- **Classification Head**: Global Average Pooling (1,024-D), Batch Normalization, Dense bottleneck (256 units, ReLU), Dropout ($p = 0.3$), Dense 6 units with Softmax activation.
+- **Training Schedule**: Two-phase transfer learning with Adam optimizer ($lr = 10^{-4}$ decaying to $10^{-5}$) and categorical cross-entropy loss with inverse class weighting.
 
 ### 2. Baseline & Comparative Architectures
 - **Custom 4-Block CNN Baseline**: 4 Conv2D blocks (32, 64, 128, 256 filters), BatchNorm, ReLU, MaxPool, Dropout, GAP, Dense 512, Softmax.
@@ -114,27 +114,29 @@ The production dataset comprises **10,548 total clinical chest radiographs** agg
 
 ## 📈 Measured Verification Results
 
-Evaluated on the completely held-out test split of **1,583 unseen clinical radiographs**:
+Evaluated on the completely held-out test split of **1,570 unseen clinical radiographs**:
 
-| Performance Metric | Custom CNN Baseline | ResNet50 Transfer Learning | DenseNet-121 Model D (Selected) | Performance Delta ($\Delta$) |
+| Performance Metric | Custom CNN Baseline | ResNet50 Transfer Learning | DenseNet-121 Model D (Selected) | Performance Delta ($\Delta$ vs CNN) |
 | :--- | :---: | :---: | :---: | :---: |
-| **Accuracy** | 78.22% | 63.90% | **82.93%** | **+4.71% / +19.03%** |
-| **Macro Precision** | 82.60% | 77.70% | **81.40%** | Robust multi-class precision |
-| **Macro Recall** | 78.22% | 63.90% | **78.35%** | **+0.13% / +14.45%** |
+| **Accuracy** | 78.22% | 63.88% | **82.93%** | **+4.71% / +19.05%** |
+| **Macro Precision** | 82.64% | 77.70% | **79.31%** | Balanced multi-class precision |
+| **Macro Recall** | 78.22% | 63.88% | **80.73%** | **+2.51% / +16.85%** |
 | **Macro F1-Score** | 72.16% | 65.80% | **78.35%** | **+6.19% / +12.55%** |
-| **Macro ROC-AUC** | 95.20% | 93.20% | **97.55%** | **+2.35% / +4.35%** |
-| **Macro PR-AUC** | 78.10% | 74.30% | **83.91%** | **+5.81% / +9.61%** |
+| **Weighted F1-Score** | 77.40% | 64.92% | **84.18%** | **+6.78% / +19.26%** |
+| **Macro ROC-AUC** | 0.9519 | 0.9321 | **0.9755** | **+0.0236 / +0.0434** |
+| **Macro PR-AUC** | 0.7810 | 0.6954 | **0.8391** | **+0.0581 / +0.1437** |
 
-### Per-Class Test Set Performance (Model D):
+### Per-Class Test Set Performance (Model D, Held-Out Split $N=1,570$):
 
-| Condition Class | Precision | Recall (Sensitivity) | F1-Score | Support |
-| :--- | :---: | :---: | :---: | :---: |
-| **COVID-19** | 0.94 | 0.97 | 0.95 | 542 |
-| **Normal** | 0.88 | 0.86 | 0.87 | 237 |
-| **Pleural Effusion** | 0.62 | 0.54 | 0.58 | 28 |
-| **Pneumonia** | 0.89 | 0.92 | 0.91 | 641 |
-| **Pulmonary Nodule / Mass** | 0.68 | 0.57 | 0.62 | 28 |
-| **Tuberculosis** | 0.87 | 0.84 | 0.85 | 105 |
+| Condition Class | Precision | Recall (Sensitivity) | F1-Score | Specificity | Test Support |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **COVID-19** | 99.64% | 94.52% | **97.01%** | 99.92% | 292 |
+| **Normal** | 90.86% | 88.32% | **89.58%** | 97.02% | 394 |
+| **Pleural Effusion** | 60.00% | 51.32% | **55.32%** | 96.33% | 152 |
+| **Pneumonia** | 94.92% | 79.43% | **86.49%** | 98.43% | 423 |
+| **Pulmonary Nodule / Mass** | 38.49% | 85.19% | **53.03%** | 89.95% | 108 |
+| **Tuberculosis** | 91.98% | 85.57% | **88.66%** | 98.90% | 201 |
+| **Total / Macro Average** | **79.31%** | **80.73%** | **78.35%** | **96.76%** | **1,570** |
 
 > **⚠️ External Generalization Disclosed:** Evaluation on quarantined external film-digitized radiographs (Montgomery County dataset, 138 scans) disclosed sensor-shift vulnerability (0% TB recall on scanned film due to high-frequency digitizer noise, while maintaining 100% binary abnormal sensitivity). This finding is documented in research as a boundary limitation of pure digital-to-film transfer without target-domain calibration.
 
@@ -214,7 +216,7 @@ Execute the backend test suite verifying image preprocessing, model loading, pat
 ```bash
 python -m pytest backend/tests/
 ```
-**Verified Status**: `22 passed, 0 failed` in 1.86s.
+**Verified Status**: `31 passed, 0 failed` in 27.93s (including end-to-end inference, Grad-CAM generation, and ORM persistence).
 
 ---
 
@@ -232,11 +234,12 @@ docker run -p 8000:8000 lung-disease-detector
 
 ---
 
-## 📌 Limitations & Future Work
+## 📌 Limitations & Clinical Context
 
-1. **Tuberculosis Recall**: Tuberculosis represents 6.44% of dataset images, yielding an 81% sensitivity rate. Low-confidence outputs automatically trigger advisory triage notes.
-2. **Modality Assumptions**: Preprocessing assumes PA/AP chest radiograph projections.
-3. **Feature Explainability**: Future iterations will integrate Grad-CAM visual attention maps to highlight lung pathology regions.
+1. **Analog Digitizer Sensor Shift**: As evaluated on the external Montgomery County benchmark (138 digitized film radiographs), scanner noise with elevated Laplacian edge variance (~1,580 vs 373 on digital CXRs) can trigger spurious texture activations. Phase 4D frequency-domain low-pass filtering ($\sigma=1.0$) was introduced specifically to attenuate this high-frequency noise.
+2. **Modality Assumptions**: Preprocessing assumes PA/AP chest radiograph projections. Cross-sectional modalities (CT/MRI) and lateral chest views are excluded from the current 6-class scope.
+3. **Interpretability Architecture**: Visual explainability via Grad-CAM (`conv5_block16_concat` target layer) is fully integrated into the production API and frontend viewer, generating overlay heatmaps and bounding-box focus regions for clinical inspection.
+4. **Clinical Intended Use**: LungAI is engineered as an assistive second-opinion clinical decision support (CDS) system for triage acceleration and radiologist review, not an autonomous diagnostic medical device.
 
 ---
 
