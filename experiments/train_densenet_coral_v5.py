@@ -54,10 +54,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, Model
-try:
-    from keras.applications import DenseNet121
-except (ImportError, AttributeError):
-    from tensorflow.keras.applications import DenseNet121
+from keras.applications import DenseNet121
 
 # Threading setup
 try:
