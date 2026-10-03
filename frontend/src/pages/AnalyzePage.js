@@ -320,7 +320,28 @@ export default function AnalyzePage() {
               </div>
             )}
 
-            {error && <div className="alert-error">{error}</div>}
+            {error && (
+              <div className="card" style={{
+                background: "rgba(239, 68, 68, 0.08)",
+                border: "1px solid rgba(239, 68, 68, 0.35)",
+                borderLeft: "4px solid #EF4444",
+                borderRadius: "8px",
+                padding: "1rem 1.25rem",
+                marginTop: "1rem"
+              }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                  <span style={{ fontSize: "20px", lineHeight: "1" }}>⚠️</span>
+                  <div>
+                    <p style={{ fontWeight: 700, color: "#DC2626", margin: "0 0 4px 0", fontSize: "14px" }}>
+                      Anatomical Radiograph Validation Error
+                    </p>
+                    <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "13px", lineHeight: "1.4" }}>
+                      {error}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── Right: Result Experience (Section 5) ──────────────── */}
@@ -339,7 +360,7 @@ export default function AnalyzePage() {
               <div className="loading-state card">
                 <div className="pulse-ring" />
                 <p style={{fontWeight:"600"}}>Running deep learning inference…</p>
-                <p className="loading-sub">Evaluating CNN and ResNet50 classification models</p>
+                <p className="loading-sub">Evaluating Model D (DenseNet-121 Frequency V5) and computing Grad-CAM</p>
               </div>
             )}
 

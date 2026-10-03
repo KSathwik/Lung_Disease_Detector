@@ -105,7 +105,70 @@ class ImagePreprocessor:
         self.target_size = target_size
         self.sigma = sigma
 
-    def load_image(self, image_path: str) -> Optional[np.ndarray]:
+    def validate_cxr_plausibility(self, img: np.ndarray) -> None:
+        """
+        Anatomical & Biophysical Chest Radiograph (CXR) Plausibility Validator.
+        
+        Protects the clinical inference pipeline against out-of-distribution (OOD)
+        non-medical inputs such as photos of vehicles, animals, natural landscapes,
+        documents, and blank/degraded images.
+        
+        Checks:
+        1. Dimensions: Minimum 32x32 pixels.
+        2. Aspect Ratio: Reject extreme banners/panoramas (> 2.8:1). Standard CXR PA/AP projections are ~0.8:1 to 1.3:1.
+        3. Intensity Dynamic Range: Luminance standard deviation must be >= 10.0 (rejects blank, solid, or flat non-images).
+        4. Polychromatic Saturation: Planar chest radiographs are monochrome or uniformly tinted;
+           natural color photos exhibiting multi-hue saturation (> 18% saturated pixels with high hue dispersion)
+           are rejected with an explicit clinical advisory.
+        """
+        if img is None:
+            raise ValueError("Could not decode image. Unreadable or corrupted file.")
+        
+        h, w = img.shape[:2]
+        if h < 32 or w < 32:
+            raise ValueError(
+                f"Image dimensions ({w}x{h}) are too small for diagnostic analysis. Minimum dimensions are 32x32 pixels."
+            )
+        
+        # 1. Aspect ratio check
+        ratio = max(h, w) / max(min(h, w), 1)
+        if ratio > 2.8:
+            raise ValueError(
+                f"Invalid Radiograph: Image aspect ratio ({w}x{h}, {ratio:.1f}:1) is inconsistent with chest radiography. "
+                "Standard PA/AP chest radiographs are approximately 0.8:1 to 1.3:1."
+            )
+        
+        # 2. Dynamic range / contrast check
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if len(img.shape) == 3 else img
+        std_intensity = float(np.std(gray))
+        if std_intensity < 10.0:
+            raise ValueError(
+                f"Invalid Radiograph: Insufficient radiographic contrast (intensity std={std_intensity:.1f} < 10.0). "
+                "Image appears blank, solid, or severely degraded."
+            )
+        
+        # 3. Chromaticity & Multi-Hue Distribution check
+        if len(img.shape) == 3 and img.shape[2] == 3:
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            sat = hsv[:, :, 1] / 255.0
+            high_sat_mask = sat > 0.25
+            high_sat_fraction = float(np.mean(high_sat_mask))
+            
+            # If a significant portion has color saturation
+            if high_sat_fraction > 0.18:
+                hues = hsv[:, :, 0][high_sat_mask]
+                hue_std = float(np.std(hues))
+                hist, _ = np.histogram(hues, bins=12, range=(0, 180))
+                non_empty_bins = int(np.sum(hist > (len(hues) * 0.05)))
+                
+                # Natural color scenes have high hue diversity across bins
+                if non_empty_bins >= 3 or hue_std > 22.0:
+                    raise ValueError(
+                        f"Invalid Radiograph: Uploaded file is a natural color photograph ({high_sat_fraction*100:.1f}% color saturation "
+                        f"across {non_empty_bins} distinct color bands). LungAI requires a grayscale/monochrome chest radiograph (X-Ray)."
+                    )
+
+    def load_image(self, image_path: str, validate_plausibility: bool = True) -> Optional[np.ndarray]:
         """Load image from path, return None on failure."""
         img = cv2.imread(image_path)
         if img is None:
@@ -114,9 +177,11 @@ class ImagePreprocessor:
         h, w = img.shape[:2]
         if h < 32 or w < 32:
             raise ValueError(f"Image dimensions ({w}x{h}) are too small. Minimum is 32x32 pixels.")
+        if validate_plausibility:
+            self.validate_cxr_plausibility(img)
         return img
 
-    def load_from_bytes(self, image_bytes: bytes) -> np.ndarray:
+    def load_from_bytes(self, image_bytes: bytes, validate_plausibility: bool = True) -> np.ndarray:
         """Load image directly from raw bytes with strict input validation."""
         if not image_bytes or len(image_bytes) == 0:
             raise ValueError("Uploaded file is empty (0 bytes).")
@@ -127,6 +192,8 @@ class ImagePreprocessor:
         h, w = img.shape[:2]
         if h < 32 or w < 32:
             raise ValueError(f"Image dimensions ({w}x{h}) are too small for diagnostic analysis. Minimum dimensions are 32x32 pixels.")
+        if validate_plausibility:
+            self.validate_cxr_plausibility(img)
         return img
 
     def clean_image(self, img: np.ndarray) -> np.ndarray:
