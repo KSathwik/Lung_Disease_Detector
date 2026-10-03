@@ -1,0 +1,34 @@
+graph TD
+    In["Input Tensor: 224 &times; 224 &times; 3<br/>(Gaussian Low-Pass Filtered &sigma;=1.0, ImageNet Normalized)"]
+    
+    subgraph Backbone ["DenseNet-121 Feature Extraction Backbone (ImageNet Pre-trained)"]
+        Stem["Initial Stem Block<br/>Conv2D 7&times;7 (64 filters, stride 2) &bull; BatchNorm &bull; ReLU &bull; MaxPool 3&times;3"]
+        DB1["Dense Block 1 (6 Dense Layers)<br/>Each: 1&times;1 Conv (128) &rarr; 3&times;3 Conv (32) &bull; Output: 256 channels"]
+        Trans1["Transition Layer 1<br/>1&times;1 Conv (128) &bull; AvgPool 2&times;2"]
+        DB2["Dense Block 2 (12 Dense Layers)<br/>Each: 1&times;1 Conv (128) &rarr; 3&times;3 Conv (32) &bull; Output: 512 channels"]
+        Trans2["Transition Layer 2<br/>1&times;1 Conv (256) &bull; AvgPool 2&times;2"]
+        DB3["Dense Block 3 (24 Dense Layers)<br/>Each: 1&times;1 Conv (128) &rarr; 3&times;3 Conv (32) &bull; Output: 1024 channels"]
+        Trans3["Transition Layer 3<br/>1&times;1 Conv (512) &bull; AvgPool 2&times;2"]
+        DB4["Dense Block 4 (16 Dense Layers)<br/>Layer: conv5_block16_concat &bull; Output: 1024 feature maps"]
+    end
+
+    subgraph Head ["Classification Head & Decision Head"]
+        GAP["Global Average Pooling 2D<br/>Spatially Collapses 7&times;7&times;1024 &rarr; 1024-D Vector"]
+        BN["Batch Normalization Layer (bn)"]
+        Dense256["Dense Latent Bottleneck<br/>256 Units &bull; ReLU Activation (dense_features)"]
+        Drop["Dropout Regularization<br/>Drop Probability = 0.30 (dropout)"]
+        Softmax["Dense Classification Head<br/>6 Units &bull; Softmax Activation (class_predictions)"]
+    end
+
+    subgraph Classes ["Six Clinical Disease Outputs"]
+        C1["COVID-19 (F1: 97.01%)"]
+        C2["Normal (F1: 89.58%)"]
+        C3["Pleural Effusion (F1: 55.32%)"]
+        C4["Pneumonia (F1: 86.49%)"]
+        C5["Pulmonary Nodule / Mass (F1: 53.03%)"]
+        C6["Tuberculosis (F1: 88.66%)"]
+    end
+
+    In --> Stem --> DB1 --> Trans1 --> DB2 --> Trans2 --> DB3 --> Trans3 --> DB4
+    DB4 --> GAP --> BN --> Dense256 --> Drop --> Softmax
+    Softmax --> C1 & C2 & C3 & C4 & C5 & C6

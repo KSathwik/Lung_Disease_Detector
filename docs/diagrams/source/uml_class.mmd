@@ -1,0 +1,102 @@
+classDiagram
+    class InferenceEngine {
+        -_instance: InferenceEngine
+        +densenet_model: tf.keras.Model
+        +preprocessor: ImagePreprocessor
+        +class_names: List[str]
+        +training_results: Dict
+        +initialize(): void
+        +predict(image_bytes, generate_gradcam): Dict
+        -_load_models(): void
+        -_setup_gradcam(): void
+        -_generate_gradcam(norm_tensor, original_rgb): Dict
+        -_determine_urgency(condition, confidence): str
+        -_get_alternatives(all_probs, primary): List[str]
+        -_get_key_findings(condition): List[Dict]
+    }
+
+    class ImagePreprocessor {
+        +sigma: float
+        +target_size: Tuple[int, int]
+        +preprocess(image_bytes): np.ndarray
+        +preprocess_with_display(image_bytes): Tuple[np.ndarray, np.ndarray]
+        +apply_clahe(img_bgr): np.ndarray
+        +apply_gaussian_lp(image, sigma): np.ndarray
+    }
+
+    class CXRGate {
+        +model_path: str
+        +threshold: float
+        -_model: tf.keras.Model
+        +validate(img_or_bytes): Tuple[bool, float, str]
+        +validate_stage1_heuristics(img): Tuple[bool, str]
+        +validate_stage2_anatomical(img): Tuple[bool, float, str]
+        -_anatomical_profile_score(gray): float
+    }
+
+    class Patient {
+        +id: int
+        +patient_id: str
+        +name: str
+        +age: int
+        +gender: str
+        +contact: str
+        +email: str
+        +medical_history: str
+        +created_at: datetime
+        +scans: List[LungScan]
+    }
+
+    class LungScan {
+        +id: int
+        +scan_id: str
+        +patient_id: int
+        +image_path: str
+        +image_filename: str
+        +image_size_bytes: int
+        +scan_type: str
+        +scan_date: datetime
+        +preprocessed: bool
+        +notes: str
+        +patient: Patient
+        +predictions: List[Prediction]
+    }
+
+    class Prediction {
+        +id: int
+        +prediction_id: str
+        +scan_id: int
+        +model_used: str
+        +selected_model: str
+        +final_condition: str
+        +final_confidence: float
+        +urgency_level: str
+        +alternative_conditions: List[str]
+        +key_findings: List[Dict]
+        +precautions: List[str]
+        +created_at: datetime
+        +scan: LungScan
+        +report: Report
+    }
+
+    class Report {
+        +id: int
+        +report_id: str
+        +prediction_id: int
+        +patient_id: int
+        +report_type: str
+        +report_title: str
+        +summary: str
+        +clinical_recommendations: str
+        +report_file_path: str
+        +generated_at: datetime
+        +prediction: Prediction
+        +patient: Patient
+    }
+
+    InferenceEngine *-- ImagePreprocessor : owns
+    InferenceEngine ..> CXRGate : depends on
+    Patient "1" *-- "0..*" LungScan : has
+    LungScan "1" *-- "0..*" Prediction : yields
+    Prediction "1" o-- "0..1" Report : documents
+    Patient "1" *-- "0..*" Report : receives

@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor User as Clinician (Browser)
+    participant UI as React AnalyzePage
+    participant API as FastAPI /api/v1/predict
+    participant Gate as CXRGate (&tau;=0.83)
+    participant Engine as InferenceEngine
+    participant DB as SQLite / SQLAlchemy
+
+    User->>UI: Selects Patient & Uploads CXR Image
+    UI->>API: POST /api/v1/predict (Multipart Form)
+    API->>Gate: validate(image_bytes)
+
+    alt Image Fails CXR Validation (Non-CXR / Photo / CT / Corrupted)
+        Gate-->>API: (is_cxr=False, score < 0.83, reason)
+        Note over API: Model D, Grad-CAM & DB Insert Bypassed
+        API-->>UI: HTTP 422 Unprocessable Entity (INVALID_CXR)
+        UI-->>User: Displays Amber Clinical Advisory Card
+    else Image Validated as Plausible Chest Radiograph
+        Gate-->>API: (is_cxr=True, score &ge; 0.83, "Passed")
+        API->>Engine: predict(image_bytes, generate_gradcam=True)
+        Note over Engine: Preprocessing: CLAHE + Gaussian LP (&sigma;=1.0)
+        Note over Engine: DenseNet-121 Forward Pass -> 6-Class Softmax
+        Note over Engine: Grad-CAM Feature Map Backpropagation
+        Engine-->>API: Diagnostic Dict (Class, Conf, Probs, Heatmap)
+        API->>DB: INSERT INTO lung_scans & predictions
+        DB-->>API: Transaction Committed (scan_id, pred_id)
+        API-->>UI: HTTP 200 OK (PredictionResponse JSON)
+        UI-->>User: Renders 6-Class Probability Bar, Triage Alert & Heatmap
+    end

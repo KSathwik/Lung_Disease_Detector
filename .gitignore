@@ -59,3 +59,11 @@ coverage/
 *.bak
 *.swp
 *~
+
+# scratch files used for doc generation
+scratch/
+.scratch
+.scracth
+
+# python env used for doc generation
+/venv_doc_gen

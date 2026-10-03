@@ -1,34 +1,40 @@
 graph TD
-    subgraph Client_Presentation_Tier ["Client Presentation Tier (React 18 SPA)"]
-        UI_Analyze["Analyze Workspace<br/>• CXR Drag & Drop / Presets<br/>• Interactive Saliency & Heatmap View<br/>• Clinical Triage Alerts"]
-        UI_Metrics["Model Performance Dashboard<br/>• CNN Baseline vs ResNet50 vs Model D<br/>• Accuracy, F1, AUC Radar & Bar Charts"]
-        UI_History["History & Audit Log<br/>• Search, Severity Filter (Routine/Urgent/Emerg)<br/>• Scan Metadata & Diagnostic Details"]
-        UI_Patients["Patient Management Portal<br/>• Demographic Records<br/>• Scan Association & EMR Integration"]
+    subgraph Client_Tier ["Client Presentation Tier (React 18 SPA)"]
+        UI_Analyze["Analyze Workspace<br/>• CXR Drag & Drop<br/>• Heatmap Controls<br/>• Clinical Triage Alerts"]
+        UI_Metrics["Model Benchmark Dashboard<br/>• 5-Paradigm Comparison<br/>• F1, AUC, PR Metrics"]
+        UI_History["History & Audit Log<br/>• Search & Severity Filter<br/>• Diagnostic Metadata"]
+        UI_Patients["Patient Management Portal<br/>• Demographic Records<br/>• Scan Associations"]
     end
 
-    subgraph API_Gateway_Tier ["API Gateway & Application Server (FastAPI + Uvicorn)"]
+    subgraph API_Tier ["API Gateway & Application Server (FastAPI + Uvicorn)"]
         Router_Health["/api/v1/health<br/>• System Status & Version"]
-        Router_Predict["/api/v1/predict<br/>• Multipart CXR Ingestion<br/>• MIME & Size Verification (&le;10MB)"]
-        Router_History["/api/v1/predictions<br/>• Historical Record Retrieval"]
+        Router_Predict["/api/v1/predict<br/>• Multipart CXR Ingestion<br/>• MIME & Size Verification"]
+        Router_History["/api/v1/predictions<br/>• Audit Record Retrieval"]
         Router_Metrics["/api/v1/model-metrics<br/>• Benchmark Cache & Stats"]
         Router_Patients["/api/v1/patients<br/>• Patient Record CRUD"]
         Router_Reports["/api/v1/reports/generate/{id}<br/>• Structured PDF/JSON Report"]
     end
 
-    subgraph ML_Inference_Tier ["ML Decision Support Pipeline (Model D Singleton)"]
-        Validation["Image Integrity & Decoupling<br/>Grayscale/RGBA &rarr; 3-Channel RGB"]
-        FreqPreproc["Model D Frequency Preprocessing<br/>Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Resize 224&times;224 &times; 3 &bull; Scale [0, 1]"]
-        DenseNet121["DenseNet-121 Deep Backbone<br/>4 Dense Blocks (6, 12, 24, 16 layers)<br/>Target Layer: conv5_block16_concat"]
-        Classifier["Dense Classification Head<br/>Global Average Pooling &bull; Dropout (0.3)<br/>6-Class Softmax Probability Distribution"]
-        DecisionSupport["Clinical Decision & Triage Engine<br/>• Severity Urgency: Routine / Urgent / Emergency<br/>• Differential Diagnosis Ranking<br/>• Key Findings & Clinical Precautions"]
-        GradCAM["Explainability Engine (Grad-CAM)<br/>Feature Map Gradient Backpropagation<br/>Jet Heatmap Alpha-Blending onto Original CXR"]
+    subgraph Gate_Tier ["CXR Ingestion Tier (Two-Stage Validation Gate)"]
+        Gate_Stage1["Stage 1: Biophysical Heuristics<br/>• Resolution &ge; 32x32<br/>• Aspect Ratio &le; 2.2:1<br/>• Contrast Dynamic Range<br/>• Polychromatic Saturation Screening"]
+        Gate_Stage2["Stage 2: Deep Anatomical Gate<br/>• Grayscale Thoracic Classifier<br/>• Production Threshold &tau; = 0.83<br/>• Rejects Non-CXR & Axial CT Scans"]
+        Gate_Reject["HTTP 422 INVALID_CXR<br/>• Downstream Inference Bypassed<br/>• DB Persistence Bypassed"]
     end
 
-    subgraph Data_Persistence_Tier ["Persistence & Storage Layer (SQLAlchemy ORM)"]
-        DB_Patient["Patient Entity<br/>ID, Demographics, History"]
-        DB_Scan["LungScan Entity<br/>File Hash, Mime, Path"]
-        DB_Prediction["Prediction Entity<br/>Class, Probabilities, Findings"]
-        Storage_Disk["Uploads Volume<br/>Raw Radiographs & Scans"]
+    subgraph ML_Tier ["ML Decision Support Pipeline (Model D Singleton)"]
+        Preprocessing["Model D Preprocessing<br/>• LAB CLAHE Enhancement<br/>• Gaussian Low-Pass (&sigma; = 1.0)<br/>• Lanczos-4 Resize 224x224x3"]
+        ModelD["DenseNet-121 Deep Backbone<br/>• 4 Dense Blocks (1024-D GAP)<br/>• 256-D Bottleneck (ReLU)<br/>• Dropout (0.30)"]
+        Classifier["Classification Head<br/>• 6-Class Softmax Distribution<br/>• COVID, Normal, Effusion, Pneumonia, Nodule, TB"]
+        GradCAM["Explainability Engine (Grad-CAM)<br/>• Layer: conv5_block16_concat<br/>• Jet Heatmap Alpha-Blending"]
+        Triage["Decision Support & Triage<br/>• Routine / Urgent / Emergency<br/>• Differential Diagnoses & Precautions"]
+    end
+
+    subgraph DB_Tier ["Persistence Tier (SQLAlchemy ORM + SQLite/PostgreSQL)"]
+        DB_Patient["patients Table<br/>Demographics & Records"]
+        DB_Scan["lung_scans Table<br/>Scan UUID, File Path, Mime"]
+        DB_Prediction["predictions Table<br/>Class, Probabilities, Findings"]
+        DB_Report["reports Table<br/>Structured Clinical Summaries"]
+        Storage["Uploads Storage<br/>Raw Radiographs & Overlays"]
     end
 
     UI_Analyze --> Router_Predict
@@ -36,17 +42,19 @@ graph TD
     UI_History --> Router_History
     UI_Patients --> Router_Patients
 
-    Router_Predict --> Validation
-    Validation --> FreqPreproc
-    FreqPreproc --> DenseNet121
-    DenseNet121 --> Classifier
-    Classifier --> DecisionSupport
-    DenseNet121 --> GradCAM
-    GradCAM --> DecisionSupport
+    Router_Predict --> Gate_Stage1
+    Gate_Stage1 -->|Pass| Gate_Stage2
+    Gate_Stage1 -->|Fail| Gate_Reject
+    Gate_Stage2 -->|Pass| Preprocessing
+    Gate_Stage2 -->|Fail| Gate_Reject
 
-    DecisionSupport --> DB_Prediction
+    Preprocessing --> ModelD
+    ModelD --> Classifier
+    Classifier --> Triage
+    ModelD --> GradCAM
+
     Router_Predict --> DB_Scan
+    Triage --> DB_Prediction
     Router_Patients --> DB_Patient
-    Router_Predict --> Storage_Disk
-
-    DecisionSupport -.->|Structured JSON + Base64 Heatmap| UI_Analyze
+    Router_Reports --> DB_Report
+    Router_Predict --> Storage

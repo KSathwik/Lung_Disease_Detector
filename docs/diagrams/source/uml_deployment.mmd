@@ -1,0 +1,30 @@
+graph TD
+    subgraph Client_Node ["Client Workstation Node"]
+        Browser["Modern Web Browser (Chrome / Edge / Firefox)<br/>• React 18 SPA Render Engine<br/>• Client-Side State Management<br/>• Interactive Saliency Visualization"]
+    end
+
+    subgraph Host_Node ["Local Application Server Node (Workstation)"]
+        subgraph Frontend_Server ["Vite Development Server (Port 3000)"]
+            Static_Assets["React Static Assets & Bundles<br/>• HTML5, CSS3, ES6 JavaScript"]
+        end
+
+        subgraph Backend_Server ["FastAPI Application Runtime (Port 8000)"]
+            ASGI["Uvicorn ASGI Web Server<br/>• Async Request Dispatcher"]
+            FastAPI_App["FastAPI Framework Application<br/>• Python 3.12 Runtime (.venv)"]
+            TF_Runtime["TensorFlow 2.16 C++ Engine<br/>• CPU/GPU Compute Backend"]
+            
+            subgraph Filesystem ["Host Storage Volumes"]
+                DB_File["SQLite Database<br/>lung_disease.db"]
+                Model_Files["Model Checkpoints<br/>• models/densenet121_frequency_v5.h5 (30.1 MB)<br/>• models/cxr_gate_model.keras (1.8 MB)<br/>• backend/ml/class_mapping.json"]
+                Upload_Dir["Upload Volume<br/>uploads/*_scan.jpg"]
+            end
+        end
+    end
+
+    Browser -->|HTTP Port 3000| Frontend_Server
+    Browser -->|REST API Port 8000 / JSON Multipart| ASGI
+    ASGI --> FastAPI_App
+    FastAPI_App --> TF_Runtime
+    TF_Runtime --> Model_Files
+    FastAPI_App --> DB_File
+    FastAPI_App --> Upload_Dir

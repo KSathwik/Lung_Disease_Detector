@@ -1,40 +1,30 @@
-flowchart TD
-    subgraph Data_Sources ["Multi-Source Benchmark Acquisition (10,547 Clinical Images)"]
-        S1["TBX11K Benchmark (3,277)<br/>Tuberculosis &bull; Normal"]
-        S2["Existing COVID-19 Cohort (1,942)<br/>COVID-19 Radiographs"]
-        S3["VinBigData VinDr-CXR (1,467)<br/>Pleural Effusion &bull; Pulmonary Nodule / Mass"]
-        S4["Existing Pneumonia Cohort (1,395)<br/>Bacterial &bull; Viral Pneumonia"]
-        S5["Existing Normal (1,199) &bull; Existing TB (665)<br/>Standard CXR Controls & Mycobacterial Scans"]
-        S6["NIH ChestX-ray14 (457) &bull; JSRT (145)<br/>Effusion &bull; Nodule/Mass Ground Truth"]
+graph TD
+    subgraph Research_Phase ["Research & Scientific Discovery Phase (V5 Dataset Benchmark)"]
+        Sources["Heterogeneous Raw Data Sources<br/>• NIH ChestX-ray14 &bull; COVID-19 Radiography Database<br/>• RSNA Pneumonia Challenge &bull; Montgomery County TB"]
+        Audit["Forensic Audit & Curation<br/>• Discovered CT scan contamination (eliminated)<br/>• Discovered acquisition-site confound (Cramér's V = 0.7654)"]
+        V5_Dataset["V5 Unified Research Dataset (10,547 Images / 10,270 Patients)<br/>• Patient-Level Stratified Splits: Train (7,398) · Val (1,579) · Test (1,570)<br/>• 6 Classes: COVID, Normal, Pleural Effusion, Pneumonia, Nodule, TB"]
+        
+        subgraph Benchmarks ["5-Paradigm Domain Generalization Study"]
+            P1["1. Empirical Risk Minimization (ERM Baseline)<br/>DenseNet-121 Baseline &bull; Acc: 76.18% · Macro F1: 72.63%"]
+            P2["2. Deep Correlation Alignment (CORAL)<br/>Second-Order Feature Alignment &bull; Acc: 80.89% · Macro F1: 76.85%"]
+            P3["3. Domain Adversarial Neural Network (DANN)<br/>Adversarial Domain Invariance &bull; Acc: 76.24% · Macro F1: 72.99%"]
+            P4["4. Frequency-Aware Filtering (Model D)<br/>Gaussian Low-Pass (&sigma;=1.0) &bull; Acc: 82.93% · Macro F1: 78.35%"]
+            P5["5. Hybrid Feature + Frequency Generalization<br/>CORAL + Low-Pass Filtering &bull; Acc: 78.22% · Macro F1: 73.95%"]
+        end
+
+        Eval["Comparative Scientific Evaluation<br/>Model D Achieves Superior Discrimination & Balanced F1"]
+        ExtBench["External Generalization Benchmark (Montgomery County TB, n=138)<br/>Revealed Severe Acquisition-Site Domain Shift (Fine-Grained Collapse)"]
     end
 
-    subgraph Unified_Manifest_V5 ["V5 Dataset Harmonization & Quality Control"]
-        Harmonize["6-Class Target Mapping<br/>COVID-19 &bull; Normal &bull; Pleural Effusion<br/>Pneumonia &bull; Pulmonary Nodule/Mass &bull; TB"]
-        Dedup["Exact & Perceptual Deduplication<br/>MD5 Hashing &bull; 64-bit dHash Analysis"]
-        Split["Patient-Strict Stratified Holdout Split (10,270 Patients)<br/>Train: 70.14% (7,398) &bull; Val: 14.97% (1,579) &bull; Test: 14.89% (1,570)"]
+    subgraph Production_Phase ["Production Deployment Phase (Frozen Architecture)"]
+        Freeze["Production Freeze<br/>Model D Weights Frozen in models/densenet121_frequency_v5.h5"]
+        Gate["Two-Stage CXR Validation Ingestion Tier<br/>Protects Model D from Out-of-Distribution Inputs (&tau; = 0.83)"]
+        App["LungAI FastAPI + React Decision-Support System<br/>Interactive Saliency, Clinical Triage, and Persistence"]
     end
 
-    subgraph Frequency_Preprocessing ["Domain Shift Mitigation (Model D Protocol)"]
-        LPFilter["Spatial Gaussian Low-Pass Filter (&sigma; = 1.0)<br/>Suppresses High-Frequency Scanner Fingerprints"]
-        Augment["Training Data Augmentation<br/>Horizontal Flip &bull; Rotation (&plusmn;10&deg;) &bull; Zoom (&plusmn;10%)"]
-    end
-
-    subgraph Model_D_Optimization ["DenseNet-121 Architecture & Optimization"]
-        Init["ImageNet Pretrained Weights Transfer"]
-        Training["Two-Phase Fine-Tuning Schedule<br/>Phase 1: Head Only &bull; Phase 2: Unfreeze Dense Blocks 3-4<br/>Adam Optimizer (lr=1e-4) &bull; Categorical Cross-Entropy"]
-    end
-
-    subgraph Scientific_Evaluation ["Verification & Domain Shift Assessment"]
-        TestMetrics["Held-Out Test Set Performance (1,570 Images)<br/>Accuracy: 82.93% &bull; Macro F1: 78.35%<br/>Macro ROC-AUC: 0.9755 &bull; Macro PR-AUC: 0.8391"]
-        ExtAudit["Quarantined Montgomery External Audit (138 Scans)<br/>Sensor-Shift Vulnerability Disclosed<br/>0% TB Recall on Film Scans &bull; 100% Binary Abnormal Sensitivity"]
-    end
-
-    S1 & S2 & S3 & S4 & S5 & S6 --> Harmonize
-    Harmonize --> Dedup
-    Dedup --> Split
-    Split --> LPFilter
-    LPFilter --> Augment
-    Augment --> Init
-    Init --> Training
-    Training --> TestMetrics
-    Training --> ExtAudit
+    Sources --> Audit --> V5_Dataset
+    V5_Dataset --> P1 & P2 & P3 & P4 & P5
+    P1 & P2 & P3 & P4 & P5 --> Eval
+    Eval --> Freeze
+    Eval --> ExtBench
+    Freeze --> Gate --> App

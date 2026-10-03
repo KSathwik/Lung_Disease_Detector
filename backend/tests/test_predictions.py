@@ -96,6 +96,7 @@ async def test_predict_reject_natural_color_photo(client):
         files={"file": ("car.jpg", car_bytes, "image/jpeg")},
         data={"scan_type": "X-Ray"},
     )
-    assert resp.status_code == 400
-    assert "Invalid Radiograph" in resp.json()["detail"] or "Invalid image" in resp.json()["detail"]
+    assert resp.status_code in (400, 422)
+    detail_str = str(resp.json()["detail"])
+    assert "Invalid Radiograph" in detail_str or "Invalid image" in detail_str or "INVALID_CXR" in detail_str
 

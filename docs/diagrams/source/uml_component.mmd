@@ -1,0 +1,57 @@
+graph TD
+    subgraph Frontend_Component ["Frontend Package (React 18 SPA)"]
+        UI_AnalyzeComp["Analyze Workspace Component<br/>• File Upload Zone<br/>• Interactive Saliency Viewer<br/>• Clinical Triage Card"]
+        UI_HistoryComp["History Table Component<br/>• Search, Severity Filter<br/>• Diagnostic Audit Trail"]
+        UI_PatientsComp["Patient Management Component<br/>• Demographic CRUD"]
+        UI_MetricsComp["Metrics Dashboard Component<br/>• 5-Paradigm Comparison Charts"]
+        UI_APIClient["API Service Layer (Axios)<br/>• Interceptors & 422 Error Handling"]
+    end
+
+    subgraph Backend_Component ["Backend Package (FastAPI + Python 3.12 Runtime)"]
+        API_Gateway["FastAPI Application Core<br/>• CORS Middleware<br/>• Lifespan Context Manager"]
+        Route_Predict["Prediction Route Handler<br/>• Ingestion Controller"]
+        Route_Patients["Patient Route Handler"]
+        Route_Reports["Report Route Handler"]
+
+        subgraph ML_Subsystem ["ML Inference Subsystem"]
+            Gate_Comp["CXR Validation Gate<br/>• Biophysical Heuristics<br/>• Grayscale Thoracic CNN"]
+            Preproc_Comp["ImagePreprocessor Module<br/>• LAB CLAHE<br/>• Gaussian LP (&sigma;=1.0)"]
+            Engine_Comp["InferenceEngine Singleton<br/>• TensorFlow Model D Runner"]
+            GradCAM_Comp["Grad-CAM Saliency Engine<br/>• Gradient Backpropagation"]
+        end
+
+        subgraph Data_Subsystem ["Data Access Subsystem"]
+            ORM_Comp["SQLAlchemy Async ORM<br/>• Unit of Work / AsyncSession"]
+            Models_Comp["Database Entities<br/>• Patient, LungScan, Prediction, Report"]
+        end
+    end
+
+    subgraph Storage_Component ["Storage & Persistence Tier"]
+        DB_Storage[("SQLite Database<br/>lung_disease.db")]
+        File_Storage[("Local Uploads Volume<br/>/uploads/*.png")]
+        Model_Storage[("Model Artifact Storage<br/>densenet121_frequency_v5.h5<br/>cxr_gate_model.keras")]
+    end
+
+    UI_AnalyzeComp --> UI_APIClient
+    UI_HistoryComp --> UI_APIClient
+    UI_PatientsComp --> UI_APIClient
+    UI_MetricsComp --> UI_APIClient
+
+    UI_APIClient -->|REST JSON / HTTP| API_Gateway
+    API_Gateway --> Route_Predict
+    API_Gateway --> Route_Patients
+    API_Gateway --> Route_Reports
+
+    Route_Predict --> Gate_Comp
+    Gate_Comp --> Preproc_Comp
+    Preproc_Comp --> Engine_Comp
+    Engine_Comp --> GradCAM_Comp
+    Engine_Comp --> Model_Storage
+
+    Route_Predict --> ORM_Comp
+    Route_Patients --> ORM_Comp
+    Route_Reports --> ORM_Comp
+
+    ORM_Comp --> Models_Comp
+    ORM_Comp --> DB_Storage
+    Route_Predict --> File_Storage

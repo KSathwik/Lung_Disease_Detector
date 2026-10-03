@@ -1,0 +1,6 @@
+graph LR
+    User["Clinician / Radiologist / User"]
+    System["0.0<br/>LungAI Diagnostic Decision-Support System"]
+    
+    User -->|"1. Chest X-Ray Image File (JPEG/PNG)<br/>2. Patient Metadata (Optional)<br/>3. Query Requests (History/Reports)"| System
+    System -->|"1. Six-Class Probability Distribution<br/>2. Primary Diagnostic Classification<br/>3. Grad-CAM Anatomical Saliency Map<br/>4. Clinical Triage Urgency & Findings<br/>5. Audit Trail & Patient Reports"| User

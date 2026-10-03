@@ -1,0 +1,33 @@
+graph LR
+    Clinician["Clinician / Radiologist / User"]
+    Engine["LungAI Decision Support Engine"]
+
+    subgraph Boundary ["LungAI Clinical Application Boundary"]
+        UC1["Upload Chest Radiograph"]
+        UC2["Validate Radiographic Plausibility (CXR Gate)"]
+        UC3["Execute Model D Disease Classification"]
+        UC4["Inspect Grad-CAM Attention Heatmap"]
+        UC5["Review Differential Diagnoses & Clinical Triage"]
+        UC6["Manage Patient Demographic Records"]
+        UC7["Query Prediction Audit History"]
+        UC8["Generate Structured Diagnostic Report"]
+        UC9["Inspect Model Performance Metrics"]
+    end
+
+    Clinician --> UC1
+    Clinician --> UC4
+    Clinician --> UC5
+    Clinician --> UC6
+    Clinician --> UC7
+    Clinician --> UC8
+    Clinician --> UC9
+
+    UC1 -.->|includes| UC2
+    UC2 -.->|triggers on valid CXR| UC3
+    UC3 -.->|generates| UC4
+    UC3 -.->|populates| UC5
+
+    UC2 --> Engine
+    UC3 --> Engine
+    UC4 --> Engine
+    UC8 --> Engine

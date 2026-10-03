@@ -1,0 +1,33 @@
+graph TD
+    In["Raw Radiograph Bytes"]
+
+    subgraph Phase1 ["Stage 1 & 2: Ingestion & Validation Gate"]
+        S1["2.1 Format & Size Screening<br/>MIME Verification &le;10MB"]
+        S2["2.2 Biophysical Heuristics<br/>Resolution, Aspect Ratio, Saturation"]
+        S3["2.3 Deep Anatomical Gate<br/>Grayscale Thoracic CNN (&tau; = 0.83)"]
+    end
+
+    subgraph Phase2 ["Stage 3: Exact Model D Preprocessing"]
+        P1["3.1 3-Channel Coercion<br/>Grayscale/RGBA &rarr; 3-Ch RGB"]
+        P2["3.2 Spatial Denoising<br/>Gaussian Blur (3x3, &sigma;=0.8)"]
+        P3["3.3 Contrast Enhancement<br/>RGB&rarr;LAB &bull; CLAHE on L (clip=2.0) &bull; LAB&rarr;RGB"]
+        P4["3.4 Frequency-Domain Filtering<br/>Gaussian Low-Pass Filter (&sigma; = 1.0)"]
+        P5["3.5 High-Fidelity Spatial Resampling<br/>Lanczos-4 Interpolation &rarr; 224x224"]
+        P6["3.6 Tensor Standardization<br/>ImageNet &mu;=[0.485,0.456,0.406], &sigma;=[0.229,0.224,0.225]"]
+    end
+
+    subgraph Phase3 ["Stage 4: Model D Deep Classification"]
+        M1["4.1 DenseNet-121 Backbone<br/>Dense Blocks 1-4 &bull; 1024 Feature Maps"]
+        M2["4.2 Spatial Reduction & Normalization<br/>Global Average Pooling &bull; Batch Normalization"]
+        M3["4.3 Latent Bottleneck<br/>Dense 256 (ReLU) &bull; Dropout (0.30)"]
+        M4["4.4 Multi-Class Decision Head<br/>Dense 6 (Softmax Activation)"]
+    end
+
+    Out["6-Class Softmax Probability Distribution<br/>COVID-19 · Normal · Pleural Effusion · Pneumonia · Nodule/Mass · Tuberculosis"]
+
+    In --> S1 --> S2 --> S3
+    S3 -->|Pass Gate| P1
+    S3 -->|Fail Gate| Rej["HTTP 422 INVALID_CXR"]
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    P6 --> M1 --> M2 --> M3 --> M4
+    M4 --> Out

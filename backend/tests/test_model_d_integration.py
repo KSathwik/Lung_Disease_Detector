@@ -166,8 +166,9 @@ async def test_api_corrupted_file(client):
         "/api/v1/predict",
         files={"file": ("corrupted.png", b"\x89PNG\r\n\x1a\ncorrupted_data_not_valid", "image/png")}
     )
-    assert resp.status_code == 400
-    assert "Invalid image" in resp.json()["detail"] or "decode" in resp.json()["detail"].lower()
+    assert resp.status_code in (400, 422)
+    detail_str = str(resp.json()["detail"]).lower()
+    assert "invalid" in detail_str or "decode" in detail_str or "corrupted" in detail_str
 
 
 @pytest.mark.asyncio
@@ -177,5 +178,7 @@ async def test_api_empty_file(client):
         "/api/v1/predict",
         files={"file": ("empty.jpg", b"", "image/jpeg")}
     )
-    assert resp.status_code == 400
-    assert "empty" in resp.json()["detail"].lower()
+    assert resp.status_code in (400, 422)
+    detail_str = str(resp.json()["detail"]).lower()
+    assert "empty" in detail_str
+

@@ -1,0 +1,39 @@
+graph TD
+    User["Clinician / Radiologist"]
+
+    P1["1.0<br/>Image Ingestion & Format Validation"]
+    P2["2.0<br/>Two-Stage CXR Validation Gate (&tau;=0.83)"]
+    P3["3.0<br/>Model D Frequency Preprocessing (&sigma;=1.0)"]
+    P4["4.0<br/>Model D Deep Inference (DenseNet-121)"]
+    P5["5.0<br/>Grad-CAM Saliency Map Generation"]
+    P6["6.0<br/>Clinical Decision & Triage Processing"]
+    P7["7.0<br/>Diagnostic Record Persistence"]
+    P8["8.0<br/>History & Report Generation"]
+
+    D1[("D1: patients")]
+    D2[("D2: lung_scans")]
+    D3[("D3: predictions")]
+    D4[("D4: reports")]
+    D5[("D5: image_uploads")]
+
+    User -->|Upload CXR File| P1
+    P1 -->|Image Bytes & Metadata| P2
+    P2 -->|Invalid Non-CXR| User
+    P2 -->|Validated CXR Bytes| P3
+    P3 -->|224x224x3 Normalized Tensor| P4
+    P4 -->|Feature Activations & Softmax Probs| P5
+    P4 -->|6-Class Probabilities| P6
+    P5 -->|Jet Alpha-Blended Heatmap| P6
+
+    P1 -->|File Bytes & Scan Info| D5
+    P1 -->|Patient & Scan Metadata| D1
+    P1 -->|Scan Record| D2
+    P6 -->|Diagnostic Outcome & Triage| D3
+    P6 -->|Diagnostic Response Package| User
+
+    User -->|Request History / Report| P8
+    D1 -->|Patient Demographics| P8
+    D2 -->|Scan Data| P8
+    D3 -->|Prediction Results| P8
+    P8 -->|PDF / JSON Report| D4
+    P8 -->|Rendered Audit View| User

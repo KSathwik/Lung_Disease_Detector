@@ -1,0 +1,29 @@
+graph TD
+    Start([Start Diagnostic Workflow]) --> Ingest[User Ingests Image via Analyze Workspace]
+    Ingest --> CheckSize{Format & Size Valid?<br/>JPEG/PNG &le; 10MB}
+    
+    CheckSize -->|No| Err400[Return HTTP 400 Bad Request] --> AdviseUser[Display Input Error Alert] --> End([End Workflow])
+    
+    CheckSize -->|Yes| Gate1{Stage 1: Biophysical Check<br/>Aspect, Contrast, Saturation}
+    Gate1 -->|Fail| Err422[Return HTTP 422 INVALID_CXR<br/>Rejection Logged] --> Show422[Display Anatomical Advisory Card] --> End
+    
+    Gate1 -->|Pass| Gate2{Stage 2: Deep Anatomical Gate<br/>Plausibility Score &ge; 0.83}
+    Gate2 -->|Fail| Err422
+    
+    Gate2 -->|Pass| Fork[Parallel Execution]
+    
+    Fork --> Preproc[Frequency Preprocessing<br/>Gaussian Low-Pass &sigma;=1.0 & Resample 224x224]
+    Preproc --> DenseNet[DenseNet-121 Feature Extraction]
+    DenseNet --> Head[256-D Bottleneck & 6-Class Softmax]
+    
+    Fork --> GradCAM[Grad-CAM Feature Activation Extraction]
+    GradCAM --> Overlay[Jet Saliency Map Alpha-Blending]
+    
+    Head --> Join[Merge Diagnostic Results]
+    Overlay --> Join
+    
+    Join --> Triage[Compute Urgency Level & Differential Diagnoses]
+    Triage --> Persist[Persist Records into lung_scans & predictions]
+    Persist --> Response[Assemble HTTP 200 PredictionResponse JSON]
+    Response --> RenderUI[Render Interactive Diagnostic Dashboard in React]
+    RenderUI --> End

@@ -137,12 +137,40 @@ async def predict(
     if len(image_bytes) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
 
-    # Run inference
+    # ── Semantic CXR vs Non-CXR Validation Gate ──
+    # Protects Model D from out-of-distribution non-medical/non-CXR images
+    from ml.cxr_gate import get_cxr_gate
+    gate = get_cxr_gate()
+    is_cxr, gate_score, rejection_reason = gate.validate(image_bytes)
+    if not is_cxr:
+        logger.warning(f"Rejected non-CXR image: {rejection_reason} (score={gate_score:.3f})")
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "INVALID_CXR",
+                "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
+                "reason": rejection_reason,
+                "score": round(gate_score, 4)
+            }
+        )
+
+    # Run inference (only reached if gate passes)
     engine = get_engine()
     try:
         results = engine.predict(image_bytes)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid image: {str(e)}")
+        # Preprocessor validation failure
+        err_msg = str(e)
+        if "Invalid Radiograph" in err_msg or "color photograph" in err_msg or "too small" in err_msg:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "INVALID_CXR",
+                    "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
+                    "reason": err_msg
+                }
+            )
+        raise HTTPException(status_code=400, detail=f"Invalid image: {err_msg}")
     except Exception as e:
         logger.error(f"Inference error: {e}")
         raise HTTPException(status_code=500, detail=f"Model inference failed: {str(e)}")
