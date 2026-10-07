@@ -20,8 +20,9 @@ from ml.preprocessing import ImagePreprocessor, DISEASE_CLASSES, PRECAUTIONS_MAP
 logger = logging.getLogger(__name__)
 
 # Search for models directory and checkpoints
-MODELS_DIR = Path(os.getenv("MODELS_DIR", "models"))
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+_env_models_dir = os.getenv("MODELS_DIR", "models")
+MODELS_DIR = Path(_env_models_dir) if Path(_env_models_dir).is_absolute() else ROOT_DIR / _env_models_dir
 
 MODEL_D_EXPERIMENT_PATH = ROOT_DIR / "experiments" / "densenet_frequency_v5" / "densenet121_frequency_v5.h5"
 MODEL_D_MODELS_PATH = MODELS_DIR / "densenet121_frequency_v5.h5"

@@ -27,11 +27,11 @@
 
 | Deliverable Artifact | File Path | Scope & Verification |
 | :--- | :--- | :--- |
-| **Compact Final Project Report (PDF)** | [`LungAI_MTech_Project_Report_Compact_Final.pdf`](LungAI_MTech_Project_Report_Compact_Final.pdf) | **71 Pages** (strictly `<80` pages, verified Times New Roman, 100% TOC/LOF/LOT synchronization) |
-| **Compact Final Project Report (DOCX)**| [`LungAI_MTech_Project_Report_Compact_Final.docx`](LungAI_MTech_Project_Report_Compact_Final.docx) | Word master document, native centered PAGE footer (`1`–`71`), academic formatting |
-| **Reference Project Report (DOCX / PDF)** | [`LungAI_MTech_Project_Report_Final_Corrected.docx`](LungAI_MTech_Project_Report_Final_Corrected.docx) | Full uncompressed reference report document & [PDF](LungAI_MTech_Project_Report_Final_Corrected.pdf) |
-| **Professional Presentation Deck (PPTX)** | [`LungAI_Updated_Professional_Presentation.pptx`](LungAI_Updated_Professional_Presentation.pptx) | Complete defense slide deck with diagrams and metrics |
-| **Final Forensic Audit Report** | [`docs/COMPACT_THESIS_FINAL_AUDIT.md`](docs/COMPACT_THESIS_FINAL_AUDIT.md) | Exhaustive sign-off audit verifying zero obsolete references |
+| **Final Project Documentation (PDF)** | [`LungAI_MTech_Project_Documentation.pdf`](LungAI_MTech_Project_Documentation.pdf) | **75 Pages** (canonical 16-chapter sequence, Times New Roman, 100% TOC/LOF/LOT synchronization) |
+| **Final Project Documentation (DOCX)**| [`LungAI_MTech_Project_Documentation.docx`](LungAI_MTech_Project_Documentation.docx) | Word master document, native centered PAGE footer (`1`–`75`), academic formatting |
+| **Professional Presentation Deck (PPTX)** | [`LungAI_Updated_Professional_Presentation.pptx`](LungAI_Updated_Professional_Presentation.pptx) | Complete defense slide deck with diagrams, architecture, and benchmark metrics |
+| **Final Forensic Audit Report** | [`docs/PROJECT_DOCUMENTATION_FINAL_AUDIT.md`](docs/PROJECT_DOCUMENTATION_FINAL_AUDIT.md) | Exhaustive sign-off audit verifying zero obsolete references & 100% compliance |
+| **Archived Prior Report Drafts** | [`Archieve docs/`](Archieve%20docs/) | Historical intermediate thesis drafts and working documents |
 
 ---
 

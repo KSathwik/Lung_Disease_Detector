@@ -179,7 +179,9 @@ export default function PatientsPage() {
                   </p>
                 )}
               </div>
-              <span className="patient-id-badge">{p.patient_id}</span>
+              <span className="patient-id-badge" title={p.patient_id}>
+                {p.patient_id === "DEFAULT" ? "DEFAULT" : `#${(p.patient_id || "").slice(0, 8)}`}
+              </span>
               <button
                 className="btn-secondary"
                 style={{position:"absolute", bottom:"12px", right:"12px", padding:"4px 12px", fontSize:"12px"}}
