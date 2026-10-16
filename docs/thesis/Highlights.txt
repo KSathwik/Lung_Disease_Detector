@@ -1,0 +1,5 @@
+* Curated 10,547 CXRs across 10,270 patients with zero cross-split leakage.
+* Benchmarked 5 domain generalization paradigms under DenseNet-121 backbone.
+* Frequency-aware preprocessing achieved 82.93% test accuracy and 0.9755 ROC-AUC.
+* Spatial frequency filtering outperformed latent-space covariance alignment.
+* Disclosed 100% binary abnormality recall alongside analog digitizer shift.
