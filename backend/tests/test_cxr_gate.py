@@ -144,8 +144,9 @@ def _get_ct_scan_bytes() -> bytes:
 # ─── Integration Tests ─────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_valid_cxr_accepted(client):
+async def test_valid_cxr_accepted(client, stub_model):
     """Valid chest radiograph must pass the CXR gate and yield predictions."""
+    stub_model([0.02, 0.05, 0.03, 0.85, 0.02, 0.03])
     cxr_bytes = _make_sample_cxr_bytes()
     resp = await client.post(
         "/api/v1/predict",

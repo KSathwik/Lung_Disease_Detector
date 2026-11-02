@@ -26,14 +26,12 @@ from typing import Tuple, Optional, Union
 import numpy as np
 import cv2
 
+from ml.paths import REPO_ROOT, resolve_models_dir
+
 logger = logging.getLogger("lungai.ml.cxr_gate")
 
-DEFAULT_GATE_MODEL_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "models", "cxr_gate_model.keras")
-)
-FALLBACK_GATE_MODEL_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "experiments", "cxr_gate", "models", "cxr_gate_model.keras")
-)
+DEFAULT_GATE_MODEL_PATH = str(resolve_models_dir() / "cxr_gate_model.keras")
+FALLBACK_GATE_MODEL_PATH = str(REPO_ROOT / "experiments" / "cxr_gate" / "models" / "cxr_gate_model.keras")
 
 class CXRValidationError(ValueError):
     """Raised when an uploaded image fails the CXR plausibility gate."""
@@ -69,6 +67,11 @@ class CXRGate:
             else:
                 logger.info(f"No CXR Gate model file found at {self.model_path}. Using anatomical profile heuristics.")
         return self._model
+
+    @property
+    def mode(self) -> str:
+        """'trained_model' when the stage-2 classifier is loaded, else 'heuristic_fallback' (weak; see docs)."""
+        return "trained_model" if self._get_model() is not None else "heuristic_fallback"
 
     def validate_stage1_heuristics(self, img: np.ndarray) -> Tuple[bool, str]:
         """

@@ -23,7 +23,7 @@ export default function PatientsPage() {
   const load = () => {
     setLoading(true);
     listPatients()
-      .then(d => setPatients(d.patients || []))
+      .then(d => setPatients((d.patients || []).filter(p => p.patient_id !== "DEFAULT")))
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   };

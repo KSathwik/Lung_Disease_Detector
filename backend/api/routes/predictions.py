@@ -3,7 +3,7 @@ Prediction API Routes
 POST /api/v1/predict          — Analyze a lung image
 GET  /api/v1/predictions      — List all predictions
 GET  /api/v1/predictions/{id} — Get single prediction
-GET  /api/v1/model-metrics    — Training metrics comparison
+GET  /api/v1/model-metrics    — Model D evaluation metrics
 """
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
@@ -11,17 +11,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+import os
+import re
 import uuid
 import aiofiles
 from datetime import datetime, timezone
 
 from database.connection import get_db, Prediction, LungScan, Patient
-from ml.inference import InferenceEngine
+from ml.inference import InferenceEngine, ModelNotLoadedError
 from utils.logger import setup_logger
 
-UPLOADS_DIR = Path("uploads")
-UPLOADS_DIR.mkdir(exist_ok=True)
+UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", "uploads"))
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 logger = setup_logger(__name__)
 router = APIRouter()
@@ -31,8 +33,22 @@ def get_engine() -> InferenceEngine:
     """Return the singleton InferenceEngine (already initialized at startup)."""
     return InferenceEngine()
 
-ALLOWED_TYPES = {"image/jpeg", "image/png", "image/bmp", "image/tiff", "image/webp"}
+# Content type -> file extension used for the stored copy (never derived from the client filename)
+ALLOWED_TYPES = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/bmp": ".bmp",
+    "image/tiff": ".tiff",
+    "image/webp": ".webp",
+}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+
+
+def safe_display_name(filename: Optional[str]) -> str:
+    """Basename of the client-supplied filename with path separators and control characters removed (for display only)."""
+    name = PureWindowsPath(filename or "").name  # handles both "/" and "\" separators
+    name = re.sub(r"[\x00-\x1f<>:\"|?*]", "_", name).strip(" .")
+    return (name or "upload")[:255]
 
 
 # ─── Schemas ────────────────────────────────────────────────────────────────
@@ -40,12 +56,12 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 class ModelResult(BaseModel):
     condition: str
     confidence: float
-    accuracy: Optional[float] = None
     all_probabilities: Optional[Dict[str, float]] = None
 
 class FinalResult(BaseModel):
     condition: str
     confidence: float
+    inconclusive: bool = False
     urgency: str
     alternative_conditions: List[str]
     key_findings: List[Dict[str, str]]
@@ -56,16 +72,18 @@ class PredictionResponse(BaseModel):
     prediction_id: str
     scan_id: str
     selected_model: str
+    model_sha256: Optional[str] = None
     predicted_class: Optional[str] = None
     confidence: Optional[float] = None
+    inconclusive: bool = False
     probabilities: Optional[Dict[str, float]] = None
     gradcam: Optional[Dict[str, Any]] = None
     external_generalization_limitation: Optional[str] = None
-    cnn: Optional[ModelResult] = None
-    resnet: Optional[ModelResult] = None
     densenet: Optional[ModelResult] = None
     final: FinalResult
     created_at: str
+
+    model_config = {"protected_namespaces": ()}
 
 
 class PredictionDetail(BaseModel):
@@ -75,14 +93,9 @@ class PredictionDetail(BaseModel):
     scan_id: int
     model_used: str
     selected_model: Optional[str] = None
-    cnn_primary_condition: Optional[str] = None
-    cnn_confidence: Optional[float] = None
-    cnn_accuracy: Optional[float] = None
-    cnn_all_probabilities: Optional[Dict[str, float]] = None
-    resnet_primary_condition: Optional[str] = None
-    resnet_confidence: Optional[float] = None
-    resnet_accuracy: Optional[float] = None
-    resnet_all_probabilities: Optional[Dict[str, float]] = None
+    model_sha256: Optional[str] = None
+    probabilities: Optional[Dict[str, float]] = None
+    inconclusive: Optional[bool] = None
     final_condition: str
     final_confidence: float
     urgency_level: str
@@ -98,6 +111,7 @@ class PredictionSummary(BaseModel):
     prediction_id: str
     final_condition: str
     final_confidence: float
+    inconclusive: Optional[bool] = None
     urgency_level: str
     selected_model: Optional[str] = None
     created_at: str
@@ -108,22 +122,33 @@ class PredictionListResponse(BaseModel):
     predictions: List[PredictionSummary]
 
 
+def _invalid_cxr(reason: str, score: Optional[float] = None) -> HTTPException:
+    detail = {
+        "error": "INVALID_CXR",
+        "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
+        "reason": reason,
+    }
+    if score is not None:
+        detail["score"] = round(score, 4)
+    return HTTPException(status_code=422, detail=detail)
+
+
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
-@router.post("/predict", response_model=PredictionResponse, summary="Analyze a lung image")
+@router.post("/predict", response_model=PredictionResponse, summary="Analyze a chest X-ray")
 async def predict(
-    file: UploadFile = File(..., description="Chest X-ray, CT scan, or MRI image"),
+    file: UploadFile = File(..., description="Frontal chest X-ray (JPEG, PNG, BMP, TIFF or WebP, max 10 MB)"),
     patient_id: Optional[str] = Form(None),
     scan_type: Optional[str] = Form("X-Ray"),
     notes: Optional[str] = Form(None),
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Upload a lung image and receive AI-powered disease detection.
-    
-    - Runs both CNN and ResNet models
-    - Returns confidence scores, findings, and precautions
-    - Stores results in database for reporting
+    Upload a chest X-ray and receive a Model D (DenseNet-121) six-class prediction.
+
+    - Returns 503 if no model checkpoint is loaded (no placeholder predictions are ever produced)
+    - Returns class probabilities, Grad-CAM, and an inconclusive flag for low-confidence outputs
+    - Stores the result (including the six probabilities and checkpoint hash) in the database
     """
     # Validate file type
     if file.content_type not in ALLOWED_TYPES:
@@ -132,10 +157,12 @@ async def predict(
             detail=f"Unsupported file type: {file.content_type}. Accepted: JPEG, PNG, BMP, TIFF, WebP"
         )
 
-    # Read and validate size
-    image_bytes = await file.read()
+    # Read at most MAX_FILE_SIZE + 1 bytes so oversized uploads are rejected without buffering them fully
+    image_bytes = await file.read(MAX_FILE_SIZE + 1)
     if len(image_bytes) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="File too large. Maximum size is 10 MB.")
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty (0 bytes).")
 
     # ── Semantic CXR vs Non-CXR Validation Gate ──
     # Protects Model D from out-of-distribution non-medical/non-CXR images
@@ -144,38 +171,9 @@ async def predict(
     is_cxr, gate_score, rejection_reason = gate.validate(image_bytes)
     if not is_cxr:
         logger.warning(f"Rejected non-CXR image: {rejection_reason} (score={gate_score:.3f})")
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "error": "INVALID_CXR",
-                "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
-                "reason": rejection_reason,
-                "score": round(gate_score, 4)
-            }
-        )
+        raise _invalid_cxr(rejection_reason, gate_score)
 
-    # Run inference (only reached if gate passes)
-    engine = get_engine()
-    try:
-        results = engine.predict(image_bytes)
-    except ValueError as e:
-        # Preprocessor validation failure
-        err_msg = str(e)
-        if "Invalid Radiograph" in err_msg or "color photograph" in err_msg or "too small" in err_msg:
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "error": "INVALID_CXR",
-                    "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
-                    "reason": err_msg
-                }
-            )
-        raise HTTPException(status_code=400, detail=f"Invalid image: {err_msg}")
-    except Exception as e:
-        logger.error(f"Inference error: {e}")
-        raise HTTPException(status_code=500, detail=f"Model inference failed: {str(e)}")
-
-    # Resolve patient: look up by patient_id string, or create a default patient
+    # Resolve patient before inference so an unknown patient_id fails fast (nothing is committed on later errors)
     db_patient_id: int
     if patient_id:
         result = await db.execute(
@@ -204,11 +202,36 @@ async def predict(
             await db.flush()
         db_patient_id = default_patient.id
 
-    # Save uploaded image to disk
+    # Run inference (only reached if gate passes). Without a checkpoint there is no prediction to return.
+    engine = get_engine()
+    if not engine.is_ready:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "MODEL_NOT_LOADED",
+                "message": "The prediction model is not loaded, so no analysis can be performed.",
+                "reason": engine.public_load_error,
+            },
+        )
+    try:
+        results = engine.predict(image_bytes)
+    except ModelNotLoadedError as e:
+        raise HTTPException(status_code=503, detail={"error": "MODEL_NOT_LOADED", "message": str(e)})
+    except ValueError as e:
+        # Preprocessor validation failure
+        err_msg = str(e)
+        if "Invalid Radiograph" in err_msg or "color photograph" in err_msg or "too small" in err_msg:
+            raise _invalid_cxr(err_msg)
+        raise HTTPException(status_code=400, detail=f"Invalid image: {err_msg}")
+    except Exception as e:
+        logger.error(f"Inference error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Model inference failed.")
+
+    # Save uploaded image to disk under a server-generated name; the client filename is stored as metadata only
     scan_id = str(uuid.uuid4())
     pred_id = str(uuid.uuid4())
-    image_filename = file.filename or "upload.jpg"
-    image_path = UPLOADS_DIR / f"{scan_id}_{image_filename}"
+    image_filename = safe_display_name(file.filename)
+    image_path = UPLOADS_DIR / f"{scan_id}{ALLOWED_TYPES[file.content_type]}"
 
     async with aiofiles.open(image_path, "wb") as f_out:
         await f_out.write(image_bytes)
@@ -228,23 +251,16 @@ async def predict(
     await db.flush()
 
     final = results["final"]
-    cnn_r = results.get("cnn")
-    rn_r  = results.get("resnet")
     dn_r  = results.get("densenet")
 
     prediction = Prediction(
         prediction_id=pred_id,
         scan_id=scan.id,
-        model_used="DenseNet" if dn_r else "Both",
+        model_used="DenseNet",
         selected_model=results.get("selected_model", "DenseNet"),
-        cnn_primary_condition=cnn_r["condition"]  if cnn_r else None,
-        cnn_confidence=cnn_r["confidence"]         if cnn_r else None,
-        cnn_accuracy=cnn_r.get("accuracy")         if cnn_r else None,
-        cnn_all_probabilities=cnn_r.get("all_probabilities") if cnn_r else None,
-        resnet_primary_condition=rn_r["condition"] if rn_r else None,
-        resnet_confidence=rn_r["confidence"]        if rn_r else None,
-        resnet_accuracy=rn_r.get("accuracy")        if rn_r else None,
-        resnet_all_probabilities=rn_r.get("all_probabilities") if rn_r else None,
+        probabilities=results.get("probabilities"),
+        model_sha256=results.get("model_sha256"),
+        inconclusive=bool(results.get("inconclusive")),
         final_condition=final["condition"],
         final_confidence=final["confidence"],
         urgency_level=final["urgency"],
@@ -259,13 +275,13 @@ async def predict(
         prediction_id=pred_id,
         scan_id=scan_id,
         selected_model=results.get("selected_model", "DenseNet-121 Frequency V5"),
+        model_sha256=results.get("model_sha256"),
         predicted_class=results.get("predicted_class"),
         confidence=results.get("confidence"),
+        inconclusive=bool(results.get("inconclusive")),
         probabilities=results.get("probabilities"),
         gradcam=results.get("gradcam"),
         external_generalization_limitation=results.get("external_generalization_limitation"),
-        cnn=ModelResult(**cnn_r) if cnn_r else None,
-        resnet=ModelResult(**rn_r) if rn_r else None,
         densenet=ModelResult(**dn_r) if dn_r else None,
         final=FinalResult(**final),
         created_at=datetime.now(timezone.utc).isoformat()
@@ -292,6 +308,7 @@ async def list_predictions(
                 prediction_id=p.prediction_id,
                 final_condition=p.final_condition,
                 final_confidence=p.final_confidence,
+                inconclusive=p.inconclusive,
                 urgency_level=p.urgency_level,
                 selected_model=p.selected_model,
                 created_at=p.created_at.isoformat()
@@ -312,12 +329,13 @@ async def get_prediction(prediction_id: str, db: AsyncSession = Depends(get_db))
     return pred
 
 
-@router.get("/model-metrics", summary="Get training metrics for both models")
+@router.get("/model-metrics", summary="Get Model D evaluation metrics")
 async def get_model_metrics():
-    metrics = get_engine().get_model_metrics()
+    metrics = get_engine().get_public_metrics()
     if not metrics:
         return {
-            "message": "Models not yet trained. Run training script first.",
-            "hint": "python backend/ml/train.py"
+            "message": "No Model D evaluation metrics found.",
+            "hint": "Expected models/training_results.json (copied from experiments/densenet_frequency_v5/frequency_metrics.json).",
+            "model_loaded": get_engine().is_ready,
         }
     return metrics

@@ -1,9 +1,12 @@
 """
+LEGACY (not used by the application): trains the original 7-class CNN/ResNet50 models on a folder-per-class
+dataset. The deployed model is Model D, trained by experiments/train_densenet_frequency_v5.py.
+
 Training Script
 Run this to train both CNN and ResNet models on your dataset.
 
 Usage:
-    python backend/ml/train.py --data_dir data/raw --epochs 50 --batch_size 32
+    python backend/ml/legacy/train.py --data_dir data/raw --epochs 50 --batch_size 32
 
 Dataset expected structure:
     data/raw/
@@ -28,10 +31,10 @@ import logging
 from pathlib import Path
 
 # Allow imports from parent
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from ml.preprocessing import DatasetPreprocessor
-from ml.models import train_and_select
+from ml.legacy.models import train_and_select
 from database.connection import init_db, AsyncSessionLocal, ModelMetrics
 import asyncio
 import json

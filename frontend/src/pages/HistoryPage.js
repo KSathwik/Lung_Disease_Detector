@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { listPredictions, generateReport } from "../services/api";
+import { listPredictions, getPrediction, generateReport } from "../services/api";
 
-const URGENCY_COLOR = { routine: "#1D9E75", urgent: "#854F0B", emergency: "#A32D2D" };
+const URGENCY_COLOR = { routine: "#1D9E75", urgent: "#854F0B", emergency: "#A32D2D", review: "#475569" };
 
 export default function HistoryPage() {
   const [data,        setData]        = useState(null);
@@ -32,8 +32,12 @@ export default function HistoryPage() {
   });
 
   const openDetail = (pred) => {
+    // Show the summary immediately, then replace it with the full stored record
     setSelectedPred(pred);
     setReportData(null);
+    getPrediction(pred.prediction_id)
+      .then(full => setSelectedPred(cur => (cur?.prediction_id === pred.prediction_id ? full : cur)))
+      .catch(e => setError(e.message));
   };
 
   const handleGenerateReportModal = async () => {
@@ -100,9 +104,9 @@ export default function HistoryPage() {
           {filteredPreds.map((p) => (
             <div key={p.prediction_id} className="history-item card" onClick={() => openDetail(p)}>
               <div className="history-left">
-                <p className="history-condition">{p.final_condition}</p>
+                <p className="history-condition">{p.inconclusive ? `Inconclusive (top: ${p.final_condition})` : p.final_condition}</p>
                 <p className="history-meta">
-                  {p.selected_model} · {p.final_confidence.toFixed(1)}% confidence · ID: {p.prediction_id.slice(0, 8)}
+                  {p.selected_model} · {p.final_confidence.toFixed(1)}% top-class score · ID: {p.prediction_id.slice(0, 8)}
                 </p>
               </div>
               <div className="history-right">
@@ -126,7 +130,9 @@ export default function HistoryPage() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <h3 className="modal-title">{selectedPred.final_condition}</h3>
+                <h3 className="modal-title">
+                  {selectedPred.inconclusive ? `Inconclusive (top: ${selectedPred.final_condition})` : selectedPred.final_condition}
+                </h3>
                 <p style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
                   Record ID: {selectedPred.prediction_id}
                 </p>
@@ -149,28 +155,39 @@ export default function HistoryPage() {
                   </span>
                 </div>
                 <p style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px" }}>
-                  {selectedPred.final_confidence.toFixed(1)}% Confidence
+                  {selectedPred.final_confidence.toFixed(1)}% top-class score
                 </p>
                 <p style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
-                  Primary model selected: <strong>{selectedPred.selected_model}</strong>
+                  Model: <strong>{selectedPred.selected_model}</strong>
                 </p>
+                {selectedPred.model_sha256 && (
+                  <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "4px", wordBreak: "break-all" }}>
+                    Checkpoint SHA-256: {selectedPred.model_sha256}
+                  </p>
+                )}
               </div>
 
-              {/* Model Scores */}
+              {/* Stored six-class model output */}
               <div className="card" style={{ marginBottom: "1rem" }}>
-                <span className="section-label">Model Breakdown</span>
-                <div className="model-compare-grid" style={{ marginTop: "8px" }}>
-                  <div className="model-card">
-                    <p className="model-name">CNN</p>
-                    <p className="model-condition">{selectedPred.cnn_primary_condition || "N/A"}</p>
-                    <p className="model-conf">{selectedPred.cnn_confidence ? `${selectedPred.cnn_confidence.toFixed(1)}%` : "N/A"}</p>
+                <span className="section-label">Class Probabilities</span>
+                {selectedPred.probabilities ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "8px" }}>
+                    {Object.entries(selectedPred.probabilities)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([cls, p]) => (
+                        <div key={cls} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                          <span>{cls}</span>
+                          <strong>{(p * 100).toFixed(1)}%</strong>
+                        </div>
+                      ))}
                   </div>
-                  <div className="model-card">
-                    <p className="model-name">ResNet50</p>
-                    <p className="model-condition">{selectedPred.resnet_primary_condition || "N/A"}</p>
-                    <p className="model-conf">{selectedPred.resnet_confidence ? `${selectedPred.resnet_confidence.toFixed(1)}%` : "N/A"}</p>
-                  </div>
-                </div>
+                ) : (
+                  <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", marginTop: "8px" }}>
+                    {!("probabilities" in selectedPred)
+                      ? "Loading…"
+                      : "Not recorded for this prediction (created before probabilities were stored)."}
+                  </p>
+                )}
               </div>
 
               {/* Precautions */}

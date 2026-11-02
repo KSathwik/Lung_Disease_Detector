@@ -165,7 +165,8 @@ def preprocess_single_image(img_path: str, filter_type: str = "none", filter_par
 
     img = cv2.imread(img_path)
     if img is None:
-        return np.zeros((*IMAGE_SIZE[:2], 3), dtype=np.float32)
+        # Never substitute a blank tensor: a missing file would silently become a black image with a real label
+        raise FileNotFoundError(f"Could not read image: {img_path}")
 
     if len(img.shape) == 2:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)

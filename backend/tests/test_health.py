@@ -17,5 +17,6 @@ async def test_health(client):
     resp = await client.get("/api/v1/health")
     assert resp.status_code == 200
     data = resp.json()
-    assert data["status"] == "healthy"
+    # "degraded" when no checkpoint is loaded (the checkpoint is not distributed with the repository)
+    assert data["status"] == ("healthy" if data["model"]["model_loaded"] else "degraded")
     assert "timestamp" in data

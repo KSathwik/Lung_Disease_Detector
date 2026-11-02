@@ -66,4 +66,6 @@ scratch/
 .scracth
 
 # python env used for doc generation
-/venv_doc_gen
+/venv_doc_gen
+# Frontend build copied next to the backend (created inside the Docker image)
+backend/static/

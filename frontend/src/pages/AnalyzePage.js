@@ -6,83 +6,7 @@ const URGENCY_CONFIG = {
   routine:   { color: "#0D9488", bg: "#CCFBF1", label: "Routine" },
   urgent:    { color: "#D97706", bg: "#FEF3C7", label: "Urgent" },
   emergency: { color: "#DC2626", bg: "#FEE2E2", label: "Emergency" },
-};
-
-// Synthetic radiology preset scan generator
-const generatePresetScanFile = (type) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
-  const ctx = canvas.getContext("2d");
-
-  // Background dark radiology gray
-  ctx.fillStyle = "#0a0c10";
-  ctx.fillRect(0, 0, 512, 512);
-
-  // Soft background gradient for chest cage
-  const bgGrad = ctx.createRadialGradient(256, 256, 20, 256, 256, 250);
-  bgGrad.addColorStop(0, "#2a3442");
-  bgGrad.addColorStop(0.7, "#141a24");
-  bgGrad.addColorStop(1, "#07090e");
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, 512, 512);
-
-  // Lungs lucency (left and right lung fields)
-  ctx.fillStyle = "#05070a";
-  ctx.beginPath(); ctx.ellipse(170, 250, 75, 140, -0.05, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(342, 250, 75, 140, 0.05, 0, Math.PI * 2); ctx.fill();
-
-  // Spine & Cardiac silhouette
-  ctx.fillStyle = "#3a4659";
-  ctx.fillRect(244, 80, 24, 340);
-  ctx.beginPath(); ctx.ellipse(225, 290, 55, 65, -0.3, 0, Math.PI * 2); ctx.fill();
-
-  // Rib cage highlights
-  ctx.strokeStyle = "#4b596e";
-  ctx.lineWidth = 4;
-  for (let y = 140; y <= 360; y += 35) {
-    ctx.beginPath(); ctx.arc(170, y, 70, Math.PI * 0.9, Math.PI * 1.8); ctx.stroke();
-    ctx.beginPath(); ctx.arc(342, y, 70, Math.PI * 1.2, Math.PI * 0.1, true); ctx.stroke();
-  }
-
-  // Disease-specific opacities
-  if (type === "pneumonia") {
-    const opacityGrad = ctx.createRadialGradient(340, 310, 5, 340, 310, 55);
-    opacityGrad.addColorStop(0, "rgba(230, 240, 255, 0.85)");
-    opacityGrad.addColorStop(0.6, "rgba(180, 195, 215, 0.5)");
-    opacityGrad.addColorStop(1, "transparent");
-    ctx.fillStyle = opacityGrad;
-    ctx.beginPath(); ctx.arc(340, 310, 55, 0, Math.PI * 2); ctx.fill();
-  } else if (type === "covid") {
-    const ggo1 = ctx.createRadialGradient(160, 240, 5, 160, 240, 45);
-    ggo1.addColorStop(0, "rgba(220, 235, 250, 0.75)");
-    ggo1.addColorStop(1, "transparent");
-    ctx.fillStyle = ggo1;
-    ctx.beginPath(); ctx.arc(160, 240, 45, 0, Math.PI * 2); ctx.fill();
-
-    const ggo2 = ctx.createRadialGradient(350, 260, 5, 350, 260, 50);
-    ggo2.addColorStop(0, "rgba(220, 235, 250, 0.8)");
-    ggo2.addColorStop(1, "transparent");
-    ctx.fillStyle = ggo2;
-    ctx.beginPath(); ctx.arc(350, 260, 50, 0, Math.PI * 2); ctx.fill();
-  } else if (type === "tb") {
-    const tbGrad = ctx.createRadialGradient(350, 160, 5, 350, 160, 35);
-    tbGrad.addColorStop(0, "rgba(245, 250, 255, 0.9)");
-    tbGrad.addColorStop(0.5, "rgba(170, 190, 215, 0.6)");
-    tbGrad.addColorStop(1, "transparent");
-    ctx.fillStyle = tbGrad;
-    ctx.beginPath(); ctx.arc(350, 160, 35, 0, Math.PI * 2); ctx.fill();
-  }
-
-  const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-  const arr = dataUrl.split(",");
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) u8arr[n] = bstr.charCodeAt(n);
-
-  return new File([u8arr], `sample_${type}_chest_xray.jpg`, { type: mime });
+  review:    { color: "#475569", bg: "#E2E8F0", label: "Needs review" },
 };
 
 export default function AnalyzePage() {
@@ -139,17 +63,23 @@ export default function AnalyzePage() {
     if (accepted[0]) selectFile(accepted[0]);
   }, []);
 
+  const onDropRejected = useCallback((rejections) => {
+    const reason = rejections?.[0]?.errors?.[0];
+    setError({
+      title: reason?.code === "file-too-large" ? "File Too Large" : "File Not Accepted",
+      message: reason?.code === "file-too-large"
+        ? "The file is larger than the 10 MB limit."
+        : "Please choose a single JPG, PNG, BMP, TIFF or WebP chest X-ray image.",
+    });
+  }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: { "image/*": [".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"] },
     maxSize: 10 * 1024 * 1024,
     multiple: false,
   });
-
-  const handlePresetSelect = (presetType) => {
-    const presetFile = generatePresetScanFile(presetType);
-    selectFile(presetFile);
-  };
 
   const handleAnalyze = async () => {
     if (!file) return;
@@ -163,7 +93,7 @@ export default function AnalyzePage() {
       setInferTime(`${elapsedSec}s`);
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError({ title: err.title || "Analysis Failed", message: err.message });
     } finally {
       setLoading(false);
     }
@@ -176,7 +106,7 @@ export default function AnalyzePage() {
       setReportData(r);
       setShowReport(true);
     } catch (err) {
-      setError("Failed to generate clinical report.");
+      setError({ title: "Report Not Generated", message: err.message });
     }
   };
 
@@ -196,6 +126,8 @@ export default function AnalyzePage() {
 
   const urgency = result?.final?.urgency || "routine";
   const urg = URGENCY_CONFIG[urgency] || URGENCY_CONFIG.routine;
+  const inconclusive = Boolean(result?.inconclusive ?? result?.final?.inconclusive);
+  const gradcam = result?.gradcam || null;
 
   return (
     <div className="page">
@@ -221,11 +153,9 @@ export default function AnalyzePage() {
 
           <div>
             <label className="field-label">Scan type</label>
+            {/* Model D was trained on frontal chest X-rays only */}
             <select className="select-input" value={scanType} onChange={e => setScanType(e.target.value)}>
               <option>X-Ray</option>
-              <option>CT Scan</option>
-              <option>MRI</option>
-              <option>PET Scan</option>
             </select>
           </div>
         </div>
@@ -243,30 +173,7 @@ export default function AnalyzePage() {
                     </svg>
                   </div>
                   <p className="drop-text">{isDragActive ? "Drop image file here" : "Drop image here or Browse files"}</p>
-                  <p className="drop-sub">JPG · PNG · BMP · TIFF · Maximum 10 MB</p>
-                </div>
-
-                {/* 1-Click Sample Presets */}
-                <div className="preset-section">
-                  <p className="preset-title">Or test with 1-click sample presets</p>
-                  <div className="preset-grid">
-                    <button className="preset-btn" onClick={() => handlePresetSelect("normal")}>
-                      <span className="preset-name">🫁 Normal</span>
-                      <span className="preset-desc">Healthy lungs</span>
-                    </button>
-                    <button className="preset-btn" onClick={() => handlePresetSelect("pneumonia")}>
-                      <span className="preset-name">🧫 Pneumonia</span>
-                      <span className="preset-desc">Right lobe opacity</span>
-                    </button>
-                    <button className="preset-btn" onClick={() => handlePresetSelect("covid")}>
-                      <span className="preset-name">🦠 COVID-19</span>
-                      <span className="preset-desc">Bilateral opacity</span>
-                    </button>
-                    <button className="preset-btn" onClick={() => handlePresetSelect("tb")}>
-                      <span className="preset-name">🧪 Tuberculosis</span>
-                      <span className="preset-desc">Apical cavity scan</span>
-                    </button>
-                  </div>
+                  <p className="drop-sub">JPG · PNG · BMP · TIFF · WebP · Frontal chest X-ray · Maximum 10 MB</p>
                 </div>
               </>
             ) : (
@@ -274,15 +181,14 @@ export default function AnalyzePage() {
                 {/* Scan Image Viewer */}
                 <div className="scan-viewer-wrapper">
                   <img
-                    src={preview}
-                    alt="Uploaded chest X-ray"
+                    src={showHeatmap && gradcam ? gradcam.overlay_image : preview}
+                    alt={showHeatmap && gradcam ? "Grad-CAM overlay" : "Uploaded chest X-ray"}
                     className="scan-viewer-img"
                     style={{
                       transform: `scale(${zoomLevel})`,
                       filter: highContrast ? "contrast(180%) brightness(110%)" : "contrast(100%) brightness(100%)",
                     }}
                   />
-                  {showHeatmap && <div className="heat-map-overlay" title="AI Saliency Region Highlight" />}
                 </div>
 
                 <div className="viewer-toolbar">
@@ -303,7 +209,8 @@ export default function AnalyzePage() {
                     <button
                       className={`icon-btn ${showHeatmap ? "active" : ""}`}
                       onClick={() => setShowHeatmap(s => !s)}
-                      title="Toggle AI Saliency Heatmap Overlay"
+                      disabled={!gradcam}
+                      title={gradcam ? "Toggle Grad-CAM overlay" : "Grad-CAM overlay is available after a successful analysis"}
                     >
                       🔥 Heatmap
                     </button>
@@ -333,10 +240,10 @@ export default function AnalyzePage() {
                   <span style={{ fontSize: "20px", lineHeight: "1" }}>⚠️</span>
                   <div>
                     <p style={{ fontWeight: 700, color: "#DC2626", margin: "0 0 4px 0", fontSize: "14px" }}>
-                      Anatomical Radiograph Validation Error
+                      {error.title}
                     </p>
                     <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "13px", lineHeight: "1.4" }}>
-                      {error}
+                      {error.message}
                     </p>
                   </div>
                 </div>
@@ -390,8 +297,15 @@ export default function AnalyzePage() {
                 <div className="card result-hero">
                   <div className="result-hero-top">
                     <div>
-                      <p className="result-label">Predicted Condition</p>
-                      <h2 className="result-condition">{result.predicted_class || result.final.condition}</h2>
+                      <p className="result-label">{inconclusive ? "Result" : "Predicted Condition"}</p>
+                      <h2 className="result-condition">
+                        {inconclusive ? "Inconclusive" : (result.predicted_class || result.final.condition)}
+                      </h2>
+                      {inconclusive && (
+                        <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
+                          Highest-scoring class: {result.predicted_class || result.final.condition}, below the reporting threshold.
+                        </p>
+                      )}
                     </div>
                     <span className="urgency-badge" style={{ color: urg.color, background: urg.bg }}>
                       {urg.label}
@@ -413,10 +327,16 @@ export default function AnalyzePage() {
                   </div>
 
                   {/* Metadata Row */}
+                  <p style={{ fontSize: "11.5px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>
+                    Top-class softmax score, not a calibrated probability of disease.
+                  </p>
+
                   <div className="meta-info-row">
                     <div className="meta-item">
                       <span className="meta-label">Selected Model</span>
-                      <span className="meta-val">{result.selected_model || "DenseNet-121 Frequency V5"}</span>
+                      <span className="meta-val" title={result.model_sha256 ? `Checkpoint SHA-256: ${result.model_sha256}` : undefined}>
+                        {result.selected_model || "DenseNet-121 Frequency V5"}
+                      </span>
                     </div>
                     {inferTime && (
                       <div className="meta-item">
@@ -506,7 +426,7 @@ export default function AnalyzePage() {
                                   borderRadius: "10px",
                                   textTransform: "uppercase"
                                 }}>
-                                  Predicted
+                                  {inconclusive ? "Top score" : "Predicted"}
                                 </span>
                               )}
                             </span>
@@ -551,7 +471,13 @@ export default function AnalyzePage() {
                     </button>
                   </div>
 
-                  {showExplanation && (
+                  {showExplanation && !gradcam && (
+                    <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", marginTop: "1rem" }}>
+                      No Grad-CAM explanation was produced for this result.
+                    </p>
+                  )}
+
+                  {showExplanation && gradcam && (
                     <div style={{ marginTop: "1rem" }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                         <div style={{ textAlign: "center" }}>
@@ -559,7 +485,7 @@ export default function AnalyzePage() {
                             Filtered Chest X-Ray
                           </p>
                           <img
-                            src={result.gradcam?.original_image || preview}
+                            src={gradcam.original_image}
                             alt="Preprocessed X-ray"
                             style={{
                               width: "100%",
@@ -576,7 +502,7 @@ export default function AnalyzePage() {
                             Grad-CAM Visualization
                           </p>
                           <img
-                            src={result.gradcam?.overlay_image || preview}
+                            src={gradcam.overlay_image}
                             alt="Grad-CAM Overlay"
                             style={{
                               width: "100%",
@@ -610,14 +536,17 @@ export default function AnalyzePage() {
                     ⚠️ External Generalization Boundary
                   </p>
                   <p style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.45, margin: 0 }}>
-                    Model D achieved peak internal diagnostic performance on multi-source digital radiographs (<strong>82.93% accuracy, 78.35% Macro F1</strong>). However, zero-shot evaluation on quarantined film-digitized radiographs (Montgomery County) demonstrated scanner sensor-shift vulnerability (0% TB recall, 100% binary abnormal sensitivity). This model does not claim robust cross-hardware generalization without site-specific calibration.
+                    {result.external_generalization_limitation}
                   </p>
                 </div>
 
-                {/* Key Radiological Findings */}
+                {/* Typical features of the predicted class (static text, not detected in this image) */}
                 {result.final.key_findings?.length > 0 && (
                   <div className="card">
-                    <p className="section-label">Key Radiological Findings</p>
+                    <p className="section-label">Typical Features of {result.final.condition}</p>
+                    <p style={{ fontSize: "11.5px", color: "var(--text-muted)", margin: "0 0 8px 0" }}>
+                      General radiographic features of this class for reference. They were not detected or measured in this image.
+                    </p>
                     <div className="findings-grid">
                       {result.final.key_findings.map((f, i) => (
                         <div key={i} className="finding-chip">
@@ -632,7 +561,7 @@ export default function AnalyzePage() {
                 {/* Precautions */}
                 {result.final.precautions?.length > 0 && (
                   <div className="card">
-                    <p className="section-label">Recommended Precautions</p>
+                    <p className="section-label">{inconclusive ? "Next Steps" : "General Precautions for This Class"}</p>
                     <ul className="precaution-list">
                       {result.final.precautions.map((p, i) => (
                         <li key={i} className="precaution-item">

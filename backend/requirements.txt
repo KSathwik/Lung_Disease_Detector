@@ -18,6 +18,10 @@ aiosqlite==0.20.0
 
 # ── ML / Deep Learning ───────────────────────────────────────────
 tensorflow==2.16.1
+# Pinned explicitly: tensorflow only requires keras>=3, and .h5 loading behaviour differs across Keras 3 releases.
+# These are the versions the backend tests were run with; match them to the versions that saved the checkpoint.
+keras==3.15.1
+h5py==3.16.0
 numpy==1.26.4
 opencv-python==4.10.0.84
 scikit-learn==1.5.1

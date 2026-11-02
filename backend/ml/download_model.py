@@ -1,8 +1,12 @@
 """
 Model Downloader Utility for LungAI
-Verifies and downloads trained model checkpoints (ResNet50 & CNN) if missing.
+Verifies and downloads the Model D checkpoint (densenet121_frequency_v5.h5) if missing.
+
+NOTE: as of 2026-11 the repository has no GitHub release, so the default URL returns 404.
+Copy the checkpoint into models/ manually, or set LUNGAI_MODEL_URL to a location you control.
 """
 
+import os
 import sys
 import io
 import urllib.request
@@ -19,7 +23,10 @@ MODELS_DIR.mkdir(exist_ok=True)
 
 # Release URL endpoints (Replace with active release assets on deployment)
 MODEL_URLS = {
-    "densenet121_frequency_v5.h5": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/densenet121_frequency_v5.h5",
+    "densenet121_frequency_v5.h5": os.getenv(
+        "LUNGAI_MODEL_URL",
+        "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/densenet121_frequency_v5.h5",
+    ),
     "training_results.json": "https://github.com/KSathwik/Lung_Disease_Detector/releases/download/v1.0.0/training_results.json",
 }
 

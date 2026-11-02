@@ -18,6 +18,15 @@ import tensorflow as tf
 
 from ml.inference import InferenceEngine
 from ml.preprocessing import ImagePreprocessor, DISEASE_CLASSES, apply_gaussian_lp
+from ml.inference import MODEL_FILENAME
+from ml.paths import REPO_ROOT, resolve_models_dir
+
+# These tests need the real Model D weights, which are not distributed with the repository
+requires_checkpoint = pytest.mark.skipif(
+    not any(p.exists() for p in (resolve_models_dir() / MODEL_FILENAME,
+                                 REPO_ROOT / "experiments" / "densenet_frequency_v5" / MODEL_FILENAME)),
+    reason=f"{MODEL_FILENAME} not present",
+)
 
 
 def _make_test_cxr_bytes(size=(256, 256)) -> bytes:
@@ -33,6 +42,7 @@ def _make_test_cxr_bytes(size=(256, 256)) -> bytes:
 
 # ─── 1. Model Loading Tests ───────────────────────────────────────────────────
 
+@requires_checkpoint
 def test_model_d_loading():
     """Verify Model D checkpoint loads cleanly with expected architecture."""
     engine = InferenceEngine()
@@ -82,6 +92,7 @@ def test_gaussian_lp_filtering():
 
 # ─── 3. Inference Tests ───────────────────────────────────────────────────────
 
+@requires_checkpoint
 def test_inference_six_class_probabilities():
     """Verify six probabilities returned, sum to ~1.0, and predicted class in class mapping."""
     engine = InferenceEngine()
@@ -110,6 +121,7 @@ def test_inference_six_class_probabilities():
 
 # ─── 4. Grad-CAM Tests ────────────────────────────────────────────────────────
 
+@requires_checkpoint
 def test_gradcam_explanation_generation():
     """Verify that Grad-CAM explanation is generated for a valid image."""
     engine = InferenceEngine()
@@ -128,6 +140,7 @@ def test_gradcam_explanation_generation():
 
 # ─── 5. API Tests (Integration) ───────────────────────────────────────────────
 
+@requires_checkpoint
 @pytest.mark.asyncio
 async def test_api_valid_cxr(client):
     """Test API endpoint with valid CXR upload."""

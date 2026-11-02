@@ -40,20 +40,143 @@ async def test_predict_bad_file_type(client):
     assert "Unsupported file type" in resp.json()["detail"]
 
 
+CONFIDENT = [0.02, 0.05, 0.03, 0.85, 0.02, 0.03]   # Pneumonia
+NEAR_UNIFORM = [0.17, 0.16, 0.17, 0.18, 0.16, 0.16]
+
+
 @pytest.mark.asyncio
-async def test_predict_success_demo_mode(client):
-    image_bytes = _make_test_image()
+async def test_predict_without_model_returns_503_and_stores_nothing(client):
+    from ml.inference import InferenceEngine
+    if InferenceEngine().is_ready:
+        pytest.skip("a real checkpoint is loaded")
     resp = await client.post(
         "/api/v1/predict",
-        files={"file": ("scan.jpg", image_bytes, "image/jpeg")},
+        files={"file": ("scan.jpg", _make_test_image(), "image/jpeg")},
+        data={"scan_type": "X-Ray"},
+    )
+    assert resp.status_code == 503
+    assert resp.json()["detail"]["error"] == "MODEL_NOT_LOADED"
+    listed = await client.get("/api/v1/predictions")
+    assert listed.json()["total"] == 0
+
+
+@pytest.mark.asyncio
+async def test_predict_success_persists_model_output(client, stub_model):
+    model = stub_model(CONFIDENT)
+    resp = await client.post(
+        "/api/v1/predict",
+        files={"file": ("scan.jpg", _make_test_image(), "image/jpeg")},
         data={"scan_type": "X-Ray"},
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert "prediction_id" in data
-    assert "final" in data
-    assert data["final"]["condition"]
-    assert data["final"]["confidence"] > 0
+    assert model.calls == 1
+    assert data["predicted_class"] == "Pneumonia"
+    assert data["inconclusive"] is False
+    assert data["probabilities"]["Pneumonia"] == pytest.approx(0.85, abs=1e-4)
+    assert data["final"]["urgency"] == "urgent"
+    assert "accuracy" not in (data.get("densenet") or {})
+
+    detail = (await client.get(f"/api/v1/predictions/{data['prediction_id']}")).json()
+    assert detail["probabilities"] == data["probabilities"]
+    assert detail["model_sha256"] == "ab" * 32
+    assert detail["final_condition"] == "Pneumonia"
+
+
+@pytest.mark.asyncio
+async def test_predict_near_uniform_output_is_inconclusive(client, stub_model):
+    stub_model(NEAR_UNIFORM)
+    resp = await client.post(
+        "/api/v1/predict",
+        files={"file": ("scan.jpg", _make_test_image(), "image/jpeg")},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["inconclusive"] is True
+    assert data["final"]["urgency"] == "review"
+    assert data["final"]["key_findings"] == []
+    assert any("radiologist" in p for p in data["final"]["precautions"])
+
+
+@pytest.mark.asyncio
+async def test_upload_filename_cannot_escape_uploads_dir(client, stub_model, uploads_dir):
+    stub_model(CONFIDENT)
+    evil = "x/../../../TRAVERSAL_PROBE.jpg"
+    resp = await client.post("/api/v1/predict", files={"file": (evil, _make_test_image(), "image/jpeg")})
+    assert resp.status_code == 200
+    saved = list(uploads_dir.iterdir())
+    assert len(saved) == 1 and saved[0].suffix == ".jpg"
+    assert "TRAVERSAL" not in saved[0].name
+    assert not (uploads_dir.parent.parent / "TRAVERSAL_PROBE.jpg").exists()
+    assert not (uploads_dir.parent / "TRAVERSAL_PROBE.jpg").exists()
+
+
+def test_safe_display_name_strips_paths():
+    from api.routes.predictions import safe_display_name
+    assert safe_display_name("x/../../evil.png") == "evil.png"
+    assert safe_display_name("..\\..\\Windows\\evil.png") == "evil.png"
+    assert safe_display_name("") == "upload"
+    assert safe_display_name(None) == "upload"
+
+
+@pytest.mark.asyncio
+async def test_predict_oversized_upload_413(client):
+    resp = await client.post(
+        "/api/v1/predict",
+        files={"file": ("big.png", b"\0" * (10 * 1024 * 1024 + 1), "image/png")},
+    )
+    assert resp.status_code == 413
+
+
+@pytest.mark.asyncio
+async def test_predict_empty_upload_400(client):
+    resp = await client.post("/api/v1/predict", files={"file": ("e.png", b"", "image/png")})
+    assert resp.status_code == 400
+    assert "empty" in resp.json()["detail"].lower()
+
+
+@pytest.mark.asyncio
+async def test_remote_client_needs_api_key(remote_client, monkeypatch):
+    monkeypatch.delenv("LUNGAI_API_KEY", raising=False)
+    assert (await remote_client.get("/api/v1/patients")).status_code == 401
+    assert (await remote_client.get("/api/v1/health")).status_code == 200
+
+
+def test_local_client_detection():
+    from types import SimpleNamespace as NS
+    from main import _is_local_client
+    assert _is_local_client(NS(client=NS(host="127.0.0.1")))
+    assert _is_local_client(NS(client=NS(host="::1")))
+    assert _is_local_client(NS(client=NS(host=None)))      # uvicorn: fully-local proxy chain
+    assert not _is_local_client(NS(client=NS(host="203.0.113.7")))
+    assert not _is_local_client(NS(client=None))
+
+
+@pytest.mark.asyncio
+async def test_api_key_enforced_when_configured(client, remote_client, monkeypatch):
+    monkeypatch.setenv("LUNGAI_API_KEY", "s3cret-test-key")
+    assert (await client.get("/api/v1/patients")).status_code == 401
+    assert (await remote_client.get("/api/v1/patients", headers={"X-API-Key": "wrong"})).status_code == 401
+    ok = await remote_client.get("/api/v1/patients", headers={"X-API-Key": "s3cret-test-key"})
+    assert ok.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_health_reports_model_state(client):
+    data = (await client.get("/api/v1/health")).json()
+    assert data["status"] in ("healthy", "degraded")
+    assert set(data["model"]) >= {"model_loaded", "checkpoint_sha256", "load_error"}
+    assert data["cxr_gate_mode"] in ("trained_model", "heuristic_fallback")
+    if not data["model"]["model_loaded"]:
+        assert data["status"] == "degraded" and data["model"]["load_error"]
+    # /health is unauthenticated: it must not reveal server filesystem paths
+    from ml.paths import REPO_ROOT
+    assert str(REPO_ROOT) not in resp_text(data)
+
+
+def resp_text(obj) -> str:
+    import json
+    return json.dumps(obj)
 
 
 @pytest.mark.asyncio
@@ -85,6 +208,12 @@ async def test_get_prediction_not_found(client):
 async def test_model_metrics(client):
     resp = await client.get("/api/v1/model-metrics")
     assert resp.status_code == 200
+    data = resp.json()
+    # Only Model D metrics are served; legacy CNN/ResNet entries come from different datasets
+    assert "cnn" not in data and "resnet" not in data
+    if "densenet" in data:
+        assert data["densenet"]["accuracy"] == pytest.approx(0.8293)
+        assert "model_loaded" in data
 
 
 @pytest.mark.asyncio

@@ -99,6 +99,11 @@ class Prediction(Base):
     resnet_accuracy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     resnet_all_probabilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
 
+    # Model D output (six-class probabilities as returned to the client) and the checkpoint that produced it
+    probabilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    model_sha256: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    inconclusive: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
+
     # Final/Selected Result
     final_condition: Mapped[str] = mapped_column(String(100), nullable=False)
     final_confidence: Mapped[float] = mapped_column(Float, nullable=False)
@@ -157,10 +162,33 @@ class Report(Base):
 
 # ─── DB Init & Session ─────────────────────────────────────────────────────────
 
+# Columns added after the first release; create_all() does not alter existing tables.
+_ADDED_COLUMNS = {
+    "predictions": {
+        "probabilities": "JSON",
+        "model_sha256": "VARCHAR(64)",
+        "inconclusive": "BOOLEAN",
+    },
+}
+
+
+def _add_missing_columns(sync_conn):
+    from sqlalchemy import inspect, text
+    insp = inspect(sync_conn)
+    for table, cols in _ADDED_COLUMNS.items():
+        if not insp.has_table(table):
+            continue
+        existing = {c["name"] for c in insp.get_columns(table)}
+        for name, ddl in cols.items():
+            if name not in existing:
+                sync_conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}"))
+
+
 async def init_db():
-    """Initialize database — create all tables."""
+    """Initialize database — create all tables and add columns introduced since the table was created."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(_add_missing_columns)
 
 
 async def get_db():

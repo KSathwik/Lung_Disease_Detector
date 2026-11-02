@@ -4,33 +4,23 @@
  */
 
 import axios from "axios";
+import { normalizeApiError } from "./errors";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000/api/v1";
+// Relative by default: the CRA dev server proxies /api to :8000 (package.json "proxy"),
+// and the Docker image serves the frontend and API from the same origin.
+const API_BASE = process.env.REACT_APP_API_URL || "/api/v1";
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const api = axios.create({
   baseURL: API_BASE,
   timeout: 60000,
+  headers: API_KEY ? { "X-API-Key": API_KEY } : {},
 });
 
 // ── Request / Response interceptors ──────────────────────────────────────────
 api.interceptors.response.use(
   (res) => res,
-  (err) => {
-    const detail = err.response?.data?.detail;
-    let msg;
-    if (Array.isArray(detail)) {
-      // FastAPI validation errors (422) come back as a list of objects
-      msg = detail
-        .map((d) => {
-          const field = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : "";
-          return field ? `${field}: ${d.msg}` : d.msg;
-        })
-        .join("; ");
-    } else {
-      msg = detail || err.message || "An error occurred";
-    }
-    return Promise.reject(new Error(msg));
-  }
+  (err) => Promise.reject(normalizeApiError(err))
 );
 
 // ─── Predictions ─────────────────────────────────────────────────────────────
