@@ -42,6 +42,13 @@ async def test_predict_bad_file_type(client):
 
 @pytest.mark.asyncio
 async def test_predict_success_demo_mode(client):
+    """
+    In this test environment no trained checkpoints are present, so the API
+    is expected to serve its fixed demo-mode output. That is only acceptable
+    behavior if the response HONESTLY reports it via demo_mode/safety_warnings —
+    this test fails if a degraded (non-real) prediction is ever returned
+    looking indistinguishable from a real one.
+    """
     image_bytes = _make_test_image()
     resp = await client.post(
         "/api/v1/predict",
@@ -54,6 +61,13 @@ async def test_predict_success_demo_mode(client):
     assert "final" in data
     assert data["final"]["condition"]
     assert data["final"]["confidence"] > 0
+    # Safety-transparency contract: a demo/fallback result must self-report as such.
+    assert "demo_mode" in data and "gate_used_trained_model" in data and "safety_warnings" in data
+    if data["demo_mode"] or not data["gate_used_trained_model"]:
+        assert len(data["safety_warnings"]) > 0, (
+            "Pipeline is running in a degraded state but safety_warnings is empty — "
+            "this is exactly the silent-fallback bug this test exists to catch."
+        )
 
 
 @pytest.mark.asyncio

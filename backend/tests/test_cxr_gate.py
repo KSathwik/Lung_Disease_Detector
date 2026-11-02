@@ -279,3 +279,28 @@ async def test_reject_corrupt_file(client):
         files={"file": ("corrupt.png", b"\x89PNG\r\n\x1a\nCorruptPayloadData", "image/png")},
     )
     assert resp.status_code in [400, 422]
+
+
+def test_gate_reports_fallback_state_honestly():
+    """
+    CXRGate.using_trained_model must truthfully reflect whether the trained
+    Stage-2 classifier loaded. This is a regression test for the bug where the
+    gate silently used a much weaker heuristic with no visible signal to
+    callers. If a trained checkpoint is later added at models/cxr_gate_model.keras,
+    this test should start asserting using_trained_model is True for that path
+    instead — until then it documents the current (degraded) default state.
+    """
+    from ml.cxr_gate import CXRGate
+
+    gate = CXRGate(model_path="/nonexistent/path/cxr_gate_model.keras")
+    assert gate.using_trained_model is False, (
+        "CXRGate reports using the trained model even though no checkpoint "
+        "exists at the given path — the fallback-visibility contract is broken."
+    )
+
+    # And the gate must still produce a decision via the fallback — it should
+    # never crash or hang just because the trained model is absent.
+    ok, score, reason = gate.validate(_make_sample_cxr_bytes())
+    assert isinstance(ok, bool)
+    assert 0.0 <= score <= 1.0
+    assert isinstance(reason, str) and reason

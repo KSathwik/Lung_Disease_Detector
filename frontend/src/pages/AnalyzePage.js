@@ -366,6 +366,33 @@ export default function AnalyzePage() {
 
             {result && (
               <>
+                {/* SAFETY: degraded-pipeline banner — shown whenever the backend reports
+                    demo_mode or a gate fallback, so a non-real/less-validated result can
+                    never look identical to a normal one. Deliberately styled more urgently
+                    than the standard research-stage disclaimer below. */}
+                {Array.isArray(result.safety_warnings) && result.safety_warnings.length > 0 && (
+                  <div className="card" style={{
+                    background: "#fef2f2",
+                    borderColor: "#fecaca",
+                    borderLeft: "4px solid #dc2626",
+                    marginBottom: "1rem"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                      <span style={{ fontSize: "18px" }}>🛑</span>
+                      <div>
+                        <p style={{ margin: "0 0 4px 0", fontWeight: "700", color: "#991b1b", fontSize: "13px" }}>
+                          Degraded Pipeline — This Result Is Not Fully Validated
+                        </p>
+                        {result.safety_warnings.map((w, i) => (
+                          <p key={i} style={{ margin: "0 0 2px 0", fontSize: "12.5px", color: "#7f1d1d", lineHeight: "1.4" }}>
+                            {w}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Research-Stage Important Medical Disclaimer Banner (Section 9) */}
                 <div className="card medical-disclaimer-card" style={{
                   background: "#fffbeb",

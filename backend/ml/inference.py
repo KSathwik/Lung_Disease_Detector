@@ -233,13 +233,22 @@ class InferenceEngine:
         # Exact Preprocessing reproducing Model D
         norm_tensor, display_rgb = self.preprocessor.preprocess_with_display(image_bytes)
 
-        if self.densenet_model is not None:
+        demo_mode = self.densenet_model is None
+        if not demo_mode:
             # Model D Softmax Predictions
             raw_probs = self.densenet_model.predict(norm_tensor, verbose=0)[0]
             raw_probs = np.clip(raw_probs, 0.0, 1.0)
             probs = raw_probs / np.sum(raw_probs)
         else:
-            # Fallback demo mode if checkpoint is absent
+            # SAFETY: Model D checkpoint is absent. This is a hardcoded, fixed
+            # demo output — it does NOT reflect any analysis of the uploaded
+            # image. `demo_mode: true` is surfaced on every API response below
+            # so this can never be mistaken for a real prediction.
+            logger.error(
+                "SAFETY DEGRADED: Model D checkpoint not loaded. Returning a fixed "
+                "demo prediction (not derived from the uploaded image). Run "
+                "`python backend/ml/download_model.py` to fetch the real checkpoint."
+            )
             probs = np.array([0.02, 0.05, 0.03, 0.85, 0.02, 0.03], dtype=np.float32)
 
         pred_idx = int(np.argmax(probs))
@@ -291,6 +300,7 @@ class InferenceEngine:
             "densenet": densenet_result,
             "cnn": None,
             "resnet": None,
+            "demo_mode": demo_mode,
             "final": final_result,
             "external_generalization_limitation": (
                 "Important Limitation: While Model D achieves peak internal validation and test accuracy (82.93%), "

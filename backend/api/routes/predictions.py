@@ -66,6 +66,11 @@ class PredictionResponse(BaseModel):
     densenet: Optional[ModelResult] = None
     final: FinalResult
     created_at: str
+    # Safety-transparency fields — surfaced so a degraded pipeline state is
+    # never silently indistinguishable from a real, fully-validated result.
+    demo_mode: bool = False
+    gate_used_trained_model: bool = True
+    safety_warnings: List[str] = []
 
 
 class PredictionDetail(BaseModel):
@@ -142,6 +147,13 @@ async def predict(
     from ml.cxr_gate import get_cxr_gate
     gate = get_cxr_gate()
     is_cxr, gate_score, rejection_reason = gate.validate(image_bytes)
+    gate_used_trained_model = gate.using_trained_model
+    if not gate_used_trained_model:
+        logger.warning(
+            "CXR gate is running on the unvalidated fallback heuristic, not the "
+            "trained Stage-2 classifier. Gate decisions in this request are less "
+            "reliable than the documented 100%% sensitivity/specificity figures."
+        )
     if not is_cxr:
         logger.warning(f"Rejected non-CXR image: {rejection_reason} (score={gate_score:.3f})")
         raise HTTPException(
@@ -150,7 +162,8 @@ async def predict(
                 "error": "INVALID_CXR",
                 "message": "The uploaded image does not appear to be a chest radiograph. Please upload a valid chest X-ray.",
                 "reason": rejection_reason,
-                "score": round(gate_score, 4)
+                "score": round(gate_score, 4),
+                "gate_used_trained_model": gate_used_trained_model
             }
         )
 
@@ -231,6 +244,19 @@ async def predict(
     cnn_r = results.get("cnn")
     rn_r  = results.get("resnet")
     dn_r  = results.get("densenet")
+    demo_mode = bool(results.get("demo_mode", False))
+
+    safety_warnings: List[str] = []
+    if demo_mode:
+        safety_warnings.append(
+            "DEMO MODE: The Model D checkpoint is not loaded. This prediction is a "
+            "fixed placeholder and is NOT derived from the uploaded image."
+        )
+    if not gate_used_trained_model:
+        safety_warnings.append(
+            "GATE FALLBACK: The CXR validation gate used an unvalidated heuristic "
+            "instead of the trained Stage-2 classifier for this request."
+        )
 
     prediction = Prediction(
         prediction_id=pred_id,
@@ -268,7 +294,10 @@ async def predict(
         resnet=ModelResult(**rn_r) if rn_r else None,
         densenet=ModelResult(**dn_r) if dn_r else None,
         final=FinalResult(**final),
-        created_at=datetime.now(timezone.utc).isoformat()
+        created_at=datetime.now(timezone.utc).isoformat(),
+        demo_mode=demo_mode,
+        gate_used_trained_model=gate_used_trained_model,
+        safety_warnings=safety_warnings
     )
 
 

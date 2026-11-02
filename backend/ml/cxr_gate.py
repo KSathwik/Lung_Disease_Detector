@@ -64,11 +64,34 @@ class CXRGate:
                     self._model = keras.models.load_model(self.model_path)
                     logger.info(f"Loaded CXR Gate model from {self.model_path}")
                 except Exception as e:
-                    logger.warning(f"Failed to load CXR Gate model from {self.model_path}: {e}")
+                    logger.error(
+                        f"SAFETY DEGRADED: Failed to load CXR Gate model from {self.model_path}: {e}. "
+                        "Falling back to the weak analytical heuristic (CXRGate._anatomical_profile_score), "
+                        "which has NOT been validated to the 100% sensitivity/specificity reported for the "
+                        "trained classifier and is known to accept simple non-anatomical shapes."
+                    )
                     self._model = None
             else:
-                logger.info(f"No CXR Gate model file found at {self.model_path}. Using anatomical profile heuristics.")
+                logger.error(
+                    f"SAFETY DEGRADED: No CXR Gate model file found at {self.model_path}. "
+                    "Run `python backend/ml/download_model.py` to fetch it, or place a trained checkpoint there. "
+                    "Falling back to the weak analytical heuristic (CXRGate._anatomical_profile_score) for Stage 2 "
+                    "of the CXR validation gate — this fallback has NOT been validated to the 100% sensitivity/"
+                    "specificity reported for the trained classifier."
+                )
         return self._model
+
+    @property
+    def using_trained_model(self) -> bool:
+        """
+        True once the trained Stage-2 classifier has been loaded successfully.
+        False means Stage-2 is currently running the unvalidated analytical
+        fallback heuristic — callers that surface gate results to end users
+        (e.g. the /predict API response) should propagate this so the degraded
+        safety state is never silently invisible.
+        """
+        self._get_model()
+        return self._model is not None
 
     def validate_stage1_heuristics(self, img: np.ndarray) -> Tuple[bool, str]:
         """
