@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "model": {
+    "model_id": "lungai-densenet121-6class",
+    "display_name": "LungAI DenseNet-121 — Six-Class Chest X-Ray Classifier",
+    "version": "v5.0",
+    "architecture": "DenseNet-121 backbone + GAP + BatchNorm + Dense(256, ReLU) + Dropout(0.3) + Dense(6, softmax)",
+    "backbone": "tensorflow.keras.applications.DenseNet121",
+    "pretrained_weights": "imagenet (Keras Applications release weights, downloaded by Keras on first build)",
+    "input_shape": [224, 224, 3],
+    "output_activation": "softmax",
+    "task": "single-label multiclass (mutually exclusive classes)",
+    "layer_names": {
+      "input": "input_xray",
+      "pooling": "gap",
+      "batch_norm": "bn",
+      "features": "dense_features",
+      "dropout": "dropout",
+      "output": "class_predictions",
+      "gradcam_conv": "relu"
+    },
+    "head": {"dense_units": 256, "dropout": 0.3},
+    "checkpoint": {
+      "filename": "densenet121_frequency_v5.h5",
+      "format": "Keras HDF5",
+      "sha256": "e2c95dc5eba588f877280948593f2965442d9950aa891ed5765eaf0117889022",
+      "sha256_source": "docs/archive/historical_audits/END_TO_END_APPLICATION_TEST_REPORT.md (recorded 2026, not re-verifiable: file not in repository)",
+      "availability": "NOT IN REPOSITORY. Place the file in models/ (or set MODELS_DIR). The backend refuses a file whose SHA-256 differs unless LUNGAI_ALLOW_UNVERIFIED_CHECKPOINT=true."
+    }
+  },
+  "classes": [
+    {"index": 0, "id": "covid19", "name": "COVID-19"},
+    {"index": 1, "id": "normal", "name": "Normal"},
+    {"index": 2, "id": "pleural_effusion", "name": "Pleural Effusion"},
+    {"index": 3, "id": "pneumonia", "name": "Pneumonia"},
+    {"index": 4, "id": "nodule_mass", "name": "Pulmonary Nodule / Mass"},
+    {"index": 5, "id": "tuberculosis", "name": "Tuberculosis"}
+  ],
+  "preprocessing": {
+    "decode": "cv2.imdecode/imread with IMREAD_COLOR (grayscale is replicated to 3 channels; alpha dropped)",
+    "color_order": "RGB",
+    "pre_blur": {"kernel_size": 3, "sigma": 0.8},
+    "clahe": {"space": "CIE LAB, L channel only", "clip_limit": 2.0, "tile_grid_size": [8, 8]},
+    "frequency_filter": {"type": "gaussian_lowpass", "sigma": 1.0, "kernel_size_rule": "2*ceil(3*sigma)+1"},
+    "resize": {"size": [224, 224], "interpolation": "INTER_LANCZOS4"},
+    "normalization": {"scale": 255.0, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]},
+    "note": "Filters run at native resolution before resizing (historical order, kept for train/serve parity with the recorded checkpoint). See docs/limitations.md."
+  },
+  "augmentation": {
+    "applies_to": ["train"],
+    "horizontal_flip_probability": 0.5,
+    "rotation_degrees": 10,
+    "border_mode": "reflect"
+  },
+  "training": {
+    "seed": 42,
+    "batch_size": 32,
+    "steps_per_epoch": 231,
+    "loss": "sparse_categorical_crossentropy",
+    "class_weighting": "balanced: n_train / (n_classes * n_train_class), applied as per-sample weights",
+    "phases": [
+      {"name": "head", "epochs": 2, "optimizer": "adam", "learning_rate": 0.001, "backbone_trainable": false},
+      {"name": "fine_tune", "epochs": 2, "optimizer": "adam", "learning_rate": 0.00001, "backbone_trainable": true, "unfreeze_last_n_layers": 30}
+    ],
+    "checkpoint_selection": {
+      "rule": "best_validation_macro_f1",
+      "evaluated_on": "val",
+      "tie_breaker": "validation macro ROC-AUC",
+      "historical_note": "The recorded v5.0 checkpoint was the final epoch of phase 2; validation was evaluated once after training and its value was not saved."
+    }
+  },
+  "dataset": {
+    "version": "V5",
+    "manifest": "data/manifests/unified_manifest_v5.csv",
+    "manifest_sha256_lf": "8117a441d5d200e781df0af33685cde32c6c7a24a5e30d73f5744ec592702e26",
+    "manifest_sha256_crlf_historical": "6730495a1e689ea8633595daa59b691d9798793a75b304f63d4f52c9cbeda2c4",
+    "label_column": "clinical_label",
+    "split_column": "split",
+    "splits": {
+      "train": {"purpose": "Learn model parameters", "permitted_use": "Gradient updates"},
+      "val": {"purpose": "Select preprocessing, hyper-parameters and checkpoints", "permitted_use": "Model selection"},
+      "test": {"purpose": "Final internal evaluation", "permitted_use": "Report once; never tune on it"}
+    },
+    "data_root_env": "LUNGAI_DATA_ROOT",
+    "data_root_note": "Manifest image paths are relative to the data root (the folder that contains data/raw and data/downloads)."
+  },
+  "external_cohort": {
+    "name": "Montgomery County CXR (NLM)",
+    "purpose": "Independent external assessment; never used for training or model selection",
+    "metadata_csv": "data/downloads/montgomery/montgomery_metadata.csv",
+    "image_dir": "data/downloads/montgomery/images/images",
+    "id_column": "study_id",
+    "finding_column": "findings",
+    "normal_value": "normal",
+    "labels": {"normal": "Normal", "abnormal": "Tuberculosis"},
+    "task": "binary abnormality (predicted class != Normal) and exact Tuberculosis recall; NOT a six-class evaluation"
+  },
+  "evaluation": {
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 42,
+    "proportion_ci": "wilson_95",
+    "calibration_bins": 15,
+    "roc_auc_definition": "one-vs-rest per class; macro = unweighted mean over the 6 classes (sklearn roc_auc_score multi_class='ovr', average='macro')"
+  },
+  "inference": {
+    "confidence_floor": 0.5,
+    "confidence_floor_note": "Top-class softmax below this is reported as inconclusive. Not clinically validated; softmax is uncalibrated.",
+    "max_upload_bytes": 10485760
+  }
+}

@@ -1,0 +1,287 @@
+"""ARCHIVED, not runnable: legacy folder-scan dataset loader used only by the archived 7-class CNN/ResNet trainer. It depended on the historical backend ImagePreprocessor (see git history before branch research/lungai-clean-baseline). Kept for traceability."""
+
+import os
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+import logging
+
+import cv2
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+logger = logging.getLogger(__name__)
+IMAGE_SIZE = (224, 224)
+MEAN = np.array([0.485, 0.456, 0.406])
+STD = np.array([0.229, 0.224, 0.225])
+
+
+class DatasetPreprocessor:
+    """
+    Full dataset preprocessing pipeline for model training.
+    Expects dataset directory structure:
+        data/raw/
+            Normal/
+                img1.jpg, img2.jpg, ...
+            Pneumonia/
+                img1.jpg, ...
+            ...
+    """
+
+    def __init__(
+        self,
+        data_dir: str,
+        target_size: Tuple[int, int] = IMAGE_SIZE,
+        test_size: float = 0.15,
+        val_size: float = 0.15,
+        random_state: int = 42
+    ):
+        self.data_dir = Path(data_dir)
+        self.target_size = target_size
+        self.test_size = test_size
+        self.val_size = val_size
+        self.random_state = random_state
+        self.preprocessor = ImagePreprocessor(target_size)
+        self.label_encoder = LabelEncoder()
+
+    # ── Step 1: Scan Dataset ──────────────────────────────────────────────────
+    def scan_dataset(self) -> pd.DataFrame:
+        """
+        Scan dataset directory and build a DataFrame of image paths + labels.
+        Also performs data quality checks.
+        """
+        records = []
+        supported_ext = {".jpg", ".jpeg", ".png", ".bmp", ".tiff"}
+
+        for class_dir in sorted(self.data_dir.iterdir()):
+            if not class_dir.is_dir():
+                continue
+            class_name = class_dir.name
+            for img_path in class_dir.iterdir():
+                if img_path.suffix.lower() not in supported_ext:
+                    continue
+                records.append({
+                    "image_path": str(img_path),
+                    "label": class_name,
+                    "filename": img_path.name
+                })
+
+        df = pd.DataFrame(records)
+        logger.info(f"Dataset scanned: {len(df)} images across {df['label'].nunique()} classes")
+        logger.info(f"Class distribution:\n{df['label'].value_counts()}")
+        return df
+
+    # ── Step 2: Data Cleaning ─────────────────────────────────────────────────
+    def clean_dataset(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Data cleaning steps:
+        1. Remove duplicate file paths
+        2. Remove corrupted / zero-byte images (file size check)
+        3. Log cleaning statistics
+        """
+        original_count = len(df)
+
+        # Remove duplicates
+        df = df.drop_duplicates(subset=["image_path"])
+        logger.info(f"After dedup: {len(df)} (removed {original_count - len(df)})")
+
+        # Validate images via fast file size check (> 1KB)
+        valid_indices = []
+        for idx, row in df.iterrows():
+            try:
+                if os.path.getsize(row["image_path"]) > 1024:
+                    valid_indices.append(idx)
+                else:
+                    logger.warning(f"Too small file size: {row['image_path']}")
+            except Exception as e:
+                logger.error(f"Error checking {row['image_path']}: {e}")
+
+        df = df.loc[valid_indices].reset_index(drop=True)
+        logger.info(f"After cleaning: {len(df)} valid images (removed {original_count - len(df)} total)")
+        return df
+
+    # ── Step 3: Split Dataset ─────────────────────────────────────────────────
+    def split_dataset(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """Split into train / validation / test sets (stratified by class)."""
+        train_val, test = train_test_split(
+            df, test_size=self.test_size,
+            stratify=df["label"], random_state=self.random_state
+        )
+        adjusted_val = self.val_size / (1 - self.test_size)
+        train, val = train_test_split(
+            train_val, test_size=adjusted_val,
+            stratify=train_val["label"], random_state=self.random_state
+        )
+        logger.info(f"Split — Train: {len(train)}, Val: {len(val)}, Test: {len(test)}")
+        return train, val, test
+
+    # ── Step 4: Encode Labels ─────────────────────────────────────────────────
+    def encode_labels(self, df: pd.DataFrame) -> np.ndarray:
+        return self.label_encoder.fit_transform(df["label"].values)
+
+    # ── Step 5: Load & Preprocess Images ─────────────────────────────────────
+    def load_images(self, df: pd.DataFrame, augment: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+        """Load and preprocess all images using multi-threading for maximum speed."""
+        from concurrent.futures import ThreadPoolExecutor
+
+        encoded_labels = self.label_encoder.transform(df["label"].values)
+        items = list(zip(df["image_path"].values, encoded_labels))
+
+        def _process_one(item):
+            path, label = item
+            img = cv2.imread(path)
+            if img is None:
+                return []
+            img = self.preprocessor.clean_image(img)
+            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LINEAR)
+            img_norm = img_resized.astype(np.float32) / 255.0
+            img_norm = (img_norm - MEAN) / STD
+            res = [(img_norm, label)]
+            if augment:
+                res.append((np.fliplr(img_norm), label))
+            return res
+
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            results = list(ex.map(_process_one, items))
+
+        images, labels = [], []
+        for batch in results:
+            for img, lbl in batch:
+                images.append(img)
+                labels.append(lbl)
+
+        return np.array(images, dtype=np.float32), np.array(labels, dtype=np.int64)
+
+    # ── Step 6: Augmentation ──────────────────────────────────────────────────
+    def _augment(self, img: np.ndarray) -> List[np.ndarray]:
+        """
+        Data augmentation to increase dataset diversity:
+        - Horizontal flip
+        - Rotation ±15°
+        - Brightness/contrast jitter
+        """
+        augmented = []
+
+        # Flip
+        augmented.append(np.fliplr(img))
+
+        # Rotation
+        h, w = img.shape[:2]
+        for angle in [-15, 15]:
+            M = cv2.getRotationMatrix2D((w // 2, h // 2), angle, 1.0)
+            rotated = cv2.warpAffine(img, M, (w, h))
+            augmented.append(rotated)
+
+        # Brightness jitter
+        bright = np.clip(img * 1.2, 0, 1)
+        augmented.append(bright)
+
+        return augmented
+
+    # ── Memory-efficient generator ──────────────────────────────────────────
+    def _image_generator(self, df: pd.DataFrame, augment: bool = False):
+        """Yield (image, label) tuples one at a time to avoid loading all into RAM."""
+        encoded_labels = self.label_encoder.transform(df["label"].values)
+        for (_, row), label in zip(df.iterrows(), encoded_labels):
+            img = cv2.imread(row["image_path"])
+            if img is None:
+                continue
+            img = self.preprocessor.clean_image(img)
+            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
+            img_norm = img_resized.astype(np.float32) / 255.0
+            img_norm = (img_norm - MEAN) / STD
+            yield img_norm, label
+
+            if augment:
+                for aug_img in self._augment(img_norm):
+                    yield aug_img, label
+
+    def _count_samples(self, df: pd.DataFrame, augment: bool = False) -> int:
+        """Estimate total sample count (original + augmented)."""
+        n = len(df)
+        if augment:
+            n *= 2
+        return n
+
+    def create_tf_dataset(
+        self, df: pd.DataFrame, batch_size: int, augment: bool = False, shuffle: bool = False
+    ):
+        """Build a tf.data.Dataset that streams images from disk in batches."""
+        import tensorflow as tf
+
+        def gen():
+            return self._image_generator(df, augment=augment)
+
+        ds = tf.data.Dataset.from_generator(
+            gen,
+            output_signature=(
+                tf.TensorSpec(shape=(*self.target_size, 3), dtype=tf.float32),
+                tf.TensorSpec(shape=(), dtype=tf.int64),
+            ),
+        )
+        if shuffle:
+            ds = ds.shuffle(buffer_size=min(2000, self._count_samples(df, augment)))
+        ds = ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+        return ds
+
+    # ── Full Pipeline ─────────────────────────────────────────────────────────
+
+    RAM_THRESHOLD = 50_000  # Load dataset into in-memory array for fast training
+
+    def run(self, batch_size: int = 32, max_train_samples: Optional[int] = None) -> Dict:
+        """Execute the full preprocessing pipeline."""
+        logger.info("=== Starting Data Preprocessing Pipeline ===")
+
+        df = self.scan_dataset()
+        df = self.clean_dataset(df)
+
+        train_df, val_df, test_df = self.split_dataset(df)
+
+        self.label_encoder.fit(df["label"])
+
+        if max_train_samples and len(train_df) > max_train_samples:
+            train_df, _ = train_test_split(
+                train_df, train_size=max_train_samples,
+                stratify=train_df["label"], random_state=self.random_state
+            )
+            logger.info(f"Subsampled train set for CPU optimization: {len(train_df)} images")
+
+        use_streaming = len(train_df) > self.RAM_THRESHOLD
+        if use_streaming:
+            logger.info(
+                f"Large dataset ({len(train_df)} training images) — using tf.data streaming."
+            )
+            return {
+                "train_ds": self.create_tf_dataset(train_df, batch_size, augment=True, shuffle=True),
+                "val_ds":   self.create_tf_dataset(val_df,   batch_size, augment=False),
+                "test_ds":  self.create_tf_dataset(test_df,  batch_size, augment=False),
+                "X_test": None, "y_test": None,
+                "streaming": True,
+                "class_names": list(self.label_encoder.classes_),
+                "label_encoder": self.label_encoder,
+                "train_df": train_df, "val_df": val_df, "test_df": test_df,
+                "train_samples": self._count_samples(train_df, augment=True),
+                "val_samples": len(val_df),
+                "test_samples": len(test_df),
+            }
+
+        logger.info("Loading and preprocessing training images (with augmentation)...")
+        X_train, y_train = self.load_images(train_df, augment=True)
+        X_val,   y_val   = self.load_images(val_df,   augment=False)
+        X_test,  y_test  = self.load_images(test_df,  augment=False)
+
+        logger.info(f"X_train shape: {X_train.shape}, y_train shape: {y_train.shape}")
+        logger.info(f"X_val shape:   {X_val.shape},   y_val shape:   {y_val.shape}")
+        logger.info(f"X_test shape:  {X_test.shape},  y_test shape:  {y_test.shape}")
+        logger.info("=== Preprocessing Complete ===")
+
+        return {
+            "X_train": X_train, "y_train": y_train,
+            "X_val":   X_val,   "y_val":   y_val,
+            "X_test":  X_test,  "y_test":  y_test,
+            "streaming": False,
+            "class_names": list(self.label_encoder.classes_),
+            "label_encoder": self.label_encoder,
+            "train_df": train_df, "val_df": val_df, "test_df": test_df
+        }

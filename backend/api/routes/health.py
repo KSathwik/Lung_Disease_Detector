@@ -12,8 +12,10 @@ router = APIRouter()
 async def health():
     model = InferenceEngine().status()
     return {
-        # "degraded" means the API is up but cannot produce predictions (no checkpoint loaded)
+        # The API answering at all means the service is available; "degraded" means it cannot produce predictions
         "status": "healthy" if model["model_loaded"] else "degraded",
+        "service_available": True,
+        "model_ready": model["model_loaded"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0",
         "model": model,

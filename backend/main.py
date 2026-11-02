@@ -20,6 +20,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from api.routes import predictions, patients, reports, health
+from lungai.config import MODEL_DISPLAY_NAME
 from database.connection import init_db, get_db
 from ml.inference import InferenceEngine
 from utils.logger import setup_logger
@@ -49,18 +50,18 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Lung Disease Detection API",
+    title=f"LungAI API — {MODEL_DISPLAY_NAME}",
     description="""
     ## Academic Lung Disease Detection System (LungAI)
 
     This API provides AI-powered 6-class lung disease triage and detection from chest radiographs.
-    Powered by Model D (DenseNet-121 with Frequency-Domain Preprocessing &sigma;=1.0) and Grad-CAM explainability.
+    One model: the LungAI DenseNet-121 Six-Class Chest X-Ray Classifier (see `GET /api/v1/model`), with Grad-CAM.
 
     **Important:** This research prototype is not a medical device and must not be used for clinical decisions.
 
     ### Features:
     - Chest radiograph (CXR) ingestion (JPEG, PNG, BMP, TIFF, WebP &le; 10MB)
-    - Model D DenseNet-121 inference across 6 active classes (503 when no checkpoint is loaded)
+    - Six-class inference with the canonical checkpoint only (503 when it is missing or fails its SHA-256 check)
     - Interactive Grad-CAM attention heatmap overlays
     - Confidence scoring with an inconclusive state for low-confidence outputs
     - Urgency categorization (Routine, Urgent, Emergency, Review)
@@ -161,7 +162,7 @@ else:
     @app.get("/")
     async def root():
         return {
-            "message": "Lung Disease Detection API",
+            "message": f"LungAI API — {MODEL_DISPLAY_NAME}",
             "version": "1.0.0",
             "status": "running",
             "docs": "/docs"

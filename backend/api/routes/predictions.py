@@ -3,7 +3,8 @@ Prediction API Routes
 POST /api/v1/predict          — Analyze a lung image
 GET  /api/v1/predictions      — List all predictions
 GET  /api/v1/predictions/{id} — Get single prediction
-GET  /api/v1/model-metrics    — Model D evaluation metrics
+GET  /api/v1/model            — Canonical model identity, class mapping and readiness
+GET  /api/v1/model-metrics    — Recorded evaluation results of the canonical model (with evidence level)
 """
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Form
@@ -15,11 +16,13 @@ from pathlib import Path, PureWindowsPath
 import os
 import re
 import uuid
+import json
 import aiofiles
 from datetime import datetime, timezone
 
 from database.connection import get_db, Prediction, LungScan, Patient
 from ml.inference import InferenceEngine, ModelNotLoadedError
+from lungai.config import INFERENCE, MODEL_ID, REPO_ROOT
 from utils.logger import setup_logger
 
 UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", "uploads"))
@@ -41,7 +44,8 @@ ALLOWED_TYPES = {
     "image/tiff": ".tiff",
     "image/webp": ".webp",
 }
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
+MAX_FILE_SIZE = int(INFERENCE["max_upload_bytes"])  # 10 MB
+RECORDED_RESULTS_FILE = REPO_ROOT / "artifacts" / "evaluation_reports" / "historical_record_verification.json"
 
 
 def safe_display_name(filename: Optional[str]) -> str:
@@ -71,9 +75,14 @@ class FinalResult(BaseModel):
 class PredictionResponse(BaseModel):
     prediction_id: str
     scan_id: str
+    model_id: str
+    model_version: str
     selected_model: str
     model_sha256: Optional[str] = None
+    checkpoint_verified: bool
+    class_order: List[str]
     predicted_class: Optional[str] = None
+    predicted_index: Optional[int] = None
     confidence: Optional[float] = None
     inconclusive: bool = False
     probabilities: Optional[Dict[str, float]] = None
@@ -93,6 +102,7 @@ class PredictionDetail(BaseModel):
     scan_id: int
     model_used: str
     selected_model: Optional[str] = None
+    model_version: Optional[str] = None
     model_sha256: Optional[str] = None
     probabilities: Optional[Dict[str, float]] = None
     inconclusive: Optional[bool] = None
@@ -144,7 +154,7 @@ async def predict(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Upload a chest X-ray and receive a Model D (DenseNet-121) six-class prediction.
+    Upload a chest X-ray and receive a six-class prediction from the canonical LungAI DenseNet-121 classifier.
 
     - Returns 503 if no model checkpoint is loaded (no placeholder predictions are ever produced)
     - Returns class probabilities, Grad-CAM, and an inconclusive flag for low-confidence outputs
@@ -165,7 +175,7 @@ async def predict(
         raise HTTPException(status_code=400, detail="Uploaded file is empty (0 bytes).")
 
     # ── Semantic CXR vs Non-CXR Validation Gate ──
-    # Protects Model D from out-of-distribution non-medical/non-CXR images
+    # Keeps obvious non-radiographs away from the classifier
     from ml.cxr_gate import get_cxr_gate
     gate = get_cxr_gate()
     is_cxr, gate_score, rejection_reason = gate.validate(image_bytes)
@@ -256,8 +266,9 @@ async def predict(
     prediction = Prediction(
         prediction_id=pred_id,
         scan_id=scan.id,
-        model_used="DenseNet",
-        selected_model=results.get("selected_model", "DenseNet"),
+        model_used=results["model_id"],
+        selected_model=results["selected_model"],
+        model_version=results["model_version"],
         probabilities=results.get("probabilities"),
         model_sha256=results.get("model_sha256"),
         inconclusive=bool(results.get("inconclusive")),
@@ -274,9 +285,14 @@ async def predict(
     return PredictionResponse(
         prediction_id=pred_id,
         scan_id=scan_id,
-        selected_model=results.get("selected_model", "DenseNet-121 Frequency V5"),
+        model_id=results["model_id"],
+        model_version=results["model_version"],
+        selected_model=results["selected_model"],
         model_sha256=results.get("model_sha256"),
+        checkpoint_verified=bool(results["checkpoint_verified"]),
+        class_order=results["class_order"],
         predicted_class=results.get("predicted_class"),
+        predicted_index=results.get("predicted_index"),
         confidence=results.get("confidence"),
         inconclusive=bool(results.get("inconclusive")),
         probabilities=results.get("probabilities"),
@@ -329,13 +345,44 @@ async def get_prediction(prediction_id: str, db: AsyncSession = Depends(get_db))
     return pred
 
 
-@router.get("/model-metrics", summary="Get Model D evaluation metrics")
+@router.get("/model", summary="Canonical model identity, class mapping and readiness")
+async def get_model():
+    return get_engine().identity()
+
+
+@router.get("/model-metrics", summary="Recorded evaluation results of the canonical model")
 async def get_model_metrics():
-    metrics = get_engine().get_public_metrics()
-    if not metrics:
+    """
+    Recorded results for the canonical model, regenerated by `python -m lungai.evaluation.historical`.
+    These are aggregate results from an earlier run, checked against their own confusion matrices; they are
+    not produced by the checkpoint this server has loaded.
+    """
+    if not RECORDED_RESULTS_FILE.is_file():
         return {
-            "message": "No Model D evaluation metrics found.",
-            "hint": "Expected models/training_results.json (copied from experiments/densenet_frequency_v5/frequency_metrics.json).",
+            "model_id": MODEL_ID,
+            "available": False,
+            "message": "No recorded evaluation results found. Run: python -m lungai.evaluation.historical",
             "model_loaded": get_engine().is_ready,
         }
-    return metrics
+    record = json.loads(RECORDED_RESULTS_FILE.read_text(encoding="utf-8"))
+    canonical = next(e for e in record["entries"] if e["canonical"])
+    internal = canonical["internal_test"]
+    return {
+        "model_id": MODEL_ID,
+        "available": True,
+        "model": record["canonical_model"],
+        "model_loaded": get_engine().is_ready,
+        "evidence_level": record["evidence_level"],
+        "generated_at": record["generated_at"],
+        "dataset_version": record["dataset_version"],
+        "class_order": record["class_order"],
+        "internal_test": {
+            "split": internal["split"],
+            "n": internal["n"],
+            "consistency": internal["status"],
+            "metrics": internal["recomputed"],
+            "recorded_unverifiable": internal["recorded_unverifiable"],
+        },
+        "external": canonical["external"],
+        "validation_evidence": canonical["validation_evidence"],
+    }

@@ -83,23 +83,12 @@ class Prediction(Base):
     prediction_id: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     scan_id: Mapped[int] = mapped_column(Integer, ForeignKey("lung_scans.id"), nullable=False)
 
-    # Model results
-    model_used: Mapped[str] = mapped_column(String(50), nullable=False)   # "CNN" or "ResNet"
-    selected_model: Mapped[str] = mapped_column(String(50), nullable=True) # best performing model
+    # Model identity: model_used = canonical model_id, selected_model = display name, model_version = config version
+    model_used: Mapped[str] = mapped_column(String(50), nullable=False)
+    selected_model: Mapped[str] = mapped_column(String(100), nullable=True)
+    model_version: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
-    # CNN Results
-    cnn_primary_condition: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    cnn_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    cnn_accuracy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    cnn_all_probabilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-
-    # ResNet Results
-    resnet_primary_condition: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
-    resnet_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    resnet_accuracy: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    resnet_all_probabilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-
-    # Model D output (six-class probabilities as returned to the client) and the checkpoint that produced it
+    # Six-class probabilities exactly as returned to the client, and the checkpoint that produced them
     probabilities: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     model_sha256: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     inconclusive: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=False)
@@ -117,29 +106,6 @@ class Prediction(Base):
     # Relationships
     scan: Mapped["LungScan"] = relationship("LungScan", back_populates="predictions")
     report: Mapped[Optional["Report"]] = relationship("Report", back_populates="prediction", uselist=False)
-
-
-class ModelMetrics(Base):
-    """Store training metrics for each model."""
-    __tablename__ = "model_metrics"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    model_name: Mapped[str] = mapped_column(String(50), nullable=False)
-    version: Mapped[str] = mapped_column(String(20), nullable=False)
-    accuracy: Mapped[float] = mapped_column(Float, nullable=False)
-    precision: Mapped[float] = mapped_column(Float, nullable=False)
-    recall: Mapped[float] = mapped_column(Float, nullable=False)
-    f1_score: Mapped[float] = mapped_column(Float, nullable=False)
-    auc_roc: Mapped[float] = mapped_column(Float, nullable=False)
-    training_loss: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
-    validation_loss: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
-    confusion_matrix: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
-    class_names: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
-    training_samples: Mapped[int] = mapped_column(Integer, nullable=True)
-    test_samples: Mapped[int] = mapped_column(Integer, nullable=True)
-    epochs: Mapped[int] = mapped_column(Integer, nullable=True)
-    trained_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
 class Report(Base):
@@ -168,6 +134,7 @@ _ADDED_COLUMNS = {
         "probabilities": "JSON",
         "model_sha256": "VARCHAR(64)",
         "inconclusive": "BOOLEAN",
+        "model_version": "VARCHAR(20)",
     },
 }
 

@@ -27,14 +27,17 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ .
+# Canonical package (config, class mapping, preprocessing) imported by the backend as `lungai`
+COPY lungai/ ./lungai/
+# Recorded evaluation results served by GET /api/v1/model-metrics
+COPY artifacts/evaluation_reports/historical_record_verification.json ./artifacts/evaluation_reports/
 
 # Served by main.py (SPAStaticFiles) at "/"
 COPY --from=frontend-build /app/frontend/build ./static
 
-# Evaluation metrics are shipped; the checkpoint is not (.dockerignore excludes *.h5).
-# Mount it at runtime:  -v /path/to/densenet121_frequency_v5.h5:/app/models/densenet121_frequency_v5.h5:ro
+# The checkpoint is not in the image (.dockerignore excludes *.h5). Mount it at runtime; the backend verifies its SHA-256:
+#   -v /path/to/densenet121_frequency_v5.h5:/app/models/densenet121_frequency_v5.h5:ro
 RUN mkdir -p models uploads
-COPY models/training_results.json ./models/
 
 EXPOSE 8000
 

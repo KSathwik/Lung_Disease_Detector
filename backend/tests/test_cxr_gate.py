@@ -8,7 +8,7 @@ Verifies that out-of-distribution non-radiograph images are rejected at HTTP 422
 - Corrupted and 0-byte images
 
 Also rigorously verifies via mocks that:
-- Model D inference is NEVER invoked
+- classifier inference is NEVER invoked
 - Grad-CAM heatmap generation is NEVER invoked
 - No prediction database record is inserted
 """
@@ -27,15 +27,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..
 
 
 def _make_sample_cxr_bytes() -> bytes:
-    """Load a real positive CXR from experiments/cxr_gate/data/positives/ or fallback."""
-    pos_dir = os.path.join(PROJECT_ROOT, "experiments", "cxr_gate", "data", "positives")
-    if os.path.exists(pos_dir):
-        files = [f for f in os.listdir(pos_dir) if f.endswith(".png")]
-        if files:
-            with open(os.path.join(pos_dir, files[0]), "rb") as f:
-                return f.read()
-
-    # Fallback to realistic synthetic thoracic projection
+    """Synthetic thoracic projection (two lung fields + mediastinum) that passes the heuristic gate."""
     arr = np.full((224, 224, 3), 30, dtype=np.uint8)
     arr[40:190, 30:95] = 120    # Left lung
     arr[40:190, 125:190] = 120  # Right lung
@@ -48,11 +40,6 @@ def _make_sample_cxr_bytes() -> bytes:
 
 def _make_car_color_bytes() -> bytes:
     """Generate or load realistic color car photograph."""
-    # Check if generated artifact exists
-    artifact_car = "C:\\Users\\skatkam\\.gemini\\antigravity-ide\\brain\\c32d2570-b452-480c-98e8-bb17fe7b4581\\test_car_1791009192087.jpg"
-    if os.path.exists(artifact_car):
-        with open(artifact_car, "rb") as f:
-            return f.read()
     arr = np.zeros((150, 150, 3), dtype=np.uint8)
     arr[:50, :] = [240, 180, 40]   # blue sky
     arr[50:110, :] = [30, 30, 220]  # red vehicle
@@ -74,10 +61,6 @@ def _make_car_grayscale_bytes() -> bytes:
 
 
 def _make_dog_bytes() -> bytes:
-    artifact_dog = "C:\\Users\\skatkam\\.gemini\antigravity-ide\\brain\\c32d2570-b452-480c-98e8-bb17fe7b4581\\test_dog_1791009217482.jpg"
-    if os.path.exists(artifact_dog):
-        with open(artifact_dog, "rb") as f:
-            return f.read()
     arr = np.zeros((150, 150, 3), dtype=np.uint8)
     arr[:70, :] = [60, 180, 60]
     arr[70:, :] = [180, 100, 30]
@@ -88,10 +71,6 @@ def _make_dog_bytes() -> bytes:
 
 
 def _make_selfie_bytes() -> bytes:
-    artifact_selfie = "C:\\Users\\skatkam\\.gemini\\antigravity-ide\\brain\\c32d2570-b452-480c-98e8-bb17fe7b4581\\test_selfie_1791009241727.jpg"
-    if os.path.exists(artifact_selfie):
-        with open(artifact_selfie, "rb") as f:
-            return f.read()
     arr = np.full((150, 150, 3), 180, dtype=np.uint8)
     arr[40:110, 40:110] = [120, 150, 220]
     img = Image.fromarray(arr)
@@ -101,10 +80,6 @@ def _make_selfie_bytes() -> bytes:
 
 
 def _make_landscape_bytes() -> bytes:
-    artifact_land = "C:\\Users\\skatkam\\.gemini\\antigravity-ide\\brain\\c32d2570-b452-480c-98e8-bb17fe7b4581\\test_landscape_1791009326624.jpg"
-    if os.path.exists(artifact_land):
-        with open(artifact_land, "rb") as f:
-            return f.read()
     arr = np.zeros((150, 150, 3), dtype=np.uint8)
     arr[:60, :] = [230, 150, 30]
     arr[60:, :] = [40, 160, 40]
@@ -162,7 +137,7 @@ async def test_valid_cxr_accepted(client, stub_model):
 
 @pytest.mark.asyncio
 async def test_reject_car_color_photo(client, db_session):
-    """Color car photo must be rejected with 422 INVALID_CXR and never call Model D or write DB."""
+    """Color car photo must be rejected with 422 INVALID_CXR and never call the classifier or write DB."""
     car_bytes = _make_car_color_bytes()
     
     with patch("api.routes.predictions.get_engine") as mock_engine:

@@ -33,7 +33,7 @@ from pathlib import Path
 # Allow imports from parent
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from ml.preprocessing import DatasetPreprocessor
+from dataset_preprocessor import DatasetPreprocessor  # archived copy
 from ml.legacy.models import train_and_select
 from database.connection import init_db, AsyncSessionLocal, ModelMetrics
 import asyncio

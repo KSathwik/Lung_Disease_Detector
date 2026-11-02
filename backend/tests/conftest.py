@@ -77,7 +77,7 @@ def uploads_dir(tmp_path, monkeypatch):
 
 
 class _StubModel:
-    """Stands in for Model D: returns fixed probabilities for any input."""
+    """Stands in for the classifier: returns fixed probabilities for any input."""
     def __init__(self, probs):
         self.probs = np.asarray(probs, dtype=np.float32)
         self.calls = 0
@@ -90,17 +90,19 @@ class _StubModel:
 
 @pytest.fixture
 def stub_model():
-    """Install a stub Model D on the engine singleton for one test; returns an installer taking 6 probabilities."""
+    """Install a stub classifier on the engine singleton for one test; returns an installer taking 6 probabilities."""
     engine = InferenceEngine()
-    saved = (engine.densenet_model, engine.base_grad_model, engine.top_layers, engine.model_sha256)
+    saved = (engine.densenet_model, engine.base_grad_model, engine.top_layers, engine.model_sha256, engine.checkpoint_verified)
 
     def install(probs, sha256="ab" * 32):
         engine.densenet_model = _StubModel(probs)
         engine.base_grad_model = None
         engine.top_layers = None
         engine.model_sha256 = sha256
+        engine.checkpoint_verified = False  # a stub is never the canonical checkpoint
         return engine.densenet_model
 
     yield install
-    engine.densenet_model, engine.base_grad_model, engine.top_layers, engine.model_sha256 = saved
+    (engine.densenet_model, engine.base_grad_model, engine.top_layers, engine.model_sha256,
+     engine.checkpoint_verified) = saved
 

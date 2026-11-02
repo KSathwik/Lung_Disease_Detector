@@ -1,0 +1,261 @@
+{
+  "report": "LungAI dataset validation",
+  "generated_at": "2026-11-02T16:11:56+00:00",
+  "lungai_version": "1.0.0",
+  "dataset_version": "V5",
+  "manifest": "data/manifests/unified_manifest_v5.csv",
+  "manifest_sha256_lf": "8117a441d5d200e781df0af33685cde32c6c7a24a5e30d73f5744ec592702e26",
+  "data_root_has_images": false,
+  "class_order": [
+    "COVID-19",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ],
+  "totals": {
+    "images": 10547,
+    "unique_manifest_patient_ids": 10270,
+    "unique_derived_patient_groups": 9432,
+    "sources": {
+      "Existing_COVID-19": 1942,
+      "Existing_Normal": 1199,
+      "Existing_Pneumonia": 1395,
+      "Existing_Tuberculosis": 665,
+      "JSRT": 145,
+      "NIH_ChestX-ray14": 457,
+      "TBX11K": 3277,
+      "VinBigData_VinDr_CXR": 1467
+    }
+  },
+  "splits": {
+    "train": {
+      "images": 7398,
+      "patient_ids": 7189,
+      "derived_patient_groups": 6722
+    },
+    "val": {
+      "images": 1579,
+      "patient_ids": 1540,
+      "derived_patient_groups": 1513
+    },
+    "test": {
+      "images": 1570,
+      "patient_ids": 1541,
+      "derived_patient_groups": 1521
+    }
+  },
+  "class_distribution": {
+    "COVID-19": {
+      "train": 1359,
+      "val": 291,
+      "test": 292
+    },
+    "Normal": {
+      "train": 1848,
+      "val": 394,
+      "test": 394
+    },
+    "Pleural Effusion": {
+      "train": 755,
+      "val": 155,
+      "test": 152
+    },
+    "Pneumonia": {
+      "train": 1963,
+      "val": 419,
+      "test": 423
+    },
+    "Pulmonary Nodule / Mass": {
+      "train": 529,
+      "val": 117,
+      "test": 108
+    },
+    "Tuberculosis": {
+      "train": 944,
+      "val": 203,
+      "test": 201
+    }
+  },
+  "external_cohort": {
+    "status": "blocked",
+    "reason": "external cohort metadata not present under the data root"
+  },
+  "overall_status": "fail",
+  "check_status": {
+    "patient_leakage": "fail",
+    "exact_duplicates": "pass",
+    "perceptual_duplicates": "warn",
+    "external_isolation": "pass",
+    "label_source_confounding": "warn",
+    "proxy_labels": "warn",
+    "placeholder_metadata": "warn",
+    "absolute_paths": "warn",
+    "image_files": "blocked"
+  },
+  "checks": {
+    "patient_leakage": {
+      "status": "fail",
+      "by_manifest_patient_id": {
+        "keys_spanning_splits": 0,
+        "images_in_spanning_keys": 0,
+        "split_patterns": {},
+        "test_images_sharing_key_with_train": 0,
+        "val_images_sharing_key_with_train": 0,
+        "test_images_sharing_key_with_train_by_source": {}
+      },
+      "by_derived_patient_group": {
+        "keys_spanning_splits": 289,
+        "images_in_spanning_keys": 855,
+        "split_patterns": {
+          "test+train": 108,
+          "test+train+val": 35,
+          "test+val": 15,
+          "train+val": 131
+        },
+        "test_images_sharing_key_with_train": 154,
+        "val_images_sharing_key_with_train": 191,
+        "test_images_sharing_key_with_train_by_source": {
+          "Existing_Normal": 44,
+          "Existing_Pneumonia": 110
+        }
+      },
+      "rows_with_synthetic_per_image_patient_id": 8478,
+      "synthetic_id_rows_by_source": {
+        "Existing_COVID-19": 1942,
+        "Existing_Normal": 1199,
+        "Existing_Pneumonia": 1395,
+        "Existing_Tuberculosis": 665,
+        "TBX11K": 3277
+      },
+      "unique_manifest_patient_ids": 10270,
+      "unique_derived_patient_groups": 9432,
+      "note": "Manifest patient_id is a synthetic per-image id for Existing_* and TBX11K rows, so the manifest-id check is uninformative for them. Derived groups recover Kermany patients from filenames; COVID-QU and Shenzhen (Existing_COVID-19, Existing_Tuberculosis) and TBX11K patient identity cannot be recovered from the manifest."
+    },
+    "exact_duplicates": {
+      "status": "pass",
+      "duplicate_md5_groups": 0,
+      "duplicate_md5_groups_spanning_splits": 0,
+      "method": "manifest md5_hash (content hash recorded at ingestion; re-verified by check_files when images are present)"
+    },
+    "perceptual_duplicates": {
+      "status": "warn",
+      "identical_dhash_pairs": 3,
+      "identical_dhash_pairs_spanning_splits": 1,
+      "pairs": [
+        {
+          "image_id_a": "existing_Tuberculosis_Tuberculosis-622.png",
+          "image_id_b": "nih_00000257_000",
+          "splits": "test+val",
+          "labels_agree": false
+        },
+        {
+          "image_id_a": "tbx11k_v3_pneu_s1273.png",
+          "image_id_b": "nih_00000049_000",
+          "splits": "train",
+          "labels_agree": false
+        },
+        {
+          "image_id_a": "tbx11k_norm_h0598.png",
+          "image_id_b": "nih_00000237_000",
+          "splits": "train",
+          "labels_agree": true
+        }
+      ],
+      "method": "64-bit dHash from manifest, Hamming distance <= 0; candidates for visual review, not proof of duplication"
+    },
+    "external_isolation": {
+      "status": "pass",
+      "rows_with_montgomery_source": 0,
+      "rows_with_montgomery_in_path": 0,
+      "external_filenames_in_manifest": [],
+      "note": "Name/path level only; content-level isolation needs the images (md5 against the external cohort)."
+    },
+    "label_source_confounding": {
+      "status": "warn",
+      "classes_from_a_single_source": [
+        "COVID-19"
+      ],
+      "dominant_source_per_class": {
+        "COVID-19": {
+          "source": "Existing_COVID-19",
+          "share": 1.0
+        },
+        "Normal": {
+          "source": "Existing_Normal",
+          "share": 0.455
+        },
+        "Pleural Effusion": {
+          "source": "VinBigData_VinDr_CXR",
+          "share": 0.877
+        },
+        "Pneumonia": {
+          "source": "Existing_Pneumonia",
+          "share": 0.497
+        },
+        "Pulmonary Nodule / Mass": {
+          "source": "VinBigData_VinDr_CXR",
+          "share": 0.711
+        },
+        "Tuberculosis": {
+          "source": "TBX11K",
+          "share": 0.507
+        }
+      },
+      "counts": {
+        "COVID-19": {
+          "Existing_COVID-19": 1942
+        },
+        "Normal": {
+          "Existing_Normal": 1199,
+          "JSRT": 67,
+          "NIH_ChestX-ray14": 171,
+          "TBX11K": 1199
+        },
+        "Pleural Effusion": {
+          "NIH_ChestX-ray14": 131,
+          "VinBigData_VinDr_CXR": 931
+        },
+        "Pneumonia": {
+          "Existing_Pneumonia": 1395,
+          "NIH_ChestX-ray14": 15,
+          "TBX11K": 1395
+        },
+        "Pulmonary Nodule / Mass": {
+          "JSRT": 78,
+          "NIH_ChestX-ray14": 140,
+          "VinBigData_VinDr_CXR": 536
+        },
+        "Tuberculosis": {
+          "Existing_Tuberculosis": 665,
+          "TBX11K": 683
+        }
+      }
+    },
+    "proxy_labels": {
+      "status": "warn",
+      "tbx11k_rows_labelled_pneumonia": 1395,
+      "original_findings": {
+        "Pneumonia": 1395
+      },
+      "share_of_pneumonia_class": 0.497,
+      "note": "TBX11K 'sick but not TB' (abnormal, cause unspecified) was mapped to Pneumonia during V2 ingestion."
+    },
+    "placeholder_metadata": {
+      "status": "warn",
+      "rows_with_default_metadata": 10090,
+      "note": "width/height/mean/std columns for these rows are defaults written by rebuild_unified_dataset_v4.py, not measurements."
+    },
+    "absolute_paths": {
+      "status": "warn",
+      "rows_with_absolute_paths": 211,
+      "handling": "lungai.data.manifest.normalize_manifest_path relocates them under the data root"
+    },
+    "image_files": {
+      "status": "blocked",
+      "reason": "no manifest image found under the configured data root (set LUNGAI_DATA_ROOT or --data-root)",
+      "rows_checked": 10547
+    }
+  }
+}

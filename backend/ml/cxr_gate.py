@@ -1,7 +1,7 @@
 """
 Anatomical & Biophysical CXR Validation Gate (CXR vs Non-CXR Input Rejection).
 
-Protects Model D and the clinical diagnostic pipeline from evaluating out-of-distribution
+Keeps the six-class classifier from evaluating out-of-distribution
 non-medical and non-chest radiograph inputs, including:
 - Natural photographs (cars, dogs, cats, selfies/faces, landscapes, buildings, food)
 - Monochrome/grayscale natural images

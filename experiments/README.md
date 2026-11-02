@@ -1,3 +1,8 @@
+> **HISTORICAL ARCHIVE — not the canonical pipeline.**
+> This folder contains the original experiment scripts and their aggregate results. These scripts hardcode paths, reuse checkpoints and use earlier names ("Model A/D"). The canonical pipeline is the `lungai/` package; see the top-level README.
+>
+> Claims in the text below ("leak-free", "0% patient leakage", "FINAL PRODUCTION MODEL") are **superseded**. See `docs/data_splits.md` and `docs/experiment_results.md`. The run in `densenet_frequency_v5/` is the run that produced the canonical model `lungai-densenet121-6class` v5.0.
+
 # LUNGAI — MASTER THESIS EXPERIMENTAL INDEX
 
 This directory houses the complete scientific experimental series developed for the M.Tech thesis on multi-source domain generalization in chest radiography.
@@ -10,13 +15,13 @@ All experiments use the identical leak-free unified cohort ($N=10,547$ scans, 10
 
 | Phase | Scientific Paradigm | Model Architecture | Key Internal Metric | Montgomery External TB Recall | Primary Artifact Directory | Paradigm Role |
 | :---: | :--- | :--- | :---: | :---: | :--- | :--- |
-| **3A** | **Unified V5 Reconstruction** | Manifest Construction | 10,547 scans / 10,270 patients | — | [`experiments/data/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/data/) | Leak-free data protocol |
-| **3B** | **ERM Baseline** | DenseNet-121 | 76.18% Acc / 72.63% F1 | 0.00% (0/58) | [`experiments/densenet_v5/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/densenet_v5/) | Scientific baseline |
-| **4A** | **External Failure Analysis** | Biophysical Analysis | 4× Laplacian edge discrepancy | — | [`experiments/results/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/results/) | Sensor shift root cause |
-| **4B** | **Deep CORAL** | DenseNet-121 + CORAL | 80.89% Acc / 76.85% F1 | 1.72% (1/58) | [`experiments/densenet_coral_v5/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/densenet_coral_v5/) | Latent covariance alignment |
-| **4C** | **DANN Adversarial** | DenseNet-121 + DANN | 76.24% Acc / 72.99% F1 | 0.00% (0/58) | [`experiments/densenet_dann_v5/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/densenet_dann_v5/) | Adversarial alignment study |
-| **4D** | **Frequency LP ($\sigma=1.0$)** | **DenseNet-121 + Gaussian LP** | **82.93% Acc / 78.35% F1** | **0.00% (0/58)** | [`experiments/densenet_frequency_v5/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/densenet_frequency_v5/) | **FINAL PRODUCTION MODEL (MODEL D)** |
-| **4E** | **Hybrid Synthesis** | DenseNet-121 + LP + CORAL | 78.22% Acc / 73.95% F1 | 0.00% (0/58) | [`experiments/densenet_hybrid_v5/`](file:///d:/Sathwik/lung_disease_detector/Lung_Disease_Detector-main/experiments/densenet_hybrid_v5/) | Synthesis study; peak COVID-19 F1 (98.62%) |
+| **3A** | **Unified V5 Reconstruction** | Manifest Construction | 10,547 scans / 10,270 patients | — | [`experiments/data/`](../experiments/data/) | Leak-free data protocol |
+| **3B** | **ERM Baseline** | DenseNet-121 | 76.18% Acc / 72.63% F1 | 0.00% (0/58) | [`experiments/densenet_v5/`](../experiments/densenet_v5/) | Scientific baseline |
+| **4A** | **External Failure Analysis** | Biophysical Analysis | 4× Laplacian edge discrepancy | — | [`experiments/results/`](../experiments/results/) | Sensor shift root cause |
+| **4B** | **Deep CORAL** | DenseNet-121 + CORAL | 80.89% Acc / 76.85% F1 | 1.72% (1/58) | [`experiments/densenet_coral_v5/`](../experiments/densenet_coral_v5/) | Latent covariance alignment |
+| **4C** | **DANN Adversarial** | DenseNet-121 + DANN | 76.24% Acc / 72.99% F1 | 0.00% (0/58) | [`experiments/densenet_dann_v5/`](../experiments/densenet_dann_v5/) | Adversarial alignment study |
+| **4D** | **Frequency LP ($\sigma=1.0$)** | **DenseNet-121 + Gaussian LP** | **82.93% Acc / 78.35% F1** | **0.00% (0/58)** | [`experiments/densenet_frequency_v5/`](../experiments/densenet_frequency_v5/) | **FINAL PRODUCTION MODEL (MODEL D)** |
+| **4E** | **Hybrid Synthesis** | DenseNet-121 + LP + CORAL | 78.22% Acc / 73.95% F1 | 0.00% (0/58) | [`experiments/densenet_hybrid_v5/`](../experiments/densenet_hybrid_v5/) | Synthesis study; peak COVID-19 F1 (98.62%) |
 
 ---
 

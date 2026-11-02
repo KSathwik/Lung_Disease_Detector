@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lungai"
+version = "1.0.0"
+description = "LungAI DenseNet-121 six-class chest X-ray classifier: canonical config, preprocessing, data checks, training and evaluation"
+requires-python = ">=3.11,<3.13"
+# Runtime dependencies are pinned in backend/requirements.txt (install that file first).
+
+[tool.setuptools.packages.find]
+include = ["lungai*"]
+
+[tool.setuptools.package-data]
+lungai = ["configs/*.json"]

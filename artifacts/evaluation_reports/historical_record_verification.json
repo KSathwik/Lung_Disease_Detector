@@ -1,0 +1,2114 @@
+{
+  "report": "Verification of recorded (historical) evaluation results",
+  "generated_at": "2026-11-02T16:11:50+00:00",
+  "lungai_version": "1.0.0",
+  "canonical_model": {
+    "model_id": "lungai-densenet121-6class",
+    "display_name": "LungAI DenseNet-121 \u2014 Six-Class Chest X-Ray Classifier",
+    "version": "v5.0"
+  },
+  "evidence_level": "RECORDED: aggregate results from earlier runs. Threshold metrics are checked for internal consistency against the stored confusion matrices. They cannot be reproduced: no checkpoint, image or per-image prediction is in the repository. The internal test split has known patient leakage (see artifacts/data_validation).",
+  "dataset_version": "V5",
+  "class_order": [
+    "COVID-19",
+    "Normal",
+    "Pleural Effusion",
+    "Pneumonia",
+    "Pulmonary Nodule / Mass",
+    "Tuberculosis"
+  ],
+  "entries": [
+    {
+      "key": "canonical_v5",
+      "label": "Canonical (DenseNet-121 + Gaussian low-pass preprocessing)",
+      "canonical": true,
+      "internal_test": {
+        "status": "consistent",
+        "file": "experiments/densenet_frequency_v5/frequency_metrics.json",
+        "file_sha256": "af73b19c27649de15a40a0cadd642ca97ed344d9ebede8712b772fa1129e0832",
+        "split": "test",
+        "n": 1570,
+        "recomputed": {
+          "n": 1570,
+          "accuracy": 0.8292993630573249,
+          "accuracy_ci95": {
+            "estimate": 0.8292993630573249,
+            "lower": 0.8098898846425365,
+            "upper": 0.8471013225752436,
+            "successes": 1302,
+            "n": 1570
+          },
+          "macro_precision": 0.7931469928015994,
+          "macro_recall": 0.8072519318624657,
+          "macro_f1": 0.7834649294941882,
+          "weighted_f1": 0.8417832515370691,
+          "per_class": {
+            "COVID-19": {
+              "support": 292,
+              "precision": 0.9963898916967509,
+              "recall": 0.9452054794520548,
+              "recall_ci95": {
+                "estimate": 0.9452054794520548,
+                "lower": 0.9128551718577795,
+                "upper": 0.9659939287261341,
+                "successes": 276,
+                "n": 292
+              },
+              "specificity": 0.9992175273865415,
+              "f1": 0.9701230228471001
+            },
+            "Normal": {
+              "support": 394,
+              "precision": 0.9086161879895561,
+              "recall": 0.883248730964467,
+              "recall_ci95": {
+                "estimate": 0.883248730964467,
+                "lower": 0.8477771308004319,
+                "upper": 0.9113192210358166,
+                "successes": 348,
+                "n": 394
+              },
+              "specificity": 0.9702380952380952,
+              "f1": 0.8957528957528959
+            },
+            "Pleural Effusion": {
+              "support": 152,
+              "precision": 0.6,
+              "recall": 0.5131578947368421,
+              "recall_ci95": {
+                "estimate": 0.5131578947368421,
+                "lower": 0.43435881801844656,
+                "upper": 0.5913082928406881,
+                "successes": 78,
+                "n": 152
+              },
+              "specificity": 0.9633286318758815,
+              "f1": 0.5531914893617021
+            },
+            "Pneumonia": {
+              "support": 423,
+              "precision": 0.9491525423728814,
+              "recall": 0.7943262411347518,
+              "recall_ci95": {
+                "estimate": 0.7943262411347518,
+                "lower": 0.7532414465909381,
+                "upper": 0.8301133209800324,
+                "successes": 336,
+                "n": 423
+              },
+              "specificity": 0.984306887532694,
+              "f1": 0.8648648648648649
+            },
+            "Pulmonary Nodule / Mass": {
+              "support": 108,
+              "precision": 0.38493723849372385,
+              "recall": 0.8518518518518519,
+              "recall_ci95": {
+                "estimate": 0.8518518518518519,
+                "lower": 0.7728286547321882,
+                "upper": 0.9067046847054198,
+                "successes": 92,
+                "n": 108
+              },
+              "specificity": 0.899452804377565,
+              "f1": 0.5302593659942363
+            },
+            "Tuberculosis": {
+              "support": 201,
+              "precision": 0.9197860962566845,
+              "recall": 0.8557213930348259,
+              "recall_ci95": {
+                "estimate": 0.8557213930348259,
+                "lower": 0.8004723480718966,
+                "upper": 0.8976285189267786,
+                "successes": 172,
+                "n": 201
+              },
+              "specificity": 0.9890430971512053,
+              "f1": 0.8865979381443299
+            }
+          },
+          "confusion_matrix": [
+            [
+              276,
+              0,
+              0,
+              10,
+              0,
+              6
+            ],
+            [
+              0,
+              348,
+              4,
+              6,
+              33,
+              3
+            ],
+            [
+              0,
+              0,
+              78,
+              0,
+              74,
+              0
+            ],
+            [
+              0,
+              29,
+              28,
+              336,
+              24,
+              6
+            ],
+            [
+              0,
+              1,
+              15,
+              0,
+              92,
+              0
+            ],
+            [
+              1,
+              5,
+              5,
+              2,
+              16,
+              172
+            ]
+          ]
+        },
+        "recorded_unverifiable": {
+          "macro_roc_auc": 0.9755,
+          "macro_pr_auc": 0.8391,
+          "calibration_confidence": {
+            "mean_confidence_correct": 0.9037,
+            "mean_confidence_incorrect": 0.682
+          },
+          "reason": "needs per-image probabilities, which were never saved"
+        },
+        "checks": [
+          {
+            "metric": "accuracy",
+            "recorded": 0.8293,
+            "recomputed": 0.829299,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_precision",
+            "recorded": 0.7931,
+            "recomputed": 0.793147,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_recall",
+            "recorded": 0.8073,
+            "recomputed": 0.807252,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_f1",
+            "recorded": 0.7835,
+            "recomputed": 0.783465,
+            "status": "consistent"
+          },
+          {
+            "metric": "weighted_f1",
+            "recorded": 0.8418,
+            "recomputed": 0.841783,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 precision",
+            "recorded": 0.9964,
+            "recomputed": 0.99639,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 recall",
+            "recorded": 0.9452,
+            "recomputed": 0.945205,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 f1",
+            "recorded": 0.9701,
+            "recomputed": 0.970123,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 specificity",
+            "recorded": 0.9992,
+            "recomputed": 0.999218,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal precision",
+            "recorded": 0.9086,
+            "recomputed": 0.908616,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal recall",
+            "recorded": 0.8832,
+            "recomputed": 0.883249,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal f1",
+            "recorded": 0.8958,
+            "recomputed": 0.895753,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal specificity",
+            "recorded": 0.9702,
+            "recomputed": 0.970238,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion precision",
+            "recorded": 0.6,
+            "recomputed": 0.6,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion recall",
+            "recorded": 0.5132,
+            "recomputed": 0.513158,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion f1",
+            "recorded": 0.5532,
+            "recomputed": 0.553191,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion specificity",
+            "recorded": 0.9633,
+            "recomputed": 0.963329,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia precision",
+            "recorded": 0.9492,
+            "recomputed": 0.949153,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia recall",
+            "recorded": 0.7943,
+            "recomputed": 0.794326,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia f1",
+            "recorded": 0.8649,
+            "recomputed": 0.864865,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia specificity",
+            "recorded": 0.9843,
+            "recomputed": 0.984307,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass precision",
+            "recorded": 0.3849,
+            "recomputed": 0.384937,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass recall",
+            "recorded": 0.8519,
+            "recomputed": 0.851852,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass f1",
+            "recorded": 0.5303,
+            "recomputed": 0.530259,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass specificity",
+            "recorded": 0.8995,
+            "recomputed": 0.899453,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis precision",
+            "recorded": 0.9198,
+            "recomputed": 0.919786,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis recall",
+            "recorded": 0.8557,
+            "recomputed": 0.855721,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis f1",
+            "recorded": 0.8866,
+            "recomputed": 0.886598,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis specificity",
+            "recorded": 0.989,
+            "recomputed": 0.989043,
+            "status": "consistent"
+          }
+        ],
+        "mismatches": []
+      },
+      "external": {
+        "status": "consistent",
+        "file": "experiments/densenet_frequency_v5/frequency_montgomery.json",
+        "cohort": "Montgomery County (external, binary TB vs normal)",
+        "recorded_counts": {
+          "total": 138,
+          "tb": 58,
+          "normal": 80
+        },
+        "prediction_breakdown": {
+          "tb_cases": {
+            "Pulmonary Nodule / Mass": 50,
+            "Pleural Effusion": 8
+          },
+          "normal_cases": {
+            "Pulmonary Nodule / Mass": 80
+          }
+        },
+        "binary_abnormality": {
+          "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+          "tp": 58,
+          "fn": 0,
+          "tn": 0,
+          "fp": 80,
+          "sensitivity": {
+            "estimate": 1.0,
+            "lower": 0.9378821442127971,
+            "upper": 1.0,
+            "successes": 58,
+            "n": 58
+          },
+          "specificity": {
+            "estimate": 0.0,
+            "lower": 0.0,
+            "upper": 0.0458181295355271,
+            "successes": 0,
+            "n": 80
+          },
+          "accuracy": {
+            "estimate": 0.42028985507246375,
+            "lower": 0.34118808558585945,
+            "upper": 0.5037091667202463,
+            "successes": 58,
+            "n": 138
+          },
+          "prevalence": 0.42028985507246375
+        },
+        "exact_tuberculosis_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.062117855787202914,
+          "successes": 0,
+          "n": 58
+        },
+        "exact_normal_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.0458181295355271,
+          "successes": 0,
+          "n": 80
+        },
+        "interpretation": "Degenerate: every scan, including every normal scan, was predicted abnormal. Sensitivity 58/58 carries no screening value with specificity 0/80.",
+        "verified_against_images": false
+      },
+      "validation_evidence": {
+        "source": "experiments/densenet_frequency_v5/frequency_validation_grid.json",
+        "what": "Filter chosen on validation: the ERM baseline checkpoint evaluated on val under 10 preprocessing filters; Gaussian sigma=1.0 had the highest val macro-F1 (0.8457 vs 0.7495 unfiltered). The trained model's own validation score was logged but not saved."
+      }
+    },
+    {
+      "key": "erm_baseline_v5",
+      "label": "Historical: DenseNet-121 ERM baseline (no low-pass filter)",
+      "canonical": false,
+      "internal_test": {
+        "status": "consistent",
+        "file": "experiments/results/densenet_v5_metrics.json",
+        "file_sha256": "32d38d443205fb6f05e96072c5649aa0df8bf0d31d5a79f1ad5a2b0adb0c0cff",
+        "split": "test",
+        "n": 1570,
+        "recomputed": {
+          "n": 1570,
+          "accuracy": 0.7617834394904459,
+          "accuracy_ci95": {
+            "estimate": 0.7617834394904459,
+            "lower": 0.7400887876614812,
+            "upper": 0.7822001604362125,
+            "successes": 1196,
+            "n": 1570
+          },
+          "macro_precision": 0.7481653187207021,
+          "macro_recall": 0.7462490435624654,
+          "macro_f1": 0.726272444279109,
+          "weighted_f1": 0.7879013108370492,
+          "per_class": {
+            "COVID-19": {
+              "support": 292,
+              "precision": 1.0,
+              "recall": 0.821917808219178,
+              "recall_ci95": {
+                "estimate": 0.821917808219178,
+                "lower": 0.773942177521294,
+                "upper": 0.8615333259778435,
+                "successes": 240,
+                "n": 292
+              },
+              "specificity": 1.0,
+              "f1": 0.9022556390977443
+            },
+            "Normal": {
+              "support": 394,
+              "precision": 0.8921832884097035,
+              "recall": 0.8401015228426396,
+              "recall_ci95": {
+                "estimate": 0.8401015228426396,
+                "lower": 0.800653367548257,
+                "upper": 0.8729818056044405,
+                "successes": 331,
+                "n": 394
+              },
+              "specificity": 0.9659863945578231,
+              "f1": 0.865359477124183
+            },
+            "Pleural Effusion": {
+              "support": 152,
+              "precision": 0.47738693467336685,
+              "recall": 0.625,
+              "recall_ci95": {
+                "estimate": 0.625,
+                "lower": 0.5458478370008374,
+                "upper": 0.6979897161609404,
+                "successes": 95,
+                "n": 152
+              },
+              "specificity": 0.926657263751763,
+              "f1": 0.5413105413105413
+            },
+            "Pneumonia": {
+              "support": 423,
+              "precision": 0.9216300940438872,
+              "recall": 0.6950354609929078,
+              "recall_ci95": {
+                "estimate": 0.6950354609929078,
+                "lower": 0.6495689287180888,
+                "upper": 0.7369914594313496,
+                "successes": 294,
+                "n": 423
+              },
+              "specificity": 0.978204010462075,
+              "f1": 0.7924528301886792
+            },
+            "Pulmonary Nodule / Mass": {
+              "support": 108,
+              "precision": 0.2830188679245283,
+              "recall": 0.6944444444444444,
+              "recall_ci95": {
+                "estimate": 0.6944444444444444,
+                "lower": 0.6021339202309699,
+                "upper": 0.7733976620898133,
+                "successes": 75,
+                "n": 108
+              },
+              "specificity": 0.8700410396716827,
+              "f1": 0.40214477211796246
+            },
+            "Tuberculosis": {
+              "support": 201,
+              "precision": 0.9147727272727273,
+              "recall": 0.8009950248756219,
+              "recall_ci95": {
+                "estimate": 0.8009950248756219,
+                "lower": 0.7403851062284253,
+                "upper": 0.8503156273858382,
+                "successes": 161,
+                "n": 201
+              },
+              "specificity": 0.9890430971512053,
+              "f1": 0.8541114058355438
+            }
+          },
+          "confusion_matrix": [
+            [
+              240,
+              7,
+              6,
+              16,
+              13,
+              10
+            ],
+            [
+              0,
+              331,
+              5,
+              6,
+              51,
+              1
+            ],
+            [
+              0,
+              0,
+              95,
+              0,
+              57,
+              0
+            ],
+            [
+              0,
+              29,
+              49,
+              294,
+              47,
+              4
+            ],
+            [
+              0,
+              0,
+              32,
+              1,
+              75,
+              0
+            ],
+            [
+              0,
+              4,
+              12,
+              2,
+              22,
+              161
+            ]
+          ]
+        },
+        "recorded_unverifiable": {
+          "macro_roc_auc": 0.96,
+          "macro_pr_auc": 0.7927,
+          "calibration_confidence": {
+            "mean_confidence_correct": 0.8674,
+            "mean_confidence_incorrect": 0.6583
+          },
+          "reason": "needs per-image probabilities, which were never saved"
+        },
+        "checks": [
+          {
+            "metric": "accuracy",
+            "recorded": 0.7618,
+            "recomputed": 0.761783,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_precision",
+            "recorded": 0.7482,
+            "recomputed": 0.748165,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_recall",
+            "recorded": 0.7462,
+            "recomputed": 0.746249,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_f1",
+            "recorded": 0.7263,
+            "recomputed": 0.726272,
+            "status": "consistent"
+          },
+          {
+            "metric": "weighted_f1",
+            "recorded": 0.7879,
+            "recomputed": 0.787901,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 precision",
+            "recorded": 1.0,
+            "recomputed": 1.0,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 recall",
+            "recorded": 0.8219,
+            "recomputed": 0.821918,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 f1",
+            "recorded": 0.9023,
+            "recomputed": 0.902256,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 specificity",
+            "recorded": 1.0,
+            "recomputed": 1.0,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal precision",
+            "recorded": 0.8922,
+            "recomputed": 0.892183,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal recall",
+            "recorded": 0.8401,
+            "recomputed": 0.840102,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal f1",
+            "recorded": 0.8654,
+            "recomputed": 0.865359,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal specificity",
+            "recorded": 0.966,
+            "recomputed": 0.965986,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion precision",
+            "recorded": 0.4774,
+            "recomputed": 0.477387,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion recall",
+            "recorded": 0.625,
+            "recomputed": 0.625,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion f1",
+            "recorded": 0.5413,
+            "recomputed": 0.541311,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion specificity",
+            "recorded": 0.9267,
+            "recomputed": 0.926657,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia precision",
+            "recorded": 0.9216,
+            "recomputed": 0.92163,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia recall",
+            "recorded": 0.695,
+            "recomputed": 0.695035,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia f1",
+            "recorded": 0.7925,
+            "recomputed": 0.792453,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia specificity",
+            "recorded": 0.9782,
+            "recomputed": 0.978204,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass precision",
+            "recorded": 0.283,
+            "recomputed": 0.283019,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass recall",
+            "recorded": 0.6944,
+            "recomputed": 0.694444,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass f1",
+            "recorded": 0.4021,
+            "recomputed": 0.402145,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass specificity",
+            "recorded": 0.87,
+            "recomputed": 0.870041,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis precision",
+            "recorded": 0.9148,
+            "recomputed": 0.914773,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis recall",
+            "recorded": 0.801,
+            "recomputed": 0.800995,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis f1",
+            "recorded": 0.8541,
+            "recomputed": 0.854111,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis specificity",
+            "recorded": 0.989,
+            "recomputed": 0.989043,
+            "status": "consistent"
+          }
+        ],
+        "mismatches": []
+      },
+      "external": {
+        "status": "consistent",
+        "file": "experiments/results/densenet_v5_montgomery.json",
+        "cohort": "Montgomery County (external, binary TB vs normal)",
+        "recorded_counts": {
+          "total": 138,
+          "tb": 58,
+          "normal": 80
+        },
+        "prediction_breakdown": {
+          "tb_cases": {
+            "Pulmonary Nodule / Mass": 48,
+            "Pleural Effusion": 10
+          },
+          "normal_cases": {
+            "Pulmonary Nodule / Mass": 79,
+            "Pleural Effusion": 1
+          }
+        },
+        "binary_abnormality": {
+          "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+          "tp": 58,
+          "fn": 0,
+          "tn": 0,
+          "fp": 80,
+          "sensitivity": {
+            "estimate": 1.0,
+            "lower": 0.9378821442127971,
+            "upper": 1.0,
+            "successes": 58,
+            "n": 58
+          },
+          "specificity": {
+            "estimate": 0.0,
+            "lower": 0.0,
+            "upper": 0.0458181295355271,
+            "successes": 0,
+            "n": 80
+          },
+          "accuracy": {
+            "estimate": 0.42028985507246375,
+            "lower": 0.34118808558585945,
+            "upper": 0.5037091667202463,
+            "successes": 58,
+            "n": 138
+          },
+          "prevalence": 0.42028985507246375
+        },
+        "exact_tuberculosis_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.062117855787202914,
+          "successes": 0,
+          "n": 58
+        },
+        "exact_normal_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.0458181295355271,
+          "successes": 0,
+          "n": 80
+        },
+        "interpretation": "Degenerate: every scan, including every normal scan, was predicted abnormal. Sensitivity 58/58 carries no screening value with specificity 0/80.",
+        "verified_against_images": false
+      },
+      "validation_evidence": {
+        "source": "experiments/densenet_v5/training_history.json",
+        "what": "Final-epoch val accuracy 0.7771 (epoch before: 0.8056)."
+      }
+    },
+    {
+      "key": "coral_v5",
+      "label": "Historical: DenseNet-121 + Deep CORAL",
+      "canonical": false,
+      "internal_test": {
+        "status": "consistent",
+        "file": "experiments/densenet_coral_v5/coral_metrics.json",
+        "file_sha256": "7a540f4e8abaf50197a6bb3b874d7289572c7272cc0e0f693c8b884fccf368f2",
+        "split": "test",
+        "n": 1570,
+        "recomputed": {
+          "n": 1570,
+          "accuracy": 0.8089171974522293,
+          "accuracy_ci95": {
+            "estimate": 0.8089171974522293,
+            "lower": 0.7887249258515782,
+            "upper": 0.8276014484242892,
+            "successes": 1270,
+            "n": 1570
+          },
+          "macro_precision": 0.7768793800160786,
+          "macro_recall": 0.7893056616661106,
+          "macro_f1": 0.7684515359128276,
+          "weighted_f1": 0.8257933875872536,
+          "per_class": {
+            "COVID-19": {
+              "support": 292,
+              "precision": 0.9962406015037594,
+              "recall": 0.9075342465753424,
+              "recall_ci95": {
+                "estimate": 0.9075342465753424,
+                "lower": 0.8688113802273459,
+                "upper": 0.9356735656917751,
+                "successes": 265,
+                "n": 292
+              },
+              "specificity": 0.9992175273865415,
+              "f1": 0.9498207885304659
+            },
+            "Normal": {
+              "support": 394,
+              "precision": 0.9259259259259259,
+              "recall": 0.8248730964467005,
+              "recall_ci95": {
+                "estimate": 0.8248730964467005,
+                "lower": 0.7842570645328737,
+                "upper": 0.859215339672688,
+                "successes": 325,
+                "n": 394
+              },
+              "specificity": 0.9778911564625851,
+              "f1": 0.87248322147651
+            },
+            "Pleural Effusion": {
+              "support": 152,
+              "precision": 0.5789473684210527,
+              "recall": 0.5789473684210527,
+              "recall_ci95": {
+                "estimate": 0.5789473684210527,
+                "lower": 0.4994603789785607,
+                "upper": 0.6545422861762462,
+                "successes": 88,
+                "n": 152
+              },
+              "specificity": 0.9548660084626234,
+              "f1": 0.5789473684210527
+            },
+            "Pneumonia": {
+              "support": 423,
+              "precision": 0.9051490514905149,
+              "recall": 0.789598108747045,
+              "recall_ci95": {
+                "estimate": 0.789598108747045,
+                "lower": 0.7482368713009329,
+                "upper": 0.8257467353452028,
+                "successes": 334,
+                "n": 423
+              },
+              "specificity": 0.969485614646905,
+              "f1": 0.8434343434343434
+            },
+            "Pulmonary Nodule / Mass": {
+              "support": 108,
+              "precision": 0.34309623430962344,
+              "recall": 0.7592592592592593,
+              "recall_ci95": {
+                "estimate": 0.7592592592592593,
+                "lower": 0.6706206664021658,
+                "upper": 0.8300881100255454,
+                "successes": 82,
+                "n": 108
+              },
+              "specificity": 0.8926128590971272,
+              "f1": 0.4726224783861671
+            },
+            "Tuberculosis": {
+              "support": 201,
+              "precision": 0.9119170984455959,
+              "recall": 0.8756218905472637,
+              "recall_ci95": {
+                "estimate": 0.8756218905472637,
+                "lower": 0.8228392218649249,
+                "upper": 0.9143162390917182,
+                "successes": 176,
+                "n": 201
+              },
+              "specificity": 0.987582176771366,
+              "f1": 0.8934010152284263
+            }
+          },
+          "confusion_matrix": [
+            [
+              265,
+              1,
+              1,
+              13,
+              3,
+              9
+            ],
+            [
+              0,
+              325,
+              3,
+              16,
+              47,
+              3
+            ],
+            [
+              0,
+              0,
+              88,
+              3,
+              61,
+              0
+            ],
+            [
+              0,
+              23,
+              27,
+              334,
+              34,
+              5
+            ],
+            [
+              0,
+              0,
+              25,
+              1,
+              82,
+              0
+            ],
+            [
+              1,
+              2,
+              8,
+              2,
+              12,
+              176
+            ]
+          ]
+        },
+        "recorded_unverifiable": {
+          "macro_roc_auc": 0.9671,
+          "macro_pr_auc": 0.8224,
+          "calibration_confidence": {
+            "mean_confidence_correct": 0.8546,
+            "mean_confidence_incorrect": 0.6473
+          },
+          "reason": "needs per-image probabilities, which were never saved"
+        },
+        "checks": [
+          {
+            "metric": "accuracy",
+            "recorded": 0.8089,
+            "recomputed": 0.808917,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_precision",
+            "recorded": 0.7769,
+            "recomputed": 0.776879,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_recall",
+            "recorded": 0.7893,
+            "recomputed": 0.789306,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_f1",
+            "recorded": 0.7685,
+            "recomputed": 0.768452,
+            "status": "consistent"
+          },
+          {
+            "metric": "weighted_f1",
+            "recorded": 0.8258,
+            "recomputed": 0.825793,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 precision",
+            "recorded": 0.9962,
+            "recomputed": 0.996241,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 recall",
+            "recorded": 0.9075,
+            "recomputed": 0.907534,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 f1",
+            "recorded": 0.9498,
+            "recomputed": 0.949821,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 specificity",
+            "recorded": 0.9992,
+            "recomputed": 0.999218,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal precision",
+            "recorded": 0.9259,
+            "recomputed": 0.925926,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal recall",
+            "recorded": 0.8249,
+            "recomputed": 0.824873,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal f1",
+            "recorded": 0.8725,
+            "recomputed": 0.872483,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal specificity",
+            "recorded": 0.9779,
+            "recomputed": 0.977891,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion precision",
+            "recorded": 0.5789,
+            "recomputed": 0.578947,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion recall",
+            "recorded": 0.5789,
+            "recomputed": 0.578947,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion f1",
+            "recorded": 0.5789,
+            "recomputed": 0.578947,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion specificity",
+            "recorded": 0.9549,
+            "recomputed": 0.954866,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia precision",
+            "recorded": 0.9051,
+            "recomputed": 0.905149,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia recall",
+            "recorded": 0.7896,
+            "recomputed": 0.789598,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia f1",
+            "recorded": 0.8434,
+            "recomputed": 0.843434,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia specificity",
+            "recorded": 0.9695,
+            "recomputed": 0.969486,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass precision",
+            "recorded": 0.3431,
+            "recomputed": 0.343096,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass recall",
+            "recorded": 0.7593,
+            "recomputed": 0.759259,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass f1",
+            "recorded": 0.4726,
+            "recomputed": 0.472622,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass specificity",
+            "recorded": 0.8926,
+            "recomputed": 0.892613,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis precision",
+            "recorded": 0.9119,
+            "recomputed": 0.911917,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis recall",
+            "recorded": 0.8756,
+            "recomputed": 0.875622,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis f1",
+            "recorded": 0.8934,
+            "recomputed": 0.893401,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis specificity",
+            "recorded": 0.9876,
+            "recomputed": 0.987582,
+            "status": "consistent"
+          }
+        ],
+        "mismatches": []
+      },
+      "external": {
+        "status": "consistent",
+        "file": "experiments/densenet_coral_v5/coral_montgomery.json",
+        "cohort": "Montgomery County (external, binary TB vs normal)",
+        "recorded_counts": {
+          "total": 138,
+          "tb": 58,
+          "normal": 80
+        },
+        "prediction_breakdown": {
+          "tb_cases": {
+            "Pulmonary Nodule / Mass": 42,
+            "Pleural Effusion": 15,
+            "Tuberculosis": 1
+          },
+          "normal_cases": {
+            "Pulmonary Nodule / Mass": 72,
+            "Tuberculosis": 6,
+            "Pleural Effusion": 2
+          }
+        },
+        "binary_abnormality": {
+          "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+          "tp": 58,
+          "fn": 0,
+          "tn": 0,
+          "fp": 80,
+          "sensitivity": {
+            "estimate": 1.0,
+            "lower": 0.9378821442127971,
+            "upper": 1.0,
+            "successes": 58,
+            "n": 58
+          },
+          "specificity": {
+            "estimate": 0.0,
+            "lower": 0.0,
+            "upper": 0.0458181295355271,
+            "successes": 0,
+            "n": 80
+          },
+          "accuracy": {
+            "estimate": 0.42028985507246375,
+            "lower": 0.34118808558585945,
+            "upper": 0.5037091667202463,
+            "successes": 58,
+            "n": 138
+          },
+          "prevalence": 0.42028985507246375
+        },
+        "exact_tuberculosis_recall": {
+          "estimate": 0.017241379310344827,
+          "lower": 0.0030500384460675004,
+          "upper": 0.09140858093468013,
+          "successes": 1,
+          "n": 58
+        },
+        "exact_normal_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.0458181295355271,
+          "successes": 0,
+          "n": 80
+        },
+        "interpretation": "Degenerate: every scan, including every normal scan, was predicted abnormal. Sensitivity 58/58 carries no screening value with specificity 0/80.",
+        "verified_against_images": false
+      },
+      "validation_evidence": {
+        "source": "experiments/densenet_coral_v5/coral_lambda_search.json",
+        "what": "Selected lambda 0.01: val accuracy 0.8151, val macro-F1 0.7771."
+      }
+    },
+    {
+      "key": "dann_v5",
+      "label": "Historical: DenseNet-121 + DANN",
+      "canonical": false,
+      "internal_test": {
+        "status": "consistent",
+        "file": "experiments/densenet_dann_v5/dann_metrics.json",
+        "file_sha256": "48e58d69fbab364fe7ca98798962a894f77715cc458a998d59141dece6e94254",
+        "split": "test",
+        "n": 1570,
+        "recomputed": {
+          "n": 1570,
+          "accuracy": 0.7624203821656051,
+          "accuracy_ci95": {
+            "estimate": 0.7624203821656051,
+            "lower": 0.7407434897654788,
+            "upper": 0.7828162343616498,
+            "successes": 1197,
+            "n": 1570
+          },
+          "macro_precision": 0.7577743915407725,
+          "macro_recall": 0.7530483148245982,
+          "macro_f1": 0.7299403603724959,
+          "weighted_f1": 0.7912489390403703,
+          "per_class": {
+            "COVID-19": {
+              "support": 292,
+              "precision": 0.992,
+              "recall": 0.8493150684931506,
+              "recall_ci95": {
+                "estimate": 0.8493150684931506,
+                "lower": 0.8037626532891444,
+                "upper": 0.8857958717843877,
+                "successes": 248,
+                "n": 292
+              },
+              "specificity": 0.9984350547730829,
+              "f1": 0.915129151291513
+            },
+            "Normal": {
+              "support": 394,
+              "precision": 0.9162011173184358,
+              "recall": 0.8324873096446701,
+              "recall_ci95": {
+                "estimate": 0.8324873096446701,
+                "lower": 0.7924418207765982,
+                "upper": 0.8661119679025315,
+                "successes": 328,
+                "n": 394
+              },
+              "specificity": 0.9744897959183674,
+              "f1": 0.872340425531915
+            },
+            "Pleural Effusion": {
+              "support": 152,
+              "precision": 0.489247311827957,
+              "recall": 0.5986842105263158,
+              "recall_ci95": {
+                "estimate": 0.5986842105263158,
+                "lower": 0.5192561441062706,
+                "upper": 0.6732471873372381,
+                "successes": 91,
+                "n": 152
+              },
+              "specificity": 0.9330042313117066,
+              "f1": 0.5384615384615384
+            },
+            "Pneumonia": {
+              "support": 423,
+              "precision": 0.9292604501607717,
+              "recall": 0.6832151300236406,
+              "recall_ci95": {
+                "estimate": 0.6832151300236406,
+                "lower": 0.6374012022979241,
+                "upper": 0.725731283539427,
+                "successes": 289,
+                "n": 423
+              },
+              "specificity": 0.980819529206626,
+              "f1": 0.7874659400544959
+            },
+            "Pulmonary Nodule / Mass": {
+              "support": 108,
+              "precision": 0.27946127946127947,
+              "recall": 0.7685185185185185,
+              "recall_ci95": {
+                "estimate": 0.7685185185185185,
+                "lower": 0.6805848684457456,
+                "upper": 0.8380063642829552,
+                "successes": 83,
+                "n": 108
+              },
+              "specificity": 0.853625170998632,
+              "f1": 0.40987654320987654
+            },
+            "Tuberculosis": {
+              "support": 201,
+              "precision": 0.9404761904761905,
+              "recall": 0.7860696517412935,
+              "recall_ci95": {
+                "estimate": 0.7860696517412935,
+                "lower": 0.7242919703011231,
+                "upper": 0.8371178178446644,
+                "successes": 158,
+                "n": 201
+              },
+              "specificity": 0.9926953981008035,
+              "f1": 0.8563685636856369
+            }
+          },
+          "confusion_matrix": [
+            [
+              248,
+              6,
+              6,
+              13,
+              10,
+              9
+            ],
+            [
+              0,
+              328,
+              9,
+              7,
+              50,
+              0
+            ],
+            [
+              0,
+              0,
+              91,
+              0,
+              61,
+              0
+            ],
+            [
+              0,
+              22,
+              44,
+              289,
+              67,
+              1
+            ],
+            [
+              0,
+              0,
+              25,
+              0,
+              83,
+              0
+            ],
+            [
+              2,
+              2,
+              11,
+              2,
+              26,
+              158
+            ]
+          ]
+        },
+        "recorded_unverifiable": {
+          "macro_roc_auc": 0.9603,
+          "macro_pr_auc": 0.7915,
+          "calibration_confidence": {
+            "mean_confidence_correct": 0.8594,
+            "mean_confidence_incorrect": 0.642
+          },
+          "reason": "needs per-image probabilities, which were never saved"
+        },
+        "checks": [
+          {
+            "metric": "accuracy",
+            "recorded": 0.7624,
+            "recomputed": 0.76242,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_precision",
+            "recorded": 0.7578,
+            "recomputed": 0.757774,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_recall",
+            "recorded": 0.753,
+            "recomputed": 0.753048,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_f1",
+            "recorded": 0.7299,
+            "recomputed": 0.72994,
+            "status": "consistent"
+          },
+          {
+            "metric": "weighted_f1",
+            "recorded": 0.7912,
+            "recomputed": 0.791249,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 precision",
+            "recorded": 0.992,
+            "recomputed": 0.992,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 recall",
+            "recorded": 0.8493,
+            "recomputed": 0.849315,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 f1",
+            "recorded": 0.9151,
+            "recomputed": 0.915129,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 specificity",
+            "recorded": 0.9984,
+            "recomputed": 0.998435,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal precision",
+            "recorded": 0.9162,
+            "recomputed": 0.916201,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal recall",
+            "recorded": 0.8325,
+            "recomputed": 0.832487,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal f1",
+            "recorded": 0.8723,
+            "recomputed": 0.87234,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal specificity",
+            "recorded": 0.9745,
+            "recomputed": 0.97449,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion precision",
+            "recorded": 0.4892,
+            "recomputed": 0.489247,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion recall",
+            "recorded": 0.5987,
+            "recomputed": 0.598684,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion f1",
+            "recorded": 0.5385,
+            "recomputed": 0.538462,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion specificity",
+            "recorded": 0.933,
+            "recomputed": 0.933004,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia precision",
+            "recorded": 0.9293,
+            "recomputed": 0.92926,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia recall",
+            "recorded": 0.6832,
+            "recomputed": 0.683215,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia f1",
+            "recorded": 0.7875,
+            "recomputed": 0.787466,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia specificity",
+            "recorded": 0.9808,
+            "recomputed": 0.98082,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass precision",
+            "recorded": 0.2795,
+            "recomputed": 0.279461,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass recall",
+            "recorded": 0.7685,
+            "recomputed": 0.768519,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass f1",
+            "recorded": 0.4099,
+            "recomputed": 0.409877,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass specificity",
+            "recorded": 0.8536,
+            "recomputed": 0.853625,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis precision",
+            "recorded": 0.9405,
+            "recomputed": 0.940476,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis recall",
+            "recorded": 0.7861,
+            "recomputed": 0.78607,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis f1",
+            "recorded": 0.8564,
+            "recomputed": 0.856369,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis specificity",
+            "recorded": 0.9927,
+            "recomputed": 0.992695,
+            "status": "consistent"
+          }
+        ],
+        "mismatches": []
+      },
+      "external": {
+        "status": "consistent",
+        "file": "experiments/densenet_dann_v5/dann_montgomery.json",
+        "cohort": "Montgomery County (external, binary TB vs normal)",
+        "recorded_counts": {
+          "total": 138,
+          "tb": 58,
+          "normal": 80
+        },
+        "prediction_breakdown": {
+          "tb_cases": {
+            "Pulmonary Nodule / Mass": 44,
+            "Pleural Effusion": 14
+          },
+          "normal_cases": {
+            "Pulmonary Nodule / Mass": 76,
+            "Pleural Effusion": 2,
+            "Tuberculosis": 2
+          }
+        },
+        "binary_abnormality": {
+          "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+          "tp": 58,
+          "fn": 0,
+          "tn": 0,
+          "fp": 80,
+          "sensitivity": {
+            "estimate": 1.0,
+            "lower": 0.9378821442127971,
+            "upper": 1.0,
+            "successes": 58,
+            "n": 58
+          },
+          "specificity": {
+            "estimate": 0.0,
+            "lower": 0.0,
+            "upper": 0.0458181295355271,
+            "successes": 0,
+            "n": 80
+          },
+          "accuracy": {
+            "estimate": 0.42028985507246375,
+            "lower": 0.34118808558585945,
+            "upper": 0.5037091667202463,
+            "successes": 58,
+            "n": 138
+          },
+          "prevalence": 0.42028985507246375
+        },
+        "exact_tuberculosis_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.062117855787202914,
+          "successes": 0,
+          "n": 58
+        },
+        "exact_normal_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.0458181295355271,
+          "successes": 0,
+          "n": 80
+        },
+        "interpretation": "Degenerate: every scan, including every normal scan, was predicted abnormal. Sensitivity 58/58 carries no screening value with specificity 0/80.",
+        "verified_against_images": false
+      },
+      "validation_evidence": {
+        "source": "experiments/densenet_dann_v5/dann_lambda_search.json",
+        "what": "Selected lambda 0.1: val accuracy 0.7688, val macro-F1 0.7397."
+      }
+    },
+    {
+      "key": "hybrid_v5",
+      "label": "Historical: DenseNet-121 + low-pass + CORAL",
+      "canonical": false,
+      "internal_test": {
+        "status": "consistent",
+        "file": "experiments/densenet_hybrid_v5/hybrid_metrics.json",
+        "file_sha256": "686116f37275e54a0defe1c78c1793f6ef063d3aee4778c2ba3b12b16ac92359",
+        "split": "test",
+        "n": 1570,
+        "recomputed": {
+          "n": 1570,
+          "accuracy": 0.7821656050955414,
+          "accuracy_ci95": {
+            "estimate": 0.7821656050955414,
+            "lower": 0.7610723080396244,
+            "upper": 0.8018814729999824,
+            "successes": 1228,
+            "n": 1570
+          },
+          "macro_precision": 0.7557239544200424,
+          "macro_recall": 0.7649757638738603,
+          "macro_f1": 0.7394842619242451,
+          "weighted_f1": 0.8018536991737872,
+          "per_class": {
+            "COVID-19": {
+              "support": 292,
+              "precision": 0.9965034965034965,
+              "recall": 0.976027397260274,
+              "recall_ci95": {
+                "estimate": 0.976027397260274,
+                "lower": 0.9513523273502318,
+                "upper": 0.9883401725048759,
+                "successes": 285,
+                "n": 292
+              },
+              "specificity": 0.9992175273865415,
+              "f1": 0.986159169550173
+            },
+            "Normal": {
+              "support": 394,
+              "precision": 0.8926701570680629,
+              "recall": 0.8654822335025381,
+              "recall_ci95": {
+                "estimate": 0.8654822335025381,
+                "lower": 0.828239683129715,
+                "upper": 0.8956667716015418,
+                "successes": 341,
+                "n": 394
+              },
+              "specificity": 0.9651360544217688,
+              "f1": 0.8788659793814434
+            },
+            "Pleural Effusion": {
+              "support": 152,
+              "precision": 0.4368421052631579,
+              "recall": 0.5460526315789473,
+              "recall_ci95": {
+                "estimate": 0.5460526315789473,
+                "lower": 0.4667416349966832,
+                "upper": 0.6230932530102874,
+                "successes": 83,
+                "n": 152
+              },
+              "specificity": 0.9245416078984485,
+              "f1": 0.48538011695906436
+            },
+            "Pneumonia": {
+              "support": 423,
+              "precision": 0.9621993127147767,
+              "recall": 0.6619385342789598,
+              "recall_ci95": {
+                "estimate": 0.6619385342789598,
+                "lower": 0.6155807155017058,
+                "upper": 0.7053815461738883,
+                "successes": 280,
+                "n": 423
+              },
+              "specificity": 0.990409764603313,
+              "f1": 0.7843137254901961
+            },
+            "Pulmonary Nodule / Mass": {
+              "support": 108,
+              "precision": 0.328,
+              "recall": 0.7592592592592593,
+              "recall_ci95": {
+                "estimate": 0.7592592592592593,
+                "lower": 0.6706206664021658,
+                "upper": 0.8300881100255454,
+                "successes": 82,
+                "n": 108
+              },
+              "specificity": 0.8850889192886456,
+              "f1": 0.4581005586592179
+            },
+            "Tuberculosis": {
+              "support": 201,
+              "precision": 0.9181286549707602,
+              "recall": 0.7810945273631841,
+              "recall_ci95": {
+                "estimate": 0.7810945273631841,
+                "lower": 0.7189517932315032,
+                "upper": 0.8326943464247926,
+                "successes": 157,
+                "n": 201
+              },
+              "specificity": 0.9897735573411249,
+              "f1": 0.8440860215053763
+            }
+          },
+          "confusion_matrix": [
+            [
+              285,
+              1,
+              1,
+              3,
+              0,
+              2
+            ],
+            [
+              0,
+              341,
+              2,
+              6,
+              45,
+              0
+            ],
+            [
+              0,
+              3,
+              83,
+              0,
+              66,
+              0
+            ],
+            [
+              1,
+              31,
+              57,
+              280,
+              42,
+              12
+            ],
+            [
+              0,
+              1,
+              25,
+              0,
+              82,
+              0
+            ],
+            [
+              0,
+              5,
+              22,
+              2,
+              15,
+              157
+            ]
+          ]
+        },
+        "recorded_unverifiable": {
+          "macro_roc_auc": 0.9609,
+          "macro_pr_auc": 0.7918,
+          "calibration_confidence": {
+            "mean_confidence_correct": 0.8524,
+            "mean_confidence_incorrect": 0.6217
+          },
+          "reason": "needs per-image probabilities, which were never saved"
+        },
+        "checks": [
+          {
+            "metric": "accuracy",
+            "recorded": 0.7822,
+            "recomputed": 0.782166,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_precision",
+            "recorded": 0.7557,
+            "recomputed": 0.755724,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_recall",
+            "recorded": 0.765,
+            "recomputed": 0.764976,
+            "status": "consistent"
+          },
+          {
+            "metric": "macro_f1",
+            "recorded": 0.7395,
+            "recomputed": 0.739484,
+            "status": "consistent"
+          },
+          {
+            "metric": "weighted_f1",
+            "recorded": 0.8019,
+            "recomputed": 0.801854,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 precision",
+            "recorded": 0.9965,
+            "recomputed": 0.996503,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 recall",
+            "recorded": 0.976,
+            "recomputed": 0.976027,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 f1",
+            "recorded": 0.9862,
+            "recomputed": 0.986159,
+            "status": "consistent"
+          },
+          {
+            "metric": "COVID-19 specificity",
+            "recorded": 0.9992,
+            "recomputed": 0.999218,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal precision",
+            "recorded": 0.8927,
+            "recomputed": 0.89267,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal recall",
+            "recorded": 0.8655,
+            "recomputed": 0.865482,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal f1",
+            "recorded": 0.8789,
+            "recomputed": 0.878866,
+            "status": "consistent"
+          },
+          {
+            "metric": "Normal specificity",
+            "recorded": 0.9651,
+            "recomputed": 0.965136,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion precision",
+            "recorded": 0.4368,
+            "recomputed": 0.436842,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion recall",
+            "recorded": 0.5461,
+            "recomputed": 0.546053,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion f1",
+            "recorded": 0.4854,
+            "recomputed": 0.48538,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pleural Effusion specificity",
+            "recorded": 0.9245,
+            "recomputed": 0.924542,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia precision",
+            "recorded": 0.9622,
+            "recomputed": 0.962199,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia recall",
+            "recorded": 0.6619,
+            "recomputed": 0.661939,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia f1",
+            "recorded": 0.7843,
+            "recomputed": 0.784314,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pneumonia specificity",
+            "recorded": 0.9904,
+            "recomputed": 0.99041,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass precision",
+            "recorded": 0.328,
+            "recomputed": 0.328,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass recall",
+            "recorded": 0.7593,
+            "recomputed": 0.759259,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass f1",
+            "recorded": 0.4581,
+            "recomputed": 0.458101,
+            "status": "consistent"
+          },
+          {
+            "metric": "Pulmonary Nodule / Mass specificity",
+            "recorded": 0.8851,
+            "recomputed": 0.885089,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis precision",
+            "recorded": 0.9181,
+            "recomputed": 0.918129,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis recall",
+            "recorded": 0.7811,
+            "recomputed": 0.781095,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis f1",
+            "recorded": 0.8441,
+            "recomputed": 0.844086,
+            "status": "consistent"
+          },
+          {
+            "metric": "Tuberculosis specificity",
+            "recorded": 0.9898,
+            "recomputed": 0.989774,
+            "status": "consistent"
+          }
+        ],
+        "mismatches": []
+      },
+      "external": {
+        "status": "consistent",
+        "file": "experiments/densenet_hybrid_v5/hybrid_montgomery.json",
+        "cohort": "Montgomery County (external, binary TB vs normal)",
+        "recorded_counts": {
+          "total": 138,
+          "tb": 58,
+          "normal": 80
+        },
+        "prediction_breakdown": {
+          "tb_cases": {
+            "Pulmonary Nodule / Mass": 53,
+            "Pleural Effusion": 3,
+            "Normal": 2
+          },
+          "normal_cases": {
+            "Pulmonary Nodule / Mass": 80
+          }
+        },
+        "binary_abnormality": {
+          "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+          "tp": 56,
+          "fn": 2,
+          "tn": 0,
+          "fp": 80,
+          "sensitivity": {
+            "estimate": 0.9655172413793104,
+            "lower": 0.8827085453568732,
+            "upper": 0.9904920716688347,
+            "successes": 56,
+            "n": 58
+          },
+          "specificity": {
+            "estimate": 0.0,
+            "lower": 0.0,
+            "upper": 0.0458181295355271,
+            "successes": 0,
+            "n": 80
+          },
+          "accuracy": {
+            "estimate": 0.4057971014492754,
+            "lower": 0.32749750977344794,
+            "upper": 0.48919924295194994,
+            "successes": 56,
+            "n": 138
+          },
+          "prevalence": 0.42028985507246375
+        },
+        "exact_tuberculosis_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.062117855787202914,
+          "successes": 0,
+          "n": 58
+        },
+        "exact_normal_recall": {
+          "estimate": 0.0,
+          "lower": 0.0,
+          "upper": 0.0458181295355271,
+          "successes": 0,
+          "n": 80
+        },
+        "interpretation": "No normal scan was classified Normal (specificity 0/80); the model does not separate normal from TB scans.",
+        "verified_against_images": false
+      },
+      "validation_evidence": {
+        "source": "experiments/densenet_hybrid_v5/hybrid_config.json",
+        "what": "No validation score recorded."
+      }
+    }
+  ]
+}

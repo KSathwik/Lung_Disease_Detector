@@ -13,10 +13,15 @@ backend/.env
 *.h5
 *.keras
 
-# Data (large - do not commit raw images / dataset archives)
+# Data (large - do not commit raw images / dataset archives). data/manifests/ IS tracked.
 data/raw/
 data/processed/
 data/downloads/
+data/external/
+
+# Training runs (checkpoints + run metadata); evaluation runs with per-image predictions
+runs/
+artifacts/evaluation_reports/*/
 
 # Database
 *.db

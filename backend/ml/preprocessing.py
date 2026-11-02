@@ -1,34 +1,26 @@
 """
-Data Preprocessing Pipeline for Lung Images
-Handles: loading, cleaning, augmentation, normalization, train/val/test split
+Backend image preprocessing.
+
+The preprocessing itself is ``lungai.preprocessing`` (shared with training and evaluation).
+This module adds the upload-time plausibility checks and the per-class guidance text.
 """
 
-import os
+import logging
+from typing import Tuple
+
 import cv2
 import numpy as np
-import pandas as pd
-from pathlib import Path
-from typing import Tuple, List, Dict, Optional
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-import logging
+
+from lungai.config import CLASS_NAMES
+from lungai import preprocessing as canonical
 
 logger = logging.getLogger(__name__)
 
-# ─── Constants ─────────────────────────────────────────────────────────────────
-IMAGE_SIZE = (224, 224)         # Standard input size for CNN & ResNet
-MEAN = np.array([0.485, 0.456, 0.406])   # ImageNet normalization mean
-STD  = np.array([0.229, 0.224, 0.225])   # ImageNet normalization std
+DISEASE_CLASSES = list(CLASS_NAMES)
+IMAGE_SIZE = canonical.TARGET_SIZE
+apply_gaussian_lp = canonical.gaussian_lowpass
 
-DISEASE_CLASSES = [
-    "COVID-19",
-    "Normal",
-    "Pleural Effusion",
-    "Pneumonia",
-    "Pulmonary Nodule / Mass",
-    "Tuberculosis"
-]
-
+# General guidance shown with a (non-inconclusive) result. Not individualised medical advice.
 PRECAUTIONS_MAP = {
     "Normal": [
         "Continue regular health check-ups every 6–12 months.",
@@ -37,510 +29,93 @@ PRECAUTIONS_MAP = {
         "Ensure proper ventilation in living/working spaces."
     ],
     "Pneumonia": [
-        "Seek immediate medical attention for antibiotic prescription.",
-        "Rest and stay well hydrated (2–3 litres of fluids per day).",
+        "Seek medical evaluation; pneumonia is diagnosed clinically and may need antibiotics.",
+        "Rest and stay well hydrated.",
         "Avoid exposure to cold air and crowds.",
-        "Monitor oxygen saturation; seek emergency care if below 94%.",
-        "Complete the full antibiotic course even if symptoms improve."
+        "Seek urgent care for breathing difficulty or low oxygen saturation."
     ],
     "Tuberculosis": [
-        "Isolate yourself to avoid spreading infection.",
-        "Begin DOTS (Directly Observed Treatment Short-course) immediately.",
-        "Wear N95 mask around others.",
-        "Notify close contacts for screening.",
-        "Complete the 6–9 month treatment course without interruption."
+        "Seek medical evaluation for sputum testing; TB is confirmed by laboratory tests, not by an X-ray alone.",
+        "Wear a mask around others until evaluated.",
+        "Inform close contacts if TB is confirmed so they can be screened.",
+        "If treatment is prescribed, complete the full course without interruption."
     ],
     "COVID-19": [
-        "Self-isolate for at least 10 days from symptom onset.",
-        "Monitor oxygen levels with a pulse oximeter.",
-        "Seek hospital care if SpO2 drops below 94%.",
-        "Stay hydrated and rest adequately.",
-        "Follow local health authority guidelines."
+        "Get a confirmatory test (PCR or antigen); X-ray findings are not specific to COVID-19.",
+        "Follow local health authority isolation guidance.",
+        "Monitor oxygen saturation and seek care if it drops or breathing worsens.",
+        "Stay hydrated and rest adequately."
     ],
     "Pulmonary Nodule / Mass": [
-        "Consult a pulmonologist or thoracic specialist for high-resolution CT evaluation.",
-        "Compare with prior chest imaging to evaluate nodule growth rate and doubling time.",
-        "Consider PET-CT or tissue biopsy if recommended by clinical risk stratifications.",
-        "Avoid tobacco smoke and respiratory carcinogen exposure.",
-        "Adhere strictly to recommended imaging follow-up intervals."
-    ],
-    "Lung Cancer": [
-        "Consult an oncologist immediately for staging and treatment plan.",
-        "Quit smoking completely — this is critical.",
-        "Discuss biopsy and PET scan with your physician.",
-        "Explore clinical trials if eligible.",
-        "Seek psychological and palliative care support."
-    ],
-    "COPD": [
-        "Use prescribed bronchodilators and inhalers as directed.",
-        "Quit smoking — the single most impactful intervention.",
-        "Enrol in a pulmonary rehabilitation programme.",
-        "Get annual flu and pneumococcal vaccinations.",
-        "Avoid air pollutants, dust, and chemical fumes."
+        "Consult a pulmonologist; CT imaging is normally needed to characterise a nodule or mass.",
+        "Compare with any prior chest imaging.",
+        "Avoid tobacco smoke exposure.",
+        "Follow the imaging follow-up interval your clinician recommends."
     ],
     "Pleural Effusion": [
         "Consult a pulmonologist to identify the underlying cause.",
-        "Thoracentesis (fluid drainage) may be required.",
-        "Limit strenuous physical activity until reviewed.",
-        "Monitor breathing difficulty and report worsening immediately.",
-        "Address underlying causes such as heart failure or infection."
-    ]
+        "Report worsening breathlessness promptly.",
+        "Limit strenuous activity until reviewed.",
+        "Further imaging or fluid sampling may be advised."
+    ],
 }
+assert set(PRECAUTIONS_MAP) == set(CLASS_NAMES), "PRECAUTIONS_MAP must cover exactly the canonical classes"
 
-
-def apply_gaussian_lp(img: np.ndarray, sigma: float = 1.0) -> np.ndarray:
-    """Applies Gaussian low-pass spatial filtering with deterministic kernel sizing."""
-    ksize = int(2 * np.ceil(3 * sigma) + 1)
-    if ksize % 2 == 0:
-        ksize += 1
-    return cv2.GaussianBlur(img, (ksize, ksize), sigma)
-
-
-# ─── Single Image Preprocessing ───────────────────────────────────────────────
 
 class ImagePreprocessor:
-    """Preprocesses a single lung image for model inference reproducing Model D."""
+    """Decodes an upload, rejects implausible inputs, and applies the canonical preprocessing."""
 
-    def __init__(self, target_size: Tuple[int, int] = IMAGE_SIZE, sigma: float = 1.0):
-        self.target_size = target_size
-        self.sigma = sigma
+    def __init__(self):
+        self.target_size = IMAGE_SIZE
 
     def validate_cxr_plausibility(self, img: np.ndarray) -> None:
         """
-        Anatomical & Biophysical Chest Radiograph (CXR) Plausibility Validator.
-        
-        Protects the clinical inference pipeline against out-of-distribution (OOD)
-        non-medical inputs such as photos of vehicles, animals, natural landscapes,
-        documents, and blank/degraded images.
-        
-        Checks:
-        1. Dimensions: Minimum 32x32 pixels.
-        2. Aspect Ratio: Reject extreme banners/panoramas (> 2.8:1). Standard CXR PA/AP projections are ~0.8:1 to 1.3:1.
-        3. Intensity Dynamic Range: Luminance standard deviation must be >= 10.0 (rejects blank, solid, or flat non-images).
-        4. Polychromatic Saturation: Planar chest radiographs are monochrome or uniformly tinted;
-           natural color photos exhibiting multi-hue saturation (> 18% saturated pixels with high hue dispersion)
-           are rejected with an explicit clinical advisory.
+        Cheap checks that reject obvious non-radiographs before inference:
+        aspect ratio > 2.8:1, intensity std < 10 (blank/flat), and multi-hue colour photographs.
+        Raises ValueError with an "Invalid Radiograph" message.
         """
-        if img is None:
-            raise ValueError("Could not decode image. Unreadable or corrupted file.")
-        
         h, w = img.shape[:2]
-        if h < 32 or w < 32:
-            raise ValueError(
-                f"Image dimensions ({w}x{h}) are too small for diagnostic analysis. Minimum dimensions are 32x32 pixels."
-            )
-        
-        # 1. Aspect ratio check
         ratio = max(h, w) / max(min(h, w), 1)
         if ratio > 2.8:
             raise ValueError(
                 f"Invalid Radiograph: Image aspect ratio ({w}x{h}, {ratio:.1f}:1) is inconsistent with chest radiography. "
                 "Standard PA/AP chest radiographs are approximately 0.8:1 to 1.3:1."
             )
-        
-        # 2. Dynamic range / contrast check
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if len(img.shape) == 3 else img
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
         std_intensity = float(np.std(gray))
         if std_intensity < 10.0:
             raise ValueError(
                 f"Invalid Radiograph: Insufficient radiographic contrast (intensity std={std_intensity:.1f} < 10.0). "
                 "Image appears blank, solid, or severely degraded."
             )
-        
-        # 3. Chromaticity & Multi-Hue Distribution check
-        if len(img.shape) == 3 and img.shape[2] == 3:
+        if img.ndim == 3 and img.shape[2] == 3:
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            sat = hsv[:, :, 1] / 255.0
-            high_sat_mask = sat > 0.25
+            high_sat_mask = (hsv[:, :, 1] / 255.0) > 0.25
             high_sat_fraction = float(np.mean(high_sat_mask))
-            
-            # If a significant portion has color saturation
             if high_sat_fraction > 0.18:
                 hues = hsv[:, :, 0][high_sat_mask]
-                hue_std = float(np.std(hues))
                 hist, _ = np.histogram(hues, bins=12, range=(0, 180))
                 non_empty_bins = int(np.sum(hist > (len(hues) * 0.05)))
-                
-                # Natural color scenes have high hue diversity across bins
-                if non_empty_bins >= 3 or hue_std > 22.0:
+                if non_empty_bins >= 3 or float(np.std(hues)) > 22.0:
                     raise ValueError(
                         f"Invalid Radiograph: Uploaded file is a natural color photograph ({high_sat_fraction*100:.1f}% color saturation "
                         f"across {non_empty_bins} distinct color bands). LungAI requires a grayscale/monochrome chest radiograph (X-Ray)."
                     )
 
-    def load_image(self, image_path: str, validate_plausibility: bool = True) -> Optional[np.ndarray]:
-        """Load image from path, return None on failure."""
-        img = cv2.imread(image_path)
-        if img is None:
-            logger.error(f"Failed to load image: {image_path}")
-            return None
-        h, w = img.shape[:2]
-        if h < 32 or w < 32:
-            raise ValueError(f"Image dimensions ({w}x{h}) are too small. Minimum is 32x32 pixels.")
-        if validate_plausibility:
-            self.validate_cxr_plausibility(img)
-        return img
-
     def load_from_bytes(self, image_bytes: bytes, validate_plausibility: bool = True) -> np.ndarray:
-        """Load image directly from raw bytes with strict input validation."""
-        if not image_bytes or len(image_bytes) == 0:
-            raise ValueError("Uploaded file is empty (0 bytes).")
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if img is None:
-            raise ValueError("Could not decode image from bytes. Corrupted or unreadable image file.")
-        h, w = img.shape[:2]
-        if h < 32 or w < 32:
-            raise ValueError(f"Image dimensions ({w}x{h}) are too small for diagnostic analysis. Minimum dimensions are 32x32 pixels.")
+        """Decode bytes to BGR uint8. Raises ValueError for empty, undecodable, too-small or implausible images."""
+        img = canonical.decode_bytes(image_bytes)  # ImageDecodeError is a ValueError
         if validate_plausibility:
             self.validate_cxr_plausibility(img)
         return img
-
-    def clean_image(self, img: np.ndarray) -> np.ndarray:
-        """
-        Exact Model D Preprocessing (Steps 1 to 6):
-        1. Convert grayscale or 4-channel to 3-channel
-        2. BGR → RGB
-        3. Initial Gaussian blur (kernel=(3,3), sigma=0.8)
-        4. CIE LAB conversion & CLAHE on L channel (clip limit=2.0, tileGridSize=(8,8))
-        5. Convert back to RGB
-        6. Frequency filtering: Gaussian low-pass (sigma=1.0)
-        """
-        # Step 1: Ensure 3 channels
-        if len(img.shape) == 2:
-            img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-        elif img.shape[2] == 4:
-            img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-        else:
-            img = img.copy()
-
-        # Step 2: BGR → RGB
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-        # Step 3: Initial Gaussian blur (3,3), sigma=0.8
-        img = cv2.GaussianBlur(img, (3, 3), 0.8)
-
-        # Step 4: CLAHE on L channel in CIE LAB
-        lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
-        l_channel = np.ascontiguousarray(lab[:, :, 0], dtype=np.uint8)
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-        lab[:, :, 0] = clahe.apply(l_channel)
-        img = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
-
-        # Step 5 & 6: Frequency Preprocessing — Gaussian Low-Pass (sigma=1.0)
-        img = apply_gaussian_lp(img, sigma=self.sigma)
-
-        return img
-
-    def resize_and_normalize(self, img: np.ndarray) -> np.ndarray:
-        """
-        Normalization Steps:
-        7. Resize to 224x224 using Lanczos-4
-        8. ImageNet normalization: (img / 255.0 - MEAN) / STD
-        9. Add batch dimension: (224, 224, 3) → (1, 224, 224, 3)
-        """
-        img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
-        img_norm = (img_resized.astype(np.float32) / 255.0 - MEAN) / STD
-        return np.expand_dims(img_norm.astype(np.float32), axis=0)
 
     def preprocess(self, image_input) -> np.ndarray:
-        """Full preprocessing pipeline: load → clean → normalize."""
-        if isinstance(image_input, bytes):
-            img = self.load_from_bytes(image_input)
-        elif isinstance(image_input, str):
-            img = self.load_image(image_input)
-        else:
-            img = image_input  # Already numpy array
-
-        cleaned = self.clean_image(img)
-        return self.resize_and_normalize(cleaned)
+        """bytes or BGR array -> (1, 224, 224, 3) float32 model input."""
+        img = self.load_from_bytes(image_input) if isinstance(image_input, bytes) else image_input
+        return canonical.preprocess_array(img)[None, ...]
 
     def preprocess_with_display(self, image_input) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Returns both:
-        - normalized batch tensor for model inference (1, 224, 224, 3)
-        - unnormalized resized RGB image (224, 224, 3) uint8 for Grad-CAM overlay
-        """
-        if isinstance(image_input, bytes):
-            img = self.load_from_bytes(image_input)
-        elif isinstance(image_input, str):
-            img = self.load_image(image_input)
-        else:
-            img = image_input
-
-        cleaned = self.clean_image(img)
-        display_rgb = cv2.resize(cleaned, self.target_size, interpolation=cv2.INTER_LANCZOS4)
-        norm_tensor = self.resize_and_normalize(cleaned)
-        return norm_tensor, display_rgb
-
-
-# ─── Dataset Preprocessing (for Training) ─────────────────────────────────────
-
-class DatasetPreprocessor:
-    """
-    Full dataset preprocessing pipeline for model training.
-    Expects dataset directory structure:
-        data/raw/
-            Normal/
-                img1.jpg, img2.jpg, ...
-            Pneumonia/
-                img1.jpg, ...
-            ...
-    """
-
-    def __init__(
-        self,
-        data_dir: str,
-        target_size: Tuple[int, int] = IMAGE_SIZE,
-        test_size: float = 0.15,
-        val_size: float = 0.15,
-        random_state: int = 42
-    ):
-        self.data_dir = Path(data_dir)
-        self.target_size = target_size
-        self.test_size = test_size
-        self.val_size = val_size
-        self.random_state = random_state
-        self.preprocessor = ImagePreprocessor(target_size)
-        self.label_encoder = LabelEncoder()
-
-    # ── Step 1: Scan Dataset ──────────────────────────────────────────────────
-    def scan_dataset(self) -> pd.DataFrame:
-        """
-        Scan dataset directory and build a DataFrame of image paths + labels.
-        Also performs data quality checks.
-        """
-        records = []
-        supported_ext = {".jpg", ".jpeg", ".png", ".bmp", ".tiff"}
-
-        for class_dir in sorted(self.data_dir.iterdir()):
-            if not class_dir.is_dir():
-                continue
-            class_name = class_dir.name
-            for img_path in class_dir.iterdir():
-                if img_path.suffix.lower() not in supported_ext:
-                    continue
-                records.append({
-                    "image_path": str(img_path),
-                    "label": class_name,
-                    "filename": img_path.name
-                })
-
-        df = pd.DataFrame(records)
-        logger.info(f"Dataset scanned: {len(df)} images across {df['label'].nunique()} classes")
-        logger.info(f"Class distribution:\n{df['label'].value_counts()}")
-        return df
-
-    # ── Step 2: Data Cleaning ─────────────────────────────────────────────────
-    def clean_dataset(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Data cleaning steps:
-        1. Remove duplicate file paths
-        2. Remove corrupted / zero-byte images (file size check)
-        3. Log cleaning statistics
-        """
-        original_count = len(df)
-
-        # Remove duplicates
-        df = df.drop_duplicates(subset=["image_path"])
-        logger.info(f"After dedup: {len(df)} (removed {original_count - len(df)})")
-
-        # Validate images via fast file size check (> 1KB)
-        valid_indices = []
-        for idx, row in df.iterrows():
-            try:
-                if os.path.getsize(row["image_path"]) > 1024:
-                    valid_indices.append(idx)
-                else:
-                    logger.warning(f"Too small file size: {row['image_path']}")
-            except Exception as e:
-                logger.error(f"Error checking {row['image_path']}: {e}")
-
-        df = df.loc[valid_indices].reset_index(drop=True)
-        logger.info(f"After cleaning: {len(df)} valid images (removed {original_count - len(df)} total)")
-        return df
-
-    # ── Step 3: Split Dataset ─────────────────────────────────────────────────
-    def split_dataset(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """Split into train / validation / test sets (stratified by class)."""
-        train_val, test = train_test_split(
-            df, test_size=self.test_size,
-            stratify=df["label"], random_state=self.random_state
-        )
-        adjusted_val = self.val_size / (1 - self.test_size)
-        train, val = train_test_split(
-            train_val, test_size=adjusted_val,
-            stratify=train_val["label"], random_state=self.random_state
-        )
-        logger.info(f"Split — Train: {len(train)}, Val: {len(val)}, Test: {len(test)}")
-        return train, val, test
-
-    # ── Step 4: Encode Labels ─────────────────────────────────────────────────
-    def encode_labels(self, df: pd.DataFrame) -> np.ndarray:
-        return self.label_encoder.fit_transform(df["label"].values)
-
-    # ── Step 5: Load & Preprocess Images ─────────────────────────────────────
-    def load_images(self, df: pd.DataFrame, augment: bool = False) -> Tuple[np.ndarray, np.ndarray]:
-        """Load and preprocess all images using multi-threading for maximum speed."""
-        from concurrent.futures import ThreadPoolExecutor
-
-        encoded_labels = self.label_encoder.transform(df["label"].values)
-        items = list(zip(df["image_path"].values, encoded_labels))
-
-        def _process_one(item):
-            path, label = item
-            img = cv2.imread(path)
-            if img is None:
-                return []
-            img = self.preprocessor.clean_image(img)
-            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LINEAR)
-            img_norm = img_resized.astype(np.float32) / 255.0
-            img_norm = (img_norm - MEAN) / STD
-            res = [(img_norm, label)]
-            if augment:
-                res.append((np.fliplr(img_norm), label))
-            return res
-
-        with ThreadPoolExecutor(max_workers=8) as ex:
-            results = list(ex.map(_process_one, items))
-
-        images, labels = [], []
-        for batch in results:
-            for img, lbl in batch:
-                images.append(img)
-                labels.append(lbl)
-
-        return np.array(images, dtype=np.float32), np.array(labels, dtype=np.int64)
-
-    # ── Step 6: Augmentation ──────────────────────────────────────────────────
-    def _augment(self, img: np.ndarray) -> List[np.ndarray]:
-        """
-        Data augmentation to increase dataset diversity:
-        - Horizontal flip
-        - Rotation ±15°
-        - Brightness/contrast jitter
-        """
-        augmented = []
-
-        # Flip
-        augmented.append(np.fliplr(img))
-
-        # Rotation
-        h, w = img.shape[:2]
-        for angle in [-15, 15]:
-            M = cv2.getRotationMatrix2D((w // 2, h // 2), angle, 1.0)
-            rotated = cv2.warpAffine(img, M, (w, h))
-            augmented.append(rotated)
-
-        # Brightness jitter
-        bright = np.clip(img * 1.2, 0, 1)
-        augmented.append(bright)
-
-        return augmented
-
-    # ── Memory-efficient generator ──────────────────────────────────────────
-    def _image_generator(self, df: pd.DataFrame, augment: bool = False):
-        """Yield (image, label) tuples one at a time to avoid loading all into RAM."""
-        encoded_labels = self.label_encoder.transform(df["label"].values)
-        for (_, row), label in zip(df.iterrows(), encoded_labels):
-            img = cv2.imread(row["image_path"])
-            if img is None:
-                continue
-            img = self.preprocessor.clean_image(img)
-            img_resized = cv2.resize(img, self.target_size, interpolation=cv2.INTER_LANCZOS4)
-            img_norm = img_resized.astype(np.float32) / 255.0
-            img_norm = (img_norm - MEAN) / STD
-            yield img_norm, label
-
-            if augment:
-                for aug_img in self._augment(img_norm):
-                    yield aug_img, label
-
-    def _count_samples(self, df: pd.DataFrame, augment: bool = False) -> int:
-        """Estimate total sample count (original + augmented)."""
-        n = len(df)
-        if augment:
-            n *= 2
-        return n
-
-    def create_tf_dataset(
-        self, df: pd.DataFrame, batch_size: int, augment: bool = False, shuffle: bool = False
-    ):
-        """Build a tf.data.Dataset that streams images from disk in batches."""
-        import tensorflow as tf
-
-        def gen():
-            return self._image_generator(df, augment=augment)
-
-        ds = tf.data.Dataset.from_generator(
-            gen,
-            output_signature=(
-                tf.TensorSpec(shape=(*self.target_size, 3), dtype=tf.float32),
-                tf.TensorSpec(shape=(), dtype=tf.int64),
-            ),
-        )
-        if shuffle:
-            ds = ds.shuffle(buffer_size=min(2000, self._count_samples(df, augment)))
-        ds = ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
-        return ds
-
-    # ── Full Pipeline ─────────────────────────────────────────────────────────
-
-    RAM_THRESHOLD = 50_000  # Load dataset into in-memory array for fast training
-
-    def run(self, batch_size: int = 32, max_train_samples: Optional[int] = None) -> Dict:
-        """Execute the full preprocessing pipeline."""
-        logger.info("=== Starting Data Preprocessing Pipeline ===")
-
-        df = self.scan_dataset()
-        df = self.clean_dataset(df)
-
-        train_df, val_df, test_df = self.split_dataset(df)
-
-        self.label_encoder.fit(df["label"])
-
-        if max_train_samples and len(train_df) > max_train_samples:
-            train_df, _ = train_test_split(
-                train_df, train_size=max_train_samples,
-                stratify=train_df["label"], random_state=self.random_state
-            )
-            logger.info(f"Subsampled train set for CPU optimization: {len(train_df)} images")
-
-        use_streaming = len(train_df) > self.RAM_THRESHOLD
-        if use_streaming:
-            logger.info(
-                f"Large dataset ({len(train_df)} training images) — using tf.data streaming."
-            )
-            return {
-                "train_ds": self.create_tf_dataset(train_df, batch_size, augment=True, shuffle=True),
-                "val_ds":   self.create_tf_dataset(val_df,   batch_size, augment=False),
-                "test_ds":  self.create_tf_dataset(test_df,  batch_size, augment=False),
-                "X_test": None, "y_test": None,
-                "streaming": True,
-                "class_names": list(self.label_encoder.classes_),
-                "label_encoder": self.label_encoder,
-                "train_df": train_df, "val_df": val_df, "test_df": test_df,
-                "train_samples": self._count_samples(train_df, augment=True),
-                "val_samples": len(val_df),
-                "test_samples": len(test_df),
-            }
-
-        logger.info("Loading and preprocessing training images (with augmentation)...")
-        X_train, y_train = self.load_images(train_df, augment=True)
-        X_val,   y_val   = self.load_images(val_df,   augment=False)
-        X_test,  y_test  = self.load_images(test_df,  augment=False)
-
-        logger.info(f"X_train shape: {X_train.shape}, y_train shape: {y_train.shape}")
-        logger.info(f"X_val shape:   {X_val.shape},   y_val shape:   {y_val.shape}")
-        logger.info(f"X_test shape:  {X_test.shape},  y_test shape:  {y_test.shape}")
-        logger.info("=== Preprocessing Complete ===")
-
-        return {
-            "X_train": X_train, "y_train": y_train,
-            "X_val":   X_val,   "y_val":   y_val,
-            "X_test":  X_test,  "y_test":  y_test,
-            "streaming": False,
-            "class_names": list(self.label_encoder.classes_),
-            "label_encoder": self.label_encoder,
-            "train_df": train_df, "val_df": val_df, "test_df": test_df
-        }
+        """Model input batch (1, 224, 224, 3) and the resized RGB uint8 image used for Grad-CAM display."""
+        img = self.load_from_bytes(image_input) if isinstance(image_input, bytes) else image_input
+        display_rgb = canonical.resize_display(canonical.clean_image(img))
+        return canonical.normalize(display_rgb)[None, ...], display_rgb

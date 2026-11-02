@@ -76,11 +76,28 @@ async def test_predict_success_persists_model_output(client, stub_model):
     assert data["probabilities"]["Pneumonia"] == pytest.approx(0.85, abs=1e-4)
     assert data["final"]["urgency"] == "urgent"
     assert "accuracy" not in (data.get("densenet") or {})
+    from lungai.config import CLASS_NAMES, MODEL_DISPLAY_NAME, MODEL_ID
+    assert data["model_id"] == MODEL_ID and data["selected_model"] == MODEL_DISPLAY_NAME
+    assert data["class_order"] == CLASS_NAMES
+    assert data["predicted_index"] == CLASS_NAMES.index("Pneumonia")
+    # The API returns the model's scores unchanged (rounded to 4 d.p.), keyed by canonical class name
+    assert [data["probabilities"][c] for c in CLASS_NAMES] == pytest.approx(CONFIDENT, abs=1e-4)
 
     detail = (await client.get(f"/api/v1/predictions/{data['prediction_id']}")).json()
     assert detail["probabilities"] == data["probabilities"]
     assert detail["model_sha256"] == "ab" * 32
     assert detail["final_condition"] == "Pneumonia"
+    assert detail["model_used"] == MODEL_ID
+    assert detail["model_version"] == data["model_version"]
+
+
+@pytest.mark.asyncio
+async def test_predict_rejects_non_probability_model_output(client, stub_model):
+    """A model output that is not a softmax vector is an inference failure (500), never a result."""
+    stub_model([0.9, 0.9, 0.0, 0.0, 0.0, 0.0])
+    resp = await client.post("/api/v1/predict", files={"file": ("scan.jpg", _make_test_image(), "image/jpeg")})
+    assert resp.status_code == 500
+    assert (await client.get("/api/v1/predictions")).json()["total"] == 0
 
 
 @pytest.mark.asyncio
@@ -205,15 +222,35 @@ async def test_get_prediction_not_found(client):
 
 
 @pytest.mark.asyncio
-async def test_model_metrics(client):
+async def test_model_metrics_serves_recorded_canonical_results(client):
     resp = await client.get("/api/v1/model-metrics")
     assert resp.status_code == 200
     data = resp.json()
-    # Only Model D metrics are served; legacy CNN/ResNet entries come from different datasets
-    assert "cnn" not in data and "resnet" not in data
-    if "densenet" in data:
-        assert data["densenet"]["accuracy"] == pytest.approx(0.8293)
-        assert "model_loaded" in data
+    from lungai.config import CLASS_NAMES, MODEL_ID
+    assert data["model_id"] == MODEL_ID
+    assert data["available"] is True
+    assert data["class_order"] == CLASS_NAMES
+    assert data["evidence_level"].startswith("RECORDED")
+    internal = data["internal_test"]
+    assert internal["consistency"] == "consistent"
+    assert internal["n"] == 1570
+    assert internal["metrics"]["accuracy"] == pytest.approx(1302 / 1570)
+    # The external result is reported with its specificity, never as sensitivity alone
+    b = data["external"]["binary_abnormality"]
+    assert (b["sensitivity"]["successes"], b["sensitivity"]["n"]) == (58, 58)
+    assert (b["specificity"]["successes"], b["specificity"]["n"]) == (0, 80)
+
+
+@pytest.mark.asyncio
+async def test_model_endpoint_reports_identity_and_class_mapping(client):
+    from lungai.config import CLASS_NAMES, MODEL_DISPLAY_NAME, MODEL_ID
+    data = (await client.get("/api/v1/model")).json()
+    assert data["model_id"] == MODEL_ID
+    assert data["display_name"] == MODEL_DISPLAY_NAME
+    assert [c["name"] for c in data["classes"]] == CLASS_NAMES
+    assert [c["index"] for c in data["classes"]] == list(range(6))
+    assert "model_loaded" in data and "expected_checkpoint_sha256" in data
+    assert "\\" not in str(data) and ":/" not in str(data)  # no filesystem paths
 
 
 @pytest.mark.asyncio

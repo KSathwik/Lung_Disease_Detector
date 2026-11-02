@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { analyzeLungImage, generateReport, listPatients } from "../services/api";
+import { classScores, formatScore, topScore } from "../services/prediction";
 
 const URGENCY_CONFIG = {
   routine:   { color: "#0D9488", bg: "#CCFBF1", label: "Routine" },
@@ -91,6 +92,9 @@ export default function AnalyzePage() {
       const data = await analyzeLungImage(file, { scanType, patientId: patientId || undefined });
       const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(2);
       setInferTime(`${elapsedSec}s`);
+      // Validate the response shape before showing anything; a malformed response is an error, not a result
+      classScores(data);
+      topScore(data);
       setResult(data);
     } catch (err) {
       setError({ title: err.title || "Analysis Failed", message: err.message });
@@ -126,7 +130,9 @@ export default function AnalyzePage() {
 
   const urgency = result?.final?.urgency || "routine";
   const urg = URGENCY_CONFIG[urgency] || URGENCY_CONFIG.routine;
-  const inconclusive = Boolean(result?.inconclusive ?? result?.final?.inconclusive);
+  const inconclusive = Boolean(result?.inconclusive);
+  const scores = result ? classScores(result) : [];
+  const top = result ? topScore(result) : null;
   const gradcam = result?.gradcam || null;
 
   return (
@@ -153,7 +159,7 @@ export default function AnalyzePage() {
 
           <div>
             <label className="field-label">Scan type</label>
-            {/* Model D was trained on frontal chest X-rays only */}
+            {/* The model was trained on frontal chest X-rays only */}
             <select className="select-input" value={scanType} onChange={e => setScanType(e.target.value)}>
               <option>X-Ray</option>
             </select>
@@ -267,7 +273,7 @@ export default function AnalyzePage() {
               <div className="loading-state card">
                 <div className="pulse-ring" />
                 <p style={{fontWeight:"600"}}>Running deep learning inference…</p>
-                <p className="loading-sub">Evaluating Model D (DenseNet-121 Frequency V5) and computing Grad-CAM</p>
+                <p className="loading-sub">Running the LungAI DenseNet-121 classifier and computing Grad-CAM</p>
               </div>
             )}
 
@@ -293,17 +299,24 @@ export default function AnalyzePage() {
                   </div>
                 </div>
 
+                {result.checkpoint_verified === false && (
+                  <div className="alert-error" role="alert" style={{ marginBottom: "1rem" }}>
+                    This server loaded a checkpoint whose SHA-256 does not match the canonical model, so these scores are
+                    not outputs of the {result.selected_model}.
+                  </div>
+                )}
+
                 {/* Prediction Result Hero */}
                 <div className="card result-hero">
                   <div className="result-hero-top">
                     <div>
                       <p className="result-label">{inconclusive ? "Result" : "Predicted Condition"}</p>
                       <h2 className="result-condition">
-                        {inconclusive ? "Inconclusive" : (result.predicted_class || result.final.condition)}
+                        {inconclusive ? "Inconclusive" : result.predicted_class}
                       </h2>
                       {inconclusive && (
                         <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
-                          Highest-scoring class: {result.predicted_class || result.final.condition}, below the reporting threshold.
+                          Highest-scoring class: {result.predicted_class}, below the reporting threshold.
                         </p>
                       )}
                     </div>
@@ -317,12 +330,12 @@ export default function AnalyzePage() {
                       <div
                         className="confidence-bar-fill"
                         style={{
-                          width: `${(result.confidence !== undefined && result.confidence <= 1 ? result.confidence * 100 : result.final.confidence)}%`
+                          width: `${top * 100}%`
                         }}
                       />
                     </div>
                     <span className="confidence-pct">
-                      {((result.confidence !== undefined && result.confidence <= 1 ? result.confidence * 100 : result.final.confidence)).toFixed(1)}%
+                      {formatScore(top)}
                     </span>
                   </div>
 
@@ -333,9 +346,9 @@ export default function AnalyzePage() {
 
                   <div className="meta-info-row">
                     <div className="meta-item">
-                      <span className="meta-label">Selected Model</span>
+                      <span className="meta-label">Model</span>
                       <span className="meta-val" title={result.model_sha256 ? `Checkpoint SHA-256: ${result.model_sha256}` : undefined}>
-                        {result.selected_model || "DenseNet-121 Frequency V5"}
+                        {result.selected_model} ({result.model_version})
                       </span>
                     </div>
                     {inferTime && (
@@ -367,7 +380,7 @@ export default function AnalyzePage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
                     <div>
                       <p className="section-label" style={{ margin: 0 }}>Probability Distribution</p>
-                      <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Six-class diagnostic probability outputs</span>
+                      <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Softmax scores for the six classes (uncalibrated)</span>
                     </div>
                     <span style={{
                       fontSize: "11px",
@@ -377,23 +390,13 @@ export default function AnalyzePage() {
                       background: "var(--brand-light-bg)",
                       color: "var(--brand-color)"
                     }}>
-                      Model D (DenseNet-121)
+                      {result.model_id}
                     </span>
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
-                    {[
-                      "Normal",
-                      "Pneumonia",
-                      "COVID-19",
-                      "Tuberculosis",
-                      "Pleural Effusion",
-                      "Pulmonary Nodule / Mass"
-                    ].map(cls => {
-                      const probVal = result.probabilities?.[cls] !== undefined
-                        ? result.probabilities[cls] * 100
-                        : (result.probabilities_pct?.[cls] ?? (result.densenet?.all_probabilities?.[cls] ?? 0));
-                      const isPredicted = (result.predicted_class || result.final.condition) === cls;
+                    {scores.map(({ name: cls, score, isTop: isPredicted }) => {
+                      const probVal = score * 100;
 
                       return (
                         <div
@@ -435,7 +438,7 @@ export default function AnalyzePage() {
                               fontSize: "13.5px",
                               color: isPredicted ? "var(--brand-color)" : "var(--text-secondary)"
                             }}>
-                              {probVal.toFixed(1)}%
+                              {formatScore(score)}
                             </span>
                           </div>
                           <div style={{ width: "100%", height: "7px", background: "rgba(0,0,0,0.06)", borderRadius: "4px", overflow: "hidden" }}>
