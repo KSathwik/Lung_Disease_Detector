@@ -1,0 +1,138 @@
+{
+  "build": "v6_build_002",
+  "threshold": 0.83,
+  "by_group": [
+    {
+      "split": "external",
+      "source": "montgomery",
+      "label": "Normal",
+      "n": 80,
+      "rejected": 7
+    },
+    {
+      "split": "external",
+      "source": "montgomery",
+      "label": "Tuberculosis",
+      "n": 58,
+      "rejected": 11
+    },
+    {
+      "split": "test",
+      "source": "cohen_covid",
+      "label": "COVID-19",
+      "n": 77,
+      "rejected": 14
+    },
+    {
+      "split": "test",
+      "source": "cohen_covid",
+      "label": "Normal",
+      "n": 4,
+      "rejected": 0
+    },
+    {
+      "split": "test",
+      "source": "cohen_covid",
+      "label": "Pneumonia",
+      "n": 29,
+      "rejected": 3
+    },
+    {
+      "split": "test",
+      "source": "cohen_covid",
+      "label": "Tuberculosis",
+      "n": 1,
+      "rejected": 0
+    },
+    {
+      "split": "test",
+      "source": "covid_radiography",
+      "label": "COVID-19",
+      "n": 374,
+      "rejected": 60
+    },
+    {
+      "split": "test",
+      "source": "kermany",
+      "label": "Normal",
+      "n": 81,
+      "rejected": 1
+    },
+    {
+      "split": "test",
+      "source": "kermany",
+      "label": "Pneumonia",
+      "n": 317,
+      "rejected": 12
+    },
+    {
+      "split": "test",
+      "source": "nih_cxr14",
+      "label": "Normal",
+      "n": 183,
+      "rejected": 10
+    },
+    {
+      "split": "test",
+      "source": "nih_cxr14",
+      "label": "Pleural Effusion",
+      "n": 444,
+      "rejected": 53
+    },
+    {
+      "split": "test",
+      "source": "nih_cxr14",
+      "label": "Pneumonia",
+      "n": 48,
+      "rejected": 7
+    },
+    {
+      "split": "test",
+      "source": "nih_cxr14",
+      "label": "Pulmonary Nodule / Mass",
+      "n": 449,
+      "rejected": 37
+    },
+    {
+      "split": "test",
+      "source": "shenzhen",
+      "label": "Normal",
+      "n": 49,
+      "rejected": 2
+    },
+    {
+      "split": "test",
+      "source": "shenzhen",
+      "label": "Tuberculosis",
+      "n": 50,
+      "rejected": 0
+    },
+    {
+      "split": "test",
+      "source": "tbx11k",
+      "label": "Normal",
+      "n": 150,
+      "rejected": 7
+    },
+    {
+      "split": "test",
+      "source": "tbx11k",
+      "label": "Tuberculosis",
+      "n": 94,
+      "rejected": 12
+    }
+  ],
+  "total": {
+    "test": {
+      "n": 2350,
+      "rejected": 218
+    },
+    "external": {
+      "n": 138,
+      "rejected": 18
+    }
+  },
+  "reasons": {
+    "Invalid Radiograph": 236
+  }
+}

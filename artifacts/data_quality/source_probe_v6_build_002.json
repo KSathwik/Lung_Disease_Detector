@@ -1,0 +1,121 @@
+{
+  "generated_at": "2026-11-03T11:18:57+00:00",
+  "build": "v6_build_002",
+  "checkpoint": "runs\\v6r2_densenet121_seed42\\model.h5",
+  "n_train": 1952,
+  "n_test": 1033,
+  "train_by_source": {
+    "nih_cxr14": 600,
+    "cohen_covid": 302,
+    "kermany": 300,
+    "shenzhen": 300,
+    "tbx11k": 300,
+    "covid_radiography": 150
+  },
+  "test_by_source": {
+    "nih_cxr14": 348,
+    "tbx11k": 194,
+    "kermany": 181,
+    "cohen_covid": 111,
+    "covid_radiography": 100,
+    "shenzhen": 99
+  },
+  "imagenet": {
+    "all": {
+      "n": 1033,
+      "n_sources": 6,
+      "balanced_accuracy": 0.937811343016743,
+      "chance": 0.16666666666666666
+    },
+    "within:COVID-19": {
+      "n": 177,
+      "sources": [
+        "cohen_covid",
+        "covid_radiography"
+      ],
+      "balanced_accuracy": 0.890064935064935,
+      "chance": 0.5
+    },
+    "within:Normal": {
+      "n": 334,
+      "sources": [
+        "cohen_covid",
+        "kermany",
+        "nih_cxr14",
+        "shenzhen",
+        "tbx11k"
+      ],
+      "balanced_accuracy": 0.9720418241370623,
+      "chance": 0.2
+    },
+    "within:Pneumonia": {
+      "n": 177,
+      "sources": [
+        "cohen_covid",
+        "kermany",
+        "nih_cxr14"
+      ],
+      "balanced_accuracy": 0.8908237547892721,
+      "chance": 0.3333333333333333
+    },
+    "within:Tuberculosis": {
+      "n": 145,
+      "sources": [
+        "cohen_covid",
+        "shenzhen",
+        "tbx11k"
+      ],
+      "balanced_accuracy": 0.9893617021276596,
+      "chance": 0.3333333333333333
+    }
+  },
+  "model": {
+    "all": {
+      "n": 1033,
+      "n_sources": 6,
+      "balanced_accuracy": 0.9380263571777223,
+      "chance": 0.16666666666666666
+    },
+    "within:COVID-19": {
+      "n": 177,
+      "sources": [
+        "cohen_covid",
+        "covid_radiography"
+      ],
+      "balanced_accuracy": 0.8915584415584416,
+      "chance": 0.5
+    },
+    "within:Normal": {
+      "n": 334,
+      "sources": [
+        "cohen_covid",
+        "kermany",
+        "nih_cxr14",
+        "shenzhen",
+        "tbx11k"
+      ],
+      "balanced_accuracy": 0.9740418241370623,
+      "chance": 0.2
+    },
+    "within:Pneumonia": {
+      "n": 177,
+      "sources": [
+        "cohen_covid",
+        "kermany",
+        "nih_cxr14"
+      ],
+      "balanced_accuracy": 0.8838793103448276,
+      "chance": 0.3333333333333333
+    },
+    "within:Tuberculosis": {
+      "n": 145,
+      "sources": [
+        "cohen_covid",
+        "shenzhen",
+        "tbx11k"
+      ],
+      "balanced_accuracy": 0.9893617021276596,
+      "chance": 0.3333333333333333
+    }
+  }
+}

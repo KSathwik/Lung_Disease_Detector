@@ -1,0 +1,104 @@
+{
+  "build": "v6_build_002",
+  "split": "val",
+  "n": 2348,
+  "stage1_rejected": 9,
+  "rule": "max(quantile threshold for target pass rate, highest stage-1-passing negative score + 0.01)",
+  "target_pass_rate": 0.98,
+  "threshold_from_quantile": 0.504,
+  "highest_negative_score_passing_stage1": 0.6922,
+  "heuristic_threshold": 0.703,
+  "val_pass_rate_by_threshold": {
+    "0.5": 0.977,
+    "0.52": 0.974,
+    "0.54": 0.9723,
+    "0.56": 0.9702,
+    "0.58": 0.9672,
+    "0.6": 0.9638,
+    "0.62": 0.96,
+    "0.64": 0.9561,
+    "0.66": 0.9442,
+    "0.68": 0.9327,
+    "0.7": 0.9118,
+    "0.72": 0.8893,
+    "0.74": 0.8475,
+    "0.76": 0.7824,
+    "0.78": 0.7006,
+    "0.8": 0.5843,
+    "0.82": 0.4557,
+    "0.84": 0.3177
+  },
+  "val_pass_rate_at_threshold": 0.9101362862010222,
+  "val_pass_rate_at_0.83": 0.38671209540034074,
+  "val_score_quantiles": {
+    "0.01": 0.4338,
+    "0.02": 0.5045,
+    "0.05": 0.6571,
+    "0.25": 0.7694,
+    "0.5": 0.8134,
+    "0.75": 0.85
+  },
+  "by_source": {
+    "cohen_covid": {
+      "n": 94,
+      "pass_at_threshold": 0.8936
+    },
+    "covid_radiography": {
+      "n": 384,
+      "pass_at_threshold": 0.8203
+    },
+    "kermany": {
+      "n": 397,
+      "pass_at_threshold": 0.9673
+    },
+    "nih_cxr14": {
+      "n": 1128,
+      "pass_at_threshold": 0.9167
+    },
+    "shenzhen": {
+      "n": 100,
+      "pass_at_threshold": 0.99
+    },
+    "tbx11k": {
+      "n": 245,
+      "pass_at_threshold": 0.902
+    }
+  },
+  "synthetic_negatives": {
+    "car_color": {
+      "stage1_pass": false,
+      "score": 0.5769,
+      "rejected_at_threshold": true
+    },
+    "car_grayscale": {
+      "stage1_pass": true,
+      "score": 0.5769,
+      "rejected_at_threshold": true
+    },
+    "dog": {
+      "stage1_pass": false,
+      "score": 0.6035,
+      "rejected_at_threshold": true
+    },
+    "selfie": {
+      "stage1_pass": true,
+      "score": 0.5585,
+      "rejected_at_threshold": true
+    },
+    "landscape": {
+      "stage1_pass": false,
+      "score": 0.5941,
+      "rejected_at_threshold": true
+    },
+    "screenshot": {
+      "stage1_pass": false,
+      "score": 0.5056,
+      "rejected_at_threshold": true
+    },
+    "ct": {
+      "stage1_pass": true,
+      "score": 0.6922,
+      "rejected_at_threshold": true
+    }
+  }
+}

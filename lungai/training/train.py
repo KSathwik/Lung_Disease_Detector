@@ -33,10 +33,11 @@ import pandas as pd
 
 from lungai import __version__
 from lungai.config import (
-    CLASS_NAMES, CLASS_TO_INDEX, CONFIG, DATASET, MODEL_ID, NUM_CLASSES, REPO_ROOT, TRAINING, data_root,
+    CLASS_NAMES, CLASS_TO_INDEX, CONFIG, DATASET_V5, MODEL_ID, NUM_CLASSES, REPO_ROOT, TRAINING, data_root,
     manifest_path, sha256_file,
 )
 from lungai.data.manifest import load_manifest, resolve_image_path, split_frame
+from lungai.data.v6 import split_fingerprint
 
 logger = logging.getLogger("lungai.training")
 RUNS_DIR = REPO_ROOT / "runs"
@@ -182,7 +183,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     root = args.data_root.resolve() if args.data_root else data_root()
     train_df, val_df = resolve_split("train", root), resolve_split("val", root)
     weights = class_weights(train_df["clinical_label"])
-    logger.info("manifest %s: train=%d val=%d; class weights %s", DATASET["version"], len(train_df), len(val_df),
+    logger.info("manifest %s: train=%d val=%d; class weights %s", DATASET_V5["version"], len(train_df), len(val_df),
                 {CLASS_NAMES[k]: round(v, 4) for k, v in weights.items()})
     try:
         check_images(train_df, "train")
@@ -206,7 +207,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "model_id": MODEL_ID, "run_name": run_name, "started_at": started,
         "finished_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "git_commit": git_commit(), "lungai_version": __version__,
-        "manifest": DATASET["manifest"], "manifest_sha256_lf": sha256_file(manifest_path(), normalize_newlines=True),
+        "manifest": DATASET_V5["manifest"], "manifest_sha256_lf": sha256_file(manifest_path(), normalize_newlines=True),
+        "split_fingerprint": split_fingerprint(load_manifest()),
         "environment": {"python": platform.python_version(), "tensorflow": tf.__version__, "numpy": np.__version__,
                         "platform": platform.platform(), "gpus": [d.name for d in tf.config.list_physical_devices("GPU")]},
         "nondeterminism": "GPU kernels and threaded data loading can make runs differ slightly even with fixed seeds.",

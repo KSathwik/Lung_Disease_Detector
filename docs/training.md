@@ -1,8 +1,34 @@
 # Training
 
-Canonical entry point: [`lungai/training/train.py`](../lungai/training/train.py). The settings come from `training`, `augmentation` and `preprocessing` in [`lungai/configs/lungai_densenet121.json`](../lungai/configs/lungai_densenet121.json).
+Canonical entry point: [`lungai/training/train_v6.py`](../lungai/training/train_v6.py), on a V6 build. The settings come from `training`, `augmentation` and `preprocessing` in [`lungai/configs/lungai_densenet121.json`](../lungai/configs/lungai_densenet121.json).
 
-## Commands
+## V6 trainer
+
+```bash
+python scripts/data/build_v6_manifest.py --raw-root data/raw --out data/derived/<build> --sources <ids...>
+python -m lungai.training.train_v6 --build data/derived/<build> --run-name <run> [--max-hours H] [--phase2-epochs N] [--patience 3]
+```
+
+1. Reads `manifest_v6.csv` from the build and the cached 224×224 images the builder made with `lungai.preprocessing` (the same code the backend uses, so training and serving see identical pixels). Fails if any cached image is missing.
+2. Computes balanced class weights from the training split.
+3. **Phase 1 (head):** 2 epochs, backbone frozen, Adam lr 1e-3. **Phase 2 (fine-tune):** last 30 backbone layers trainable, Adam lr 1e-5, up to `--phase2-epochs` (default 8). Batch 32, sample-weighted sparse cross-entropy, flip and ±10° rotation augmentation.
+4. After every epoch: validation pass, then save `model.h5` if validation macro-F1 is the best so far (tie: macro ROC-AUC); always save `last.weights.h5` and `state.json`.
+5. Stops on early stopping (3 fine-tune epochs without gain), at the end of the schedule, or when `--max-hours` is used up.
+6. Writes `runs/<run>/run_metadata.json`: git commit, build and manifest hash, split fingerprint, library versions, per-epoch history, selected epoch, class weights, checkpoint SHA-256.
+
+Never used by training: `test` or the external cohort. Re-running the same command resumes after the last completed epoch (weights restored; optimiser moments restart, which is recorded in `resumed_from`).
+
+Inference inside the trainer and evaluator runs as one compiled TensorFlow graph with a fixed batch shape. Eager model calls on CPU took minutes per batch and exhausted memory on the 8 GB training laptop; that stalled the first two overnight attempts at their first validation pass.
+
+**Measured cost** (8,054 training images, laptop CPU): about 13–14 minutes per epoch including validation. The per-epoch times of the current checkpoint are in [results/current_model.md](results/current_model.md#training).
+
+`scripts/pipeline/run_overnight.py` chains download wait, extraction, build, training and evaluation, records each stage in `artifacts/execution_state.json`, and continues from the last completed stage when restarted.
+
+## V5 trainer (historical)
+
+[`lungai/training/train.py`](../lungai/training/train.py) trains on the V5 manifest (`dataset_v5_historical` in the config). It is kept to document the V5 protocol; its images are not available here.
+
+### Commands
 
 ```bash
 export LUNGAI_DATA_ROOT=/path/to/folder-with-data   # contains data/raw and data/downloads
@@ -12,7 +38,7 @@ python -m lungai.training.train --run-name densenet121_v5_seed42
 
 `--dry-run` and training both exit with code 2 and list the problem if any train or val image is missing.
 
-## What it does
+### What it does
 
 1. Loads the manifest and verifies its checksum.
 2. Resolves the train and val image paths, and fails on any missing file.
@@ -27,7 +53,7 @@ python -m lungai.training.train --run-name densenet121_v5_seed42
 
 Never used by training: `test`, the external cohort, or an existing checkpoint. The run folder must not already exist.
 
-## Reproducibility
+### Reproducibility
 
 - **Seeds:** Python, NumPy and TensorFlow are seeded with 42, and `PYTHONHASHSEED` is set.
 - **Augmentation:** draws come from one seeded `numpy.random.Generator` and are made sequentially, so they are reproducible.
@@ -38,7 +64,7 @@ Never used by training: `test`, the external cohort, or an existing checkpoint. 
 
   Expect small run-to-run differences. Record several seeds before comparing variants.
 
-## Compute and cost (estimate, not measured in this branch)
+### Compute and cost (estimate, not measured in this branch)
 
 | Item | Estimate |
 |---|---|
@@ -48,9 +74,9 @@ Never used by training: `test`, the external cohort, or an existing checkpoint. 
 | CPU only | Several hours per run |
 | Storage | ≈30 MB per checkpoint, plus a few MB of metadata |
 
-**Retraining has not been run on this branch.** The images are not available here, and retraining needs explicit approval.
+The V5 images are not available here, so this trainer has not been run on this branch.
 
-## Relationship to the recorded checkpoint
+### Relationship to the recorded checkpoint
 
 The recorded v5.0 checkpoint came from `experiments/train_densenet_frequency_v5.py`. It used the same architecture, preprocessing, loss, weights, schedule and seed. It differed from the canonical trainer in four ways:
 

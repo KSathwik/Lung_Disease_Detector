@@ -7,6 +7,7 @@ loaded, the engine reports "not ready" and every prediction request fails with 5
 """
 
 import os
+import json
 import base64
 import logging
 from pathlib import Path
@@ -18,7 +19,8 @@ import tensorflow as tf
 from tensorflow import keras
 
 from lungai.config import (
-    CHECKPOINT_FILENAME, CLASS_NAMES, INFERENCE, MODEL, MODEL_DISPLAY_NAME, MODEL_ID, MODEL_VERSION, model_identity,
+    CHECKPOINT_FILENAME, CHECKPOINT_SHA256, CLASS_NAMES, INFERENCE, MODEL, MODEL_DISPLAY_NAME, MODEL_ID, MODEL_VERSION,
+    REPO_ROOT, model_identity,
 )
 from lungai.models.densenet import CheckpointError, load_checkpoint
 from ml.preprocessing import ImagePreprocessor, PRECAUTIONS_MAP
@@ -30,13 +32,35 @@ logger = logging.getLogger(__name__)
 # Not clinically validated: it only stops near-uniform outputs (chance = 1/6) being shown as findings.
 CONFIDENCE_FLOOR = float(os.getenv("CONFIDENCE_FLOOR", str(INFERENCE["confidence_floor"])))
 
-EXTERNAL_LIMITATION = (
-    "Research model, not validated for clinical use. Recorded results: 82.93% accuracy on the internal V5 test split, "
-    "which shares patients with the training split for two sources. On the external Montgomery County cohort "
-    "(138 film-digitized scans) it labelled every image abnormal: 0/58 tuberculosis scans were classified as "
-    "Tuberculosis and 0/80 normal scans as Normal (specificity 0%). Predictions on images from new hospitals or "
-    "scanners are not reliable. Scores are uncalibrated softmax outputs, not probabilities of disease."
+METRICS_FILE = REPO_ROOT / "artifacts" / "evaluation_reports" / "model_metrics.json"
+_GENERIC_LIMITATION = (
+    "Research model, not validated for clinical use. Predictions on images from new hospitals or scanners are not "
+    "reliable. Scores are uncalibrated softmax outputs, not probabilities of disease."
 )
+
+
+def external_limitation(metrics_file: Path = METRICS_FILE) -> str:
+    """Limitation notice returned with every prediction, built from the generated metrics of the configured checkpoint."""
+    try:
+        r = json.loads(metrics_file.read_text(encoding="utf-8"))
+        if r["canonical_model"]["checkpoint_sha256"] != CHECKPOINT_SHA256:
+            return _GENERIC_LIMITATION
+        m, e = r["internal_test"]["metrics"], r["external"]
+        sens, spec = e["binary_abnormality"]["sensitivity"], e["binary_abnormality"]["specificity"]
+        tb = e["exact_tuberculosis_recall"]
+    except (OSError, ValueError, KeyError):
+        return _GENERIC_LIMITATION
+    return (
+        f"Research model, not validated for clinical use. Internal {r['dataset_version']} test split: "
+        f"{m['accuracy']:.1%} accuracy, macro F1 {m['macro_f1']:.1%} (N={r['internal_test']['n']}). "
+        f"On the external Montgomery County cohort ({e['n']} scans from a hospital not used in training) it flagged "
+        f"{sens['successes']}/{sens['n']} tuberculosis scans as abnormal but called only {tb['successes']}/{tb['n']} "
+        f"Tuberculosis, and called {spec['successes']}/{spec['n']} normal scans Normal. Predictions on images from new "
+        "hospitals or scanners are not reliable. Scores are uncalibrated softmax outputs, not probabilities of disease."
+    )
+
+
+EXTERNAL_LIMITATION = external_limitation()
 
 
 class ModelNotLoadedError(RuntimeError):

@@ -3,7 +3,7 @@
   "model": {
     "model_id": "lungai-densenet121-6class",
     "display_name": "LungAI DenseNet-121 — Six-Class Chest X-Ray Classifier",
-    "version": "v5.0",
+    "version": "v6.1",
     "architecture": "DenseNet-121 backbone + GAP + BatchNorm + Dense(256, ReLU) + Dropout(0.3) + Dense(6, softmax)",
     "backbone": "tensorflow.keras.applications.DenseNet121",
     "pretrained_weights": "imagenet (Keras Applications release weights, downloaded by Keras on first build)",
@@ -21,12 +21,20 @@
     },
     "head": {"dense_units": 256, "dropout": 0.3},
     "checkpoint": {
-      "filename": "densenet121_frequency_v5.h5",
+      "filename": "densenet121_v6r2_seed42.h5",
       "format": "Keras HDF5",
-      "sha256": "e2c95dc5eba588f877280948593f2965442d9950aa891ed5765eaf0117889022",
-      "sha256_source": "docs/archive/historical_audits/END_TO_END_APPLICATION_TEST_REPORT.md (recorded 2026, not re-verifiable: file not in repository)",
-      "availability": "NOT IN REPOSITORY. Place the file in models/ (or set MODELS_DIR). The backend refuses a file whose SHA-256 differs unless LUNGAI_ALLOW_UNVERIFIED_CHECKPOINT=true."
-    }
+      "sha256": "7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6",
+      "sha256_source": "runs/v6r2_densenet121_seed42/run_metadata.json (checkpoint_sha256), written by lungai.training.train_v6",
+      "produced_by": "python -m lungai.training.train_v6 --build data/derived/v6_build_002 --run-name v6r2_densenet121_seed42 --phase2-epochs 14",
+      "selection": "chosen over run 1 by the pre-registered rule in docs/data/run_selection_protocol.md (artifacts/evaluation_reports/run_comparison.json)",
+      "availability": "NOT IN REPOSITORY (*.h5 is gitignored; 28.7 MB). Install with scripts/install_checkpoint.py into models/ (or set MODELS_DIR). The backend refuses a file whose SHA-256 differs unless LUNGAI_ALLOW_UNVERIFIED_CHECKPOINT=true."
+    },
+    "historical_checkpoints": [
+      {"version": "v6.0", "filename": "densenet121_v6_seed42.h5", "sha256": "c51ed228455c2aab93b4b0220ee721443c3c0486eea961a242829ce68ee6c0e6",
+       "dataset_version": "V6 (v6_build_001)", "status": "superseded by v6.1 on 2026-11-03 (run comparison); file in runs/v6_densenet121_seed42/model.h5, evaluation in artifacts/evaluation_reports/v6_*"},
+      {"version": "v5.0", "filename": "densenet121_frequency_v5.h5", "sha256": "e2c95dc5eba588f877280948593f2965442d9950aa891ed5765eaf0117889022",
+       "dataset_version": "V5", "status": "lost (not in repository; SHA-256 recorded in docs/archive/historical_audits/END_TO_END_APPLICATION_TEST_REPORT.md)"}
+    ]
   },
   "classes": [
     {"index": 0, "id": "covid19", "name": "COVID-19"},
@@ -70,6 +78,23 @@
     }
   },
   "dataset": {
+    "version": "V6",
+    "build": "data/derived/v6_build_002",
+    "manifest": "data/derived/v6_build_002/manifest_v6.csv",
+    "build_report": "data/derived/v6_build_002/v6_build_report.json",
+    "rules": "lungai/configs/dataset_v6_proposal.json",
+    "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+    "label_column": "lungai_label",
+    "split_column": "split",
+    "splits": {
+      "train": {"purpose": "Learn model parameters", "permitted_use": "Gradient updates"},
+      "val": {"purpose": "Select checkpoints", "permitted_use": "Model selection"},
+      "test": {"purpose": "Final internal evaluation", "permitted_use": "Report once; never tune on it"},
+      "external": {"purpose": "Montgomery County (NLM), independent hospital", "permitted_use": "Report once; never train or select on it"}
+    },
+    "note": "Built from official sources by scripts/data/build_v6_manifest.py; the build folder is gitignored (raw images are not redistributable)."
+  },
+  "dataset_v5_historical": {
     "version": "V5",
     "manifest": "data/manifests/unified_manifest_v5.csv",
     "manifest_sha256_lf": "8117a441d5d200e781df0af33685cde32c6c7a24a5e30d73f5744ec592702e26",
@@ -105,6 +130,11 @@
   "inference": {
     "confidence_floor": 0.5,
     "confidence_floor_note": "Top-class softmax below this is reported as inconclusive. Not clinically validated; softmax is uncalibrated.",
-    "max_upload_bytes": 10485760
+    "max_upload_bytes": 10485760,
+    "cxr_gate": {
+      "model_threshold": 0.83,
+      "heuristic_threshold": 0.703,
+      "heuristic_threshold_source": "scripts/data/calibrate_cxr_gate.py on v6_build_002 validation radiographs (artifacts/app_checks/cxr_gate_calibration_v6_build_002.json): lowest threshold that still rejects every available non-radiograph test image (highest stage-1-passing negative 0.692 + 0.01); passes 91.0% of validation radiographs (38.7% at 0.83). The negatives are synthetic, so rejection of real non-radiographs is not established."
+    }
   }
 }

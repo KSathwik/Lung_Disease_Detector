@@ -31,8 +31,14 @@ def _grep(files, pattern):
     return hits
 
 
+# Manuscripts, the dissertation, slides and venue notes review other authors' models (ResNet, CNN, ...) on purpose;
+# they are still covered by test_unsupported_claims_absent_from_active_docs.
+LITERATURE_DOCS = re.compile(r"^docs/(manuscripts|thesis|presentation|publication)/")
+
+
 def test_no_competing_model_names_in_active_code_or_docs():
-    files = _tracked(ACTIVE_CODE + ACTIVE_DOCS, (".py", ".js", ".md", ".json"))
+    files = [f for f in _tracked(ACTIVE_CODE + ACTIVE_DOCS, (".py", ".js", ".md", ".json"))
+             if not LITERATURE_DOCS.search(f.relative_to(REPO_ROOT).as_posix())]
     assert not _grep(files, r"\bModel [A-E]\b|Final Model|Best Model|Latest Model|ResNet|\bCNN\b"), "ambiguous model names"
 
 

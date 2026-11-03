@@ -1,0 +1,127 @@
+%% =====================================================================
+%% Journal manuscript for Biomedical Signal Processing and Control (Elsevier)
+%% Review (preprint) format, elsarticle class. Compile on Overleaf with
+%% pdfLaTeX + BibTeX (see README.md in this folder).
+%%
+%% All model-result numbers come from ../shared/results_macros.tex, which is
+%% regenerated from the final model (python -m lungai.evaluation.render_docs).
+%% Never type a model-result number by hand. Result-dependent interpretation
+%% is marked with \pending{...}. The final model is fixed (run 2, v6.1,
+%% chosen on the common validation set); as of 2026-11-03 the only remaining
+%% \pending items are the seed-variability runs (runs 3-4, \RMS... macros)
+%% and the preprocessing ablation (run 5, \RAbl... macros).
+%%
+%% ---------------------------------------------------------------------
+%% PLANNED EXTENSIONS: STATUS (updated 2026-11-03 evening)
+%% ---------------------------------------------------------------------
+%% DONE (results in the manuscript):
+%%  - Source-identifiability probe: logistic regression on frozen 1024-d GAP
+%%    features (ImageNet and trained backbone), overall and within class
+%%    (lungai/evaluation/source_probe.py ->
+%%    artifacts/data_quality/source_probe_v6_build_002.json; Sec. 4, 6).
+%%  - Per-source analysis of the internal test split (Table tab:persource).
+%%  - Run 1 vs run 2 on the common selection set with exact McNemar test
+%%    (descriptive) and the shared-sources-only restriction.
+%%
+%% RUNNING (results expected 2026-11-04; keep \pending until then):
+%%  - Seeds 43 and 44 of the selected configuration (runs 3-4), reported with
+%%    run 2 as mean +/- SD (3 runs only) -> Sec. "Seed variability".
+%%  - No-filter preprocessing ablation, seed 42 (run 5) -> Sec.
+%%    "Preprocessing ablation". Only full chain vs no filters; no single-
+%%    filter or canonical-size-first variants.
+%%
+%% NOT DONE (do not claim; do before submission or keep as limitations):
+%%  1. A second backbone (e.g. ResNet-50, EfficientNet-B0) under the
+%%     identical leakage-controlled protocol.
+%%  2. Statistical comparison beyond McNemar on the common set: DeLong or
+%%     paired bootstrap for ROC-AUC differences; seed-based comparison of
+%%     runs (3 seeds of one configuration are not enough for this).
+%%  3. A second external cohort with more than two classes (e.g. VinDr-CXR,
+%%     PadChest, or a local hospital set with ethics approval).
+%%  4. Quantitative evaluation of the CXR input gate on real non-radiograph
+%%     images (threshold 0.703 checked with synthetic negatives only).
+%%  5. Post-hoc calibration (temperature scaling fitted on validation) and a
+%%     validated "inconclusive" threshold.
+%%  6. Public code release (repository URL) and CLAIM / TRIPOD+AI
+%%     checklists as supplementary material.
+%%  Also not done: leave-one-source-out training or lung-masked inference
+%%  (a causal test of the source shortcut); finer preprocessing ablation.
+%% =====================================================================
+
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{lineno}
+
+\newcommand{\pending}[1]{\textcolor{red}{[PENDING FINAL RESULTS: #1]}}
+\newcommand{\confirm}[1]{\textcolor{blue}{[AUTHORS TO CONFIRM: #1]}}
+% Use \protect\pending / \protect\confirm inside captions and other moving arguments.
+
+\input{../shared/results_macros.tex}
+
+\graphicspath{{../../figures/}}
+
+\journal{Biomedical Signal Processing and Control}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Internal accuracy is not generalisation: an auditable, leakage-controlled six-class chest radiograph benchmark from public sources with external and per-source evaluation}
+
+%% Author order confirmed by the project owner. Corresponding author: [TO BE CONFIRMED] (the \corref below is a placeholder until it is chosen).
+\author[kuce]{Katkam Sathwik\corref{cor1}}
+\ead{[TO BE PROVIDED]}
+\author[kuce]{Nagavelli Ramana}
+\author[jntuhm]{P. Tirupathi}
+\author[srit]{K. Srinivas}
+
+\cortext[cor1]{Corresponding author: [TO BE CONFIRMED]. Contributions must be verified and all authors must approve before submission [AUTHORS TO CONFIRM].}
+
+\affiliation[kuce]{organization={Department of Computer Science and Engineering, Kakatiya University College of Engineering and Technology (KUCE\&T), Kakatiya University},
+            city={Warangal},
+            state={Telangana},
+            country={India}}
+\affiliation[jntuhm]{organization={Department of Computer Science and Engineering, JNTUH University College of Engineering Manthani},
+            city={Manthani},
+            state={Telangana},
+            country={India}}
+\affiliation[srit]{organization={Department of Computer Science and Engineering, Swathi Reddy Institute of Technology for Women},
+            city={Warangal},
+            state={Telangana},
+            country={India}}
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\begin{keyword}
+Chest radiograph \sep Deep learning \sep Data leakage \sep Shortcut learning \sep External validation \sep Dataset construction \sep DenseNet-121 \sep Contrast-limited adaptive histogram equalisation
+\end{keyword}
+
+\end{frontmatter}
+
+\linenumbers
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_materials}
+\input{sections/04_methods}
+\input{sections/05_experimental_design}
+\input{sections/06_results}
+\input{sections/07_discussion}
+\input{sections/08_conclusion}
+
+\input{declarations}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{../shared/references}
+
+\end{document}

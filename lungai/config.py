@@ -76,7 +76,8 @@ CHECKPOINT_SHA256: str = MODEL["checkpoint"]["sha256"].lower()
 PREPROCESSING = CONFIG["preprocessing"]
 AUGMENTATION = CONFIG["augmentation"]
 TRAINING = CONFIG["training"]
-DATASET = CONFIG["dataset"]
+DATASET = CONFIG["dataset"]  # V6: the dataset of the current checkpoint
+DATASET_V5 = CONFIG["dataset_v5_historical"]  # used only by the V5 reproduction tools (train/evaluate/validate/manifest)
 EXTERNAL_COHORT = CONFIG["external_cohort"]
 EVALUATION = CONFIG["evaluation"]
 INFERENCE = CONFIG["inference"]
@@ -98,12 +99,13 @@ def model_identity() -> Dict[str, Any]:
 
 
 def manifest_path() -> Path:
-    return REPO_ROOT / DATASET["manifest"]
+    """The V5 manifest (V6 builds carry their own manifest_v6.csv)."""
+    return REPO_ROOT / DATASET_V5["manifest"]
 
 
 def data_root() -> Path:
-    """Folder that manifest image paths are relative to (env LUNGAI_DATA_ROOT, default repo root)."""
-    env = os.getenv(DATASET["data_root_env"])
+    """Folder that V5 manifest image paths are relative to (env LUNGAI_DATA_ROOT, default repo root)."""
+    env = os.getenv(DATASET_V5["data_root_env"])
     return Path(env).expanduser().resolve() if env else REPO_ROOT
 
 

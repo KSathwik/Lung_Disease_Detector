@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { getModelMetrics } from "../services/api";
-import { summarizeRecordedMetrics } from "../services/metrics";
+import { summarizeModelMetrics } from "../services/metrics";
 
 const pct = (v) => (v === undefined || v === null ? "—" : `${(v * 100).toFixed(1)}%`);
 const ci = (c) => (c && c.lower !== null && c.lower !== undefined ? `${pct(c.lower)}–${pct(c.upper)}` : "");
@@ -23,7 +23,7 @@ export default function MetricsPage() {
 
   let summary;
   try {
-    summary = summarizeRecordedMetrics(data);
+    summary = summarizeModelMetrics(data);
   } catch (e) {
     return <div className="page"><div className="alert-error">{e.message}</div></div>;
   }
@@ -31,13 +31,14 @@ export default function MetricsPage() {
     <div className="page">
       <div className="page-header">
         <h1 className="page-title">Model Performance</h1>
-        <p className="page-subtitle">No recorded evaluation results are available on this server.</p>
+        <p className="page-subtitle">No evaluation results are available on this server.</p>
       </div>
       <div className="card"><p style={{color:"var(--color-text-secondary)"}}>{data?.message}</p></div>
     </div>
   );
 
-  const { model, internal, perClass, external } = summary;
+  const { model, internal, perClass, external, validation, historical } = summary;
+  const accent = summary.reproduced && summary.matchesConfiguredCheckpoint ? "#1D9E75" : "#D97706";
   const perClassChart = perClass.map(r => ({
     name: r.name.replace("Pulmonary Nodule / Mass", "Nodule / Mass"),
     Precision: +(r.precision * 100).toFixed(1),
@@ -50,14 +51,27 @@ export default function MetricsPage() {
       <div className="page-header">
         <h1 className="page-title">Model Performance & Evaluation</h1>
         <p className="page-subtitle">
-          Recorded evaluation of <strong style={{color:"#7C3AED"}}>{model.display_name}</strong> ({model.version}),
+          Evaluation of <strong style={{color:"#7C3AED"}}>{model.display_name}</strong> ({model.version}),
           dataset {summary.datasetVersion}.
         </p>
       </div>
 
-      <div className="card" style={{ borderLeft: "4px solid #D97706", backgroundColor: "rgba(217, 119, 6, 0.04)" }}>
-        <p style={{ fontWeight: 700, color: "#D97706", fontSize: "14px", margin: "0 0 4px 0" }}>Evidence level: recorded, not reproduced</p>
+      <div className="card" style={{ borderLeft: `4px solid ${accent}` }}>
+        <p style={{ fontWeight: 700, color: accent, fontSize: "14px", margin: "0 0 4px 0" }}>
+          Evidence level: {summary.reproduced ? "computed from per-image predictions of this checkpoint" : "recorded, not reproduced"}
+        </p>
         <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.5", margin: 0 }}>{summary.evidenceLevel}</p>
+        {!summary.matchesConfiguredCheckpoint && (
+          <p style={{ fontSize: "12.5px", color: "#D97706", lineHeight: "1.5", margin: "6px 0 0 0" }}>
+            These results belong to a different checkpoint from the one this server is configured to load.
+          </p>
+        )}
+        {validation && (
+          <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.5", margin: "6px 0 0 0" }}>
+            Checkpoint chosen on the validation split (epoch {validation.selected_epoch} of {validation.epochs_trained};
+            validation macro F1 {pct(validation.macro_f1)}). The test split and the external cohort were each evaluated once, afterwards.
+          </p>
+        )}
         {data.model_loaded === false && (
           <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.5", margin: "6px 0 0 0" }}>
             The checkpoint is not loaded on this server, so the Analyze page cannot produce predictions.
@@ -69,7 +83,7 @@ export default function MetricsPage() {
         {internal.map(m => (
           <div key={m.label} className="metric-card">
             <p className="metric-label">{m.label}</p>
-            <span className="metric-number">{m.format === "ratio" ? (m.value ?? "—") : pct(m.value)}</span>
+            <span className="metric-number">{m.format === "ratio" ? (m.value === undefined || m.value === null ? "—" : m.value.toFixed(3)) : pct(m.value)}</span>
             {m.ci && <p style={{ fontSize: "11.5px", color: "var(--text-muted)", margin: "2px 0 0 0" }}>95% CI {ci(m.ci)}</p>}
             {m.note && <p style={{ fontSize: "11.5px", color: "var(--text-muted)", margin: "2px 0 0 0" }}>{m.note}</p>}
           </div>
@@ -100,6 +114,7 @@ export default function MetricsPage() {
                 <th style={{ padding: "8px 12px" }}>Recall (95% CI)</th>
                 <th style={{ padding: "8px 12px" }}>Specificity</th>
                 <th style={{ padding: "8px 12px" }}>F1</th>
+                <th style={{ padding: "8px 12px" }}>ROC-AUC</th>
               </tr>
             </thead>
             <tbody>
@@ -111,6 +126,7 @@ export default function MetricsPage() {
                   <td style={{ padding: "8px 12px" }}>{pct(r.recall)} ({ci(r.recallCi)})</td>
                   <td style={{ padding: "8px 12px" }}>{pct(r.specificity)}</td>
                   <td style={{ padding: "8px 12px", fontWeight: 600 }}>{pct(r.f1)}</td>
+                  <td style={{ padding: "8px 12px" }}>{r.rocAuc === undefined || r.rocAuc === null ? "—" : r.rocAuc.toFixed(3)}</td>
                 </tr>
               ))}
             </tbody>
@@ -130,7 +146,22 @@ export default function MetricsPage() {
               </div>
             ))}
           </div>
-          <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: 1.5, margin: "8px 0 0 0" }}>{external.interpretation}</p>
+          <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: 1.5, margin: "8px 0 0 0" }}>
+            {external.interpretation}
+            {external.rocAuc !== null && ` ROC-AUC of P(abnormal): ${external.rocAuc.toFixed(3)}.`}
+          </p>
+        </div>
+      )}
+
+      {historical && (
+        <div className="card" style={{ borderLeft: "4px solid var(--border-color)" }}>
+          <p className="section-label">History: previous model {historical.version} (dataset {historical.datasetVersion})</p>
+          <p style={{ fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: 1.5, margin: "4px 0 0 0" }}>
+            Internal test accuracy {pct(historical.accuracy)}, macro F1 {pct(historical.macroF1)} (N={historical.n});
+            external sensitivity {historical.externalSensitivity?.successes}/{historical.externalSensitivity?.n},
+            specificity {historical.externalSpecificity?.successes}/{historical.externalSpecificity?.n}.
+          </p>
+          <p style={{ fontSize: "12.5px", color: "var(--text-muted)", lineHeight: 1.5, margin: "4px 0 0 0" }}>{historical.note}</p>
         </div>
       )}
     </div>

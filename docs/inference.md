@@ -2,14 +2,16 @@
 
 ## Installing the checkpoint
 
-The checkpoint `densenet121_frequency_v5.h5` is not in the repository and has no public release. If you have a copy:
+The checkpoint is not in the repository (`*.h5` is gitignored) and has no public release. It is produced by `lungai.training.train_v6`; install it from the run folder:
 
 ```bash
-python scripts/install_checkpoint.py --from /path/to/densenet121_frequency_v5.h5
+python scripts/install_checkpoint.py --from runs/<run>/model.h5
 python scripts/install_checkpoint.py --check
 ```
 
-The script copies the file to `models/` only if its SHA-256 equals `e2c95dc5eba588f877280948593f2965442d9950aa891ed5765eaf0117889022` (from the config). `MODELS_DIR` can point elsewhere. Docker expects the file at `/app/models/`.
+The script copies the file to `models/` under the configured name (`model.checkpoint.filename`) only if its SHA-256 equals `model.checkpoint.sha256` in [the config](../lungai/configs/lungai_densenet121.json). `MODELS_DIR` can point elsewhere. Docker expects the file at `/app/models/`. The previous v5.0 checkpoint is lost (`historical_checkpoints` in the config).
+
+The notice returned with every prediction (`external_generalization_limitation`) is built at start-up from `artifacts/evaluation_reports/model_metrics.json` when that file belongs to the configured checkpoint; otherwise a generic notice without numbers is returned.
 
 ## Loading rules (`backend/ml/inference.py`)
 

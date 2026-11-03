@@ -1,6 +1,7 @@
-"""Canonical evaluation entry point.
+"""V5 evaluation entry point (historical: reproduces the V5 protocol on data/manifests/unified_manifest_v5.csv).
+The current V6 model is evaluated with lungai.evaluation.evaluate_v6.
 
-Run the checkpoint on a split and save per-image predictions plus metrics:
+Run a checkpoint on a V5 split and save per-image predictions plus metrics:
 
     python -m lungai.evaluation.evaluate --split val  --checkpoint models/densenet121_frequency_v5.h5
     python -m lungai.evaluation.evaluate --split test --checkpoint models/densenet121_frequency_v5.h5 --final
@@ -31,10 +32,11 @@ import pandas as pd
 
 from lungai import __version__
 from lungai.config import (
-    CLASS_IDS, CLASS_NAMES, CLASS_TO_INDEX, DATASET, EVALUATION, EXTERNAL_COHORT, MODEL_DISPLAY_NAME, MODEL_ID,
+    CLASS_IDS, CLASS_NAMES, CLASS_TO_INDEX, DATASET_V5, EVALUATION, EXTERNAL_COHORT, MODEL_DISPLAY_NAME, MODEL_ID,
     MODEL_VERSION, NORMAL_CLASS, NUM_CLASSES, REPO_ROOT, data_root, manifest_path, sha256_file,
 )
 from lungai.data.manifest import load_manifest, resolve_image_path, split_frame
+from lungai.data.v6 import split_fingerprint
 from lungai.evaluation.metrics import (
     EvaluationInputError, binary_abnormality_report, multiclass_report, wilson_ci,
 )
@@ -185,9 +187,10 @@ def report_header(split: str, checkpoint_sha: str, checkpoint_name: Optional[str
         "model_version": MODEL_VERSION,
         "checkpoint_file": checkpoint_name,
         "checkpoint_sha256": checkpoint_sha,
-        "dataset_version": DATASET["version"] if split != "external" else EXTERNAL_COHORT["name"],
-        "manifest": DATASET["manifest"],
+        "dataset_version": DATASET_V5["version"] if split != "external" else EXTERNAL_COHORT["name"],
+        "manifest": DATASET_V5["manifest"],
         "manifest_sha256_lf": sha256_file(manifest_path(), normalize_newlines=True),
+        "split_fingerprint": split_fingerprint(load_manifest()),
         "split": split,
         "evaluated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "software": {"lungai": __version__, "python": platform.python_version(), "tensorflow": tf_version,

@@ -1,6 +1,6 @@
 """Canonical image preprocessing shared by training, evaluation and the backend.
 
-Reproduces, step for step, the preprocessing used to train the recorded v5.0
+Reproduces, step for step, the preprocessing used to train the v5.0 and v6.0
 checkpoint (``experiments/train_densenet_frequency_v5.py::preprocess_single_image``
 with the selected Gaussian sigma=1.0 filter). ``tests/ml/test_preprocessing.py``
 pins this against a frozen copy of that historical function.

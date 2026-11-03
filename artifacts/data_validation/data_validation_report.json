@@ -1,10 +1,11 @@
 {
   "report": "LungAI dataset validation",
-  "generated_at": "2026-11-02T16:11:56+00:00",
+  "generated_at": "2026-11-02T16:48:03+00:00",
   "lungai_version": "1.0.0",
   "dataset_version": "V5",
   "manifest": "data/manifests/unified_manifest_v5.csv",
   "manifest_sha256_lf": "8117a441d5d200e781df0af33685cde32c6c7a24a5e30d73f5744ec592702e26",
+  "split_fingerprint": "d05fb63d3282d2e9e01b96ac29cd3ee75ff94fb1d8d49a3d0e09d0987385dde9",
   "data_root_has_images": false,
   "class_order": [
     "COVID-19",

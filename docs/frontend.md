@@ -6,7 +6,7 @@ React 18 (Create React App), in `frontend/`. In development, `npm start` proxies
 |---|---|---|
 | Analyze (`pages/AnalyzePage.js`) | `POST /predict` | Shows the predicted class or "Inconclusive", the top score and six score bars, and Grad-CAM. Shows an error banner for 4xx/5xx/network failures, and a warning when `checkpoint_verified` is false |
 | History (`pages/HistoryPage.js`) | `/predictions`, `/predictions/{id}` | Shows the stored six-class scores, model and checkpoint hash |
-| Model Performance (`pages/MetricsPage.js`) | `/model-metrics` | Labelled as *recorded, not reproduced*. External sensitivity is always shown with specificity |
+| Model Performance (`pages/MetricsPage.js`) | `/model-metrics` | Shows the evidence level from the payload (computed from per-image predictions for V6), a warning if the metrics belong to another checkpoint, per-class ROC-AUC, the validation epoch used for selection, and the V5 record in a separate History card. External sensitivity is always shown with specificity |
 | Patients (`pages/PatientsPage.js`) | `/patients` | — |
 
 ## Rules the code enforces

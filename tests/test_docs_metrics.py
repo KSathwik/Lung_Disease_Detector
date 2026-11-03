@@ -42,15 +42,32 @@ def test_experiment_results_table_matches_record(record):
         assert f"{b['tp']}/{b['tp'] + b['fn']}" in doc
 
 
-def test_readme_and_model_card_quote_the_canonical_record(record):
+def test_v5_history_quotes_the_canonical_record(record):
     canon = next(e for e in record["entries"] if e["canonical"])
     m = canon["internal_test"]["recomputed"]
     b = canon["external"]["binary_abnormality"]
     for rel in ("README.md", "docs/model_card.md"):
         doc = _read(rel)
-        assert _pct(m["accuracy"]) in doc and _pct(m["macro_f1"]) in doc
+        assert _pct(m["accuracy"]) in doc
         assert f"{b['tn']}/{b['tn'] + b['fp']}" in doc, "specificity must be stated with sensitivity"
-        assert str(canon["internal_test"]["recorded_unverifiable"]["macro_roc_auc"]) in doc
+    card = _read("docs/model_card.md")
+    assert _pct(m["macro_f1"]) in card
+    assert str(canon["internal_test"]["recorded_unverifiable"]["macro_roc_auc"]) in card
+
+
+def test_generated_result_blocks_are_current():
+    """The results blocks in the docs equal what render_docs produces from the current generated artifacts."""
+    from lungai.evaluation import render_docs
+    if not render_docs.METRICS.is_file():
+        pytest.skip("no generated model_metrics.json")
+    r = render_docs.load()
+    if r["_run"] is None or r["_build"] is None:
+        pytest.skip("run metadata or build report not on this machine (both are gitignored)")
+    for rel, block in render_docs.TARGETS.items():
+        doc = _read(rel).replace("\r\n", "\n")
+        expected = render_docs.summary(r) if block == "summary" else render_docs.full(r)
+        assert f"<!-- BEGIN GENERATED: {block} -->\n{expected}\n<!-- END GENERATED: {block} -->" in doc, rel
+    assert render_docs.full(r) in _read("docs/results/current_model.md").replace("\r\n", "\n")
 
 
 def test_split_counts_in_docs_match_manifest():
@@ -58,7 +75,7 @@ def test_split_counts_in_docs_match_manifest():
     counts = counts_by_split(df)
     grouped = add_patient_groups(df)
     leaked = check_patient_leakage(df)["by_derived_patient_group"]["test_images_sharing_key_with_train"]
-    for rel in ("README.md", "docs/data_splits.md"):
+    for rel in ("docs/data_splits.md",):  # the V5 split description (README now describes V6)
         doc = _read(rel)
         for split, c in counts.items():
             groups = grouped[grouped["split"] == split]["patient_group"].nunique()

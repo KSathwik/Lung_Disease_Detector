@@ -1,20 +1,30 @@
 # Evaluation
 
-There are two entry points with different evidence levels:
-
 | Entry point | Input | Evidence level |
 |---|---|---|
-| `python -m lungai.evaluation.evaluate` | A checkpoint plus images, or a saved predictions CSV | **Reproduced**: metrics computed from per-image outputs |
-| `python -m lungai.evaluation.historical` | Aggregate result files in `experiments/` | **Recorded**: internal-consistency check only |
+| `python -m lungai.evaluation.evaluate_v6` | A checkpoint plus a V6 build (cached images) | **Reproduced**: metrics computed from per-image outputs. Current model |
+| `python -m lungai.evaluation.served_metrics` | The three V6 reports + `run_metadata.json` | Copies them into `model_metrics.json`, which `/api/v1/model-metrics` serves; refuses reports from different checkpoints |
+| `python -m lungai.evaluation.render_docs` | `model_metrics.json`, run metadata, build report | Writes the generated results blocks in the docs |
+| `python -m lungai.evaluation.evaluate` | A checkpoint plus V5 images, or a saved predictions CSV | Reproduced, V5 protocol (historical; V5 images not available here) |
+| `python -m lungai.evaluation.historical` | Aggregate result files in `experiments/` | **Recorded**: internal-consistency check of the V5 runs only |
 
-At present only the second can run, because there is no checkpoint and no image.
-
-## Canonical evaluation
+## Canonical evaluation (V6)
 
 ```bash
-python -m lungai.evaluation.evaluate --split val      --checkpoint models/densenet121_frequency_v5.h5
-python -m lungai.evaluation.evaluate --split test     --checkpoint models/densenet121_frequency_v5.h5 --final
-python -m lungai.evaluation.evaluate --split external --checkpoint models/densenet121_frequency_v5.h5 --final
+B=data/derived/<build>; C=runs/<run>/model.h5; R=artifacts/evaluation_reports
+python -m lungai.evaluation.evaluate_v6 --build $B --checkpoint $C --split val --out $R/<prefix>_val
+python -m lungai.evaluation.evaluate_v6 --build $B --checkpoint $C --split test --final --out $R/<prefix>_test
+python -m lungai.evaluation.evaluate_v6 --build $B --checkpoint $C --split external --final --out $R/<prefix>_external
+python -m lungai.evaluation.served_metrics --eval-prefix <prefix> --run runs/<run>
+python -m lungai.evaluation.render_docs
+```
+
+The rules below (once-only test and external, no silent exclusions, the metric definitions) apply to both the V6 and the V5 evaluators. Current results: [results/current_model.md](results/current_model.md).
+
+## V5 evaluator (historical)
+
+```bash
+python -m lungai.evaluation.evaluate --split test --checkpoint models/<v5 checkpoint>.h5 --final
 python -m lungai.evaluation.evaluate --predictions artifacts/evaluation_reports/<run>/predictions_test.csv
 ```
 
@@ -65,7 +75,7 @@ This is a **binary** assessment, separate from the six-class task, and six-class
 
 A sensitivity claim is never reported without its specificity.
 
-## Recorded results check
+## Recorded results check (V5 history)
 
 `python -m lungai.evaluation.historical` writes `artifacts/evaluation_reports/historical_record_verification.{json,md}`. For each of the five recorded V5 runs it does the following:
 
@@ -78,6 +88,5 @@ Result on this branch: 5 of 5 runs consistent, 0 mismatches (29 checks per run).
 
 ## Limitations
 
-- No per-image predictions exist for any recorded run, so ROC-AUC, PR-AUC, calibration and bootstrap CIs cannot be checked.
-- The internal test split is patient-leaked (154 images), so the internal metrics are optimistic.
-- Each run is a single seed.
+- **V6:** one training run (single seed), so run-to-run variation is not measured. The external cohort has only normal and TB scans, so it tests abnormal-vs-normal separation, not the six classes. See [limitations.md](limitations.md).
+- **V5 (recorded runs):** no per-image predictions exist, so ROC-AUC, PR-AUC, calibration and bootstrap CIs cannot be checked. The V5 internal test split is patient-leaked (154 images), so its internal metrics are optimistic.

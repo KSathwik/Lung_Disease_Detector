@@ -106,7 +106,7 @@ export default function HistoryPage() {
               <div className="history-left">
                 <p className="history-condition">{p.inconclusive ? `Inconclusive (top: ${p.final_condition})` : p.final_condition}</p>
                 <p className="history-meta">
-                  {p.selected_model} · {p.final_confidence.toFixed(1)}% top-class score · ID: {p.prediction_id.slice(0, 8)}
+                  {p.selected_model}{p.model_version ? ` ${p.model_version}` : ""} · {p.final_confidence.toFixed(1)}% top-class score · ID: {p.prediction_id.slice(0, 8)}
                 </p>
               </div>
               <div className="history-right">
@@ -159,6 +159,7 @@ export default function HistoryPage() {
                 </p>
                 <p style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
                   Model: <strong>{selectedPred.selected_model}</strong>
+                  {selectedPred.model_version && <> · version <strong>{selectedPred.model_version}</strong></>}
                 </p>
                 {selectedPred.model_sha256 && (
                   <p style={{ fontSize: "11.5px", color: "var(--text-muted)", marginTop: "4px", wordBreak: "break-all" }}>

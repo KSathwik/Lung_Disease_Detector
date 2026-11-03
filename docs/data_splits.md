@@ -1,4 +1,6 @@
-# Data splits — V5
+# Data splits — V5 (history)
+
+> This page documents the **V5** splits of the previous model. The current V6 splits are grouped by patient and checked in each build's `v6_build_report.json`; their counts and leakage checks are in [results/current_model.md](results/current_model.md#dataset-composition).
 
 All numbers on this page come from `python -m lungai.data.validate` ([report](../artifacts/data_validation/data_validation_report.md), [JSON](../artifacts/data_validation/data_validation_report.json)), run on the manifest. Image-level checks are **blocked** because the images are not in the repository.
 

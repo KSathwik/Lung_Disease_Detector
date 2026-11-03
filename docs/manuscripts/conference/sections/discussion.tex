@@ -1,0 +1,23 @@
+\section{Discussion}\label{sec:discussion}
+Internal accuracy of \RTestAcc\% did not predict external behaviour: the same model labels only
+\RExtSpecK/\RExtSpecN{} normal Montgomery scans Normal and names none of the \RExtTBN{} TB scans
+Tuberculosis. The internal split shares sources, acquisition styles and labelling practices with training,
+even when patients are separated; an external cohort breaks that link
+\cite{zech2018variable,degrave2021ai,geirhos2020shortcut}.
+
+\emph{Source confounding.} Class and source overlap in the merged data. In run 1 the external scans were
+frequently called COVID-19, a class supplied only by web-collected sources. Adding a second COVID-19 source
+removed that pattern, yet specificity stayed low and the errors moved to Pneumonia and Nodule/Mass.
+This is consistent with a source shortcut that changed with the training data rather than disappeared, but
+our evidence is indirect, and we do not claim to have proven that the model uses source cues. Adding sources
+changed which shortcut appeared; it did not remove the external gap.
+
+\emph{Limitations.}
+(i) One training run per model (seed \RSeed), CPU-trained and time-boxed; run 2's selection advantage is
+largest on sources that only it saw. (ii) NIH labels are mined from reports, not read from images.
+(iii) Patient identity is unknown for TBX11K and COVID-19 Radiography images, so residual patient overlap
+across splits is possible. (iv) Kermany images are paediatric, the other sources adult.
+(v) Pleural Effusion and Nodule/Mass come from NIH only. (vi) The single-label design excludes
+multi-finding images. (vii) The external cohort is small and binary, so intervals are wide.
+(viii) Data are retrospective and public; no clinical validity is claimed.
+Further analyses, including seed variability, are ongoing and are not reported here.

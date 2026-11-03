@@ -7,6 +7,10 @@ import pytest
 async def test_root(client):
     resp = await client.get("/")
     assert resp.status_code == 200
+    from main import STATIC_DIR
+    if STATIC_DIR.is_dir():  # single-origin deployment: "/" serves the React build (backend/main.py)
+        assert "text/html" in resp.headers["content-type"] and "<div id=\"root\">" in resp.text
+        return
     data = resp.json()
     assert data["status"] == "running"
     assert "LungAI" in data["message"]

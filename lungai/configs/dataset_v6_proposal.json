@@ -1,0 +1,257 @@
+{
+  "status": "ADOPTED for build v6_build_001 (2026-11-02, user instruction to build and train overnight). Rules below are fixed before any training.",
+  "dataset_version": "V6",
+  "seed": 20261102,
+  "split_fractions": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "stratify_by": [
+    "lungai_label",
+    "source_id"
+  ],
+  "grouping": "patient_group = genuine or filename-derived patient id; otherwise a per-image group. Groups are then merged (union-find) with every image they share an exact (md5) or confirmed near-duplicate (pHash + correlation) with, so duplicates can never cross splits.",
+  "near_duplicate": {
+    "phash_max_hamming": 6,
+    "min_thumbnail_correlation": 0.97,
+    "note": "pairs within the threshold are merged into one split group; development images matching the external cohort are excluded"
+  },
+  "external_cohorts": [
+    "montgomery"
+  ],
+  "sources": {
+    "nih_cxr14": {
+      "include": true,
+      "patient_id": "genuine",
+      "rules": [
+        {
+          "id": "nih_normal",
+          "when": "Finding Labels == 'No Finding'",
+          "label": "Normal",
+          "max_images_per_patient": 1
+        },
+        {
+          "id": "nih_effusion",
+          "when": "Finding Labels == 'Effusion'",
+          "label": "Pleural Effusion"
+        },
+        {
+          "id": "nih_nodule_mass",
+          "when": "set(Finding Labels) <= {'Nodule','Mass'}",
+          "label": "Pulmonary Nodule / Mass"
+        },
+        {
+          "id": "nih_pneumonia",
+          "when": "Finding Labels == 'Pneumonia'",
+          "label": "Pneumonia"
+        }
+      ],
+      "exclude_otherwise": "any other or additional finding",
+      "known_limitation": "labels are NLP-mined from reports, not image-read"
+    },
+    "vindr_cxr": {
+      "include": true,
+      "patient_id": "unknown",
+      "label_source": "annotations/image_labels_train.csv (3 radiologists per training image) and image_labels_test.csv (consensus)",
+      "rules": [
+        {
+          "id": "vindr_effusion",
+          "when": "majority of radiologists mark 'Pleural effusion' AND no majority for any of: Nodule/Mass, Lung tumor, Pneumonia, Tuberculosis, Consolidation",
+          "label": "Pleural Effusion"
+        },
+        {
+          "id": "vindr_nodule_mass",
+          "when": "majority mark 'Nodule/Mass' AND no majority for: Pleural effusion, Pneumonia, Tuberculosis, Consolidation",
+          "label": "Pulmonary Nodule / Mass"
+        },
+        {
+          "id": "vindr_normal",
+          "when": "all radiologists mark 'No finding'",
+          "label": "Normal"
+        }
+      ],
+      "record": "all co-occurring findings are kept in source_label_set",
+      "known_limitation": "no patient identifiers; images are de-identified per study"
+    },
+    "tbx11k": {
+      "include": true,
+      "patient_id": "unknown",
+      "rules": [
+        {
+          "id": "tbx_healthy",
+          "when": "category == healthy",
+          "label": "Normal"
+        },
+        {
+          "id": "tbx_active_tb",
+          "when": "category == active TB only (no latent-TB annotation)",
+          "label": "Tuberculosis"
+        }
+      ],
+      "exclude": [
+        {
+          "id": "tbx_sick_non_tb",
+          "when": "category == sick but non-TB",
+          "reason": "cause of abnormality unspecified; not evidence of pneumonia"
+        },
+        {
+          "id": "tbx_latent",
+          "when": "any latent-TB annotation",
+          "reason": "latent TB is not an active-TB radiographic label"
+        },
+        {
+          "id": "tbx_test",
+          "when": "official test split (labels withheld)",
+          "reason": "no labels"
+        }
+      ]
+    },
+    "shenzhen": {
+      "include": true,
+      "patient_id": "one image per subject (per NLM documentation; to confirm)",
+      "rules": [
+        {
+          "id": "shz_normal",
+          "when": "filename suffix _0",
+          "label": "Normal"
+        },
+        {
+          "id": "shz_tb",
+          "when": "filename suffix _1 (TB manifestation per clinical reading)",
+          "label": "Tuberculosis"
+        }
+      ],
+      "note": "Replaces the Rahman TB archive, which aggregates Shenzhen, Montgomery and Belarus images."
+    },
+    "rahman_tb": {
+      "include": false,
+      "reason": "Aggregated archive reported to contain NLM Montgomery images (the external cohort) and renamed files without patient identity. Use the official Shenzhen set instead; reconsider only after check_external_overlap.py proves no overlap."
+    },
+    "kermany": {
+      "include": "DECISION REQUIRED (default true)",
+      "patient_id": "derived_from_filename (personNNN / IM-NNNN tokens, scoped by original folder)",
+      "rules": [
+        {
+          "id": "kermany_normal",
+          "when": "folder NORMAL",
+          "label": "Normal"
+        },
+        {
+          "id": "kermany_pneumonia",
+          "when": "folder PNEUMONIA (bacterial or viral)",
+          "label": "Pneumonia"
+        }
+      ],
+      "population": "paediatric (1-5 years), AP",
+      "known_limitation": "age and acquisition differ from all adult sources; the class may be learnable from age alone. Report per-source metrics."
+    },
+    "covid_radiography": {
+      "include": "DECISION REQUIRED (default true, COVID class only)",
+      "patient_id": "unknown",
+      "rules": [
+        {
+          "id": "covid",
+          "when": "COVID folder",
+          "label": "COVID-19"
+        }
+      ],
+      "record": "upstream source URL from the archive metadata in source_label_raw",
+      "known_limitation": "single-source class; aggregated from web collections; multiple images per patient possible. A patient-identified alternative (BIMCV-COVID19+) requires a separate access request."
+    },
+    "jsrt": {
+      "include": true,
+      "patient_id": "one image per case",
+      "rules": [
+        {
+          "id": "jsrt_nodule",
+          "when": "nodule case (malignant or benign, CT-confirmed)",
+          "label": "Pulmonary Nodule / Mass"
+        },
+        {
+          "id": "jsrt_non_nodule",
+          "when": "non-nodule case",
+          "label": "Normal"
+        }
+      ],
+      "note": "V5 excluded benign nodules because the class was once 'Lung Cancer'. For a radiological Nodule/Mass class, benign nodules are valid positives."
+    },
+    "montgomery": {
+      "include": false,
+      "role": "external evaluation only (binary normal vs TB)",
+      "rules": [
+        {
+          "id": "mont_normal",
+          "when": "filename suffix _0",
+          "label": "Normal"
+        },
+        {
+          "id": "mont_tb",
+          "when": "filename suffix _1",
+          "label": "Tuberculosis"
+        }
+      ]
+    },
+    "cohen_covid": {
+      "include": true,
+      "patient_id": "genuine (metadata.csv patientid, assigned by the collection)",
+      "rules": [
+        {
+          "id": "cohen_covid",
+          "when": "modality X-ray, frontal view (PA/AP*), finding contains 'COVID-19'",
+          "label": "COVID-19"
+        },
+        {
+          "id": "cohen_pneumonia",
+          "when": "frontal X-ray, finding starts with 'Pneumonia' and does not contain COVID-19",
+          "label": "Pneumonia"
+        },
+        {
+          "id": "cohen_tb",
+          "when": "frontal X-ray, finding == 'Tuberculosis'",
+          "label": "Tuberculosis"
+        },
+        {
+          "id": "cohen_normal",
+          "when": "frontal X-ray, finding == 'No Finding'",
+          "label": "Normal"
+        }
+      ],
+      "exclude": "lateral views, CT, other findings, images outside the images/ folder",
+      "known_limitation": "images collected from publications and websites (often cropped/annotated); heterogeneous acquisition"
+    }
+  },
+  "sampling": {
+    "note": "Caps are applied per (source, class) by sampling whole patient groups with the seed below, BEFORE splitting and training. They bound CPU training time and limit any single source dominating a class.",
+    "seed": 20261102,
+    "caps": {
+      "nih_cxr14": {
+        "Normal": 1200,
+        "Pleural Effusion": 3000,
+        "Pulmonary Nodule / Mass": 3000,
+        "Pneumonia": null
+      },
+      "tbx11k": {
+        "Normal": 1000,
+        "Tuberculosis": null
+      },
+      "kermany": {
+        "Normal": 1000,
+        "Pneumonia": 2200
+      },
+      "shenzhen": {
+        "Normal": null,
+        "Tuberculosis": null
+      },
+      "cohen_covid": {
+        "COVID-19": null,
+        "Pneumonia": null,
+        "Normal": null,
+        "Tuberculosis": null
+      },
+      "covid_radiography": {
+        "COVID-19": 2500
+      }
+    }
+  }
+}

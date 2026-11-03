@@ -1,0 +1,19 @@
+%% Highlights for BSPC: 3-5 bullets, each at most 85 characters including spaces.
+%% Submit as a separate file. Character counts (plain text) are given in comments.
+%% Bullet 5 uses a V5 history macro (renders as "0/80"); bullets are result-neutral
+%% with respect to the final V6 model. The final model is now fixed (run 2). An
+%% optional result bullet (would replace bullet 4 to stay within 5 bullets, <= 85 chars):
+%% "Unseen hospital: \RExtSpecK/\RExtSpecN{} normal scans called Normal; image source predictable"
+%% Authors to decide; character count must be re-checked after macro expansion.
+\documentclass[12pt]{article}
+\input{../shared/results_macros.tex}
+\begin{document}
+\section*{Highlights}
+\begin{itemize}
+\item Six-class chest X-ray benchmark rebuilt from official sources with SHA-256 provenance % 85
+\item Splits grouped by patient and near-duplicate content; all leakage checks are zero % 81
+\item External hospital cohort reported with sensitivity, specificity and predicted classes % 85
+\item Results reported per source to expose how accuracy depends on the source mix % 76
+\item Audit of an earlier pipeline: patient leakage and \RVFiveExtSpecK/\RVFiveExtSpecN{} external specificity % 75
+\end{itemize}
+\end{document}

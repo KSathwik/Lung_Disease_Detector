@@ -1,0 +1,11 @@
+{
+  "generated_at": "2026-11-02T22:41:56+00:00",
+  "external_images": 138,
+  "candidate_images": 4200,
+  "external_images_with_a_match": 0,
+  "thresholds": {
+    "phash_max_hamming": 10,
+    "min_thumbnail_correlation": 0.97
+  },
+  "matches": []
+}

@@ -1,6 +1,7 @@
 """Tests for the prediction endpoints."""
 
 import io
+import json
 import pytest
 import numpy as np
 from PIL import Image
@@ -89,6 +90,9 @@ async def test_predict_success_persists_model_output(client, stub_model):
     assert detail["final_condition"] == "Pneumonia"
     assert detail["model_used"] == MODEL_ID
     assert detail["model_version"] == data["model_version"]
+    # The history list carries the version too, so the History page can show which model produced each row
+    listed = (await client.get("/api/v1/predictions")).json()["predictions"]
+    assert listed[0]["prediction_id"] == data["prediction_id"] and listed[0]["model_version"] == data["model_version"]
 
 
 @pytest.mark.asyncio
@@ -222,23 +226,37 @@ async def test_get_prediction_not_found(client):
 
 
 @pytest.mark.asyncio
-async def test_model_metrics_serves_recorded_canonical_results(client):
+async def test_model_metrics_serves_generated_results_for_configured_checkpoint(client):
     resp = await client.get("/api/v1/model-metrics")
     assert resp.status_code == 200
     data = resp.json()
-    from lungai.config import CLASS_NAMES, MODEL_ID
+    from lungai.config import CHECKPOINT_SHA256, CLASS_NAMES, MODEL_ID, MODEL_VERSION, REPO_ROOT
+    record = json.loads((REPO_ROOT / "artifacts" / "evaluation_reports" / "model_metrics.json").read_text(encoding="utf-8"))
     assert data["model_id"] == MODEL_ID
     assert data["available"] is True
     assert data["class_order"] == CLASS_NAMES
-    assert data["evidence_level"].startswith("RECORDED")
+    assert data["evidence_level"].startswith("REPRODUCED")
+    # The served numbers belong to the checkpoint the server is configured to load
+    assert data["matches_configured_checkpoint"] is True
+    assert data["model"]["checkpoint_sha256"] == CHECKPOINT_SHA256
+    assert data["model"]["version"] == MODEL_VERSION
     internal = data["internal_test"]
-    assert internal["consistency"] == "consistent"
-    assert internal["n"] == 1570
-    assert internal["metrics"]["accuracy"] == pytest.approx(1302 / 1570)
+    assert internal["n"] == record["internal_test"]["n"]
+    assert internal["metrics"]["accuracy"] == pytest.approx(record["internal_test"]["metrics"]["accuracy"])
+    assert set(internal["metrics"]["per_class"]) == set(CLASS_NAMES)
     # The external result is reported with its specificity, never as sensitivity alone
     b = data["external"]["binary_abnormality"]
-    assert (b["sensitivity"]["successes"], b["sensitivity"]["n"]) == (58, 58)
-    assert (b["specificity"]["successes"], b["specificity"]["n"]) == (0, 80)
+    assert b["sensitivity"]["n"] + b["specificity"]["n"] == data["external"]["n"] == 138
+    # The notice returned with every prediction quotes these same generated numbers
+    from ml.inference import EXTERNAL_LIMITATION
+    tb = data["external"]["exact_tuberculosis_recall"]
+    assert f"called only {tb['successes']}/{tb['n']}" in EXTERNAL_LIMITATION
+    assert f"{b['specificity']['successes']}/{b['specificity']['n']} normal scans" in EXTERNAL_LIMITATION
+    # The V5 record stays visible as history, with its zero specificity
+    hb = data["historical"]["external_binary_abnormality"]
+    assert data["historical"]["dataset_version"] == "V5"
+    assert (hb["sensitivity"]["successes"], hb["sensitivity"]["n"]) == (58, 58)
+    assert (hb["specificity"]["successes"], hb["specificity"]["n"]) == (0, 80)
 
 
 @pytest.mark.asyncio

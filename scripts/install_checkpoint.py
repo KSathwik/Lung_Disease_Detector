@@ -1,7 +1,7 @@
 """Install the canonical checkpoint into models/ after verifying its SHA-256.
 
-    python scripts/install_checkpoint.py --from /path/to/densenet121_frequency_v5.h5
-    python scripts/install_checkpoint.py --url https://<location you control>/densenet121_frequency_v5.h5
+    python scripts/install_checkpoint.py --from /path/to/densenet121_v6_seed42.h5
+    python scripts/install_checkpoint.py --url https://<location you control>/densenet121_v6_seed42.h5
     python scripts/install_checkpoint.py --check            # verify the file already in models/
 
 The checkpoint is not distributed with the repository and there is no public release.

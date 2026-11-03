@@ -1,0 +1,18 @@
+\section{Introduction}
+Deep networks reach high accuracy on chest X-ray (CXR) benchmarks \cite{rajpurkar2017chexnet,wang2017chestxray8},
+yet reported performance often fails to transfer to other hospitals \cite{zech2018variable}.
+Merged public datasets add specific risks: the same patient in several splits, labels that are
+proxies or mined by language processing, and classes that come from different sources, so a model
+can identify the source instead of the disease \cite{oakdenrayner2020exploring,degrave2021ai,geirhos2020shortcut}.
+These problems were documented most clearly for COVID-19 models \cite{roberts2021common,maguolo2020critic}.
+
+We met them in our own earlier model, V5. It reported \RVFiveAcc\% accuracy on \RVFiveN{}
+test images, but an audit found patient overlap between training and test, proxy labels, and
+\RVFiveExtSpecK{} of \RVFiveExtSpecN{} normal external scans called Normal. This paper reports the
+rebuild and what the corrected evaluation shows. Our contributions are modest:
+(i) an auditable, leakage-controlled rebuild of a multi-source six-class CXR benchmark from
+official sources, with documented label rules, caps and patient-grouped splits;
+(ii) a reproducible pipeline from acquisition to a once-only test and external evaluation; and
+(iii) evidence that internal metrics overstate generalisation, including a contrast between two
+training runs whose data differ. We claim no new architecture and no state-of-the-art accuracy.
+Further analyses are ongoing and are not reported here.

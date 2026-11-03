@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from lungai.config import CLASS_NAMES, DATASET
+from lungai.config import CLASS_NAMES, DATASET_V5
 from lungai.data import checks
 from lungai.data.manifest import (
     ManifestError, class_distribution, counts_by_split, load_manifest, normalize_manifest_path, schema_errors,
@@ -102,4 +102,4 @@ def test_image_checks_detect_missing_and_corrupt(tmp_path):
 
 
 def test_dataset_config_points_at_this_manifest():
-    assert DATASET["manifest"] == "data/manifests/unified_manifest_v5.csv"
+    assert DATASET_V5["manifest"] == "data/manifests/unified_manifest_v5.csv"

@@ -1,6 +1,10 @@
 # Dataset
 
-The canonical dataset is **V5**, defined by `data/manifests/unified_manifest_v5.csv`. Partitions, counts and integrity checks are in [data_splits.md](data_splits.md).
+**Current dataset: V6.** It is rebuilt from official sources by `scripts/data/build_v6_manifest.py` under the rules in `lungai/configs/dataset_v6_proposal.json`; see the README section *Dataset (V6)*, [data/](data/) for each source, and the generated composition table in [results/current_model.md](results/current_model.md#dataset-composition).
+
+## History: dataset V5 (superseded)
+
+The rest of this page describes **V5**, defined by `data/manifests/unified_manifest_v5.csv`, which the previous model used. Partitions, counts and integrity checks are in [data_splits.md](data_splits.md).
 
 ## Sources (rows in the manifest)
 
@@ -29,4 +33,4 @@ The images are not in this repository and must be obtained from the original pub
 
 ## Versions
 
-V1 to V4 manifests are kept in `experiments/data/` for history only. Only V5 is used.
+V1 to V4 manifests are kept in `experiments/data/` for history only. V5 is kept as history; the current model uses V6.

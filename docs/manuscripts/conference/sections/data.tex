@@ -1,0 +1,30 @@
+\section{Data}\label{sec:data}
+\subsection{Sources and label rules}
+All images come from official or author-published releases, and the rules were fixed before training.
+Each image receives one of six mutually exclusive labels. NIH ChestX-ray14 \cite{wang2017chestxray8}
+supplies Normal (``No Finding'', at most one image per patient), Pleural Effusion, Pulmonary Nodule/Mass
+and Pneumonia (each only when no other finding is present). Shenzhen \cite{jaeger2014two} supplies Normal and
+Tuberculosis. Kermany \cite{kermany2018identifying} supplies Normal and Pneumonia. The Cohen collection
+\cite{cohen2020covid} supplies frontal COVID-19, Pneumonia, Normal and Tuberculosis images. TBX11K
+\cite{liu2020rethinking} contributes healthy and active-TB images only; its ``sick but non-TB'' class (a
+proxy that the earlier build had mislabelled as Pneumonia), latent TB and unlabelled images are excluded.
+The COVID-19 Radiography Database \cite{chowdhury2020can,rahman2021exploring} contributes COVID-19 images
+only. The final build (\RDatasetBuild) uses all six sources; the first V6 build (run 1) used the first four.
+Lateral views and CT are excluded. Per-(source, class) caps bound CPU training time and limit any
+source dominating a class.
+
+\subsection{Patient-grouped split and leakage checks}
+The final build has \RNTrain{} training, \RNVal{} validation and \RNTest{} test images, split 70/15/15 and
+stratified by class and source. A group is a genuine or filename-derived patient identifier where one
+exists (NIH, Kermany, Shenzhen, Cohen). For TBX11K and the COVID-19 Radiography Database patient identity is
+unknown, so each image is its own group; the same patient could therefore appear in two splits for these
+sources. Groups are merged through any shared exact (MD5) or near-duplicate (perceptual hash and thumbnail
+correlation) image, so duplicates cannot cross splits. Development images matching the external cohort are
+excluded.
+
+\subsection{External cohort}
+The Montgomery County set \cite{jaeger2014two} (\RNExternal{} scans: \RExtSpecN{} normal, \RExtTBN{}
+tuberculosis) is never used for training or selection. The task is binary (Normal versus abnormal/TB), not a
+six-class evaluation. Class and source remain partly confounded (COVID-19 images come from web
+collections and Pneumonia partly from paediatric images), which matters for
+Section~\ref{sec:results}.

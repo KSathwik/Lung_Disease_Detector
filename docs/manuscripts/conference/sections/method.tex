@@ -1,0 +1,27 @@
+\section{Method}\label{sec:method}
+\subsection{Preprocessing and model}
+One implementation serves training, evaluation and deployment. Images are decoded to three channels, then
+passed through a $3{\times}3$ Gaussian blur ($\sigma{=}0.8$), CLAHE \cite{pizer1987adaptive} on the L channel
+of CIE LAB (clip limit 2.0, $8{\times}8$ tiles), a Gaussian low-pass filter ($\sigma{=}1.0$), Lanczos resize
+to $224{\times}224$ and ImageNet normalisation. The backbone is DenseNet-121 \cite{huang2017densely} with
+ImageNet weights \cite{deng2009imagenet} and frozen BatchNorm statistics. The head is global average pooling,
+batch normalisation, a dense layer of 256 ReLU units, dropout 0.3 and a six-way softmax.
+
+\subsection{Training}
+Training has two phases with Adam \cite{kingma2015adam}: the head alone for two epochs (learning rate
+$10^{-3}$), then the last 30 backbone layers are unfrozen (learning rate $10^{-5}$) with early stopping on
+validation macro-F1 inside a wall-clock budget. The loss is cross-entropy with balanced class weights;
+augmentation is a horizontal flip and a rotation of up to ten degrees; batch size is 32. Each model is
+trained in \emph{one} run (seed \RSeed) on a laptop CPU, so run-to-run variation is not measured here.
+
+\subsection{Checkpoint and run selection}
+Within a run, the checkpoint is the epoch with the best \emph{validation} macro-F1 (ties: validation macro
+ROC-AUC). Run 2 completed its full schedule of \REpochsTrained{} epochs and its best epoch was
+\RSelectedEpoch, the last; the validation curve was still rising slightly, so longer training might change
+the result, but we make no claim that it would.
+Two runs exist: run 1 (four sources) and run 2 (adds TBX11K and COVID-19 Radiography). Their validation
+splits differ, so the choice between them used a rule fixed before run 2's results were seen: macro-F1 on a
+common selection set of \RCmpN{} validation images that neither build used for training or testing, with
+test and external data excluded from the decision. Run 2 was started after run 1's external results
+were known; only the rule, not the decision to run it, preceded run 2's results. Run 2 was selected and is
+the model reported below.

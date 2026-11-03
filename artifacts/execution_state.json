@@ -1,0 +1,162 @@
+{
+  "branch": "research/lungai-clean-baseline",
+  "started": "2026-11-02T17:35:00Z",
+  "stages": {
+    "1_source_audit": {
+      "status": "done"
+    },
+    "2_recover_data": {
+      "status": "done",
+      "updated": "2026-11-02T22:19:31+00:00",
+      "extracted": {
+        "images_001.tar.gz": "extracted",
+        "images_002.tar.gz": "extracted",
+        "images_003.tar.gz": "extracted",
+        "images_004.tar.gz": "extracted",
+        "images_005.tar.gz": "extracted",
+        "images_006.tar.gz": "extracted",
+        "images_007.tar.gz": "extracted",
+        "images_008.tar.gz": "extracted",
+        "images_010.tar.gz": "extracted",
+        "images_011.tar.gz": "extracted",
+        "ChestXRay2017.zip": "extracted"
+      },
+      "sources_available": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "cohen_covid"
+      ]
+    },
+    "3_build_v6": {
+      "status": "done",
+      "updated": "2026-11-02T22:26:22+00:00",
+      "sources": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "cohen_covid"
+      ],
+      "build": "data\\derived\\v6_build_001"
+    },
+    "4_train": {
+      "status": "done",
+      "updated": "2026-11-03T03:50:45+00:00",
+      "run": "v6_densenet121_seed42",
+      "max_hours": 2.69,
+      "returncode": 4294967295
+    },
+    "5_evaluate": {
+      "status": "done",
+      "updated": "2026-11-03T03:58:34+00:00",
+      "reports": {
+        "val": "artifacts\\evaluation_reports\\v6_val",
+        "test": "artifacts\\evaluation_reports\\v6_test",
+        "external": "artifacts\\evaluation_reports\\v6_external"
+      }
+    },
+    "6_integrate": {
+      "status": "pending"
+    },
+    "7_docs_and_verify": {
+      "status": "pending"
+    },
+    "2_recover_data_r2": {
+      "status": "done",
+      "updated": "2026-11-03T04:23:51+00:00",
+      "extracted": {
+        "images_009.tar.gz": "extracted",
+        "images_012.tar.gz": "extracted",
+        "TBX11K.zip": "extracted",
+        "covid19-radiography-database.zip": "extracted"
+      },
+      "sources_available": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "tbx11k",
+        "cohen_covid",
+        "covid_radiography"
+      ]
+    },
+    "3_build_v6_r2": {
+      "status": "done",
+      "updated": "2026-11-03T04:37:25+00:00",
+      "sources": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "tbx11k",
+        "cohen_covid",
+        "covid_radiography"
+      ],
+      "build": "data\\derived\\v6_build_002"
+    },
+    "4_train_r2": {
+      "status": "done",
+      "updated": "2026-11-03T10:24:16+00:00",
+      "run": "v6r2_densenet121_seed42",
+      "max_hours": 5.63
+    },
+    "5_evaluate_r2": {
+      "status": "done",
+      "updated": "2026-11-03T10:32:30+00:00",
+      "reports": {
+        "val": "artifacts\\evaluation_reports\\v6_r2_val",
+        "test": "artifacts\\evaluation_reports\\v6_r2_test",
+        "external": "artifacts\\evaluation_reports\\v6_r2_external"
+      }
+    },
+    "2_recover_data_r3": {
+      "status": "done",
+      "updated": "2026-11-03T10:44:51+00:00",
+      "extracted": {},
+      "sources_available": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "tbx11k",
+        "cohen_covid",
+        "covid_radiography"
+      ]
+    },
+    "3_build_v6_r3": {
+      "status": "done",
+      "updated": "2026-11-03T10:44:51+00:00",
+      "build": "data\\derived\\v6_build_002"
+    },
+    "4_train_r3": {
+      "status": "in_progress",
+      "updated": "2026-11-03T10:44:51+00:00",
+      "run": "v6r3_densenet121_seed43",
+      "max_hours": 7.24
+    }
+  },
+  "blockers": [
+    {
+      "id": "kaggle_token",
+      "needs": "kaggle.json in C:/Users/KATKAM SATHWIK/.kaggle/",
+      "affects": [
+        "covid_radiography",
+        "rahman_tb"
+      ]
+    },
+    {
+      "id": "physionet_credentialing",
+      "affects": [
+        "vindr_cxr"
+      ]
+    },
+    {
+      "id": "jsrt_registration",
+      "affects": [
+        "jsrt"
+      ]
+    }
+  ]
+}

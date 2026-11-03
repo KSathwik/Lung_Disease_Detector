@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-11-03T10:36:57+00:00",
+  "protocol": "docs/data/run_selection_protocol.md",
+  "n_common": 2018,
+  "common_by_class": {
+    "Normal": 573,
+    "Pulmonary Nodule / Mass": 394,
+    "COVID-19": 386,
+    "Pneumonia": 318,
+    "Pleural Effusion": 241,
+    "Tuberculosis": 106
+  },
+  "common_by_source": {
+    "nih_cxr14": 956,
+    "kermany": 412,
+    "covid_radiography": 381,
+    "tbx11k": 245,
+    "shenzhen": 15,
+    "cohen_covid": 9
+  },
+  "a": {
+    "build": "v6_build_001",
+    "run": "v6_densenet121_seed42",
+    "checkpoint_sha256": "c51ed228455c2aab93b4b0220ee721443c3c0486eea961a242829ce68ee6c0e6",
+    "all": {
+      "n": 2018,
+      "accuracy": 0.6352824578790882,
+      "macro_f1": 0.5941329175286508,
+      "recall_by_class": {
+        "COVID-19": 0.5673575129533679,
+        "Normal": 0.699825479930192,
+        "Pleural Effusion": 0.7593360995850622,
+        "Pneumonia": 0.9056603773584906,
+        "Pulmonary Nodule / Mass": 0.43147208121827413,
+        "Tuberculosis": 0.19811320754716982
+      },
+      "macro_roc_auc": 0.8803826117452948
+    },
+    "shared_sources_only": {
+      "n": 1392,
+      "accuracy": 0.6760057471264368,
+      "macro_f1": 0.6219575800635065,
+      "recall_by_class": {
+        "COVID-19": 1.0,
+        "Normal": 0.6713947990543735,
+        "Pleural Effusion": 0.7593360995850622,
+        "Pneumonia": 0.9056603773584906,
+        "Pulmonary Nodule / Mass": 0.43147208121827413,
+        "Tuberculosis": 1.0
+      },
+      "macro_roc_auc": 0.9294440711462393
+    }
+  },
+  "b": {
+    "build": "v6_build_002",
+    "run": "v6r2_densenet121_seed42",
+    "checkpoint_sha256": "7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6",
+    "all": {
+      "n": 2018,
+      "accuracy": 0.7700693756194251,
+      "macro_f1": 0.7961562605264595,
+      "recall_by_class": {
+        "COVID-19": 0.9818652849740933,
+        "Normal": 0.612565445026178,
+        "Pleural Effusion": 0.8049792531120332,
+        "Pneumonia": 0.9276729559748428,
+        "Pulmonary Nodule / Mass": 0.6040609137055838,
+        "Tuberculosis": 0.9150943396226415
+      },
+      "macro_roc_auc": 0.9570119773935927
+    },
+    "shared_sources_only": {
+      "n": 1392,
+      "accuracy": 0.6781609195402298,
+      "macro_f1": 0.6854236501540488,
+      "recall_by_class": {
+        "COVID-19": 0.8,
+        "Normal": 0.48226950354609927,
+        "Pleural Effusion": 0.8049792531120332,
+        "Pneumonia": 0.9276729559748428,
+        "Pulmonary Nodule / Mass": 0.6040609137055838,
+        "Tuberculosis": 0.8181818181818182
+      },
+      "macro_roc_auc": 0.929159727176741
+    }
+  },
+  "mcnemar_all": {
+    "a_right_b_wrong": 132,
+    "a_wrong_b_right": 404,
+    "p_value_exact": 4.565206216259261e-33
+  },
+  "decision": "b",
+  "selected_run": "v6r2_densenet121_seed42"
+}

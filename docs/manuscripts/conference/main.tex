@@ -1,0 +1,70 @@
+% Conference manuscript for IEEE EMBC 2027 (IEEEtran): 4 pages of content + 5th page references only, max 20 references. Confirm page count on Overleaf.
+% Conference manuscript (IEEEtran). Compile: pdflatex -> bibtex -> pdflatex x2.
+% All result numbers come from ../shared/results_macros.tex (regenerated from the final model).
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\input{../shared/results_macros.tex}
+
+\begin{document}
+
+\title{Leakage-Controlled Multi-Source Chest X-Ray Classification:\\
+Internal Accuracy Versus External Generalisation}
+
+% Author order confirmed by the project owner. Corresponding author: [TO BE CONFIRMED]. CRediT roles must be verified and all authors must approve before submission [AUTHORS TO CONFIRM].
+\author{\IEEEauthorblockN{Katkam Sathwik\IEEEauthorrefmark{1},
+Nagavelli Ramana\IEEEauthorrefmark{1},
+P. Tirupathi\IEEEauthorrefmark{2},
+K. Srinivas\IEEEauthorrefmark{3}}
+\IEEEauthorblockA{\IEEEauthorrefmark{1}Department of Computer Science and Engineering,
+KUCE\&T (Kakatiya University College of Engineering and Technology), Kakatiya University,
+Warangal, Telangana, India\\
+Emails: [TO BE PROVIDED]}
+\IEEEauthorblockA{\IEEEauthorrefmark{2}Department of CSE, JNTUH University College of Engineering, Manthani, India\\
+Email: [TO BE PROVIDED]}
+\IEEEauthorblockA{\IEEEauthorrefmark{3}Department of CSE, Swathi Reddy Institute of Technology for Women, Warangal, India\\
+Email: [TO BE PROVIDED]}
+\thanks{Corresponding author: [TO BE CONFIRMED]. Mobile numbers: [TO BE PROVIDED]. Author contributions must be verified and approved by all authors before submission [AUTHORS TO CONFIRM].}}
+
+\maketitle
+
+\input{sections/abstract}
+\begin{IEEEkeywords}
+chest X-ray, DenseNet-121, data leakage, external validation, patient-grouped split, shortcut learning
+\end{IEEEkeywords}
+
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/data}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\section*{Ethics and Data Statement}
+This study uses only public, de-identified chest radiograph datasets, each under its publisher's
+terms; no new human data were collected and no patient was contacted. Images are not redistributed.
+The model is a research prototype and is not intended for diagnosis, triage or screening.
+\emph{[Authors to confirm institutional ethics-review position.]}
+
+\section*{Acknowledgment}
+\emph{[Authors to complete: supervision, computing resources, funding, if any.]}
+
+\section*{AI-Assistance Disclosure}
+\emph{[Authors to review and confirm.]} Generative AI tools assisted with drafting and code. The
+authors are responsible for the content and must verify every claim and number.
+
+\bibliographystyle{IEEEtran}
+\bibliography{../shared/references}
+
+\end{document}

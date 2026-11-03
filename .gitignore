@@ -18,6 +18,7 @@ data/raw/
 data/processed/
 data/downloads/
 data/external/
+data/derived/
 
 # Training runs (checkpoints + run metadata); evaluation runs with per-image predictions
 runs/
@@ -74,3 +75,5 @@ scratch/
 /venv_doc_gen
 # Frontend build copied next to the backend (created inside the Docker image)
 backend/static/
+# Per-image predictions of the run comparison (same policy as the per-split report folders)
+artifacts/evaluation_reports/run_comparison_predictions.csv

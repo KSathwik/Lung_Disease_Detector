@@ -1,0 +1,17 @@
+\begin{abstract}
+Public chest X-ray (CXR) collections are often merged into multi-class benchmarks in which
+patients, labels and image sources are not controlled, so internal accuracy can overstate how a
+model behaves at a new hospital. We rebuild a six-class benchmark (COVID-19, Normal, Pleural
+Effusion, Pneumonia, Pulmonary Nodule/Mass, Tuberculosis) from official sources, including TBX11K and the
+COVID-19 Radiography Database, with explicit label rules, per-source caps, patient-grouped splits and
+duplicate checks. An earlier version of this pipeline reported \RVFiveAcc\% internal accuracy, but an audit
+found patient leakage, proxy labels and an external specificity of \RVFiveExtSpecK/\RVFiveExtSpecN. We
+train an ImageNet-initialised DenseNet-121 (seed \RSeed, CPU) and evaluate the test split and an external
+Montgomery County cohort once. On the leakage-controlled test split the model reaches \RTestAcc\% accuracy
+(macro-F1 \RTestMacroFOne\%, macro ROC-AUC \RTestMacroAUC), but on the external cohort it labels only
+\RExtSpecK/\RExtSpecN{} normal scans as Normal and names \RExtTBK/\RExtTBN{} tuberculosis scans as
+Tuberculosis. A first training run called about half of the external scans COVID-19; after a second COVID-19
+source was added this pattern disappeared, but the errors moved to other abnormal classes. Adding sources
+changed which shortcut appeared; it did not close the external gap. Results come from a single run in a
+retrospective, public-data setting and are not evidence of clinical validity.
+\end{abstract}

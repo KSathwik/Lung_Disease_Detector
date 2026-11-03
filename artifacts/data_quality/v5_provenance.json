@@ -1,0 +1,642 @@
+{
+  "report": "V5 provenance reconstruction (manifest-only)",
+  "generated_at": "2026-11-02T16:44:33+00:00",
+  "manifest": "data/manifests/unified_manifest_v5.csv",
+  "manifest_sha256_lf": "8117a441d5d200e781df0af33685cde32c6c7a24a5e30d73f5744ec592702e26",
+  "v1_manifest": "experiments/data/unified_manifest.csv",
+  "v1_manifest_sha256_lf": "92ae3605b64ce955ac7ebe9403752ebe890d340602be6d9803a4f0724bf5e74c",
+  "total_images": 10547,
+  "per_source": {
+    "Existing_COVID-19": {
+      "registry_id": "covid_radiography",
+      "images": 1942,
+      "by_label": {
+        "COVID-19": 1942
+      },
+      "by_split": {
+        "train": 1359,
+        "test": 292,
+        "val": 291
+      },
+      "manifest_patient_ids": 1942,
+      "derived_patient_groups": 1942,
+      "patient_identity": "unknown (archive renamed files COVID-<n>.png; upstream IDs only via source URLs in the archive metadata)",
+      "filename_examples": [
+        "COVID-1.png",
+        "COVID-10.png",
+        "COVID-100.png"
+      ],
+      "absolute_paths": 0
+    },
+    "Existing_Normal": {
+      "registry_id": "kermany",
+      "images": 1199,
+      "by_label": {
+        "Normal": 1199
+      },
+      "by_split": {
+        "train": 839,
+        "test": 180,
+        "val": 180
+      },
+      "manifest_patient_ids": 1199,
+      "derived_patient_groups": 976,
+      "patient_identity": "recoverable from filename token (Kermany personNNN / IM-NNNN); manifest uses synthetic per-image IDs",
+      "filename_examples": [
+        "test_IM-0001-0001.jpeg",
+        "test_IM-0003-0001.jpeg",
+        "test_IM-0005-0001.jpeg"
+      ],
+      "absolute_paths": 0
+    },
+    "Existing_Pneumonia": {
+      "registry_id": "kermany",
+      "images": 1395,
+      "by_label": {
+        "Pneumonia": 1395
+      },
+      "by_split": {
+        "train": 976,
+        "test": 210,
+        "val": 209
+      },
+      "manifest_patient_ids": 1395,
+      "derived_patient_groups": 780,
+      "patient_identity": "recoverable from filename token (Kermany personNNN); manifest uses synthetic per-image IDs",
+      "filename_examples": [
+        "test_person100_bacteria_475.jpeg",
+        "test_person100_bacteria_477.jpeg",
+        "test_person100_bacteria_478.jpeg"
+      ],
+      "absolute_paths": 0
+    },
+    "Existing_Tuberculosis": {
+      "registry_id": "rahman_tb",
+      "images": 665,
+      "by_label": {
+        "Tuberculosis": 665
+      },
+      "by_split": {
+        "train": 466,
+        "val": 100,
+        "test": 99
+      },
+      "manifest_patient_ids": 665,
+      "derived_patient_groups": 665,
+      "patient_identity": "unknown (archive renamed files Tuberculosis-<n>.png)",
+      "filename_examples": [
+        "Tuberculosis-1.png",
+        "Tuberculosis-10.png",
+        "Tuberculosis-100.png"
+      ],
+      "absolute_paths": 0
+    },
+    "JSRT": {
+      "registry_id": "jsrt",
+      "images": 145,
+      "by_label": {
+        "Pulmonary Nodule / Mass": 78,
+        "Normal": 67
+      },
+      "by_split": {
+        "train": 102,
+        "val": 22,
+        "test": 21
+      },
+      "manifest_patient_ids": 145,
+      "derived_patient_groups": 145,
+      "patient_identity": "one image per case (per JSRT documentation, to confirm); manifest uses per-case IDs",
+      "filename_examples": [
+        "JPCLN001.png",
+        "JPCLN003.png",
+        "JPCLN005.png"
+      ],
+      "absolute_paths": 0
+    },
+    "NIH_ChestX-ray14": {
+      "registry_id": "nih_cxr14",
+      "images": 457,
+      "by_label": {
+        "Normal": 171,
+        "Pulmonary Nodule / Mass": 140,
+        "Pleural Effusion": 131,
+        "Pneumonia": 15
+      },
+      "by_split": {
+        "train": 337,
+        "val": 64,
+        "test": 56
+      },
+      "manifest_patient_ids": 302,
+      "derived_patient_groups": 302,
+      "patient_identity": "genuine (NIH Patient ID, from filename prefix)",
+      "filename_examples": [
+        "00000002_000.png",
+        "00000005_000.png",
+        "00000014_000.png"
+      ],
+      "absolute_paths": 211
+    },
+    "TBX11K": {
+      "registry_id": "tbx11k",
+      "images": 3277,
+      "by_label": {
+        "Pneumonia": 1395,
+        "Normal": 1199,
+        "Tuberculosis": 683
+      },
+      "by_split": {
+        "train": 2293,
+        "val": 492,
+        "test": 492
+      },
+      "manifest_patient_ids": 3277,
+      "derived_patient_groups": 3277,
+      "patient_identity": "unknown (dataset publishes no patient IDs); manifest uses synthetic per-image IDs",
+      "filename_examples": [
+        "tb0005.png",
+        "tb0007.png",
+        "tb0012.png"
+      ],
+      "absolute_paths": 0
+    },
+    "VinBigData_VinDr_CXR": {
+      "registry_id": "vindr_cxr",
+      "images": 1467,
+      "by_label": {
+        "Pleural Effusion": 931,
+        "Pulmonary Nodule / Mass": 536
+      },
+      "by_split": {
+        "train": 1026,
+        "val": 221,
+        "test": 220
+      },
+      "manifest_patient_ids": 1345,
+      "derived_patient_groups": 1345,
+      "patient_identity": "unknown (VinDr-CXR is de-identified per image); manifest 'vinbigdata_pt_N' grouping has undocumented origin",
+      "filename_examples": [
+        "7acffd33cfddf67f7a7a9cb705096335.jpg",
+        "5c236bd87dff8c15d259c70b842620aa.jpg",
+        "21bdb7a46e19c697209064855102859e.jpg"
+      ],
+      "absolute_paths": 0
+    }
+  },
+  "vindr_multi_finding": {
+    "v5_rows": 1467,
+    "matched_to_v1_record": 1467,
+    "distinct_findings_per_image": {
+      "1": 27,
+      "2": 101,
+      "3": 237,
+      "4": 344,
+      "5": 302,
+      "6": 227,
+      "7": 142,
+      "8": 64,
+      "9": 20,
+      "10": 3
+    },
+    "images_with_2plus_findings": 1440,
+    "effusion_images_also_nodule_mass": 181,
+    "co_finding_frequency_by_label": {
+      "Pleural Effusion": {
+        "Aortic enlargement": 517,
+        "Atelectasis": 84,
+        "Calcification": 74,
+        "Cardiomegaly": 327,
+        "Consolidation": 186,
+        "ILD": 86,
+        "Infiltration": 203,
+        "Lung Opacity": 504,
+        "Nodule/Mass": 181,
+        "Other lesion": 332,
+        "Pleural effusion": 931,
+        "Pleural thickening": 745,
+        "Pneumothorax": 56,
+        "Pulmonary fibrosis": 441
+      },
+      "Pulmonary Nodule / Mass": {
+        "Aortic enlargement": 337,
+        "Atelectasis": 23,
+        "Calcification": 130,
+        "Cardiomegaly": 190,
+        "Consolidation": 60,
+        "ILD": 47,
+        "Infiltration": 58,
+        "Lung Opacity": 223,
+        "Nodule/Mass": 536,
+        "Other lesion": 201,
+        "Pleural effusion": 0,
+        "Pleural thickening": 197,
+        "Pneumothorax": 7,
+        "Pulmonary fibrosis": 228
+      }
+    },
+    "ingestion_rule": "experiments/rebuild_unified_dataset_v2.py: 'Pleural_effusion' in cats and len(cats) <= 3 (WBF COCO categories); effusion takes priority over Nodule/Mass",
+    "class_id_mapping": "assumed VinBigData competition order (to verify)"
+  },
+  "tbx11k_label_origin": {
+    "by_label_and_v1_original_label": {
+      "Normal": {
+        "not_in_v1_record": 871,
+        "no_tb_healthy_none": 328
+      },
+      "Pneumonia": {
+        "not_in_v1_record": 969,
+        "no_tb_sick_but_no_tb_none": 426
+      },
+      "Tuberculosis": {
+        "tb_tb_active_tb": 559,
+        "tb_tb_latent_tb": 124
+      }
+    },
+    "note": "Rows absent from the V1 record were added in V2+ from data.csv image_type ('healthy' -> Normal, 'sick_but_no_tb' -> Pneumonia)."
+  },
+  "jsrt_label_origin": {
+    "Normal": {
+      "non-nodule": 67
+    },
+    "Pulmonary Nodule / Mass": {
+      "malignant": 78
+    }
+  },
+  "near_duplicates_dhash": {
+    "by_hamming_distance": {
+      "0": {
+        "pairs": 3,
+        "cross_split": 1,
+        "cross_source": 3,
+        "label_conflicts": 2
+      },
+      "1": {
+        "pairs": 41,
+        "cross_split": 16,
+        "cross_source": 41,
+        "label_conflicts": 36
+      },
+      "2": {
+        "pairs": 6650,
+        "cross_split": 3074,
+        "cross_source": 3184,
+        "label_conflicts": 3633
+      }
+    },
+    "pairs_distance_le1": [
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-622.png",
+        "b": "nih_00000257_000",
+        "hamming": 0,
+        "splits": "test+val",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_norm_h0598.png",
+        "b": "nih_00000237_000",
+        "hamming": 0,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_v3_pneu_s1273.png",
+        "b": "nih_00000049_000",
+        "hamming": 0,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-1033.png",
+        "b": "nih_00000163_001",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-175.png",
+        "b": "nih_00000165_001",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-1761.png",
+        "b": "nih_00000267_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-1978.png",
+        "b": "nih_00000007_000",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-210.png",
+        "b": "nih_00000018_000",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-2571.png",
+        "b": "nih_00000206_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_COVID-19_COVID-2651.png",
+        "b": "nih_00000267_000",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "Existing_COVID-19+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-138.png",
+        "b": "nih_00000105_005",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-152.png",
+        "b": "nih_00001093_003",
+        "hamming": 1,
+        "splits": "test+val",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-335.png",
+        "b": "nih_00000113_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-353.png",
+        "b": "nih_00000008_001",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "existing_Tuberculosis_Tuberculosis-69.png",
+        "b": "nih_00000022_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "Existing_Tuberculosis+NIH_ChestX-ray14",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_tb0079.png",
+        "b": "nih_00000744_001",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_tb0250.png",
+        "b": "nih_00000006_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_tb0333.png",
+        "b": "nih_00000064_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_tb0998.png",
+        "b": "nih_00000192_000",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_s4414.png",
+        "b": "nih_00000383_001",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_h1824.png",
+        "b": "nih_00001248_017",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_h0713.png",
+        "b": "nih_00001247_011",
+        "hamming": 1,
+        "splits": "test",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_h1384.png",
+        "b": "nih_00000169_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_h4151.png",
+        "b": "nih_00001247_011",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "vinbigdata_d7d4e27e5a9b3752fddcf5c6080026d5.jpg",
+        "b": "nih_00000267_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+VinBigData_VinDr_CXR",
+        "labels_agree": false
+      },
+      {
+        "a": "vinbigdata_9f7a76f14e777ed53606a7d6d3ef3890.jpg",
+        "b": "nih_00000165_001",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+VinBigData_VinDr_CXR",
+        "labels_agree": false
+      },
+      {
+        "a": "vinbigdata_2b0fb0afde2742c14c1c967cdcb20969.jpg",
+        "b": "nih_00000336_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+VinBigData_VinDr_CXR",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_norm_h0155.png",
+        "b": "nih_00001247_011",
+        "hamming": 1,
+        "splits": "test+train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_norm_h0519.png",
+        "b": "nih_00000064_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_norm_h0534.png",
+        "b": "nih_00000105_005",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_norm_h0675.png",
+        "b": "nih_00000039_000",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_norm_h0788.png",
+        "b": "nih_00000206_000",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_pneu_s0493.png",
+        "b": "nih_00000206_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_pneu_s0547.png",
+        "b": "nih_00000250_003",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_pneu_s0693.png",
+        "b": "nih_00000798_036",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_pneu_s0703.png",
+        "b": "nih_00000206_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_norm_h1505.png",
+        "b": "nih_00001247_011",
+        "hamming": 1,
+        "splits": "test+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_norm_h1676.png",
+        "b": "nih_00000963_025",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_norm_h2836.png",
+        "b": "nih_00000008_002",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_pneu_s1788.png",
+        "b": "nih_00000370_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_pneu_s1947.png",
+        "b": "nih_00000218_001",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": true
+      },
+      {
+        "a": "tbx11k_v3_pneu_s2161.png",
+        "b": "nih_00000064_000",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_pneu_s2314.png",
+        "b": "nih_00000091_003",
+        "hamming": 1,
+        "splits": "train+val",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      },
+      {
+        "a": "tbx11k_v3_pneu_s2404.png",
+        "b": "nih_00000618_002",
+        "hamming": 1,
+        "splits": "train",
+        "sources": "NIH_ChestX-ray14+TBX11K",
+        "labels_agree": false
+      }
+    ],
+    "note": "The ingestion dHash algorithm is undocumented and a 64-bit dHash discriminates chest X-rays poorly (their coarse structure is similar), so pair counts grow quickly with distance. These are review candidates only; V6 needs a stronger near-duplicate method computed from the images."
+  }
+}

@@ -8,7 +8,7 @@ Base path: `/api/v1`. Interactive documentation is at `/docs` when the backend i
 |---|---|---|---|
 | GET | `/health` | Service status (`service_available`) and model readiness (`model_ready`, `model.*`, `cxr_gate_mode`) | 200 |
 | GET | `/model` | Canonical identity, class mapping, expected checkpoint SHA-256, load status | 200, 401 |
-| GET | `/model-metrics` | Recorded results for the canonical model, with `evidence_level` | 200, 401 |
+| GET | `/model-metrics` | Generated evaluation results of the configured checkpoint (`model_metrics.json`), with `evidence_level`, `matches_configured_checkpoint` and the V5 record under `historical` | 200, 401 |
 | POST | `/predict` | Multipart `file` (+ optional `patient_id`, `scan_type`, `notes`) → prediction | 200, 400, 401, 404, 413, 422, 500, 503 |
 | GET | `/predictions?skip&limit` | List stored predictions | 200, 401 |
 | GET | `/predictions/{prediction_id}` | Stored prediction, including the six probabilities | 200, 401, 404 |
@@ -21,9 +21,9 @@ Base path: `/api/v1`. Interactive documentation is at `/docs` when the backend i
 ```json
 {
   "prediction_id": "…", "scan_id": "…",
-  "model_id": "lungai-densenet121-6class", "model_version": "v5.0",
+  "model_id": "lungai-densenet121-6class", "model_version": "v6.0",
   "selected_model": "LungAI DenseNet-121 — Six-Class Chest X-Ray Classifier",
-  "model_sha256": "e2c95dc5…", "checkpoint_verified": true,
+  "model_sha256": "c51ed228…", "checkpoint_verified": true,
   "class_order": ["COVID-19", "Normal", "Pleural Effusion", "Pneumonia", "Pulmonary Nodule / Mass", "Tuberculosis"],
   "predicted_class": "Pneumonia", "predicted_index": 3,
   "confidence": 0.85, "inconclusive": false,

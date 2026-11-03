@@ -27,8 +27,10 @@ import numpy as np
 import cv2
 
 from ml.paths import REPO_ROOT, resolve_models_dir
+from lungai.config import INFERENCE
 
 logger = logging.getLogger("lungai.ml.cxr_gate")
+_GATE_CFG = INFERENCE["cxr_gate"]
 
 DEFAULT_GATE_MODEL_PATH = str(resolve_models_dir() / "cxr_gate_model.keras")
 FALLBACK_GATE_MODEL_PATH = str(REPO_ROOT / "experiments" / "cxr_gate" / "models" / "cxr_gate_model.keras")
@@ -43,11 +45,15 @@ class CXRGate:
     Validation Gate for Chest Radiographs (CXR vs Non-CXR).
     """
 
-    def __init__(self, model_path: Optional[str] = None, threshold: float = 0.83):
+    def __init__(self, model_path: Optional[str] = None, threshold: Optional[float] = None,
+                 heuristic_threshold: Optional[float] = None):
         self.model_path = model_path or (
             DEFAULT_GATE_MODEL_PATH if os.path.exists(DEFAULT_GATE_MODEL_PATH) else FALLBACK_GATE_MODEL_PATH
         )
-        self.threshold = threshold
+        # The trained model outputs a probability; the heuristic fallback scores on another scale and has its own
+        # threshold, calibrated on validation radiographs (see lungai_densenet121.json inference.cxr_gate).
+        self.threshold = float(_GATE_CFG["model_threshold"] if threshold is None else threshold)
+        self.heuristic_threshold = float(_GATE_CFG["heuristic_threshold"] if heuristic_threshold is None else heuristic_threshold)
         self._model = None
         self._model_load_attempted = False
 
@@ -194,11 +200,11 @@ class CXRGate:
                 
         # Fallback to analytical morphological profile if model not yet loaded
         score = self._anatomical_profile_score(gray)
-        if score >= self.threshold:
+        if score >= self.heuristic_threshold:
             return True, score, f"Passed fallback anatomical heuristics (score={score:.3f})"
         else:
             return False, score, (
-                f"Invalid Radiograph: Image failed anatomical thoracic screening (score: {score:.1%} < {self.threshold:.1%}). "
+                f"Invalid Radiograph: Image failed anatomical thoracic screening (score: {score:.1%} < {self.heuristic_threshold:.1%}). "
                 "Uploaded file does not match bilateral chest radiograph structure."
             )
 

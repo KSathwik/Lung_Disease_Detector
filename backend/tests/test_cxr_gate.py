@@ -247,6 +247,21 @@ async def test_reject_empty_file(client):
     assert resp.status_code in [400, 422]
 
 
+def test_gate_thresholds_come_from_config_and_reject_every_negative():
+    """The heuristic fallback has its own calibrated threshold; every synthetic non-radiograph is still rejected."""
+    from lungai.config import INFERENCE
+    from ml.cxr_gate import CXRGate
+    gate = CXRGate()
+    assert gate.threshold == INFERENCE["cxr_gate"]["model_threshold"]
+    assert gate.heuristic_threshold == INFERENCE["cxr_gate"]["heuristic_threshold"]
+    negatives = [_make_car_color_bytes(), _make_car_grayscale_bytes(), _make_dog_bytes(), _make_selfie_bytes(),
+                 _make_landscape_bytes(), _make_screenshot_bytes(), _get_ct_scan_bytes()]
+    for b in negatives:
+        ok, _, _ = gate.validate(b)
+        assert not ok
+    assert gate.validate(_make_sample_cxr_bytes())[0]
+
+
 @pytest.mark.asyncio
 async def test_reject_corrupt_file(client):
     """Corrupted image bytes must be rejected."""

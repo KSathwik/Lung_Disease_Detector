@@ -1,6 +1,6 @@
 """The canonical DenseNet-121 six-class classifier and its checkpoint loader.
 
-Layer names match the recorded v5.0 checkpoint so Grad-CAM and weight loading work
+Layer names match the v5.0 and v6.0 checkpoints so Grad-CAM and weight loading work
 unchanged (see ``model.layer_names`` in the config).
 """
 

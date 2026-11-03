@@ -1,0 +1,339 @@
+{
+  "_comment": "Registry of dataset sources for LungAI. Facts are marked with a verification status; see docs/data/dataset_source_inventory.md. 'acquisition' says how acquire.py may fetch a source: 'direct' (open HTTPS, no login), 'kaggle_cli' (user's own Kaggle API credentials, never stored here), 'manual' (login, registration or credentialing; the user downloads it).",
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "montgomery",
+      "name": "Montgomery County CXR Set (NLM)",
+      "role": "external_evaluation_only",
+      "publisher": "U.S. National Library of Medicine, Lister Hill National Center for Biomedical Communications",
+      "official_url": "https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Montgomery-County-CXR-Set/MontgomerySet/index.html",
+      "citation": "Jaeger S, Candemir S, Antani S, Wang YX, Lu PX, Thoma G. Two public chest X-ray datasets for computer-aided screening of pulmonary diseases. Quant Imaging Med Surg. 2014;4(6):475-477. doi:10.3978/j.issn.2223-4292.2014.11.20",
+      "license": "Research use; do not share outside your research group/organization; forward new requests to NLM; cite Candemir et al. 2014 (IEEE TMI 33(2):577-90, doi:10.1109/TMI.2013.2290491) and Jaeger et al. 2014 (IEEE TMI 33(2):233-45, doi:10.1109/TMI.2013.2284099); attribute NLM. (NLM-MontgomeryCXRSet-ReadMe.pdf, read 2026-11-02)",
+      "access": "open HTTPS directory listing; no login observed (2026-11-02)",
+      "acquisition": "nlm_index",
+      "publisher_checksums": "S3 ETag in the publisher's index.json (MD5 for single-part objects)",
+      "original_labels": "normal (filename suffix _0) / TB manifestation (_1); ClinicalReadings text per image (sex, age, finding)",
+      "expected_counts": {
+        "images": 138,
+        "normal": 80,
+        "tb": 58
+      },
+      "historical_local_path": "data/downloads/montgomery/ (metadata CSV + images/images/)",
+      "verified": {
+        "source_url": true,
+        "counts_from_publisher_paper": true,
+        "license": true,
+        "local_files": false
+      },
+      "index_url": "https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Montgomery-County-CXR-Set/MontgomerySet/index.json",
+      "include_prefixes": [
+        "CXR_png/",
+        "ClinicalReadings/"
+      ]
+    },
+    {
+      "id": "shenzhen",
+      "name": "Shenzhen Hospital CXR Set (NLM)",
+      "role": "not_in_V5_directly; suspected upstream of Existing_Tuberculosis",
+      "publisher": "NLM LHNCBC with Shenzhen No.3 People's Hospital",
+      "official_url": "https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Shenzhen-Hospital-CXR-Set/index.html",
+      "citation": "Jaeger S et al. Automatic tuberculosis screening using chest radiographs. IEEE Trans Med Imaging. 2014;33(2):233-45. doi:10.1109/TMI.2013.2284099; Candemir S et al. IEEE Trans Med Imaging. 2014;33(2):577-90. doi:10.1109/TMI.2013.2290491",
+      "license": "Research use; do not share outside your research group/organization; forward new requests to NLM; attribute NLM and Shenzhen No.3 People's Hospital; cite Jaeger et al. 2014 (IEEE TMI 33(2):233-45) and Candemir et al. 2014 (IEEE TMI 33(2):577-90). (NLM-ChinaCXRSet-ReadMe.docx, read 2026-11-02)",
+      "access": "open HTTPS directory listing",
+      "acquisition": "nlm_index",
+      "original_labels": "normal (_0) / abnormal (_1); ClinicalReadings text: age, gender, finding (PTB = pulmonary tuberculosis)",
+      "expected_counts": {
+        "images": 662,
+        "normal": 326,
+        "tb": 336
+      },
+      "verified": {
+        "source_url": true,
+        "counts_from_publisher_paper": true,
+        "license": true,
+        "local_files": false
+      },
+      "index_url": "https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Shenzhen-Hospital-CXR-Set/index.json",
+      "include_prefixes": [
+        "CXR_png/",
+        "ClinicalReadings/"
+      ],
+      "publisher_checksums": "S3 ETag in the publisher's index.json (MD5 for single-part objects)"
+    },
+    {
+      "id": "rahman_tb",
+      "name": "Tuberculosis (TB) Chest X-ray Database (Rahman et al.) — 700-TB-image release",
+      "project_source_dataset": "Existing_Tuberculosis",
+      "publisher": "Tawsifur Rahman et al. (Qatar University / University of Dhaka); published by the authors on Kaggle and IEEE DataPort",
+      "official_url": "https://www.kaggle.com/datasets/tawsifurrahman/tuberculosis-tb-chest-xray-dataset",
+      "official_url_alt": "https://ieee-dataport.org/documents/tuberculosis-tb-chest-x-ray-database (DOI 10.21227/mps8-kb56; subscription; current release 3,500 TB + 3,500 normal)",
+      "citation": "Rahman T, Khandakar A, Kadir MA, et al. Reliable Tuberculosis Detection Using Chest X-Ray With Deep Learning, Segmentation and Visualization. IEEE Access. 2020;8:191586-191601. doi:10.1109/ACCESS.2020.3031384",
+      "license": "UNVERIFIED: DataPort page names no license, asks for credit and citation; Kaggle page license not yet read",
+      "access": "Kaggle account (API token) or IEEE DataPort subscription",
+      "acquisition": "kaggle_cli",
+      "kaggle_ref": "tawsifurrahman/tuberculosis-tb-chest-xray-dataset",
+      "publisher_checksums": "none",
+      "original_labels": "Tuberculosis / Normal (folder); per-image metadata spreadsheet with source URL",
+      "composition_reported": "700 TB = NLM Montgomery + Shenzhen (394) + Belarus (306), per secondary summaries of Rahman et al. 2020; DataPort lists NLM Montgomery and Shenzhen as sources",
+      "expected_counts": {
+        "tb_in_historical_archive": 700
+      },
+      "historical_local_path": "tuberculosis-tb-chest-xray-dataset.zip -> data/raw/Tuberculosis/ (files renamed Tuberculosis-<n>.png)",
+      "risk": "CRITICAL: likely contains the 58 Montgomery TB images used as the external test cohort. Must be checked by content hash / perceptual hash before any reuse.",
+      "verified": {
+        "source_url": true,
+        "composition": false,
+        "license": false,
+        "local_files": false,
+        "kaggle_version_matching_700": false
+      }
+    },
+    {
+      "id": "covid_radiography",
+      "name": "COVID-19 Radiography Database (Rahman, Chowdhury et al.)",
+      "project_source_dataset": "Existing_COVID-19",
+      "publisher": "Qatar University / University of Dhaka team; published by the authors on Kaggle",
+      "official_url": "https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database",
+      "citation": "Chowdhury MEH, Rahman T, Khandakar A, et al. Can AI help in screening viral and COVID-19 pneumonia? IEEE Access. 2020;8:132665-132676. doi:10.1109/ACCESS.2020.3010287; and Rahman T, Khandakar A, Qiblawey Y, et al. Exploring the effect of image enhancement techniques on COVID-19 detection using chest X-ray images. Comput Biol Med. 2021;132:104319.",
+      "license": "UNVERIFIED (Kaggle page not yet read); upstream sources (BIMCV/PadChest, SIRM, GitHub collections, RSNA) carry their own terms",
+      "access": "Kaggle account (API token)",
+      "acquisition": "kaggle_cli",
+      "kaggle_ref": "tawsifurrahman/covid19-radiography-database",
+      "original_labels": "COVID / Normal / Lung_Opacity / Viral Pneumonia folders + metadata spreadsheets (source URL per image)",
+      "composition_reported": "COVID class 3,616 images; largest share from BIMCV-COVID19+/PadChest, plus SIRM, GitHub collections (incl. Cohen et al.), Twitter, a German medical school (PyHealth documentation; project audit found 143 Cohen images)",
+      "expected_counts": {
+        "covid_images_in_archive": 3616
+      },
+      "historical_local_path": "covid19-radiography-database.zip -> data/raw/COVID-19/ (COVID-<n>.png, archive names kept)",
+      "risk": "Patient identity lost (multiple images per patient possible, e.g. BIMCV series); single-source class; aggregated from web sources",
+      "verified": {
+        "source_url": true,
+        "composition": false,
+        "license": false,
+        "local_files": false
+      }
+    },
+    {
+      "id": "kermany",
+      "name": "Labeled Optical Coherence Tomography (OCT) and Chest X-Ray Images for Classification — chest X-ray part (Kermany et al.)",
+      "project_source_dataset": "Existing_Normal, Existing_Pneumonia",
+      "publisher": "Kermany D, Zhang K, Goldbaum M (Mendeley Data), Guangzhou Women and Children's Medical Center images",
+      "official_url": "https://data.mendeley.com/datasets/rscbjbr9sj/2",
+      "doi": "10.17632/rscbjbr9sj.2",
+      "historical_url_used": "https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia (third-party Kaggle repackaging)",
+      "citation": "Kermany DS, Goldbaum M, Cai W, et al. Identifying Medical Diagnoses and Treatable Diseases by Image-Based Deep Learning. Cell. 2018;172(5):1122-1131.e9. doi:10.1016/j.cell.2018.02.010",
+      "license": "CC BY 4.0 (Mendeley Data v2 page, read 2026-11-02)",
+      "access": "open (Mendeley); Kaggle repackaging needs an account",
+      "acquisition": "direct",
+      "original_labels": "NORMAL / PNEUMONIA (BACTERIA / VIRUS in filename); patient token in filename (personNNN / IM-NNNN)",
+      "population": "paediatric (1-5 years), anterior-posterior",
+      "expected_counts": {
+        "total_cxr": "5,856 (Kaggle) or 5,863 (reported); to reconcile"
+      },
+      "historical_local_path": "chest-xray-pneumonia.zip -> data/raw/Normal, data/raw/Pneumonia (prefixed train_/test_/val_)",
+      "verified": {
+        "source_url": true,
+        "license": true,
+        "local_files": false
+      },
+      "files": [
+        {
+          "name": "ChestXRay2017.zip",
+          "url": "https://data.mendeley.com/public-files/datasets/rscbjbr9sj/files/f12eaf6d-6023-432f-acc9-80c9d7393433/file_downloaded",
+          "sha256": "13efc055629733dbab07877f8b3c9f81097840dbcdaa326a8542322c2281ce36",
+          "size_note": "1,235,512,464 bytes (publisher)"
+        }
+      ],
+      "publisher_checksums": "SHA-256 from the Mendeley Data public API"
+    },
+    {
+      "id": "tbx11k",
+      "name": "TBX11K (Liu et al., CVPR 2020)",
+      "project_source_dataset": "TBX11K",
+      "publisher": "Nankai University (Ming-Ming Cheng group)",
+      "official_url": "https://mmcheng.net/tb/",
+      "historical_url_used": "https://www.kaggle.com/datasets/vbookshelf/tbx11k-simplified (third-party simplified derivative)",
+      "citation": "Liu Y, Wu YH, Ban Y, Wang H, Cheng MM. Rethinking Computer-Aided Tuberculosis Diagnosis. CVPR 2020:2646-2655. doi:10.1109/CVPR42600.2020.00272",
+      "license": "Creative Commons Attribution 4.0 (official page mmcheng.net/tb, read 2026-11-02); cite Liu et al. CVPR 2020",
+      "access": "open (official Google Drive or Baidu link on the project page); only train+val released, test labels withheld",
+      "acquisition": "gdrive",
+      "original_labels": "image folders healthy / sick-but-non-TB / TB; COCO/XML boxes: ActiveTuberculosis (1), ObsoletePulmonaryTuberculosis (2 = latent TB per author), PulmonaryTuberculosis (3, test only)",
+      "expected_counts": {
+        "images": "11,200 (paper) / 11,702 (mednet docs); to reconcile"
+      },
+      "historical_local_path": "data/downloads/tbx11k-simplified/ (data.csv + images/)",
+      "risk": "sick_but_non-TB mapped to Pneumonia (1,395 images); 124 latent-TB images labelled Tuberculosis in V5; no patient IDs",
+      "verified": {
+        "source_url": true,
+        "license": true,
+        "local_files": false
+      },
+      "gdrive_id": "1r-oNYTPiPCOUzSjChjCIYTdkjBTugqxR",
+      "gdrive_file": "TBX11K.zip",
+      "image_size": "512x512 (originals not released)"
+    },
+    {
+      "id": "vindr_cxr",
+      "name": "VinDr-CXR v1.0.0",
+      "project_source_dataset": "VinBigData_VinDr_CXR",
+      "publisher": "Vingroup Big Data Institute (VinBigData), hosted on PhysioNet",
+      "official_url": "https://physionet.org/content/vindr-cxr/1.0.0/",
+      "historical_url_used": "Kaggle derivative 'vinbigdata-coco-dataset-with-wbf-3x-downscaled' (third-party; boxes fused by weighted boxes fusion; images downscaled 3x) — exact page not located",
+      "citation": "Nguyen HQ, Lam K, Le LT, et al. VinDr-CXR: An open dataset of chest X-rays with radiologist's annotations. Sci Data. 2022;9:429. doi:10.1038/s41597-022-01498-w",
+      "license": "PhysioNet Credentialed Health Data License 1.5.0 (credentialed access + data use agreement)",
+      "access": "PhysioNet credentialed account, training course, signed DUA",
+      "acquisition": "manual",
+      "publisher_checksums": "PhysioNet publishes SHA256SUMS.txt for each project version",
+      "original_labels": "22 local + 6 global labels per image from 3 radiologists (training set); bounding boxes",
+      "historical_local_path": "data/downloads/vinbigdata/vinbigdata-coco-dataset-with-wbf-3x-downscaled/{train,val}_images",
+      "risk": "Historical images are a resized third-party derivative and cannot be matched to the official DICOMs by md5. 1,446 of 1,467 V5 VinDr images carry 2+ findings in the V1 record; 181 'Pleural Effusion' images also carry Nodule/Mass.",
+      "verified": {
+        "source_url": true,
+        "license": true,
+        "local_files": false
+      }
+    },
+    {
+      "id": "nih_cxr14",
+      "name": "NIH ChestX-ray14 (ChestX-ray8), Data_Entry_2017_v2020.csv",
+      "project_source_dataset": "NIH_ChestX-ray14",
+      "publisher": "NIH Clinical Center",
+      "official_url": "https://nihcc.app.box.com/v/ChestXray-NIHCC",
+      "historical_url_used": "https://nihcc.box.com/shared/static/vfk49d74nhbxq3nqjg0900w5nvkorp5c.gz (images_001.tar.gz, streamed by experiments/extract_nih_subset.py)",
+      "citation": "Wang X, Peng Y, Lu L, Lu Z, Bagheri M, Summers RM. ChestX-ray8: Hospital-scale Chest X-ray Database and Benchmarks on Weakly-Supervised Classification and Localization of Common Thorax Diseases. CVPR 2017:3462-3471. doi:10.1109/CVPR.2017.369",
+      "license": "No restrictions on use per NIH README (as quoted by mirrors); requires link to the NIH download site, citation, and acknowledgement of the NIH Clinical Center. Confirm in the official README.",
+      "access": "open (Box)",
+      "acquisition": "direct",
+      "files": [
+        {
+          "name": "images_001.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/vfk49d74nhbxq3nqjg0900w5nvkorp5c.gz",
+          "official_name": "images_01.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_002.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/i28rlmbvmfjbl8p2n3ril0pptcmcu9d1.gz",
+          "official_name": "images_02.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_003.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/f1t00wrtdk94satdfb9olcolqx20z2jp.gz",
+          "official_name": "images_03.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_004.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/0aowwzs5lhjrceb3qp67ahp0rd1l1etg.gz",
+          "official_name": "images_04.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_005.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/v5e3goj22zr6h8tzualxfsqlqaygfbsn.gz",
+          "official_name": "images_05.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_006.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/asi7ikud9jwnkrnkj99jnpfkjdes7l6l.gz",
+          "official_name": "images_06.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_007.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/jn1b4mw4n6lnh74ovmcjb8y48h8xj07n.gz",
+          "official_name": "images_07.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_008.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/tvpxmn7qyrgl0w8wfh9kqfjskv6nmm1j.gz",
+          "official_name": "images_08.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_009.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/upyy3ml7qdumlgk2rfcvlb9k6gvqq2pj.gz",
+          "official_name": "images_09.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_010.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/l6nilvfa9cg3s28tqv1qc1olm3gnz54p.gz",
+          "official_name": "images_10.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_011.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/hhq8fkdgvcari67vfhs7ppg2w6ni4jze.gz",
+          "official_name": "images_11.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        },
+        {
+          "name": "images_012.tar.gz",
+          "url": "https://nihcc.box.com/shared/static/ioqwiy20ihqwyr8pf4c24eazhh281pbu.gz",
+          "official_name": "images_12.tar.gz",
+          "size_note": "about 2-4 GB each (estimate); ~42 GB total"
+        }
+      ],
+      "metadata_note": "Data_Entry_2017_v2020.csv must be downloaded from the Box folder page (no stable direct link recorded).",
+      "original_labels": "14 NLP-mined findings + No Finding (multi-label, pipe-separated); genuine Patient ID; Follow-up #; view position",
+      "expected_counts": {
+        "total_images": 112120,
+        "used_in_V5": 457
+      },
+      "verified": {
+        "source_url": true,
+        "license": false,
+        "local_files": false
+      },
+      "links_source": "NIH's own batch_download_zips.py in the ChestX-ray14 Box folder (images/, updated 2020-07-20 by R. Summers, NIH CC/DRD), provided by the user 2026-11-02. NIH names the files images_01..images_12; this project uses images_001..images_012.",
+      "publisher_checksums": "NIH's script says 'Please check the checksums'; no checksum file has been obtained yet. SHA-256 of each download is logged."
+    },
+    {
+      "id": "jsrt",
+      "name": "JSRT Digital Image Database",
+      "project_source_dataset": "JSRT",
+      "publisher": "Japanese Society of Radiological Technology",
+      "official_url": "http://db.jsrt.or.jp/eng.php",
+      "historical_url_used": "unknown (local path data/downloads/jsrt/images/images suggests the Kaggle PNG conversion)",
+      "citation": "Shiraishi J, Katsuragawa S, Ikezoe J, et al. Development of a digital image database for chest radiographs with and without a lung nodule. AJR Am J Roentgenol. 2000;174(1):71-74. doi:10.2214/ajr.174.1.1740071",
+      "license": "UNVERIFIED: JSRT terms of use (registration on the JSRT site)",
+      "access": "registration on the JSRT site (to confirm)",
+      "acquisition": "manual",
+      "original_labels": "154 nodule (100 malignant, 54 benign, CT-confirmed) / 93 non-nodule; 12-bit RAW 2048x2048",
+      "expected_counts": {
+        "images": 247
+      },
+      "verified": {
+        "source_url": false,
+        "license": false,
+        "local_files": false
+      }
+    },
+    {
+      "id": "cohen_covid",
+      "name": "COVID-19 Image Data Collection (Cohen et al.)",
+      "project_source_dataset": "(new in V6)",
+      "role": "COVID-19 class (open source with patient ids)",
+      "publisher": "Joseph Paul Cohen et al., Mila / University of Montreal (GitHub ieee8023)",
+      "official_url": "https://github.com/ieee8023/covid-chestxray-dataset",
+      "citation": "Cohen JP, Morrison P, Dao L, Roth K, Duong TQ, Ghassemi M. COVID-19 Image Data Collection: Prospective Predictions Are the Future. MELBA 2020. arXiv:2006.11988",
+      "license": "Per image, listed in metadata.csv 'license' column (various: CC BY, CC BY-NC-SA, Apache 2.0, etc.); repository has no single licence",
+      "access": "open (git)",
+      "acquisition": "git",
+      "git_repo": "https://github.com/ieee8023/covid-chestxray-dataset.git",
+      "git_branch": "master",
+      "original_labels": "metadata.csv: patientid, finding (e.g. 'Pneumonia/Viral/COVID-19'), view, modality, license, url",
+      "risk": "Images collected from publications/websites; heterogeneous quality; part of the COVID-19 Radiography Database was built from it (duplicates across sources expected)",
+      "verified": {
+        "source_url": true,
+        "license": false,
+        "local_files": false
+      }
+    }
+  ]
+}

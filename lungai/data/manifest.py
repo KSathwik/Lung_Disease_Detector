@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-from lungai.config import CLASS_NAMES, DATASET, data_root, manifest_path, sha256_file
+from lungai.config import CLASS_NAMES, DATASET_V5, data_root, manifest_path, sha256_file
 
 REQUIRED_COLUMNS: List[str] = [
     "image_id", "image_path", "patient_id", "source_dataset", "clinical_label", "split", "md5_hash",
@@ -32,9 +32,9 @@ def load_manifest(path: Optional[Path] = None, verify_checksum: bool = True) -> 
         raise ManifestError(f"Manifest not found: {path}")
     if verify_checksum:
         actual = sha256_file(path, normalize_newlines=True)
-        if actual != DATASET["manifest_sha256_lf"]:
+        if actual != DATASET_V5["manifest_sha256_lf"]:
             raise ManifestError(
-                f"Manifest checksum mismatch for {path.name}: expected {DATASET['manifest_sha256_lf']}, got {actual}. "
+                f"Manifest checksum mismatch for {path.name}: expected {DATASET_V5['manifest_sha256_lf']}, got {actual}. "
                 "The dataset definition changed; record a new dataset version instead of editing V5."
             )
     df = pd.read_csv(path, dtype={"md5_hash": str, "patient_id": str, "image_id": str})
