@@ -13,7 +13,7 @@ Legend: DONE · IN PROGRESS · PENDING · BLOCKED (needs someone outside this se
 | V6 builds (rules, caps, patient-grouped split, leakage checks) | DONE | `v6_build_001`, `v6_build_002`; all leakage checks 0 |
 | Run 1 training + evaluation | DONE | Integrated in the app as v6.0 |
 | Run 2 training + evaluation | DONE | 16 epochs (schedule completed); test acc 77.4%, macro-F1 78.8%, ROC-AUC 0.955; Montgomery sens 55/58, spec 19/80, exact TB 0/58, COVID-19 calls 3 (run 1: 71) |
-| Fair comparison of runs on a common unseen validation set | DONE | 2,018 images; macro-F1 run 1 59.4% vs run 2 79.6% → run 2 selected (pre-registered rule); shared sources only: acc 67.6% vs 67.8%, macro-F1 62.2% vs 68.5% |
+| Fair comparison of runs on a common unseen validation set | DONE | 2,018 images; macro-F1 run 1 59.4% vs run 2 79.6% → run 2 selected (rule fixed in advance in the repository); shared sources only: acc 67.6% vs 67.8%, macro-F1 62.2% vs 68.5% |
 | Integrate final model, regenerate metrics/docs/macros | DONE | v6.1 = run 2 (`densenet121_v6r2_seed42.h5`, sha 7992b8da…); figures + Grad-CAM regenerated; run 1 = v6.0 history |
 | Runs 3 (seed 43), 4 (seed 44), 5 (no-filter ablation) | IN PROGRESS | Sequential queue started 16:14 (`scripts/pipeline/run_followups.py`); ~5 h each, done ~tomorrow 07:30 |
 | Source-identifiability probe | DONE | Source predictable from frozen features: 93.8% balanced acc (6 sources, chance 16.7%); within Normal 97.2% (5 sources); within TB 98.9% |

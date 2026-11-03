@@ -6,8 +6,7 @@ proxies or mined by language processing, and classes that come from different so
 can identify the source instead of the disease \cite{oakdenrayner2020exploring,degrave2021ai,geirhos2020shortcut}.
 These problems were documented most clearly for COVID-19 models \cite{roberts2021common,maguolo2020critic}.
 
-We met them in our own earlier model, V5. It reported \RVFiveAcc\% accuracy on \RVFiveN{}
-test images, but an audit found patient overlap between training and test, proxy labels, and
+Our earlier model, V5, reported \RVFiveAcc\% accuracy, but an audit found patient overlap, proxy labels and
 \RVFiveExtSpecK{} of \RVFiveExtSpecN{} normal external scans called Normal. This paper reports the
 rebuild and what the corrected evaluation shows. Our contributions are modest:
 (i) an auditable, leakage-controlled rebuild of a multi-source six-class CXR benchmark from

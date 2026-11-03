@@ -1,7 +1,7 @@
 \section{Conclusion}\label{sec:conclusion}
-A leakage-controlled, patient-grouped six-class rebuild gives \RTestAcc\% internal test accuracy with a
+A leakage-controlled, patient-grouped six-class rebuild (identity-based separation holds only where patient identity is known) gives \RTestAcc\% internal test accuracy with a
 standard DenseNet-121, but on an unseen hospital only \RExtSpecK/\RExtSpecN{} normal scans are called Normal
-and \RExtTBK/\RExtTBN{} TB scans are called Tuberculosis. Adding sources changed which shortcut appeared
-rather than closing the external gap. The work does not show clinical utility or superiority over other
+and \RExtTBK/\RExtTBN{} TB scans are called Tuberculosis. Changing the sources moved the external errors to
+other classes rather than closing the external gap; this is consistent with, but does not prove, a source shortcut. The work does not show clinical utility or superiority over other
 methods. Future work: patient-identified COVID-19 and TB sources and a second external cohort. The model is a
 research prototype and must not be used clinically.

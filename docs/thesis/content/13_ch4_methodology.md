@@ -34,7 +34,7 @@ The layer names of the head (gap, bn, dense_features, dropout, class_predictions
 
 ## Two-phase transfer learning
 
-In phase 1 the backbone is frozen and only the head is trained, for two epochs with Adam [@kingma2015adam] at learning rate 10⁻³. This lets the randomly initialised head adapt to the pre-trained features without distorting them. In phase 2 the last 30 layers of the backbone are unfrozen and the network is trained with Adam at learning rate 10⁻⁵ until early stopping (three epochs without improvement of validation macro-F1), the epoch limit or the wall-clock budget. The small learning rate protects the pre-trained weights.
+In phase 1 the backbone is frozen and only the head is trained, for two epochs with Adam [@kingma2015adam] at learning rate 10⁻³. This lets the randomly initialised head adapt to the pre-trained features without distorting them. In phase 2 the last 30 layers of the backbone (17 of which carry weights) are unfrozen and the network is trained with Adam at learning rate 10⁻⁵ until early stopping (three epochs without improvement of validation macro-F1), the epoch limit or the wall-clock budget. The small learning rate protects the pre-trained weights.
 
 The loss is sparse categorical cross-entropy with per-sample weights equal to n / (k · n_c), where n is the number of training images, k = 6 the number of classes and n_c the number of training images of the class. This compensates for class imbalance without resampling.
 

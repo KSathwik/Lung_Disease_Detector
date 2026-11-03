@@ -1,4 +1,6 @@
-# Results facts for the fill pass (2026-11-03, ~17:00)
+# Results facts for the fill pass (2026-11-03, ~17:00; corrected ~19:00 after docs/AUDIT_FINDINGS.md)
+
+**Wording rules from the audit:** (a) say the selection rule was *fixed in advance and recorded in the repository before run 2's results* — never "pre-registered" (it was not registered with any external body); (b) the source-change explanation for run 1 → run 2 is an **interpretation**: build 2 changed several sources at once (TBX11K, COVID-19 Radiography, two more NIH archives), so say the COVID-19 calls "fell from … to …" and that this is *consistent with* the added COVID-19 source removing a source cue — never "removed the shortcut"; (c) any leakage statement must carry the identity caveat: separation is proven only for rows with known patient identity; 4,130 TBX11K and COVID-19 Radiography rows are grouped per image; (d) Montgomery was not used for training or for selecting the served model, but run 2 was started after run 1's external results were seen — never write that it influenced no design decision; (e) genuine patient IDs come from NIH and Cohen; Kermany IDs are derived from file names.
 
 Interpretation statements that writers may now use in place of `\pending{}` / `[PENDING FINAL RESULTS]`. Every number must still come from `results_macros.tex` / `results.json` (macro names given). The sources are generated files; nothing here is a new number.
 
@@ -14,14 +16,14 @@ Interpretation statements that writers may now use in place of `\pending{}` / `[
 - Run 2 completed its full schedule: `\REpochsTrained` epochs (2 head + 14 fine-tune), best validation macro-F1 at epoch `\RSelectedEpoch` (the last epoch; the validation curve was still rising slightly, so longer training might help — do not claim it would).
 
 ## F3. Internal test (evaluated once)
-- Accuracy `\RTestAcc`% (95% bootstrap CI `\RTestAccLo`–`\RTestAccHi`), macro-F1 `\RTestMacroFOne`%, macro ROC-AUC `\RTestMacroAUC`, ECE `\RTestECE`.
+- Accuracy `\RTestAcc`% (Wilson 95% CI `\RTestAccLo`–`\RTestAccHi`; percentile-bootstrap 95% CI `\RTestAccBootLo`–`\RTestAccBootHi` — always say which interval you quote), macro-F1 `\RTestMacroFOne`%, macro ROC-AUC `\RTestMacroAUC`, ECE `\RTestECE`.
 - Strongest classes: COVID-19 (`\RFOneCovid`% F1), Tuberculosis (`\RFOneTB`%), Pneumonia (`\RFOnePneumonia`%). Weakest: Pulmonary Nodule / Mass (`\RFOneNodule`%), then Normal (`\RFOneNormal`%). Nodule/Mass and Pleural Effusion are both NIH-only classes with NLP-mined labels.
 - Per-source accuracy differs (macros `\RSrcAcc…`): use the per-source table; do not rank sources by quality of data.
 
 ## F4. External cohort (Montgomery, evaluated once)
 - Abnormal-vs-normal: sensitivity `\RExtSensK/\RExtSensN` (`\RExtSens`%), specificity `\RExtSpecK/\RExtSpecN` (`\RExtSpec`%), ROC-AUC of P(abnormal) `\RExtAUC`; exact Tuberculosis recall `\RExtTBK/\RExtTBN`.
 - Montgomery scans were mostly assigned to Pneumonia and Pulmonary Nodule / Mass (fig_external_breakdown); only `\RExtCovidCalls` were called COVID-19.
-- Comparison with run 1 (history, evaluated once each): run 1 called 71 of 138 Montgomery scans COVID-19 and 43/80 normals Normal; run 2 calls 3 COVID-19 and 19/80 Normal. Interpretation: adding a large second COVID-19 source removed the run-1 COVID-19 shortcut, but the external errors shifted to other abnormal classes; internal gains did not translate into better external specificity or any TB recognition. (Run-1 values: `artifacts/evaluation_reports/v6_external/metrics_external.json`; quote them as numbers with that source, they are not in the macros.)
+- Comparison with run 1 (history, evaluated once each; use the `\RRunOne…` macros / `RunOne…` keys): run 1 assigned COVID-19 to `\RRunOneExtCovidCalls` of `\RNExternal` Montgomery scans and called `\RRunOneExtSpecK`/`\RExtSpecN` normals Normal; run 2 assigns COVID-19 to `\RExtCovidCalls` and calls `\RExtSpecK`/`\RExtSpecN` normals Normal. Interpretation allowed: the COVID-19 calls fell, which is *consistent with* the added COVID-19 source removing a source cue — build 2 changed several sources at once, so this is not proven; the external errors moved to other abnormal classes, and internal gains did not translate into better external specificity or any TB recognition.
 - Low specificity means the model would flag most healthy patients from this hospital as abnormal.
 
 ## F5. Source confounding (control)
@@ -34,7 +36,7 @@ Interpretation statements that writers may now use in place of `\pending{}` / `[
 - Observation: COVID-19 and Normal heatmaps concentrate on the neck/trachea, shoulders and image borders; Nodule/Mass and Tuberculosis heatmaps fall inside the lung fields; Pneumonia (paediatric Kermany image) is diffuse. One image per class: illustrative only.
 
 ## F7. Application
-- CXR gate: heuristic threshold recalibrated 0.83 → 0.703 on validation radiographs; rejections of real test radiographs 63.6% → 9.3% (build 2 test), Montgomery 60.1% → 13.0%; all synthetic non-radiographs still rejected; no real non-radiograph set (`artifacts/app_checks/*.json`).
+- CXR gate: heuristic threshold recalibrated 0.83 → `\RCxrGateNewThr` on `\RCxrGateValN` validation radiographs (validation pass `\RCxrGateValPassOld`% → `\RCxrGateValPassNew`%). **Like-for-like on the same build-2 test split:** rejected `\RCxrGateBTwoOldTestRej`/`\RCxrGateBTwoOldTestN` (`\RCxrGateBTwoOldTestRejPct`%) at 0.83 vs `\RCxrGateBTwoNewTestRej`/`\RCxrGateBTwoNewTestN` (`\RCxrGateBTwoNewTestRejPct`%) at the new threshold; Montgomery `\RCxrGateBTwoOldExtRej` → `\RCxrGateBTwoNewExtRej` of `\RCxrGateBTwoNewExtN`. (The first measurement, 1,096/1,724, was on the build-1 test split; do not pair it with the build-2 figure.) All synthetic non-radiographs still rejected; no real non-radiograph set (`artifacts/app_checks/*.json`). Use the `\RCxrGate…` macros / `CxrGate…` keys, never typed numbers.
 - Tests: Python suite green for v6.1 (≈150 passed, 1 skip that applies only without a checkpoint); browser end-to-end check of v6.1 pending at time of writing (main session will update).
 
 ## F8. What the work does and does not show (for conclusions)

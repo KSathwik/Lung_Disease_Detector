@@ -10,20 +10,20 @@ Table~\ref{tab:sources} lists the sources. Each was downloaded from its official
 
 \begin{table}[t]
 \centering
-\caption{Data sources, their role, the classes they contribute and the patient-identity status used for grouping. Licence terms are as stated by the publishers on the dates of download; the images are not redistributed.}
+\caption{Data sources, their role, the classes they contribute and the patient-identity status used for grouping. Licence terms were not verified for this manuscript; ``see source terms'' means that the publisher's terms must be read before reuse. The images are not redistributed.}
 \label{tab:sources}
 \small
 \begin{tabular}{@{}p{3.0cm}p{1.5cm}p{3.6cm}p{2.4cm}p{3.2cm}@{}}
 \toprule
 Source & Builds & Classes contributed & Patient identity & Licence / terms \\
 \midrule
-NIH ChestX-ray14~\cite{wang2017chestxray8} & 1, 2 & Normal, Pleural Effusion, Nodule/Mass, Pneumonia & Genuine (patient ID) & Open use with citation and acknowledgement of the NIH Clinical Center \\
-Kermany et al., Mendeley v2~\cite{kermany2018identifying} & 1, 2 & Normal, Pneumonia (paediatric) & Derived from file name & CC BY 4.0 \\
-Shenzhen (NLM)~\cite{jaeger2014two,candemir2014lung} & 1, 2 & Normal, Tuberculosis & One image per subject & Research use; no redistribution \\
-COVID-19 image data collection~\cite{cohen2020covid} & 1, 2 & COVID-19, Pneumonia, Normal, Tuberculosis & Genuine (collection patient ID) & Per image (various) \\
-TBX11K~\cite{liu2020rethinking} & 2 & Normal, Tuberculosis & Unknown (grouped per image) & CC BY 4.0 \\
-COVID-19 Radiography Database~\cite{chowdhury2020can,rahman2021exploring} & 2 & COVID-19 & Unknown (grouped per image) & \confirm{licence not yet verified on the publisher page} \\
-Montgomery County (NLM)~\cite{jaeger2014two,candemir2014lung} & external & Normal vs Tuberculosis (binary) & One image per subject & Research use; no redistribution \\
+NIH ChestX-ray14~\cite{wang2017chestxray8} & 1, 2 & Normal, Pleural Effusion, Nodule/Mass, Pneumonia & Genuine (patient ID) & See source terms \\
+Kermany et al., Mendeley v2~\cite{kermany2018identifying} & 1, 2 & Normal, Pneumonia (paediatric) & Derived from file name & See source terms \\
+Shenzhen (NLM)~\cite{jaeger2014two,candemir2014lung} & 1, 2 & Normal, Tuberculosis & One image per subject & See source terms (NLM) \\
+COVID-19 image data collection~\cite{cohen2020covid} & 1, 2 & COVID-19, Pneumonia, Normal, Tuberculosis & Genuine (collection patient ID) & See source terms (per image) \\
+TBX11K~\cite{liu2020rethinking} & 2 & Normal, Tuberculosis & Unknown (grouped per image) & See source terms \\
+COVID-19 Radiography Database~\cite{chowdhury2020can,rahman2021exploring} & 2 & COVID-19 & Unknown (grouped per image) & See source terms \\
+Montgomery County (NLM)~\cite{jaeger2014two,candemir2014lung} & external & Normal vs Tuberculosis (binary) & One image per subject & See source terms (NLM) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -132,4 +132,4 @@ The largest exclusion categories in build~2 were NIH images with another or an a
 \end{figure}
 
 \subsection{External cohort}
-The Montgomery County set contains 138 frontal radiographs from a United States county TB control programme: 80 normal and 58 with TB manifestations~\cite{jaeger2014two,candemir2014lung}. It shares no source with the development data, was never used for training, checkpoint selection or any design decision, and was evaluated once per run. It contains only normal and TB images, so it tests whether the classifier separates abnormal from normal radiographs from an unseen hospital, and whether it names TB correctly; it does not test six-class accuracy.
+The Montgomery County set contains 138 frontal radiographs from a United States county TB control programme: 80 normal and 58 with TB manifestations~\cite{jaeger2014two,candemir2014lung}. It shares no source with the development data, was never used for training or checkpoint selection and was evaluated once per run; Section~\ref{sec:design} gives the caveat that run~2 was started after run~1's external results had been seen. It contains only normal and TB images, so it tests whether the classifier separates abnormal from normal radiographs from an unseen hospital, and whether it names TB correctly; it does not test six-class accuracy.

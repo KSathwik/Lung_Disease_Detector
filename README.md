@@ -37,7 +37,7 @@ The backend loads this order from the config and returns it with every predictio
 V6 is rebuilt from official sources (candidates: NIH ChestX-ray14, Kermany, Shenzhen, TBX11K, the Cohen COVID-19 collection, the COVID-19 Radiography Database; Montgomery as an external cohort only; the sources used by the current build are listed in [docs/results/current_model.md](docs/results/current_model.md#dataset-composition)) by [`scripts/data/build_v6_manifest.py`](scripts/data/build_v6_manifest.py) under rules fixed before training ([`lungai/configs/dataset_v6_proposal.json`](lungai/configs/dataset_v6_proposal.json), [proposal](docs/data/dataset_v6_proposal.md)):
 
 - labels come from each source's own labels; multi-finding NIH images, TBX11K "sick but not TB" and latent-TB images are excluded;
-- splits are 70/15/15 by patient group; groups are merged across exact and near-duplicate images, so no patient or duplicate crosses splits;
+- splits are 70/15/15 by patient group; groups are merged across exact and near-duplicate images, so no known patient and no duplicate crosses splits (rows without patient identity, TBX11K and the COVID-19 Radiography Database, are grouped per image, so their separation is by image only);
 - development images that duplicate the external cohort are removed.
 
 Images are **not** in the repository (licences do not allow it); download provenance (URL, bytes, SHA-256) is logged in `data/raw/_provenance/`. Per-class and per-source counts: [docs/results/current_model.md](docs/results/current_model.md#dataset-composition). Patient identity is unknown for some sources, which are then grouped per image; [docs/data/](docs/data/) explains each source.

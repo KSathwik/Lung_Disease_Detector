@@ -2,7 +2,7 @@
 # Format: slides separated by a line "---". Header lines "key: value" (layout, title, subtitle, figure, caption, colw),
 # then body: "- " bullet, "| " table row (first row = header, cells split by |),
 # "> " speaker-note line. {{Key}} is replaced from docs/manuscripts/shared/results.json at build time.
-# Anything written [PENDING ...] is drawn in red: only seed-run, ablation and demo-screenshot placeholders remain.
+# Anything written [PENDING ...] is drawn in red: only seed-run and ablation placeholders remain.
 
 layout: title
 title: LungAI DenseNet-121: Six-Class Chest X-Ray Classifier
@@ -28,7 +28,7 @@ layout: bullets
 title: Motivation
 - Chest X-ray (CXR) is the most widely available imaging test for lung disease
 - Radiologist access is limited, especially outside large centres
-- Public CXR datasets make deep-learning screening aids feasible [wang2017chestxray8, rajpurkar2017chexnet]
+- Public CXR datasets make deep-learning decision-support research feasible [wang2017chestxray8, rajpurkar2017chexnet]
 - Reported accuracies often fail to carry over to new hospitals [zech2018variable]
 - A decision-support tool is only useful if its evaluation is honest
 > Chest radiography is cheap and common, but reading it needs trained radiologists who are not available everywhere.
@@ -39,7 +39,7 @@ title: Motivation
 layout: bullets
 title: Problem statement and objectives
 - Classify a frontal CXR into six exclusive classes: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass, Tuberculosis
-- O1-O2: rebuild the data from official sources with rule-based labels; patient-grouped splits, no leakage
+- O1-O2: rebuild the data from official sources with rule-based labels; patient-grouped splits; leakage checks pass (identity unknown for two sources)
 - O3-O4: train DenseNet-121 reproducibly; evaluate once on test and on an external cohort, with confidence intervals
 - O5: end-to-end application (FastAPI, React, Grad-CAM, SQLite)
 - O6: report limitations without overclaiming
@@ -64,11 +64,11 @@ colw: 2.4, 5.2
 ---
 layout: bullets
 title: Research gap
-- Many CXR studies report results on a random image-level split
+- Some CXR studies report results on a random image-level split
 - Patient identity and label provenance are often undocumented
-- External evaluation is rare, and specificity is often not reported with sensitivity
-- Source and acquisition shortcuts are seldom tested [degrave2021ai, geirhos2020shortcut]
-- Few projects release an auditable pipeline from raw data to served metrics
+- External evaluation is often missing, and specificity is not always reported with sensitivity [roberts2021common, zech2018variable]
+- Source and acquisition shortcuts are not always tested [degrave2021ai, geirhos2020shortcut]
+- Some projects do not release an auditable pipeline from raw data to served metrics
 > The gap is not a missing architecture. DenseNet-121 is well known.
 > The gap is in evaluation hygiene: patient-grouped splits, documented label rules, external testing and a reproducible path from raw data to the numbers shown in the application.
 > Our contribution is therefore a leakage-controlled, auditable rebuild rather than a new network.
@@ -181,12 +181,12 @@ title: Implementation and the CXR gate
 - Backend: FastAPI; checkpoint SHA-256 check; predict, health, metrics endpoints
 - Frontend: React upload page, probabilities, Grad-CAM overlay, history; SQLite storage
 - Gate: heuristic fallback (trained gate model absent); non-radiographs get HTTP 422
-- Threshold 0.83 rejected 63.6% of real test radiographs; recalibrated to 0.703 on validation
-- After recalibration: 9.3% of test radiographs rejected, 13.0% of Montgomery scans
+- Threshold 0.83 rejected {{CxrGateBTwoOldTestRej}}/{{CxrGateBTwoOldTestN}} ({{CxrGateBTwoOldTestRejPct}}%) of build-2 test radiographs; recalibrated to {{CxrGateNewThr}} on validation
+- Same split after: {{CxrGateBTwoNewTestRej}}/{{CxrGateBTwoNewTestN}} ({{CxrGateBTwoNewTestRejPct}}%); Montgomery {{CxrGateBTwoOldExtRej}} to {{CxrGateBTwoNewExtRej}} of {{CxrGateBTwoNewExtN}}
 - All synthetic non-radiographs are still rejected; no real non-radiograph set exists
 > The backend is FastAPI and the frontend is React. The backend refuses a checkpoint whose hash does not match the recorded one.
-> The input gate is a heuristic, because a trained gate model is not available. With its original threshold it rejected over 63 percent of genuine test radiographs, which makes the application refuse most real X-rays.
-> I recalibrated the threshold from 0.83 to 0.703 on validation radiographs. Rejection of real test radiographs fell from 63.6 to 9.3 percent, and of Montgomery scans from 60.1 to 13.0 percent.
+> The input gate is a heuristic, because a trained gate model is not available. The problem was first noticed on the build-1 test split, where the original threshold rejected {{CxrGateBOneOldTestRej}} of {{CxrGateBOneOldTestN}} genuine radiographs; on the build-2 test split it rejects {{CxrGateBTwoOldTestRej}} of {{CxrGateBTwoOldTestN}}, so the application would refuse most real X-rays.
+> I recalibrated the threshold from 0.83 to {{CxrGateNewThr}} on validation radiographs. On the same build-2 test split, rejection fell from {{CxrGateBTwoOldTestRejPct}} to {{CxrGateBTwoNewTestRejPct}} percent, and on Montgomery (the same set) from {{CxrGateBTwoOldExtRejPct}} to {{CxrGateBTwoNewExtRejPct}} percent; the validation pass rate rose from {{CxrGateValPassOld}} to {{CxrGateValPassNew}} percent.
 > All synthetic non-radiographs are still rejected, but there is no real set of non-radiographs, so the gate remains a limited safeguard, and the model metrics are computed without it.
 ---
 layout: table_fig
@@ -196,14 +196,14 @@ colw: 3.0, 4.2
 caption: Test confusion matrix (evaluated once).
 | Metric | Value |
 | Test images | {{NTest}} |
-| Accuracy | {{TestAcc}}% (95% CI {{TestAccLo}}-{{TestAccHi}}) |
+| Accuracy | {{TestAcc}}% (95% Wilson CI {{TestAccLo}}-{{TestAccHi}}) |
 | Macro-F1 | {{TestMacroFOne}}% |
 | Macro recall | {{TestMacroRecall}}% |
 | Macro ROC-AUC | {{TestMacroAUC}} |
 | Macro PR-AUC | {{TestMacroPRAUC}} |
 - Errors concentrate in Nodule / Mass and Normal, the weakest classes
 > These are the internal test results of the final model, v6.1, which is run 2 with seed 42. The test split was evaluated once.
-> Accuracy and macro-F1 are given with the bootstrap interval for accuracy. Macro ROC-AUC is higher than accuracy because AUC measures ranking, not the decision threshold.
+> The 95% Wilson interval is shown for accuracy only (the percentile bootstrap gives {{TestAccBootLo}} to {{TestAccBootHi}}); no interval is shown for macro-F1. Macro ROC-AUC is higher than accuracy because AUC measures ranking, not the decision threshold.
 > The confusion matrix shows that errors concentrate on Pulmonary Nodule / Mass and Normal. Nodule/Mass and Pleural Effusion are NIH-only classes with NLP-mined labels.
 > These are internal numbers; the external cohort later shows they overstate behaviour on an unseen hospital.
 ---
@@ -211,8 +211,8 @@ layout: figs2
 title: ROC curves and calibration
 figure: fig_roc_curves, fig_calibration
 caption: One-vs-rest ROC curves (left); reliability diagram on the test split (right), ECE {{TestECE}}.
-- Best separated: COVID-19, Tuberculosis, Pneumonia; weakest: Nodule / Mass, then Normal
-> The left panel shows one-versus-rest ROC curves on the test split. COVID-19, Tuberculosis and Pneumonia are separated best; Pulmonary Nodule / Mass and Normal are weakest.
+- AUC highest: COVID-19 {{AUCCovid}}, TB {{AUCTB}}; lowest: Normal {{AUCNormal}}, Nodule {{AUCNodule}}
+> The left panel shows one-versus-rest ROC curves on the test split. By ROC-AUC, COVID-19 ({{AUCCovid}}) and Tuberculosis ({{AUCTB}}) are highest, then Pleural Effusion ({{AUCEffusion}}) and Pneumonia ({{AUCPneumonia}}); Normal ({{AUCNormal}}) and Pulmonary Nodule / Mass ({{AUCNodule}}) are lowest.
 > The right panel is the reliability diagram: predicted confidence against observed accuracy, with expected calibration error {{TestECE}} in the caption. Calibration matters because the application shows probabilities to users.
 > Per-class precision, recall and F1 follow in the next table.
 ---
@@ -241,11 +241,11 @@ colw: 4.6, 3.0, 2.4
 | Binary AUC | {{ExtAUC}} | not computed |
 | Exact TB class on TB scans | {{ExtTBK}}/{{ExtTBN}} = {{ExtTB}}% | not computed |
 - Run 1: {{RunOneExtCovidCalls}} of {{NExternal}} scans called COVID-19, {{RunOneExtSpecK}}/{{ExtSpecN}} normals Normal. Run 2: {{ExtCovidCalls}} COVID-19, {{ExtSpecK}}/{{ExtSpecN}} Normal
-- A second COVID-19 source removed that shortcut, but errors moved to other abnormal classes; V5 specificity was {{VFiveExtSpecK}}/{{VFiveExtSpecN}}
+- Run 1's COVID-19 calls largely disappeared with build 2 (which adds several sources), but errors moved to other abnormal classes: consistent with, not proof of, a source shortcut; V5 specificity was {{VFiveExtSpecK}}/{{VFiveExtSpecN}}
 > The external cohort is Montgomery, with 58 TB and 80 normal scans, evaluated as a binary task. Each model was evaluated on it once.
 > Sensitivity is only meaningful with specificity. Specificity is low: the model would flag most healthy patients from this hospital as abnormal. Exact TB recognition is {{ExtTBK}} of {{ExtTBN}}.
 > Run 1 called {{RunOneExtCovidCalls}} of {{NExternal}} scans COVID-19 and {{RunOneExtSpecK}} of {{ExtSpecN}} normals Normal (run-1 external evaluation). Run 2 calls {{ExtCovidCalls}} COVID-19 and {{ExtSpecK}} of {{ExtSpecN}} Normal.
-> Interpretation: adding a large second COVID-19 source removed the run-1 COVID-19 shortcut, but the external errors shifted to other abnormal classes, mostly Pneumonia and Nodule/Mass. Internal gains did not translate into better external specificity or any TB recognition.
+> Interpretation: run 1's COVID-19 calls fell sharply when build 2 was used, but the external errors shifted to other abnormal classes, mostly Pneumonia and Nodule/Mass. Build 2 changed several sources at once (TBX11K, COVID-19 Radiography, two more NIH archives), so this is consistent with, but does not prove, a source shortcut; the evidence is indirect. Internal gains did not translate into better external specificity or any TB recognition.
 ---
 layout: table
 title: Model selection: run 1 vs run 2 on a common validation set
@@ -270,7 +270,7 @@ figure: fig_gradcam_examples
 caption: Grad-CAM, one correctly classified median-confidence test image per class (rule fixed before viewing).
 - Source probe: balanced accuracy {{ProbeImgBalAcc}}% (ImageNet features), {{ProbeMdlBalAcc}}% (model backbone); chance {{ProbeImgChance}}%
 > A linear probe on frozen features predicts a test image's source with balanced accuracy {{ProbeImgBalAcc}} percent using ImageNet features and {{ProbeMdlBalAcc}} percent using the trained backbone; chance is {{ProbeImgChance}} percent over {{ProbeImgNSources}} sources.
-> Within one class the source is still identifiable: Normal {{ProbeImgWithinNormal}} percent (chance {{ProbeImgWithinNormalChance}}), Tuberculosis {{ProbeImgWithinTB}}, Pneumonia {{ProbeImgWithinPneumonia}}, COVID-19 {{ProbeImgWithinCovid}}. Fine-tuning changed only the last 17 weighted backbone layers.
+> Within one class the source is still identifiable: Normal {{ProbeImgWithinNormal}} percent (chance {{ProbeImgWithinNormalChance}}), Tuberculosis {{ProbeImgWithinTB}}, Pneumonia {{ProbeImgWithinPneumonia}}, COVID-19 {{ProbeImgWithinCovid}}. Fine-tuning unfroze the last 30 backbone layers, 17 of which carry weights, so only those changed.
 > So source and class are confounded and source information is linearly available, which makes a shortcut possible. This is indirect evidence, not proof that the model uses source cues.
 > Grad-CAM, one image per class, illustrative only: COVID-19 and Normal heatmaps concentrate on neck, shoulders and image borders; Nodule/Mass and Tuberculosis fall inside the lung fields; Pneumonia (a paediatric image) is diffuse. Together with the external result this supports the concern.
 ---
@@ -283,9 +283,9 @@ title: Robustness: seeds and ablation
 > Until then every number in this talk is from a single seed, and I make no claim about run-to-run variance or about the benefit of the preprocessing.
 ---
 layout: figs2
-title: Application demo (model v{{ModelVersion}})
+title: Application demo (model {{ModelVersion}})
 figure: screenshots/07_result_card, screenshots/08_gradcam_card
-caption: A test-split Shenzhen radiograph (true label Tuberculosis) analysed by the running application. Left: prediction and six-class scores. Right: Grad-CAM overlay. Captured with scripts/capture_screenshots.py.
+caption: Test-split Shenzhen radiograph (true label Tuberculosis). Left: prediction and scores. Right: Grad-CAM overlay.
 > These are screenshots of the running application with the final model, not mock-ups. The image comes from the held-out test split of the final dataset, and its true label is Tuberculosis.
 > The left panel shows the predicted class with its top-class score and all six softmax scores; the same values are returned by the API and stored in the history.
 > The right panel shows the Grad-CAM overlay. It shows image regions that influenced the score; it is not radiological reasoning, and on this image part of the attention falls outside the lung fields.
@@ -310,11 +310,11 @@ title: Conclusion
 - Delivered a reproducible pipeline from raw data to served metrics, and a working application
 - Showed how leakage and proxy labels inflated the earlier V5 result
 - Final model v6.1: {{TestAcc}}% internal accuracy, but external specificity {{ExtSpecK}}/{{ExtSpecN}} and TB recall {{ExtTBK}}/{{ExtTBN}}: internal metrics overstate behaviour
-- Class-source confounding is strong; adding sources changed the shortcut, not the external gap
+- Class-source confounding is strong; build 2 changed where external errors fall, not the external gap (indirect evidence of a source shortcut)
 - Not shown: clinical utility, superiority over other methods, seed robustness, preprocessing benefit (pending)
 > To conclude, the contribution is an auditable rebuild and a reproducible pipeline, together with evidence of how an earlier pipeline overstated its results.
 > The final model is v6.1, run 2. Its internal accuracy is good, but on the external cohort specificity is low and no TB scan is recognised as TB, so internal metrics overstate generalisation.
-> Adding a second COVID-19 source changed which shortcut appears rather than closing the external gap. Seed robustness and the preprocessing ablation remain pending.
+> With build 2 the COVID-19 calls fell but the external gap remained; this is consistent with a source shortcut, not proof of one. Seed robustness and the preprocessing ablation remain pending.
 > The claim I can defend is about method, not about clinical accuracy.
 ---
 layout: bullets

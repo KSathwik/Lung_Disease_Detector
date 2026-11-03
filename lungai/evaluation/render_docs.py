@@ -187,6 +187,25 @@ def flat_results(r: Dict[str, Any]) -> Dict[str, str]:
                             f"Cmp{name}{tag}MacroFOne": p1(mm["macro_f1"])})
                 if "macro_roc_auc" in mm:
                     out[f"Cmp{name}{tag}MacroAUC"] = f"{mm['macro_roc_auc']:.3f}"
+    # Accuracy has two intervals: Wilson (accuracy_ci95, the TestAccLo/Hi macros) and percentile bootstrap.
+    bci = (m.get("bootstrap_ci95") or {}).get("accuracy")
+    if bci:
+        out.update({"TestAccBootLo": p1(bci["lower"]), "TestAccBootHi": p1(bci["upper"])})
+    # CXR input gate: calibration (validation split) and rejection of real radiographs (test/external), from app checks
+    checks = REPO_ROOT / "artifacts" / "app_checks"
+    cal = checks / "cxr_gate_calibration_v6_build_002.json"
+    if cal.is_file():
+        c = json.loads(cal.read_text(encoding="utf-8"))
+        out.update({"CxrGateNewThr": f"{c['heuristic_threshold']:.3f}", "CxrGateValN": f"{c['n']:,}",
+                    "CxrGateValPassNew": p1(c["val_pass_rate_at_threshold"]), "CxrGateValPassOld": p1(c["val_pass_rate_at_0.83"])})
+    for key, fname in (("BOneOld", "cxr_gate_rejection_v6_build_001.json"), ("BTwoNew", "cxr_gate_rejection_v6_build_002_heuristic0703.json"),
+                       ("BTwoOld", "cxr_gate_rejection_v6_build_002_heuristic083.json")):
+        f = checks / fname
+        if f.is_file():
+            g = json.loads(f.read_text(encoding="utf-8"))["total"]
+            for split, tag in (("test", "Test"), ("external", "Ext")):
+                n, k = g[split]["n"], g[split]["rejected"]
+                out.update({f"CxrGate{key}{tag}Rej": f"{k:,}", f"CxrGate{key}{tag}N": f"{n:,}", f"CxrGate{key}{tag}RejPct": p1(k / n)})
     # Run 1 (superseded v6.0), from its own once-only evaluation reports, for the run comparison tables
     run1 = REPO_ROOT / "artifacts" / "evaluation_reports"
     if (run1 / "v6_test" / "metrics_test.json").is_file() and (run1 / "v6_external" / "metrics_external.json").is_file():

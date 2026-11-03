@@ -131,9 +131,43 @@
       "build": "data\\derived\\v6_build_002"
     },
     "4_train_r3": {
-      "status": "in_progress",
-      "updated": "2026-11-03T10:44:51+00:00",
+      "status": "done",
+      "updated": "2026-11-03T14:13:29+00:00",
       "run": "v6r3_densenet121_seed43",
+      "max_hours": 7.24
+    },
+    "5_evaluate_r3": {
+      "status": "done",
+      "updated": "2026-11-03T14:25:32+00:00",
+      "reports": {
+        "val": "artifacts\\evaluation_reports\\v6_r3_val",
+        "test": "artifacts\\evaluation_reports\\v6_r3_test",
+        "external": "artifacts\\evaluation_reports\\v6_r3_external"
+      }
+    },
+    "2_recover_data_r4": {
+      "status": "done",
+      "updated": "2026-11-03T14:25:34+00:00",
+      "extracted": {},
+      "sources_available": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "tbx11k",
+        "cohen_covid",
+        "covid_radiography"
+      ]
+    },
+    "3_build_v6_r4": {
+      "status": "done",
+      "updated": "2026-11-03T14:25:34+00:00",
+      "build": "data\\derived\\v6_build_002"
+    },
+    "4_train_r4": {
+      "status": "in_progress",
+      "updated": "2026-11-03T14:25:34+00:00",
+      "run": "v6r4_densenet121_seed44",
       "max_hours": 7.24
     }
   },

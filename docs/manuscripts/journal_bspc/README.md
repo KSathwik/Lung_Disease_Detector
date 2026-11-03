@@ -44,7 +44,7 @@ For submission, Elsevier's system usually wants a flat folder: copy `results_mac
 ## Placeholders
 
 - `\pending{...}` (red): result-dependent interpretation to write after the final model is chosen (run 1 vs run 2 on the common selection set).
-- `\confirm{...}` (blue): decisions or facts the authors must confirm (author order, CRediT roles, licence of the COVID-19 Radiography Database, ethics exemption, repository URL, AI declaration).
+- `\confirm{...}` (blue): decisions or facts the authors must confirm (author order, CRediT roles, source licences (Table 1 says "see source terms"), ethics exemption, repository URL, AI declaration).
 - `[TO BE PROVIDED]`: contact details.
 
 Before submission: `grep -n "pending\|confirm\|TO BE PROVIDED" -r .` must return nothing outside comments, and the macro file must have been regenerated from the final model (`python -m lungai.evaluation.render_docs`).

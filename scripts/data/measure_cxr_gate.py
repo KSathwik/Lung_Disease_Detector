@@ -22,8 +22,10 @@ def main() -> int:
     ap.add_argument("--build", type=Path, required=True)
     ap.add_argument("--raw-root", type=Path, default=REPO / "data" / "raw")
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--heuristic-threshold", type=float, default=None,
+                    help="override the configured heuristic threshold (e.g. 0.83 to measure the old setting on the same split)")
     args = ap.parse_args()
-    gate = CXRGate()
+    gate = CXRGate(heuristic_threshold=args.heuristic_threshold)
     m = pd.read_csv(args.build / "manifest_v6.csv", dtype=str, keep_default_na=False)
     tot, rej, reasons = Counter(), Counter(), Counter()
     for _, r in m[m.split.isin(["test", "external"])].iterrows():
@@ -33,7 +35,7 @@ def main() -> int:
         if not ok:
             rej[key] += 1
             reasons[msg.split(":")[0][:60]] += 1
-    out = {"build": args.build.name, "threshold": gate.threshold,
+    out = {"build": args.build.name, "threshold": gate.threshold, "heuristic_threshold": gate.heuristic_threshold,
            "by_group": [{"split": k[0], "source": k[1], "label": k[2], "n": tot[k], "rejected": rej[k]} for k in sorted(tot)],
            "total": {s: {"n": sum(v for k, v in tot.items() if k[0] == s), "rejected": sum(v for k, v in rej.items() if k[0] == s)}
                      for s in ("test", "external")},

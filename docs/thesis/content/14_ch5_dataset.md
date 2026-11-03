@@ -8,7 +8,7 @@ This chapter describes how the V6 dataset was assembled and how each image is pr
 
 Seven sources were used. Six provide development data and one (Montgomery) is reserved as an external cohort.
 
-- **NIH ChestX-ray14** [@wang2017chestxray8] supplies Normal, Pleural Effusion, Pneumonia and Pulmonary Nodule / Mass images. It is the only source with genuine patient identifiers and the largest source by far.
+- **NIH ChestX-ray14** [@wang2017chestxray8] supplies Normal, Pleural Effusion, Pneumonia and Pulmonary Nodule / Mass images. It is one of two sources with genuine patient identifiers (the other is the Cohen collection) and the largest source by far.
 - **Kermany** [@kermany2018identifying] supplies paediatric Normal and Pneumonia images.
 - **Shenzhen** [@jaeger2014two] supplies adult Normal and Tuberculosis images.
 - **TBX11K** [@liu2020rethinking] supplies Normal and Tuberculosis images (run 2 only).
@@ -99,7 +99,7 @@ The zero in the first row proves separation only for the rows whose identity is 
 
 ## Composition of the builds
 
-Two builds were made. Run 1 (build 001) uses four development sources and the external cohort. Run 2 (build 002) adds TBX11K and the COVID-19 Radiography Database, which enlarges the Tuberculosis and COVID-19 classes. The final model is chosen between the runs on a common validation set The final model, {{ModelVersion}}, was trained on build {{DatasetBuild}} (run 2); build 001 (run 1) is the superseded first build and its model is kept only as a documented earlier experiment. [[tab:composition]] shows the class composition, [[tab:sources]] the source composition and [[tab:exclusions]] the reasons images were left out. [[fig:composition]] shows the same composition graphically.
+Two builds were made. Run 1 (build 001) uses four development sources and the external cohort. Run 2 (build 002) adds TBX11K and the COVID-19 Radiography Database, which enlarges the Tuberculosis and COVID-19 classes. The final model is chosen between the runs on a common validation set. The final model, {{ModelVersion}}, was trained on build {{DatasetBuild}} (run 2); build 001 (run 1) is the superseded first build and its model is kept only as a documented earlier experiment. [[tab:composition]] shows the class composition, [[tab:sources]] the source composition and [[tab:exclusions]] the reasons images were left out. [[fig:composition]] shows the same composition graphically.
 
 @gen: composition | Images per class and split in the two V6 builds. {#tab:composition}
 

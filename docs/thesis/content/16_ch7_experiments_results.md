@@ -45,7 +45,7 @@ No hyper-parameter search was run. Run-to-run variation is measured only by the 
 
 ![fig_training_curves](Training loss and validation accuracy, macro-F1 and macro ROC-AUC per epoch.) {#fig:curves}
 
-The run completed its full schedule of {{EpochsTrained}} epochs (the head epochs followed by fine-tuning) and was not stopped early. Validation macro-F1 rose slowly during fine-tuning and was highest at the last epoch ({{SelectedEpoch}}), where it was {{ValMacroFOne}}%. The validation curve was therefore still rising slightly when training ended, and a longer schedule might change the result; this was not tested
+The run completed its full schedule of {{EpochsTrained}} epochs (the head epochs followed by fine-tuning) and was not stopped early. Validation macro-F1 rose slowly during fine-tuning and was highest at the last epoch ({{SelectedEpoch}}), where it was {{ValMacroFOne}}%. The validation curve was therefore still rising slightly when training ended, and a longer schedule might change the result; this was not tested.
 
 ## Internal results
 
@@ -180,7 +180,7 @@ The internal test accuracy of {{TestAcc}}% hides large differences between class
 
 On the unseen hospital the picture is different. The model flags {{ExtSensK}} of {{ExtSensN}} tuberculosis scans as abnormal, but it calls only {{ExtSpecK}} of {{ExtSpecN}} normal scans Normal, so most healthy patients of this cohort would be flagged. The exact Tuberculosis recall is {{ExtTBK}} of {{ExtTBN}}: the abnormal sensitivity does not mean that tuberculosis is recognised. Most scans, normal and tuberculosis alike, were assigned to Pneumonia or Pulmonary Nodule / Mass ([[fig:external]]), and only {{ExtCovidCalls}} scans were called COVID-19. The internal Tuberculosis F1 of {{FOneTB}}% therefore does not transfer to this cohort.
 
-Run 1 called {{RunOneExtCovidCalls}} of {{NExternal}} Montgomery scans COVID-19. Adding a second large COVID-19 source in run 2 removed that behaviour, but the external errors moved to the other abnormal classes: the internal gains did not translate into better external specificity or into any recognition of Tuberculosis. Adding sources changed which error appears; it did not close the external gap.
+Run 1 called {{RunOneExtCovidCalls}} of {{NExternal}} Montgomery scans COVID-19. With build 2, which adds several sources at once (TBX11K, the COVID-19 Radiography Database and two more NIH archives), run 2 called only {{ExtCovidCalls}} scans COVID-19, but the external errors moved to the other abnormal classes: the internal gains did not translate into better external specificity or into any recognition of Tuberculosis. This is consistent with, but does not prove, a source shortcut in run 1; without an ablation the change cannot be attributed to any single added source. The external gap was not closed.
 
 ### Evidence on source shortcuts
 

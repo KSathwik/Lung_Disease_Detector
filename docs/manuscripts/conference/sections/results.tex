@@ -1,16 +1,12 @@
 \section{Results}\label{sec:results}
 \subsection{Run selection}
-On the common selection set (\RCmpN{} images), run 2 reached macro-F1 \RCmpRunTwoMacroFOne\% against
-\RCmpRunOneMacroFOne\% for run 1, accuracy \RCmpRunTwoAcc\% against \RCmpRunOneAcc\%, and macro ROC-AUC
-\RCmpRunTwoMacroAUC{} against \RCmpRunOneMacroAUC. Run 1 was right and run 2 wrong on \RCmpMcNemarB{}
-images, the reverse on \RCmpMcNemarC{} (exact McNemar $p{=}\RCmpMcNemarP$, descriptive only). On the
-\RCmpRunOneSharedN{} common images from the four sources both runs trained on, accuracy is almost equal
-(\RCmpRunOneSharedAcc\% against \RCmpRunTwoSharedAcc\%) and the macro-F1 gap is smaller
-(\RCmpRunOneSharedMacroFOne\% against \RCmpRunTwoSharedMacroFOne\%). Much of run 2's advantage therefore lies on
-TBX11K and COVID-19 Radiography images, which are in-distribution for run 2 only.
+Run 2 was selected on the common selection set (\RCmpN{} images) by macro-F1 (\RCmpRunTwoMacroFOne\% against
+\RCmpRunOneMacroFOne\% for run 1). On the \RCmpRunOneSharedN{} images from the four sources both runs trained on,
+the macro-F1 gap is smaller (\RCmpRunOneSharedMacroFOne\% against \RCmpRunTwoSharedMacroFOne\%), so much of run 2's
+advantage lies on TBX11K and COVID-19 Radiography images, which are in-distribution for run 2 only.
 
 \subsection{Internal test}
-On the test split of \RNTest{} images the selected model reaches \RTestAcc\% accuracy (bootstrap interval
+On the test split of \RNTest{} images the selected model reaches \RTestAcc\% accuracy (Wilson 95\% interval
 \RTestAccLo--\RTestAccHi\%), macro-F1 \RTestMacroFOne\%, macro ROC-AUC \RTestMacroAUC{} and ECE \RTestECE;
 validation accuracy was \RValAcc\%. The earlier leaky V5 model reported \RVFiveAcc\% on a different test
 set (N=\RVFiveN); the numbers are not comparable. Table~\ref{tab:perclass} gives per-class results and
@@ -56,9 +52,11 @@ means the model would flag most healthy patients from this hospital as abnormal.
 
 The first run behaved differently. Run 1 called \RRunOneExtCovidCalls{} of \RNExternal{} Montgomery scans COVID-19 and \RRunOneExtSpecK{} of \RExtSpecN{} normal scans
 Normal (each run evaluated once).
-Run 2 calls \RExtCovidCalls{} scans COVID-19 and \RExtSpecK{} of \RExtSpecN{} normals Normal. Adding a large
-second COVID-19 source thus removed the run-1 COVID-19 pattern, but the errors moved to other abnormal
-classes: internal gains did not translate into better external specificity or any TB recognition.
+Run 2 calls \RExtCovidCalls{} scans COVID-19 and \RExtSpecK{} of \RExtSpecN{} normals Normal. COVID-19 calls thus fell
+from \RRunOneExtCovidCalls{} to \RExtCovidCalls{} of \RNExternal{}. This is consistent with, but does not prove, the added
+COVID-19 source removing a source cue; build 2 changed several sources at once (TBX11K, COVID-19 Radiography,
+further NIH archives). The errors moved to other abnormal classes, and internal gains did not translate into better
+external specificity or any TB recognition.
 
 \begin{figure}[t]
 \centering

@@ -2,6 +2,8 @@
 
 The base path is /api/v1. Interactive documentation is served at /docs when the backend runs. If the environment variable LUNGAI_API_KEY is set, every route except the health route requires the header X-API-Key; otherwise only loopback clients are served. Failures return 401.
 
+[[tab:api]] lists the endpoints.
+
 Table: Endpoints of the backend. {#tab:api}
 
 | Method | Path | Purpose | Status codes |
@@ -17,6 +19,8 @@ Table: Endpoints of the backend. {#tab:api}
 | GET, POST, PUT | /patients | Patient records | 200, 201, 401, 404, 409, 422 |
 
 The response of a successful prediction contains: the prediction and scan identifiers; the model identifier, version, display name and checkpoint SHA-256 with the verification flag; the class order; the predicted class and index; the confidence (top score) and the inconclusive flag; the six probabilities keyed by class name; the Grad-CAM overlay, original image, target class and disclaimer; a summary block with urgency, alternative conditions, key findings and precautions; the external-generalisation limitation notice; and the creation time.
+
+[[tab:errors]] lists the error bodies returned by the prediction endpoint.
 
 Table: Error bodies of the prediction endpoint. {#tab:errors}
 
@@ -41,7 +45,7 @@ Table: Main groups of the model configuration. {#tab:config}
 | Training | Batch size, learning rates, number of unfrozen layers, phases, seed, checkpoint selection rule |
 | Augmentation | Flip probability, rotation range, border mode |
 | Checkpoint | File name and expected SHA-256 |
-| Inference | Confidence floor 0.5, input gate parameters (model threshold 0.83, heuristic threshold 0.703) |
+| Inference | Confidence floor 0.5, input gate parameters (model threshold 0.83, heuristic threshold {{CxrGateNewThr}}) |
 | Dataset | Description of the V6 build, split fingerprint; the V5 description is kept under a historical key |
 
 The dataset rules are in lungai/configs/dataset_v6_proposal.json: the seed 20261102, the split fractions 0.70, 0.15 and 0.15, the stratification keys, the near-duplicate thresholds (at most 6 bits of perceptual hash difference and thumbnail correlation of at least 0.97), the per-source label rules and the sampling caps.
@@ -90,6 +94,8 @@ A rebuild from the same sources, rules and seed reproduces the split; its finger
 
 The tests run on Windows 11 with Python 3.12.4, TensorFlow 2.16.1 and Node 18. The Python suite was re-run after the final model (v6.1) was integrated; the frontend figures below were recorded on 2 November 2026.
 
+[[tab:tests]] gives the recorded results.
+
 Table: Test results recorded on the project branch. {#tab:tests}
 
 | Suite | Result |
@@ -102,6 +108,8 @@ Table: Test results recorded on the project branch. {#tab:tests}
 | Recorded V5 results check | 5 of 5 runs consistent, 0 mismatches |
 
 The remaining skip applies only when no checkpoint is installed. Image-level checks, training and evaluation on the real data are not automated tests because they need the images.
+
+[[tab:coverage]] summarises what each suite covers.
 
 Table: What the test suites cover. {#tab:coverage}
 
@@ -139,6 +147,8 @@ This appendix records what the audit of the earlier model found, for the record.
 **Consequence.** V6 was built to remove these defects: see [[tab:defects]].
 
 # Reporting Checklist Mapping
+
+[[tab:claim]] maps the report to the CLAIM and TRIPOD+AI items.
 
 Table: Mapping of the report to items of the CLAIM checklist [@mongan2020claim] and the TRIPOD+AI statement [@collins2024tripodai]. This is a self-assessment by the author of the report and has not been reviewed by others. {#tab:claim}
 

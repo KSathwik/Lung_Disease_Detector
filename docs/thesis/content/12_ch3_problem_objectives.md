@@ -4,7 +4,7 @@
 
 Given one frontal chest radiograph, assign it to exactly one of six classes: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass or Tuberculosis. The class order is fixed in the configuration file and is used by the trainer, the evaluator, the backend and the frontend. Alongside the class, the system must return the six class scores, a Grad-CAM overlay for the predicted class, and the evaluation metrics of the model that produced them.
 
-The scientific problem is the second half of the task: the numbers reported for such a classifier must describe how it will behave on images it has not seen, from sources it has not seen. That requires a dataset whose splits are free of patient and duplicate leakage, whose labels are defined by explicit rules, and whose evaluation includes a cohort that played no part in development.
+The scientific problem is the second half of the task: the numbers reported for such a classifier must describe how it will behave on images it has not seen, from sources it has not seen. That requires a dataset whose splits are free of leakage of known patient identities and of duplicates, whose labels are defined by explicit rules, and whose evaluation includes a cohort that played no part in development.
 
 ## Single-label formulation and its consequences
 
@@ -52,7 +52,7 @@ The project is judged on process rather than on a headline accuracy. The criteri
 
 The work is organised around three questions.
 
-1. How different are internal and external results when the internal split is free of patient and duplicate leakage?
+1. How different are internal and external results when the internal split is free of leakage of known patient identities and of duplicates?
 2. Do per-source and external breakdowns show that any class is recognised by its source rather than by disease?
 3. Can a leakage-controlled six-class pipeline be built, trained and served on a laptop CPU, and what does it cost in time and memory?
 
@@ -62,7 +62,7 @@ The answers to the first two questions depend on the final model and are given i
 
 The project runs under the following constraints, which shape the design.
 
-- **Compute.** The training machine is an 8 GB laptop without a GPU supported by the TensorFlow version used. A training epoch takes roughly 13 to 14 minutes, so a run is limited to about ten epochs.
+- **Compute.** The training machine is an 8 GB laptop without a GPU supported by the TensorFlow version used. A training epoch takes roughly 20 to 26 minutes for the final build (run 2), so the number of epochs per run is small.
 - **Data access.** Sources behind credentialing (VinDr-CXR, via PhysioNet) or registration (JSRT) were not available.
 - **Time.** The overnight build, training and evaluation run had to complete within a fixed time box.
 - **Single seed.** Repeating the training with several seeds was not possible in the time available.

@@ -9,8 +9,8 @@ This project rebuilt a six-class chest X-ray classification system around a leak
 For the final model, {{ModelVersion}}, the answers to the three research questions of Chapter 3 are as follows.
 
 1. **Internal versus external.** With a patient-grouped, leakage-controlled split the internal test accuracy is {{TestAcc}}% (macro-F1 {{TestMacroFOne}}%), but on the external hospital the model calls only {{ExtSpecK}} of {{ExtSpecN}} normal scans Normal and none of {{ExtTBN}} tuberculosis scans Tuberculosis. The gap is large and a clean internal split does not close it.
-2. **Source shortcuts.** The source of an image is predictable from the features (balanced accuracy {{ProbeMdlBalAcc}}% against a chance of {{ProbeMdlChance}}%), also within a class. The first run's COVID-19 assignments on Montgomery were removed in the final run by adding a second source, but the external errors moved to other classes. The evidence is consistent with source shortcuts and is indirect; it does not prove them.
-3. **Cost.** The pipeline, from acquisition to served metrics, runs on a laptop CPU; training the final model took several hours, and each run is a single time-boxed seed.
+2. **Source shortcuts.** The source of an image is predictable from the features (balanced accuracy {{ProbeMdlBalAcc}}% against a chance of {{ProbeMdlChance}}%), also within a class. The first run's COVID-19 assignments on Montgomery largely disappeared in the final run, which used build 2 (several sources added at once), but the external errors moved to other classes. The evidence is consistent with source shortcuts and is indirect; it does not prove them.
+3. **Cost.** The pipeline, from acquisition to served metrics, runs on a laptop CPU; training the final model (run 2) took about 5.8 hours, and each run is a single time-boxed seed.
 
 Seed variability and the preprocessing ablation will be added when those runs finish: [PENDING: seed runs] [PENDING: ablation].
 
@@ -23,13 +23,13 @@ Conclusions that do not depend on the final model are the following.
 
 ## Contributions revisited
 
-The four contributions stated in Chapter 1 stand as pipeline and audit contributions: the auditable rebuild, the reproducible end-to-end pipeline, the evidence about internal versus external behaviour internal metrics of {{TestAcc}}% accuracy against an external specificity of {{ExtSpecK}} of {{ExtSpecN}}, and the audit of the earlier pipeline. The project does not claim a new architecture or a clinically useful classifier.
+The four contributions stated in Chapter 1 stand as pipeline and audit contributions: the auditable rebuild, the reproducible end-to-end pipeline, the evidence about internal versus external behaviour (internal metrics of {{TestAcc}}% accuracy against an external specificity of {{ExtSpecK}} of {{ExtSpecN}}), and the audit of the earlier pipeline. The project does not claim a new architecture or a clinically useful classifier.
 
 ## Future scope
 
 The most valuable extensions follow from the limitations.
 
-- **More seeds.** Train at least five seeds per configuration (about five hours of CPU time each) and report mean and spread, so that differences between configurations can be judged.
+- **More seeds.** Train at least five seeds per configuration (about six hours of CPU time each for the final build) and report mean and spread, so that differences between configurations can be judged.
 - **Better data for the weak classes.** Obtain VinDr-CXR and JSRT through credentialing and registration, to give Pleural Effusion and Nodule / Mass radiologist-read labels and a second source. Add a source with real patient identifiers for COVID-19 and TB.
 - **Source-shortcut controls.** A source-prediction probe on frozen features was run in this work. Report leave-one-source-out results for multi-source classes, and test whether performance holds when the border and annotation regions of the image are masked.
 - **Preprocessing redesign.** Resize to a canonical size before blur, CLAHE and low-pass filtering, remove the dependence on image resolution, and choose between the variants on validation. Reconsider the horizontal flip, which reverses cardiac laterality.

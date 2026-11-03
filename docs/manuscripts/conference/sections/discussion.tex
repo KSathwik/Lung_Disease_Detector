@@ -6,11 +6,11 @@ even when patients are separated; an external cohort breaks that link
 \cite{zech2018variable,degrave2021ai,geirhos2020shortcut}.
 
 \emph{Source confounding.} Class and source overlap in the merged data. In run 1 the external scans were
-frequently called COVID-19, a class supplied only by web-collected sources. Adding a second COVID-19 source
-removed that pattern, yet specificity stayed low and the errors moved to Pneumonia and Nodule/Mass.
-This is consistent with a source shortcut that changed with the training data rather than disappeared, but
-our evidence is indirect, and we do not claim to have proven that the model uses source cues. Adding sources
-changed which shortcut appeared; it did not remove the external gap.
+frequently called COVID-19, a class supplied only by web-collected sources. COVID-19 calls fell from \RRunOneExtCovidCalls{} to
+\RExtCovidCalls{} of \RNExternal{} with build 2, yet specificity stayed low and the errors moved to Pneumonia and Nodule/Mass.
+Build 2 changed several sources at once (TBX11K, the COVID-19 Radiography Database and further NIH archives), so
+this is consistent with, but not proof of, the added COVID-19 source removing a source cue. Our evidence is
+indirect, and we do not claim that the model uses source cues.
 
 \emph{Limitations.}
 (i) One training run per model (seed \RSeed), CPU-trained and time-boxed; run 2's selection advantage is

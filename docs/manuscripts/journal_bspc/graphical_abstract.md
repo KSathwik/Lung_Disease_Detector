@@ -9,7 +9,7 @@ Seven source icons (NIH ChestX-ray14, Kermany, Shenzhen, COVID-19 image data col
 - official download + SHA-256 provenance
 - label rules fixed before training (proxy and latent labels excluded)
 - patient grouping + pHash/correlation near-duplicate merging
-- leakage checks = 0 (groups, files, external files)
+- leakage checks = 0 (identity known for some sources only; others grouped per image)
 
 **Panel 2: "Train" (result-independent).**
 Small schematic: blur → CLAHE → low-pass → DenseNet-121 → 6 classes. Caption "selected on validation macro-F1; test and external evaluated once".

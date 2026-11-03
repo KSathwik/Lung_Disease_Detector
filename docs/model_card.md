@@ -38,7 +38,7 @@ Implemented once, in [`lungai/preprocessing.py`](../lungai/preprocessing.py), an
 6. Lanczos-4 resize to 224×224.
 7. Normalise: `(x/255 − mean)/std`, with ImageNet mean [0.485, 0.456, 0.406] and std [0.229, 0.224, 0.225].
 
-Steps 3–5 run at native resolution, *before* resizing, as in the original training run. Their effective strength therefore depends on the input size (see [limitations.md](limitations.md)). This order is kept so that training and serving match the checkpoints trained with it (v5.0 and v6.0). `tests/ml/test_preprocessing.py` checks the implementation against a frozen copy of the original training function (tolerance 1e-6).
+Steps 3–5 run at native resolution, *before* resizing, as in the original training run. Their effective strength therefore depends on the input size (see [limitations.md](limitations.md)). This order is kept so that training and serving match the checkpoints trained with it (v5.0, v6.0 and the served v6.1). `tests/ml/test_preprocessing.py` checks the implementation against a frozen copy of the original training function (tolerance 1e-6).
 
 ## Training procedure
 
@@ -52,6 +52,8 @@ Trainer: [`lungai/training/train_v6.py`](../lungai/training/train_v6.py) on a V6
 - **Checkpoint selection:** the epoch with the best **validation** macro-F1 (tie-break: validation macro ROC-AUC). The test split and the external cohort are evaluated once, after selection.
 
 The per-epoch curve and the selected epoch are in [results/current_model.md](results/current_model.md#training).
+
+**Which run is served.** Two V6 runs exist: run 1 on `v6_build_001` and run 2 on `v6_build_002` (adds TBX11K, the COVID-19 Radiography Database and two NIH archives). The served v6.1 is run 2, chosen by a rule fixed in advance and recorded in the repository before run 2's results: macro-F1 on a common set of validation images that neither build used for training or testing ([data/run_selection_protocol.md](data/run_selection_protocol.md), `artifacts/evaluation_reports/run_comparison.json`). Much of run 2's advantage lies on the sources only it trained on, and run 2 was started after run 1's external results had been seen; both caveats are in [limitations.md](limitations.md#current-model). Run 1 is kept as v6.0 history.
 
 ## Why this model
 

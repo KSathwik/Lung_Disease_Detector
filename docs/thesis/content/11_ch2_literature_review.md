@@ -40,7 +40,7 @@ Table: Public sources used or considered for the six-class benchmark. Counts are
 
 Transfer learning from ImageNet [@deng2009imagenet] is the dominant strategy, because radiograph collections are small compared with natural image sets. DenseNet [@huang2017densely] connects each layer to all later layers within a block, which encourages feature reuse and keeps the parameter count low. CheXNet [@rajpurkar2017chexnet] fine-tuned a DenseNet-121 on ChestX-ray14 and reported radiologist-level pneumonia detection on its own test split; it popularised DenseNet-121 as the baseline for chest X-ray work. COVID-Net [@wang2020covidnet] proposed a purpose-built architecture for COVID-19 detection, and Apostolopoulos and Mpesiana [@apostolopoulos2020covid] applied transfer learning to the same task with small collections. Rahman et al. studied image enhancement for COVID-19 detection [@rahman2021exploring] and deep networks for TB detection [@rahman2020reliable].
 
-Many of these studies report very high accuracy, often above 95%. The numbers are valid only for the test set on which they were measured. Whether they transfer to another hospital depends on how the data were collected and split, which is the subject of the following sections. This report does not compare its figures with those of other papers, because the test sets differ.
+Some of these studies report very high accuracy. The numbers are valid only for the test set on which they were measured. Whether they transfer to another hospital depends on how the data were collected and split, which is the subject of the following sections. This report does not compare its figures with those of other papers, because the test sets differ.
 
 ## Image preprocessing
 

@@ -19,12 +19,13 @@ stratified by class and source. A group is a genuine or filename-derived patient
 exists (NIH, Kermany, Shenzhen, Cohen). For TBX11K and the COVID-19 Radiography Database patient identity is
 unknown, so each image is its own group; the same patient could therefore appear in two splits for these
 sources. Groups are merged through any shared exact (MD5) or near-duplicate (perceptual hash and thumbnail
-correlation) image, so duplicates cannot cross splits. Development images matching the external cohort are
+correlation) image, so exact and near duplicates cannot cross splits. Separation of patients is therefore guaranteed only for
+rows with known patient identity. Development images matching the external cohort are
 excluded.
 
 \subsection{External cohort}
 The Montgomery County set \cite{jaeger2014two} (\RNExternal{} scans: \RExtSpecN{} normal, \RExtTBN{}
-tuberculosis) is never used for training or selection. The task is binary (Normal versus abnormal/TB), not a
+tuberculosis) were not used for training or for selecting the served model; however, run 2 was started after run 1's external results were seen (Section~\ref{sec:method}). The task is binary (Normal versus abnormal/TB), not a
 six-class evaluation. Class and source remain partly confounded (COVID-19 images come from web
 collections and Pneumonia partly from paediatric images), which matters for
 Section~\ref{sec:results}.

@@ -1,9 +1,8 @@
 \section{Evaluation Protocol}\label{sec:experiments}
 The test split and the external cohort are each evaluated once, after the checkpoint is fixed; nothing is
-tuned on them. We report accuracy with a 2000-resample bootstrap confidence interval
-\cite{efron1994introduction}, macro-F1, per-class precision, recall and F1, one-vs-rest ROC-AUC with
+tuned on them. We report accuracy with a Wilson interval, macro-F1, per-class precision, recall and F1, one-vs-rest ROC-AUC with
 macro average, expected calibration error (ECE, 15 bins), and Wilson intervals \cite{wilson1927probable}
-for proportions. Intervals are two-sided at the conventional nominal level of ninety-five percent.
+for all proportions (no interval is given for macro-F1). Intervals are two-sided at the conventional nominal level of ninety-five percent.
 
 On the external cohort the task is binary. ``Sensitivity'' is the share of TB scans predicted as any class
 other than Normal; it is reported only together with specificity, the share of normal scans predicted

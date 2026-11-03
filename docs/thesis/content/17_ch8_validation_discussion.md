@@ -37,7 +37,7 @@ The main findings of the final model, {{ModelVersion}}, are discussed in five po
 
 **Weak classes.** Pulmonary Nodule / Mass (F1 {{FOneNodule}}%) and Normal ({{FOneNormal}}%) are the weakest. Nodule / Mass and Pleural Effusion come from NIH alone, with labels mined from reports, and are confused with Normal and with each other. Label noise is a plausible contributor but was not measured.
 
-**Source shortcuts.** For COVID-19, the first run's external behaviour ({{RunOneExtCovidCalls}} of {{NExternal}} Montgomery scans assigned COVID-19) suggested a shortcut tied to its single source. The second run removed that behaviour after a second COVID-19 source was added, but the errors moved to other abnormal classes. For Tuberculosis, the good internal result does not appear on Montgomery. The probe shows that the source is predictable from the features, also within a class, and the COVID-19 and Normal heatmaps fall outside the lung fields. This evidence is indirect and consistent with, but does not prove, the use of source cues.
+**Source shortcuts.** For COVID-19, the first run's external behaviour ({{RunOneExtCovidCalls}} of {{NExternal}} Montgomery scans assigned COVID-19) suggested a shortcut tied to its single source. The second run largely lost that behaviour with build 2, which changed several sources at once, but the errors moved to other abnormal classes. For Tuberculosis, the good internal result does not appear on Montgomery. The probe shows that the source is predictable from the features, also within a class, and the COVID-19 and Normal heatmaps fall outside the lung fields. This evidence is indirect and consistent with, but does not prove, the use of source cues.
 
 **Comparison of the two runs.** Run 2 was better on the common validation set ({{CmpRunTwoMacroFOne}}% against {{CmpRunOneMacroFOne}}% macro-F1), but on the images from sources both runs trained on, the accuracy is almost equal ({{CmpRunTwoSharedAcc}}% against {{CmpRunOneSharedAcc}}%). Much of the gain is on sources only run 2 saw. Each is a single seed, and seed variability is still to be measured [PENDING: seed runs].
 
@@ -77,7 +77,7 @@ The following limitations come from the project's limitation record. Those that 
 - Weak classes: Pulmonary Nodule / Mass and Normal have the lowest F1, and their labels, like those of Pleural Effusion, come from report mining.
 - Per-source differences: accuracy differs between sources in the test split, so overall accuracy depends on the source mix.
 - Much of the gain of the final run over the first is on sources only the final run trained on.
-- Run 2 was started after run 1's external results were known; only the selection rule was fixed beforehand
+- Run 2 was started after run 1's external results were known; only the selection rule was fixed beforehand.
 
 ### Data
 
@@ -90,7 +90,7 @@ The following limitations come from the project's limitation record. Those that 
 
 ### Application
 
-- The input gate is heuristic. After recalibration it rejects {{GateNewRejTestPct}}% of the real test radiographs of build 002 and {{GateNewRejExtPct}}% of Montgomery radiographs, down from {{GateRejTestPct}}% and {{GateRejExtPct}}% at the original threshold. Its rejection of real non-radiographs is not established, because only seven synthetic negatives were available.
+- The input gate is heuristic. After recalibration it rejects {{CxrGateBTwoNewTestRejPct}}% of the real test radiographs of build 002 and {{CxrGateBTwoNewExtRejPct}}% of Montgomery radiographs, down from {{CxrGateBTwoOldTestRejPct}}% and {{CxrGateBTwoOldExtRejPct}}% at the original threshold on the same build-2 test split and the same Montgomery set. Its rejection of real non-radiographs is not established, because only seven synthetic negatives were available.
 - The "typical features" and "precautions" texts are generic per class, not findings read from the image.
 - Authentication is a single shared key or loopback-only access. There are no user accounts, no audit log, and uploads are kept indefinitely.
 - The Docker image could not be built on the development laptop, and continuous integration has not run because the branch was not pushed.
