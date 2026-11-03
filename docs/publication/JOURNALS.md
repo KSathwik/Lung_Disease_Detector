@@ -1,5 +1,7 @@
 # Track A: journal venues
 
+> Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md`; the ranking below is the earlier one and is kept for reference.
+
 Prepared 2026-11-03. All "accessed" dates are 2026-11-03. Figures are copied from the pages named; they change, so re-check on the submission day.
 Work to be published: leakage-controlled, multi-source six-class chest X-ray (CXR) classifier (DenseNet-121), patient-grouped splits, once-only test and external (Montgomery) evaluation, source-shortcut analysis, audit of an earlier leaking pipeline. Single seed (42), CPU, time-boxed. Final numbers are pending (model chosen after run 2).
 

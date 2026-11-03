@@ -88,5 +88,5 @@ Result on this branch: 5 of 5 runs consistent, 0 mismatches (29 checks per run).
 
 ## Limitations
 
-- **V6:** one training run (single seed), so run-to-run variation is not measured. The external cohort has only normal and TB scans, so it tests abnormal-vs-normal separation, not the six classes. See [limitations.md](limitations.md).
+- **V6:** the served model is one run (seed 42); seed variability over three seeds of the same recipe is in `artifacts/evaluation_reports/multi_seed_summary.json` (a rough estimate), and the preprocessing ablation is one seed. The external cohort has only normal and TB scans, so it tests abnormal-vs-normal separation, not the six classes. See [limitations.md](limitations.md).
 - **V5 (recorded runs):** no per-image predictions exist, so ROC-AUC, PR-AUC, calibration and bootstrap CIs cannot be checked. The V5 internal test split is patient-leaked (154 images), so its internal metrics are optimistic.

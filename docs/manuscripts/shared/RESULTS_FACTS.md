@@ -4,7 +4,7 @@
 
 Interpretation statements that writers may now use in place of `\pending{}` / `[PENDING FINAL RESULTS]`. Every number must still come from `results_macros.tex` / `results.json` (macro names given). The sources are generated files; nothing here is a new number.
 
-**Still pending until ~07:30 on 2026-11-04 (keep their placeholders):** seed variability (runs 3 and 4: `\RMS…` macros), the preprocessing ablation (run 5: `\RAbl…` macros). Write these sentences as `\pending{seed variability}` / `\pending{ablation}` or `[PENDING: seed runs]`, `[PENDING: ablation]`.
+**Seed runs and ablation finished 2026-11-04 04:52** (F9, F10 below; `artifacts/evaluation_reports/multi_seed_summary.json`). No seed/ablation placeholder should remain.
 
 ## F1. Which model is final and why
 - The served/final model is **v6.1 = run 2** (`v6r2_densenet121_seed42`, build `v6_build_002`, seed 42, checkpoint `\RCheckpointShort`), selected over run 1 by the rule fixed before run 2's results were seen (`docs/data/run_selection_protocol.md`).
@@ -41,4 +41,19 @@ Interpretation statements that writers may now use in place of `\pending{}` / `[
 
 ## F8. What the work does and does not show (for conclusions)
 - Shows: with leakage-controlled, patient-grouped splits, a standard DenseNet-121 reaches the internal results above, and those results overstate behaviour on an unseen hospital; class–source confounding is strong in public CXR collections; adding sources changes which shortcut appears rather than removing the external gap.
-- Does not show: clinical utility; superiority over other methods; that the preprocessing helps (pending ablation); robustness across seeds (pending).
+- Does not show: clinical utility; superiority over other methods; that the preprocessing chain is better in general (F10 is one seed of one alternative); robustness to anything other than the training seed (F9 varies the seed only, with the split and recipe fixed).
+
+## F9. Seed variability (runs 2, 3, 4; same build, split and recipe; seeds `\RMSSeeds`)
+- `\RMSNRuns` runs, all on `v6_build_002` with the same split fingerprint. Runs 3 and 4 stopped early (no validation macro-F1 gain for 3 epochs; 9 and 10 epochs, best epochs 6 and 7); run 2 completed all 16 epochs. Test and Montgomery were evaluated once per run.
+- Internal test: accuracy mean `\RMSTestAccMean`% (SD `\RMSTestAccSD`, range `\RMSTestAccMin`–`\RMSTestAccMax`), macro-F1 mean `\RMSTestMacroFOneMean`% (SD `\RMSTestMacroFOneSD`, range `\RMSTestMacroFOneMin`–`\RMSTestMacroFOneMax`), macro ROC-AUC mean `\RMSTestMacroAUCMean` (SD `\RMSTestMacroAUCSD`). Per run: `\RMSRunOne…` (seed 42 = served run 2), `\RMSRunTwo…` (seed 43), `\RMSRunThree…` (seed 44).
+- Montgomery: sensitivity mean `\RMSExtSensMean`% (range `\RMSExtSensMin`–`\RMSExtSensMax`), specificity mean `\RMSExtSpecMean`% (range `\RMSExtSpecMin`–`\RMSExtSpecMax`), exact TB recall `\RMSExtTBMean`% in every run.
+- Interpretation allowed: with this recipe and split, the internal results vary little across seeds (SD under one percentage point), and the served run 2 is the highest of the three seeds within that spread; write "the served run is the highest of the three seeds, within a spread of under one percentage point; a small favourable draw cannot be ruled out"; never "not a lucky seed" or "representative of the recipe". The external failure (low specificity, no exact TB recognition) is consistent across seeds. SD from three runs is a rough estimate (say so). Not allowed: generalising seed stability to other splits, data or architectures.
+
+- Macros: per run `\RMSRun{One,Two,Three}{Seed,TestAcc,TestMacroFOne,TestMacroAUC,ExtSens,ExtSpec,ExtTB}` (One = run 2, Two = run 3, Three = run 4); summary `\RMS{TestAcc,TestMacroFOne,TestMacroAUC,ExtSens,ExtSpec,ExtAUC,ExtTB}{Mean,SD,Min,Max}`; `\RMSNRuns`, `\RMSSeeds`. Thesis/slides use the same names without the leading R as `{{...}}` tokens.
+- External specificity varies more between seeds than the internal metrics. The served model stays run 2 (chosen before seeds 43/44 existed); never select a seed on test or external results.
+
+## F10. Preprocessing ablation (run 5 vs run 2: same seed 42, same split fingerprint, filters removed)
+- Run 5 (`v6_build_002_no_filters`: Gaussian blur, CLAHE and low-pass removed; resize and normalisation unchanged) completed all 16 epochs and selected its last epoch (16 of 16, validation still rising), so a difference in convergence speed cannot be excluded. Internal test: accuracy `\RAblTestAcc`% vs `\RMSRunOneTestAcc`% (run 2), macro-F1 `\RAblTestMacroFOne`% vs `\RMSRunOneTestMacroFOne`%, macro ROC-AUC `\RAblTestMacroAUC` vs `\RMSRunOneTestMacroAUC`. The run-5 internal values lie below the whole seed range of runs 2–4 (F9).
+- Montgomery: sensitivity `\RAblExtSens`% vs `\RMSRunOneExtSens`%, specificity `\RAblExtSpec`% vs `\RMSRunOneExtSpec`%, exact TB recall `\RAblExtTB`% vs `\RMSRunOneExtTB`% (the filtered runs recognised no Montgomery TB case in any seed).
+- Interpretation allowed: in this single-seed comparison, the run with the filters scored higher internally by more than the seed-to-seed spread, and the run without them did not have higher external specificity; the no-filter run recognised a small number of Montgomery TB cases where no filtered run did — a small count from one run, so report it as an observation, not an effect. Not allowed: "the preprocessing improves generalisation", "the low-pass filter removes TB information", or any causal claim; one ablation seed cannot separate the effect from run-to-run variation outside the measured seed spread.
+- Macros: `\RAbl{TestAcc,TestMacroFOne,TestMacroAUC,ExtSens,ExtSpec,ExtTB}`, compared with run 2 (`\RMSRunOne...`). Allowed descriptive form: "the run with the filters scored higher internally in this single comparison"; not "the filters helped/improved". State the last-epoch caveat (run 5 selected epoch 16 of 16).

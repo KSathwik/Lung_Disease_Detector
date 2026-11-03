@@ -30,7 +30,7 @@ Sensitivity quoted without specificity is not a result, and the V5 checkpoint wa
 This report describes V6, a rebuild of the data pipeline and of the model around it. The system, called LungAI in this report, is the DenseNet-121 Six-Class Chest X-Ray Classifier. It has four parts.
 
 1. **A data pipeline** that downloads each source from its official distribution point with logged provenance, applies label rules that were fixed before any training, caps each (source, class) cell, hashes every image, merges duplicate images into patient groups and splits whole groups 70/15/15 into training, validation and test sets. A separate external cohort is excluded from every development decision.
-2. **A model and training protocol**: DenseNet-121 with a small classification head, a two-phase schedule, class-balanced loss, checkpoint selection on validation macro-F1 only, and a single seed, trained on a laptop CPU within a time budget.
+2. **A model and training protocol**: DenseNet-121 with a small classification head, a two-phase schedule, class-balanced loss, checkpoint selection on validation macro-F1 only, trained on a laptop CPU within a time budget.
 3. **An evaluation protocol** in which the test split and the external cohort are each evaluated exactly once, with confidence intervals, per-class and per-source breakdowns, calibration, and external sensitivity reported only together with specificity.
 4. **A web application**: a FastAPI backend that serves the model, a heuristic input gate that rejects images that are not chest radiographs, Grad-CAM overlays and an SQLite store, and a React frontend that shows the scores and the metrics of the checkpoint actually loaded.
 
@@ -55,7 +55,7 @@ The report does not claim a new network architecture, a new state-of-the-art acc
 
 ## Scope and limits
 
-The classifier solves a single-label problem over six mutually exclusive classes. It sees one frontal image at a time and no clinical information. It was trained once with one seed on a laptop CPU, so run-to-run variation is unknown. Two data sources that would have strengthened the Pleural Effusion and Nodule / Mass classes (VinDr-CXR and JSRT) require credentialing or registration and were not available. The application is a research prototype. These limits are discussed in Chapter 8.
+The classifier solves a single-label problem over six mutually exclusive classes. It sees one frontal image at a time and no clinical information. The final recipe was trained with three seeds on a laptop CPU, which gives only a rough estimate of run-to-run variation, and the preprocessing ablation is one run. Two data sources that would have strengthened the Pleural Effusion and Nodule / Mass classes (VinDr-CXR and JSRT) require credentialing or registration and were not available. The application is a research prototype. These limits are discussed in Chapter 8.
 
 ## Organisation of the report
 

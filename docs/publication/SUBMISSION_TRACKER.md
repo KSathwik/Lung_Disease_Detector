@@ -1,5 +1,7 @@
 # Submission tracker
 
+> Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md` (the fallback order in the table below is the earlier one).
+
 Updated 2026-11-03. Statuses: not started / drafting / ready / submitted. Owner is a placeholder: [AUTHORS TO CONFIRM]. Sources for rows are in JOURNALS.md and CONFERENCES.md.
 
 | Venue | Track | Deadline | Template | Page limit | Required items | Status | Owner | Notes |

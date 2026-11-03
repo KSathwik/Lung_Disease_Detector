@@ -88,7 +88,7 @@ cd frontend && CI=true npm run build
 python docs/thesis/build_report.py
 ```
 
-A rebuild from the same sources, rules and seed reproduces the split; its fingerprint is compared with the one in the build report. Training uses one seed and is not bit-deterministic, so small differences between repeated runs are expected. Steps that need the images or the checkpoint cannot be reproduced from the repository alone. Re-running steps 5 and 8 from saved reports is possible.
+A rebuild from the same sources, rules and seed reproduces the split; its fingerprint is compared with the one in the build report. Training uses a fixed seed per run and is not bit-deterministic, so small differences between repeated runs are expected. Steps that need the images or the checkpoint cannot be reproduced from the repository alone. Re-running steps 5 and 8 from saved reports is possible.
 
 # Test Summary
 

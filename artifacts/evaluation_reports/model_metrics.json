@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T11:05:58+00:00",
+  "generated_at": "2026-11-03T23:25:06+00:00",
   "generated_by": "python -m lungai.evaluation.served_metrics",
   "canonical_model": {
     "model_id": "lungai-densenet121-6class",
@@ -10,7 +10,7 @@
     "checkpoint_sha256": "7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6",
     "evaluated_as": "runs/v6r2_densenet121_seed42/model.h5"
   },
-  "evidence_level": "REPRODUCED: computed by lungai.evaluation.evaluate_v6 from per-image predictions of this checkpoint (saved under artifacts/evaluation_reports/v6_r2_*). Single training run (seed 42), CPU-only and time-boxed; no repeated seeds, so run-to-run variation is not measured.",
+  "evidence_level": "REPRODUCED: computed by lungai.evaluation.evaluate_v6 from per-image predictions of this checkpoint (saved under artifacts/evaluation_reports/v6_r2_*). One training run (seed 42), CPU-only and time-boxed; run-to-run variation over further seeds of the same recipe and split is in artifacts/evaluation_reports/multi_seed_summary.json.",
   "dataset_version": "V6",
   "build": "v6_build_002",
   "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",

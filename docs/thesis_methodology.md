@@ -44,7 +44,7 @@ The builder applies steps 1–4 once and caches the 224×224 result; training, e
 - **Phase 1:** two epochs with the backbone frozen (Adam, lr = 10⁻³).
 - **Phase 2:** the last 30 backbone layers unfrozen (Adam, lr = 10⁻⁵), batch 32, seed 42, until early stopping (3 epochs without validation macro-F1 gain), the epoch limit, or a wall-clock budget.
 - **Checkpoint:** the epoch with the best validation macro-F1 (tie: validation macro ROC-AUC).
-- **Compute:** a laptop CPU (TensorFlow 2.16 has no GPU support on native Windows); one run, no repeat seeds.
+- **Compute:** a laptop CPU (TensorFlow 2.16 has no GPU support on native Windows); the served model is one run (seed 42); two further seeds and one ablation run are reported in `docs/experiment_results.md`.
 
 ## 6. Evaluation protocol
 
@@ -76,7 +76,7 @@ State the single-run, CPU, time-boxed design; the source confounding of classes 
 - clinical validation, or screening ability from a sensitivity quoted without its specificity;
 - TB detection from the "abnormal" rate on Montgomery when exact Tuberculosis recall is low;
 - that patient-level separation is proven for sources without patient identifiers;
-- that a few points' difference between runs is meaningful (single seeds);
+- that a few points' difference between runs is meaningful (only three seeds of the served recipe and one ablation seed were run; see `docs/experiment_results.md`);
 - any V5 number (82.93%, 58/58, 76.18% / 0.9600) as a result of the current model.
 
 ## Appendix: the V5 work (superseded)

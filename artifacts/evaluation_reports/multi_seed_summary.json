@@ -1,0 +1,229 @@
+{
+  "generated_at": "2026-11-03T23:22:56+00:00",
+  "build": "v6_build_002",
+  "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+  "runs": [
+    {
+      "prefix": "v6_r2",
+      "run": "v6r2_densenet121_seed42",
+      "seed": 42,
+      "build": "v6_build_002",
+      "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+      "checkpoint_sha256": "7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6",
+      "selected_epoch": 16,
+      "epochs": 16,
+      "stop_reason": "completed all epochs",
+      "values": {
+        "test_accuracy": 0.7740425531914894,
+        "test_macro_f1": 0.7878422373408691,
+        "test_macro_roc_auc": 0.9553282854135343,
+        "test_ece": 0.02041985526997994,
+        "val_macro_f1": 0.7848825220994083,
+        "ext_sensitivity": 0.9482758620689655,
+        "ext_specificity": 0.2375,
+        "ext_auc": 0.8094827586206896,
+        "ext_exact_tb_recall": 0.0,
+        "test_f1:COVID-19": 0.9516310461192351,
+        "test_f1:Normal": 0.7076222980659842,
+        "test_f1:Pleural Effusion": 0.7559709241952233,
+        "test_f1:Pneumonia": 0.8540540540540541,
+        "test_f1:Pulmonary Nodule / Mass": 0.6006322444678609,
+        "test_f1:Tuberculosis": 0.8571428571428572
+      }
+    },
+    {
+      "prefix": "v6_r3",
+      "run": "v6r3_densenet121_seed43",
+      "seed": 43,
+      "build": "v6_build_002",
+      "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+      "checkpoint_sha256": "08e9bdfd0f19b0b7f15a277d6d3de4cc73b7e9056e644e79ebe7e83664896e1e",
+      "selected_epoch": 6,
+      "epochs": 9,
+      "stop_reason": "early stopping: no validation macro-F1 gain for 3 epochs",
+      "values": {
+        "test_accuracy": 0.7714893617021277,
+        "test_macro_f1": 0.7848761334962844,
+        "test_macro_roc_auc": 0.9540838020975019,
+        "test_ece": 0.019443497867026226,
+        "val_macro_f1": 0.7825426252433391,
+        "ext_sensitivity": 0.9310344827586207,
+        "ext_specificity": 0.3125,
+        "ext_auc": 0.7620689655172413,
+        "ext_exact_tb_recall": 0.0,
+        "test_f1:COVID-19": 0.9378531073446327,
+        "test_f1:Normal": 0.7185354691075515,
+        "test_f1:Pleural Effusion": 0.744973544973545,
+        "test_f1:Pneumonia": 0.8418230563002681,
+        "test_f1:Pulmonary Nodule / Mass": 0.6098843322818086,
+        "test_f1:Tuberculosis": 0.8561872909698997
+      }
+    },
+    {
+      "prefix": "v6_r4",
+      "run": "v6r4_densenet121_seed44",
+      "seed": 44,
+      "build": "v6_build_002",
+      "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+      "checkpoint_sha256": "a4091be4c8426520532765cba9164a05357102dcae78c65dcc638d6510cfa199",
+      "selected_epoch": 7,
+      "epochs": 10,
+      "stop_reason": "early stopping: no validation macro-F1 gain for 3 epochs",
+      "values": {
+        "test_accuracy": 0.768936170212766,
+        "test_macro_f1": 0.7791822372941467,
+        "test_macro_roc_auc": 0.9531063230171672,
+        "test_ece": 0.028635908847159504,
+        "val_macro_f1": 0.7837812548726651,
+        "ext_sensitivity": 0.9482758620689655,
+        "ext_specificity": 0.2625,
+        "ext_auc": 0.7935344827586207,
+        "ext_exact_tb_recall": 0.0,
+        "test_f1:COVID-19": 0.9480812641083521,
+        "test_f1:Normal": 0.6996547756041427,
+        "test_f1:Pleural Effusion": 0.7413441955193483,
+        "test_f1:Pneumonia": 0.8505434782608695,
+        "test_f1:Pulmonary Nodule / Mass": 0.6119402985074626,
+        "test_f1:Tuberculosis": 0.8235294117647057
+      }
+    }
+  ],
+  "summary": {
+    "test_accuracy": {
+      "mean": 0.7714893617021277,
+      "sd": 0.002553191489361728,
+      "min": 0.768936170212766,
+      "max": 0.7740425531914894,
+      "n_runs": 3
+    },
+    "test_macro_f1": {
+      "mean": 0.7839668693771,
+      "sd": 0.004401019328648197,
+      "min": 0.7791822372941467,
+      "max": 0.7878422373408691,
+      "n_runs": 3
+    },
+    "test_macro_roc_auc": {
+      "mean": 0.9541728035094011,
+      "sd": 0.001113651723478832,
+      "min": 0.9531063230171672,
+      "max": 0.9553282854135343,
+      "n_runs": 3
+    },
+    "test_ece": {
+      "mean": 0.022833087328055224,
+      "sd": 0.005049046606193135,
+      "min": 0.019443497867026226,
+      "max": 0.028635908847159504,
+      "n_runs": 3
+    },
+    "val_macro_f1": {
+      "mean": 0.7837354674051374,
+      "sd": 0.0011706202174051451,
+      "min": 0.7825426252433391,
+      "max": 0.7848825220994083,
+      "n_runs": 3
+    },
+    "ext_sensitivity": {
+      "mean": 0.9425287356321839,
+      "sd": 0.00995431498602805,
+      "min": 0.9310344827586207,
+      "max": 0.9482758620689655,
+      "n_runs": 3
+    },
+    "ext_specificity": {
+      "mean": 0.2708333333333333,
+      "sd": 0.03818813079129867,
+      "min": 0.2375,
+      "max": 0.3125,
+      "n_runs": 3
+    },
+    "ext_auc": {
+      "mean": 0.7883620689655172,
+      "sd": 0.024126382705442304,
+      "min": 0.7620689655172413,
+      "max": 0.8094827586206896,
+      "n_runs": 3
+    },
+    "ext_exact_tb_recall": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "n_runs": 3
+    },
+    "test_f1:COVID-19": {
+      "mean": 0.94585513919074,
+      "sd": 0.007153644059553396,
+      "min": 0.9378531073446327,
+      "max": 0.9516310461192351,
+      "n_runs": 3
+    },
+    "test_f1:Normal": {
+      "mean": 0.7086041809258928,
+      "sd": 0.009478566202509359,
+      "min": 0.6996547756041427,
+      "max": 0.7185354691075515,
+      "n_runs": 3
+    },
+    "test_f1:Pleural Effusion": {
+      "mean": 0.7474295548960388,
+      "sd": 0.0076163827696589205,
+      "min": 0.7413441955193483,
+      "max": 0.7559709241952233,
+      "n_runs": 3
+    },
+    "test_f1:Pneumonia": {
+      "mean": 0.8488068628717306,
+      "sd": 0.006297713971801608,
+      "min": 0.8418230563002681,
+      "max": 0.8540540540540541,
+      "n_runs": 3
+    },
+    "test_f1:Pulmonary Nodule / Mass": {
+      "mean": 0.6074856250857107,
+      "sd": 0.006023567771686215,
+      "min": 0.6006322444678609,
+      "max": 0.6119402985074626,
+      "n_runs": 3
+    },
+    "test_f1:Tuberculosis": {
+      "mean": 0.8456198532924875,
+      "sd": 0.01913684879615725,
+      "min": 0.8235294117647057,
+      "max": 0.8571428571428572,
+      "n_runs": 3
+    }
+  },
+  "note": "SD is the sample standard deviation over seeds (ddof=1); with few seeds it is a rough estimate.",
+  "ablation": [
+    {
+      "prefix": "v6_r5abl",
+      "run": "v6r5_densenet121_seed42_nofilters",
+      "seed": 42,
+      "build": "v6_build_002_no_filters",
+      "split_fingerprint": "5973233fb9ea0700fe6919cfd11daec5bdf148b754db56b145ea33b439a7dfa5",
+      "checkpoint_sha256": "728595fb53c7eb42c699b4800c382e8dc8405c19e047838f3ba59e4711f8df19",
+      "selected_epoch": 16,
+      "epochs": 16,
+      "stop_reason": "completed all epochs",
+      "values": {
+        "test_accuracy": 0.7408510638297873,
+        "test_macro_f1": 0.7581478722641825,
+        "test_macro_roc_auc": 0.9486807297048615,
+        "test_ece": 0.030382992301849588,
+        "val_macro_f1": 0.7654055862663417,
+        "ext_sensitivity": 0.9310344827586207,
+        "ext_specificity": 0.2375,
+        "ext_auc": 0.7717672413793104,
+        "ext_exact_tb_recall": 0.08620689655172414,
+        "test_f1:COVID-19": 0.8714810281517748,
+        "test_f1:Normal": 0.6910755148741419,
+        "test_f1:Pleural Effusion": 0.7206645898234684,
+        "test_f1:Pneumonia": 0.8293333333333334,
+        "test_f1:Pulmonary Nodule / Mass": 0.6008064516129032,
+        "test_f1:Tuberculosis": 0.8355263157894737
+      }
+    }
+  ]
+}

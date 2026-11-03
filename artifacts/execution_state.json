@@ -165,10 +165,53 @@
       "build": "data\\derived\\v6_build_002"
     },
     "4_train_r4": {
-      "status": "in_progress",
-      "updated": "2026-11-03T14:25:34+00:00",
+      "status": "done",
+      "updated": "2026-11-03T17:52:33+00:00",
       "run": "v6r4_densenet121_seed44",
       "max_hours": 7.24
+    },
+    "5_evaluate_r4": {
+      "status": "done",
+      "updated": "2026-11-03T18:01:09+00:00",
+      "reports": {
+        "val": "artifacts\\evaluation_reports\\v6_r4_val",
+        "test": "artifacts\\evaluation_reports\\v6_r4_test",
+        "external": "artifacts\\evaluation_reports\\v6_r4_external"
+      }
+    },
+    "2_recover_data_r5abl": {
+      "status": "done",
+      "updated": "2026-11-03T18:01:11+00:00",
+      "extracted": {},
+      "sources_available": [
+        "nih_cxr14",
+        "montgomery",
+        "shenzhen",
+        "kermany",
+        "tbx11k",
+        "cohen_covid",
+        "covid_radiography"
+      ]
+    },
+    "3_build_v6_r5abl": {
+      "status": "done",
+      "updated": "2026-11-03T18:01:11+00:00",
+      "build": "data\\derived\\v6_build_002_no_filters"
+    },
+    "4_train_r5abl": {
+      "status": "done",
+      "updated": "2026-11-03T23:14:28+00:00",
+      "run": "v6r5_densenet121_seed42_nofilters",
+      "max_hours": 7.25
+    },
+    "5_evaluate_r5abl": {
+      "status": "done",
+      "updated": "2026-11-03T23:22:14+00:00",
+      "reports": {
+        "val": "artifacts\\evaluation_reports\\v6_r5abl_val",
+        "test": "artifacts\\evaluation_reports\\v6_r5abl_test",
+        "external": "artifacts\\evaluation_reports\\v6_r5abl_external"
+      }
     }
   },
   "blockers": [

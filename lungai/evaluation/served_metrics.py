@@ -62,8 +62,12 @@ def build(eval_prefix: str, run_dir: Path, historical: Optional[Path] = HISTORIC
                             "evaluated_as": f"runs/{meta['run_name']}/{test['checkpoint_file']}"},
         "evidence_level": (
             "REPRODUCED: computed by lungai.evaluation.evaluate_v6 from per-image predictions of this checkpoint "
-            f"(saved under artifacts/evaluation_reports/{eval_prefix}_*). Single training run (seed "
-            f"{meta['seed']}), CPU-only and time-boxed; no repeated seeds, so run-to-run variation is not measured."),
+            f"(saved under artifacts/evaluation_reports/{eval_prefix}_*). One training run (seed {meta['seed']}), "
+            "CPU-only and time-boxed; "
+            + ("run-to-run variation over further seeds of the same recipe and split is in "
+               "artifacts/evaluation_reports/multi_seed_summary.json."
+               if (REPORTS / "multi_seed_summary.json").is_file() else
+               "no repeated seeds, so run-to-run variation is not measured.")),
         "dataset_version": test["dataset_version"],
         "build": test["build"],
         "split_fingerprint": test["split_fingerprint"],

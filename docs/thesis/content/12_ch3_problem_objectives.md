@@ -65,5 +65,5 @@ The project runs under the following constraints, which shape the design.
 - **Compute.** The training machine is an 8 GB laptop without a GPU supported by the TensorFlow version used. A training epoch takes roughly 20 to 26 minutes for the final build (run 2), so the number of epochs per run is small.
 - **Data access.** Sources behind credentialing (VinDr-CXR, via PhysioNet) or registration (JSRT) were not available.
 - **Time.** The overnight build, training and evaluation run had to complete within a fixed time box.
-- **Single seed.** Repeating the training with several seeds was not possible in the time available.
+- **Few seeds.** Only three seeds of the final recipe and one ablation run were possible in the time available.
 - **No clinical partner.** There is no clinician-reviewed ground truth beyond that of the source datasets, so no clinical claim can be made.

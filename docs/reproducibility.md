@@ -6,7 +6,7 @@ What another researcher can reproduce, and what they need to do it:
 |---|---|---|---|
 | Download V6 sources | Internet (Kaggle token for the COVID-19 Radiography Database) | `python scripts/data/acquire.py <source> --execute` | No: images are downloaded, not distributed; provenance and SHA-256 are logged |
 | Build V6 (labels, caps, patient-grouped split, leakage checks) | Downloaded sources | `python scripts/data/build_v6_manifest.py …` | No: needs the images. The split fingerprint in the build report identifies an identical split |
-| Training | V6 build; CPU works (hours) | `python -m lungai.training.train_v6 …` | No: needs the build. Single seed; expect small run-to-run differences |
+| Training | V6 build; CPU works (hours) | `python -m lungai.training.train_v6 …` | No: needs the build. Served run is seed 42; three seeds and one ablation are in `docs/experiment_results.md`; expect small run-to-run differences |
 | Evaluation of the current checkpoint | Checkpoint + build | `python -m lungai.evaluation.evaluate_v6 …` | No: needs both. Per-image predictions are saved under `artifacts/evaluation_reports/` |
 | Served metrics and docs from saved reports | Saved reports + run metadata | `python -m lungai.evaluation.served_metrics …`; `python -m lungai.evaluation.render_docs` | Yes, once those files are present |
 | V5 manifest checks and recorded V5 results | Repository | `python -m lungai.data.validate --skip-files`; `python -m lungai.evaluation.historical` | **Yes** (history) |

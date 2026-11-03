@@ -39,7 +39,7 @@ The main findings of the final model, {{ModelVersion}}, are discussed in five po
 
 **Source shortcuts.** For COVID-19, the first run's external behaviour ({{RunOneExtCovidCalls}} of {{NExternal}} Montgomery scans assigned COVID-19) suggested a shortcut tied to its single source. The second run largely lost that behaviour with build 2, which changed several sources at once, but the errors moved to other abnormal classes. For Tuberculosis, the good internal result does not appear on Montgomery. The probe shows that the source is predictable from the features, also within a class, and the COVID-19 and Normal heatmaps fall outside the lung fields. This evidence is indirect and consistent with, but does not prove, the use of source cues.
 
-**Comparison of the two runs.** Run 2 was better on the common validation set ({{CmpRunTwoMacroFOne}}% against {{CmpRunOneMacroFOne}}% macro-F1), but on the images from sources both runs trained on, the accuracy is almost equal ({{CmpRunTwoSharedAcc}}% against {{CmpRunOneSharedAcc}}%). Much of the gain is on sources only run 2 saw. Each is a single seed, and seed variability is still to be measured [PENDING: seed runs].
+**Comparison of the two runs.** Run 2 was better on the common validation set ({{CmpRunTwoMacroFOne}}% against {{CmpRunOneMacroFOne}}% macro-F1), but on the images from sources both runs trained on, the accuracy is almost equal ({{CmpRunTwoSharedAcc}}% against {{CmpRunOneSharedAcc}}%). Much of the gain is on sources only run 2 saw. Each run is a single seed, but the seed study (Chapter 7) shows that seeds of the run-2 recipe differ by only {{MSTestMacroFOneSD}} points of macro-F1 (standard deviation over three seeds); the run-1 recipe was not repeated.
 
 **Calibration.** The expected calibration error is {{TestECE}} on the internal test split, so the displayed scores are reasonably calibrated there. This was not checked externally, no calibration was fitted, and a score is not a probability of disease.
 
@@ -55,7 +55,7 @@ Third, sources define classes in this benchmark. A class with a single type of s
 
 ## Threats to validity
 
-- **Internal validity.** One run per model, one seed. The ranking of two runs that differ by a few points is not reliable. A learning curve that is still rising at the time limit means that the model is not converged.
+- **Internal validity.** One run for the first model and three seeds for the served recipe (standard deviation of accuracy {{MSTestAccSD}} points, a rough estimate from three runs). The ranking of two runs that differ by a few points is not reliable. A learning curve that is still rising at the time limit means that the model is not converged.
 - **Label validity.** NIH labels are mined from reports and not read from the images [@oakdenrayner2020exploring]. The Kermany and Cohen labels come from their sources. No re-reading by a radiologist was done.
 - **Construct validity.** The single-label rule means that the test set contains clear single-finding cases. It overstates performance on the real mixture of findings.
 - **External validity.** One external cohort, from one programme and with two classes. Population effects, scanners and prevalence are not controlled. No demographic data are available, so subgroup performance [@seyyedkalantari2021underdiagnosis] cannot be assessed.
@@ -67,7 +67,7 @@ The following limitations come from the project's limitation record. Those that 
 
 ### Model and training
 
-- One run, CPU, time-boxed. Run-to-run variation is measured only by the follow-up seed runs [PENDING: seed runs], and the effect of the preprocessing is untested until the ablation is complete [PENDING: ablation]. Differences of a few points are not evidence of a better model.
+- CPU, time-boxed. Run-to-run variation is measured for the served recipe with three seeds on one split (a rough estimate), not for run 1, other splits or other architectures; the effect of the preprocessing is tested with a single ablation run at one seed. Differences of a few points are not evidence of a better model.
 - The six classes are treated as mutually exclusive.
 - Preprocessing steps run at native resolution, before the resize, so the same anatomy scanned at another resolution receives a different effective filter. Training and serving use the same code and therefore agree with each other.
 - Grad-CAM shows which regions influenced the score. It does not show radiological reasoning, and saliency maps have been found to be unreliable as localisation evidence [@arun2021assessing; @ghassemi2021false].

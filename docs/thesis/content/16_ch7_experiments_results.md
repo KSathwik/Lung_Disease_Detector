@@ -28,7 +28,7 @@ Table: Training configuration of the evaluated model. {#tab:hyper}
 | Augmentation | Horizontal flip (p = 0.5), rotation ±10° with reflected borders |
 | Early stopping | Three fine-tuning epochs without validation macro-F1 gain |
 | Checkpoint rule | Best validation macro-F1 (tie: validation macro ROC-AUC) |
-| Seed | {{Seed}} (one run) |
+| Seed | {{Seed}} for the final model; seeds {{MSSeeds}} in the seed study |
 | Epochs trained | {{EpochsTrained}}; selected epoch {{SelectedEpoch}} |
 
 ### Evaluation protocol
@@ -37,7 +37,7 @@ The validation split is evaluated after every epoch and is used to choose the ch
 
 ### What is not done
 
-No hyper-parameter search was run. Run-to-run variation is measured only by the follow-up seed runs reported in the section on seed variability [PENDING: seed runs]. No threshold was tuned on the test split or the external cohort. No calibration method was fitted. No comparison with other published systems is made.
+No hyper-parameter search was run. Run-to-run variation is measured only by the follow-up seed runs reported in the section on seed variability, and the preprocessing is examined by one ablation run (section on the preprocessing ablation). No threshold was tuned on the test split or the external cohort. No calibration method was fitted. No comparison with other published systems is made.
 
 ## Training behaviour
 
@@ -164,11 +164,35 @@ Table: External behaviour of run 1 (not selected; historical values) and run 2 (
 
 ## Seed variability
 
-[PENDING: seed runs] Two further seeds of the selected recipe are being trained. The mean, sample standard deviation, minimum and maximum of the main metrics over the three seeds will be reported here.
+The recipe of the final model was trained with {{MSNRuns}} seeds ({{MSSeeds}}) on the same build, the same split (identical fingerprint), the same schedule and the same checkpoint rule; only the seed changed. Run 2 is the served model. Runs 3 and 4 were stopped early by the rule of three fine-tuning epochs without validation macro-F1 gain (best epochs 6 and 7), whereas run 2 completed all 16 epochs; the same rule applied to all runs, so this is part of the variability of the recipe. The test split and the Montgomery cohort were evaluated once per run. [[tab:seeds]] gives the results.
+
+Table: Seed variability of the final recipe (runs 2 to 4; same build, split and schedule). Test metrics in percent except ROC-AUC; Montgomery columns in percent. The last row gives the mean and the sample standard deviation over the three runs. {#tab:seeds}
+
+| Run | Seed | Test accuracy | Test macro-F1 | Test macro ROC-AUC | Ext. sensitivity | Ext. specificity | Exact TB recall |
+|---|---|---|---|---|---|---|---|
+| 2 (served) | {{MSRunOneSeed}} | {{MSRunOneTestAcc}} | {{MSRunOneTestMacroFOne}} | {{MSRunOneTestMacroAUC}} | {{MSRunOneExtSens}} | {{MSRunOneExtSpec}} | {{MSRunOneExtTB}} |
+| 3 | {{MSRunTwoSeed}} | {{MSRunTwoTestAcc}} | {{MSRunTwoTestMacroFOne}} | {{MSRunTwoTestMacroAUC}} | {{MSRunTwoExtSens}} | {{MSRunTwoExtSpec}} | {{MSRunTwoExtTB}} |
+| 4 | {{MSRunThreeSeed}} | {{MSRunThreeTestAcc}} | {{MSRunThreeTestMacroFOne}} | {{MSRunThreeTestMacroAUC}} | {{MSRunThreeExtSens}} | {{MSRunThreeExtSpec}} | {{MSRunThreeExtTB}} |
+| Mean ± SD | | {{MSTestAccMean}} ± {{MSTestAccSD}} | {{MSTestMacroFOneMean}} ± {{MSTestMacroFOneSD}} | {{MSTestMacroAUCMean}} ± {{MSTestMacroAUCSD}} | {{MSExtSensMean}} ± {{MSExtSensSD}} | {{MSExtSpecMean}} ± {{MSExtSpecSD}} | {{MSExtTBMean}} ± {{MSExtTBSD}} |
+
+The internal results vary little with the seed. Test accuracy ranges from {{MSTestAccMin}}% to {{MSTestAccMax}}% (standard deviation {{MSTestAccSD}} points), macro-F1 from {{MSTestMacroFOneMin}}% to {{MSTestMacroFOneMax}}% and macro ROC-AUC from {{MSTestMacroAUCMin}} to {{MSTestMacroAUCMax}}. The served run 2 has the highest internal values of the three seeds, but all three lie within a spread of under one percentage point, so with this recipe and split it is not an outlier; three seeds cannot rule out a small favourable draw. The external behaviour is consistently poor: specificity ranges from {{MSExtSpecMin}}% to {{MSExtSpecMax}}% (mean {{MSExtSpecMean}}%), so it varies more between seeds than the internal metrics, and no seed names any Montgomery tuberculosis scan Tuberculosis. The external failure is thus not an artefact of one seed. The standard deviation is the sample standard deviation over three runs, a rough estimate, and it describes the seed only: the split, the data and the architecture were fixed. The served model stays run 2, which was chosen before seeds 43 and 44 existed; no seed was selected on test or external results.
 
 ## Preprocessing ablation
 
-[PENDING: ablation] One run on images without the Gaussian blur, CLAHE and low-pass filter, with the same manifest, split and seed, will be compared here with the final model. Until it is complete, this report makes no claim that the preprocessing helps.
+One further run (run 5) used the same build, the same split fingerprint, the same seed ({{MSRunOneSeed}}) and the same schedule as run 2, but images cached without the Gaussian blur, CLAHE and low-pass filter; the resize and the normalisation were unchanged. It completed all 16 epochs and selected its last epoch (16 of 16), with the validation score still rising. [[tab:ablation]] compares it with run 2.
+
+Table: Preprocessing ablation. Run 2 (with the filters) and run 5 (without them), same seed. Percentages except ROC-AUC. {#tab:ablation}
+
+| Quantity | Run 2 (filters) | Run 5 (no filters) |
+|---|---|---|
+| Test accuracy | {{MSRunOneTestAcc}} | {{AblTestAcc}} |
+| Test macro-F1 | {{MSRunOneTestMacroFOne}} | {{AblTestMacroFOne}} |
+| Test macro ROC-AUC | {{MSRunOneTestMacroAUC}} | {{AblTestMacroAUC}} |
+| Ext. sensitivity | {{MSRunOneExtSens}} | {{AblExtSens}} |
+| Ext. specificity | {{MSRunOneExtSpec}} | {{AblExtSpec}} |
+| Exact TB recall | {{MSRunOneExtTB}} | {{AblExtTB}} |
+
+Without the filters, internal accuracy and macro-F1 are lower, by more than the seed-to-seed spread of the previous section, and the run-5 internal values lie below the whole range of runs 2 to 4. In this comparison the run with the filters therefore scored higher internally. Montgomery specificity is unchanged, so the main external failure is present with and without the filters. The run without filters named a small number of Montgomery tuberculosis scans Tuberculosis ({{AblExtTB}}% of the scans) where no filtered run did; this is a small count from one run and is reported as an observation, not as an effect. Run 5 also selected its last epoch, so a difference in convergence speed cannot be excluded. The comparison is a single ablation seed of one alternative: it does not show that the preprocessing improves generalisation, and it does not identify which filter matters.
 
 ## Interpretation
 

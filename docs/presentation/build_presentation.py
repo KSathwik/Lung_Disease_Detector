@@ -90,7 +90,13 @@ def parse_slides(res):
             elif l.startswith("- "):
                 s["bullets"].append(subst(l[2:], res))
             elif l.startswith("| "):
-                s["table"].append([c.strip() for c in subst(l, res).strip().strip("|").split("|")])
+                row = [c.strip() for c in subst(l, res).strip().strip("|").split("|")]
+                if row == ["---"]:
+                    s["table2"] = []
+                elif "table2" in s:
+                    s["table2"].append(row)
+                else:
+                    s["table"].append(row)
             else:
                 m = re.match(r"(\w+):\s*(.*)", l)
                 if m:
@@ -349,6 +355,13 @@ def build():
                 th = (0.5 if nrows <= 7 else 0.42) * nrows
                 y = min(top + 0.1 + th + 0.35, 5.6)
                 add_bullets(sl, 0.6, y, 12.1, bot - y, s["bullets"])
+        elif lay == "tables2":
+            colw = [float(c) for c in s["colw"].split(",")] if s.get("colw") else None
+            add_table(sl, s["table"], 0.5, top + 0.1, 6.1, colw)
+            add_table(sl, s["table2"], 6.8, top + 0.1, 6.0, colw)
+            if s["bullets"]:
+                y = top + 0.1 + 0.5 * len(s["table"]) + 0.3
+                add_bullets(sl, 0.5, y, 12.3, bot - y, s["bullets"])
         elif lay == "table_fig":
             colw = [float(c) for c in s["colw"].split(",")] if s.get("colw") else None
             add_table(sl, s["table"], 0.5, top + 0.1, 6.4, colw)

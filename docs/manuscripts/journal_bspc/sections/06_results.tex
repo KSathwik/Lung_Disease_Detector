@@ -1,7 +1,7 @@
 \section{Results}
 \label{sec:results}
 
-Unless stated otherwise, all values in this section are from the selected model (version \RModelVersion, dataset build \RDatasetBuild, checkpoint \texttt{\RCheckpointShort\ldots}, seed \RSeed) and come from a single training run. Differences of a few percentage points between classes, sources or runs are within the range that seed-to-seed variation could produce and should not be read as established; the seed runs are reported in Section~\ref{sec:res-seeds}.
+Unless stated otherwise, all values in this section are from the selected model (version \RModelVersion, dataset build \RDatasetBuild, checkpoint \texttt{\RCheckpointShort\ldots}, seed \RSeed) and come from that single training run. Differences of a few percentage points between classes, sources or runs are within the range that seed-to-seed variation could produce and should not be read as established; the seed runs are reported in Section~\ref{sec:res-seeds}.
 
 Run~2 was selected by the rule of Section~\ref{sec:selection}, because its macro-F1 on the common selection set was higher than that of run~1 (\RCmpRunTwoMacroFOne\% versus \RCmpRunOneMacroFOne\%); much of this advantage lies on sources that only run~2 trained on (Section~\ref{sec:res-runs}).
 
@@ -225,7 +225,7 @@ By the rule of Section~\ref{sec:selection}, which was fixed in advance and recor
 
 \subsection{Seed variability}
 \label{sec:res-seeds}
-Table~\ref{tab:seeds} reports the selected run and the two follow-up seeds of Section~\ref{sec:followup}, each evaluated once on the test split and the external cohort. \pending{seed variability: size of the seed-to-seed spread of test accuracy, macro-F1, macro ROC-AUC, external specificity and exact TB recall; whether the selected run lies inside the spread; which earlier statements (class, source and run differences) are smaller than the spread. Use \texttt{\textbackslash RMS...} macros only}.
+Table~\ref{tab:seeds} reports the selected run and the two follow-up seeds of Section~\ref{sec:followup}, each evaluated once on the test split and the external cohort (seeds \RMSSeeds; \RMSNRuns{} runs on the same build, split and recipe). Internal results varied little across seeds: test accuracy had mean \RMSTestAccMean\% (SD \RMSTestAccSD, range \RMSTestAccMin--\RMSTestAccMax\%), macro-F1 mean \RMSTestMacroFOneMean\% (SD \RMSTestMacroFOneSD, range \RMSTestMacroFOneMin--\RMSTestMacroFOneMax\%) and macro ROC-AUC mean \RMSTestMacroAUCMean{} (SD \RMSTestMacroAUCSD, range \RMSTestMacroAUCMin--\RMSTestMacroAUCMax). The selected run (seed \RMSRunOneSeed) has the highest test accuracy, macro-F1 and macro ROC-AUC of the three, but all three lie within a spread of under one percentage point, so with this recipe and split it is not an outlier, although three seeds cannot rule out a small favourable draw; it was chosen before seeds \RMSRunTwoSeed{} and \RMSRunThreeSeed{} existed. Runs 3 and 4 were stopped early by the patience rule (best epochs 6 and 7), whereas run 2 completed its schedule; this is part of the recipe's variability. The external results varied more: specificity had mean \RMSExtSpecMean\% (SD \RMSExtSpecSD, range \RMSExtSpecMin--\RMSExtSpecMax\%) and sensitivity mean \RMSExtSensMean\% (range \RMSExtSensMin--\RMSExtSensMax\%), so the selected run's specificity of \RMSRunOneExtSpec\% is the lowest of the three. Differences of a few points in external specificity between runs of this recipe are therefore within the seed spread and should not be interpreted. In every run, exact Tuberculosis recall on Montgomery was \RMSExtTBMean\% (no TB scan was named Tuberculosis), and specificity stayed low, so the external failure is consistent across seeds. The internal class and source differences discussed above, which span many percentage points, are larger than this seed spread; differences of a point or less are not. The standard deviation from three runs is only a rough estimate, and these results say nothing about other splits, data or architectures.
 
 \begin{table}[t]
 \centering
@@ -238,27 +238,34 @@ Run & Seed & Test acc. & Macro-F1 & Macro ROC-AUC & Ext. specificity & Ext. TB r
 \midrule
 Run 2 (selected) & \RSeed & \RTestAcc & \RTestMacroFOne & \RTestMacroAUC & \RExtSpec & \RExtTB \\
 % Run 2 row = \RMSRunOne... (Seed, TestAcc, TestMacroFOne, TestMacroAUC, ExtSens, ExtSpec, ExtTB); values identical to the macros used here.
-Run 3 & 43 % \RMSRunTwoSeed
-  & \pending{} % \RMSRunTwoTestAcc
-  & \pending{} % \RMSRunTwoTestMacroFOne
-  & \pending{} % \RMSRunTwoTestMacroAUC
-  & \pending{} % \RMSRunTwoExtSpec
-  & \pending{} % \RMSRunTwoExtTB
+Run 3 & \RMSRunTwoSeed
+  & \RMSRunTwoTestAcc
+  & \RMSRunTwoTestMacroFOne
+  & \RMSRunTwoTestMacroAUC
+  & \RMSRunTwoExtSpec
+  & \RMSRunTwoExtTB
   \\
-Run 4 & 44 % \RMSRunThreeSeed
-  & \pending{} % \RMSRunThreeTestAcc
-  & \pending{} % \RMSRunThreeTestMacroFOne
-  & \pending{} % \RMSRunThreeTestMacroAUC
-  & \pending{} % \RMSRunThreeExtSpec
-  & \pending{} % \RMSRunThreeExtTB
+Run 4 & \RMSRunThreeSeed
+  & \RMSRunThreeTestAcc
+  & \RMSRunThreeTestMacroFOne
+  & \RMSRunThreeTestMacroAUC
+  & \RMSRunThreeExtSpec
+  & \RMSRunThreeExtTB
   \\
 \midrule
 Mean $\pm$ SD & --
-  & \pending{} % \RMSTestAccMean $\pm$ \RMSTestAccSD
-  & \pending{} % \RMSTestMacroFOneMean $\pm$ \RMSTestMacroFOneSD
-  & \pending{} % \RMSTestMacroAUCMean $\pm$ \RMSTestMacroAUCSD
-  & \pending{} % \RMSExtSpecMean $\pm$ \RMSExtSpecSD
-  & \pending{} % \RMSExtTBMean $\pm$ \RMSExtTBSD
+  & \RMSTestAccMean{} $\pm$ \RMSTestAccSD
+  & \RMSTestMacroFOneMean{} $\pm$ \RMSTestMacroFOneSD
+  & \RMSTestMacroAUCMean{} $\pm$ \RMSTestMacroAUCSD
+  & \RMSExtSpecMean{} $\pm$ \RMSExtSpecSD
+  & \RMSExtTBMean{} $\pm$ \RMSExtTBSD
+  \\
+Min--max & --
+  & \RMSTestAccMin--\RMSTestAccMax
+  & \RMSTestMacroFOneMin--\RMSTestMacroFOneMax
+  & \RMSTestMacroAUCMin--\RMSTestMacroAUCMax
+  & \RMSExtSpecMin--\RMSExtSpecMax
+  & \RMSExtTBMin--\RMSExtTBMax
   \\
 \bottomrule
 \end{tabular}
@@ -270,7 +277,7 @@ Mean $\pm$ SD & --
 
 \subsection{Preprocessing ablation}
 \label{sec:res-ablation}
-Table~\ref{tab:ablation} compares the selected run, trained with the full filtering chain, with run~5, trained with the same seed, data and schedule but without the Gaussian pre-blur, CLAHE and low-pass filter. \pending{ablation: direction and size of the differences on test and external data, read against the seed spread of Table~\ref{tab:seeds}; no claim that the filtering helps or harms unless the difference clearly exceeds that spread. Use \texttt{\textbackslash RAbl...} macros only}.
+Table~\ref{tab:ablation} compares the selected run, trained with the full filtering chain, with run~5, trained with the same seed, data and schedule but without the Gaussian pre-blur, CLAHE and low-pass filter. Without the filters, test accuracy was \RAblTestAcc\% against \RMSRunOneTestAcc\%, macro-F1 \RAblTestMacroFOne\% against \RMSRunOneTestMacroFOne\% and macro ROC-AUC \RAblTestMacroAUC{} against \RMSRunOneTestMacroAUC. All three internal values for run~5 lie below the entire range of runs 2--4 in Table~\ref{tab:seeds} (accuracy \RMSTestAccMin--\RMSTestAccMax\%, macro-F1 \RMSTestMacroFOneMin--\RMSTestMacroFOneMax\%, macro ROC-AUC \RMSTestMacroAUCMin--\RMSTestMacroAUCMax), and the accuracy and macro-F1 differences are several times the seed SD (\RMSTestAccSD{} and \RMSTestMacroFOneSD{} points). In this single-seed comparison, therefore, the run with the filters scored higher internally, by more than the seed-to-seed spread. On the external cohort, specificity was \RAblExtSpec\% against \RMSRunOneExtSpec\% (the filtered runs ranged \RMSExtSpecMin--\RMSExtSpecMax\%) and sensitivity \RAblExtSens\% against \RMSRunOneExtSens\%, so removing the filters did not improve external specificity. Run~5 named \RAblExtTB\% of the Montgomery TB scans Tuberculosis, a small number of scans, where no filtered run named any (\RMSExtTBMean\% in all three seeds); this is an observation from one run, not an established effect. Run~5 also selected its last epoch (16 of 16, validation still rising), whereas runs 3 and 4 stopped early, so a difference in convergence speed cannot be excluded. With one ablation seed, the difference cannot be separated from run-to-run variation outside the measured seed spread, and we make no claim about why the filters matter or that they improve generalisation.
 
 \begin{table}[t]
 \centering
@@ -281,12 +288,12 @@ Table~\ref{tab:ablation} compares the selected run, trained with the full filter
 \toprule
 Quantity & Run 2 (full chain) & Run 5 (no filters) \\
 \midrule
-Test accuracy & \RTestAcc & \pending{} \\
-Test macro-F1 & \RTestMacroFOne & \pending{} \\
-Test macro ROC-AUC & \RTestMacroAUC & \pending{} \\
-External sensitivity & \RExtSens & \pending{} \\
-External specificity & \RExtSpec & \pending{} \\
-External exact TB recall & \RExtTB & \pending{} \\
+Test accuracy & \RTestAcc & \RAblTestAcc \\
+Test macro-F1 & \RTestMacroFOne & \RAblTestMacroFOne \\
+Test macro ROC-AUC & \RTestMacroAUC & \RAblTestMacroAUC \\
+External sensitivity & \RExtSens & \RAblExtSens \\
+External specificity & \RExtSpec & \RAblExtSpec \\
+External exact TB recall & \RExtTB & \RAblExtTB \\
 \bottomrule
 \end{tabular}
 \end{table}

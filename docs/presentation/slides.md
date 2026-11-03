@@ -2,7 +2,7 @@
 # Format: slides separated by a line "---". Header lines "key: value" (layout, title, subtitle, figure, caption, colw),
 # then body: "- " bullet, "| " table row (first row = header, cells split by |),
 # "> " speaker-note line. {{Key}} is replaced from docs/manuscripts/shared/results.json at build time.
-# Anything written [PENDING ...] is drawn in red: only seed-run and ablation placeholders remain.
+# Unfilled tokens are drawn in red by the build script; no placeholders remain at present.
 
 layout: title
 title: LungAI DenseNet-121: Six-Class Chest X-Ray Classifier
@@ -155,11 +155,11 @@ title: Training protocol
 - Phase 2: last 30 layers trainable, learning rate 1e-5, early stopping (patience 3)
 - Batch 32, class-balanced sample weights, flip and 10 degree rotation
 - Checkpoint selected on validation macro-F1 only (tie: validation AUC)
-- Single run, seed 42, CPU only, time-boxed
+- Final model: seed 42; seeds 43 and 44 and a no-filter ablation are on the robustness slide; CPU only, time-boxed
 - Final model (run 2): {{EpochsTrained}} epochs trained, best validation macro-F1 at epoch {{SelectedEpoch}} (the last)
 > Training has two phases, a frozen backbone followed by gentle fine-tuning.
 > The checkpoint is chosen by validation macro-F1, never by test results.
-> Because this was done on a laptop CPU with a time limit, each model is a single run with seed 42. I therefore cannot report run-to-run variance.
+> Because this was done on a laptop CPU with a time limit, the final model is a single run with seed 42. Two further seeds and one ablation run were done afterwards and are shown on the robustness slide.
 > Run 2, the final model, completed its full schedule; the best epoch was the last one and validation was still rising slightly. I do not claim longer training would help.
 ---
 layout: bullets
@@ -241,7 +241,7 @@ colw: 4.6, 3.0, 2.4
 | Binary AUC | {{ExtAUC}} | not computed |
 | Exact TB class on TB scans | {{ExtTBK}}/{{ExtTBN}} = {{ExtTB}}% | not computed |
 - Run 1: {{RunOneExtCovidCalls}} of {{NExternal}} scans called COVID-19, {{RunOneExtSpecK}}/{{ExtSpecN}} normals Normal. Run 2: {{ExtCovidCalls}} COVID-19, {{ExtSpecK}}/{{ExtSpecN}} Normal
-- Run 1's COVID-19 calls largely disappeared with build 2 (which adds several sources), but errors moved to other abnormal classes: consistent with, not proof of, a source shortcut; V5 specificity was {{VFiveExtSpecK}}/{{VFiveExtSpecN}}
+- Run 1's COVID-19 calls fell with build 2 (which adds several sources), but errors moved to other abnormal classes: consistent with, not proof of, a source shortcut; V5 specificity was {{VFiveExtSpecK}}/{{VFiveExtSpecN}}
 > The external cohort is Montgomery, with 58 TB and 80 normal scans, evaluated as a binary task. Each model was evaluated on it once.
 > Sensitivity is only meaningful with specificity. Specificity is low: the model would flag most healthy patients from this hospital as abnormal. Exact TB recognition is {{ExtTBK}} of {{ExtTBN}}.
 > Run 1 called {{RunOneExtCovidCalls}} of {{NExternal}} scans COVID-19 and {{RunOneExtSpecK}} of {{ExtSpecN}} normals Normal (run-1 external evaluation). Run 2 calls {{ExtCovidCalls}} COVID-19 and {{ExtSpecK}} of {{ExtSpecN}} Normal.
@@ -274,13 +274,27 @@ caption: Grad-CAM, one correctly classified median-confidence test image per cla
 > So source and class are confounded and source information is linearly available, which makes a shortcut possible. This is indirect evidence, not proof that the model uses source cues.
 > Grad-CAM, one image per class, illustrative only: COVID-19 and Normal heatmaps concentrate on neck, shoulders and image borders; Nodule/Mass and Tuberculosis fall inside the lung fields; Pneumonia (a paediatric image) is diffuse. Together with the external result this supports the concern.
 ---
-layout: bullets
+layout: tables2
 title: Robustness: seeds and ablation
-- [PENDING: seed runs] Variability across seeds (runs 3 and 4)
-- [PENDING: ablation] Effect of the preprocessing chain (run 5)
-- Until then: single seed 42 per model; no variance estimate and no claim that the preprocessing helps
-> These experiments are still running on the laptop CPU. I will fill this slide when they finish.
-> Until then every number in this talk is from a single seed, and I make no claim about run-to-run variance or about the benefit of the preprocessing.
+colw: 2.4, 1.9, 1.7
+| Seeds (runs 2 to 4) | Mean ± SD | Range |
+| Test accuracy % | {{MSTestAccMean}} ± {{MSTestAccSD}} | {{MSTestAccMin}} to {{MSTestAccMax}} |
+| Test macro-F1 % | {{MSTestMacroFOneMean}} ± {{MSTestMacroFOneSD}} | {{MSTestMacroFOneMin}} to {{MSTestMacroFOneMax}} |
+| Test macro ROC-AUC | {{MSTestMacroAUCMean}} ± {{MSTestMacroAUCSD}} | {{MSTestMacroAUCMin}} to {{MSTestMacroAUCMax}} |
+| Ext. specificity % | {{MSExtSpecMean}} ± {{MSExtSpecSD}} | {{MSExtSpecMin}} to {{MSExtSpecMax}} |
+| Exact TB recall % | {{MSExtTBMean}} | {{MSExtTBMin}} to {{MSExtTBMax}} |
+| --- |
+| Ablation (seed 42) | Run 2 (filters) | Run 5 (none) |
+| Test accuracy % | {{MSRunOneTestAcc}} | {{AblTestAcc}} |
+| Test macro-F1 % | {{MSRunOneTestMacroFOne}} | {{AblTestMacroFOne}} |
+| Ext. specificity % | {{MSRunOneExtSpec}} | {{AblExtSpec}} |
+| Exact TB recall % | {{MSRunOneExtTB}} | {{AblExtTB}} |
+- Served run is the highest of three seeds (spread under one point); external failure recurs in every seed
+- Without filters, internal scores are lower than the seed range; external specificity unchanged
+- Run 5's few correct Montgomery TB calls: one run, observation only
+> I repeated the final recipe with seeds 43 and 44 on the same split. Internal accuracy has mean {{MSTestAccMean}} and standard deviation {{MSTestAccSD}} percent. The served run 2 is the highest of the three seeds, within a spread of under one percentage point; a small favourable draw cannot be ruled out. The standard deviation comes from only three runs, so it is rough, and it covers the seed only, not other splits, data or architectures.
+> Runs 3 and 4 stopped early by the same patience rule; run 2 completed its schedule. External specificity ranges from {{MSExtSpecMin}} to {{MSExtSpecMax}} percent and no seed names any Montgomery TB scan Tuberculosis, so the external failure is not a one-seed artefact.
+> The ablation, run 5, uses the same split, seed and schedule as run 2, without blur, CLAHE and low-pass filter. Internal accuracy is {{AblTestAcc}} against {{MSRunOneTestAcc}} percent, a gap larger than the seed spread, so the run with the filters scored higher internally in this single comparison. Run 5 selected its last epoch (16 of 16, validation still rising), so a convergence-speed difference cannot be excluded. External specificity is the same. Exact TB recall is {{AblExtTB}} percent without filters against {{MSRunOneExtTB}}: a handful of scans from one run, an observation and not an effect. One ablation seed cannot support a general claim about preprocessing.
 ---
 layout: figs2
 title: Application demo (model {{ModelVersion}})
@@ -294,13 +308,13 @@ caption: Test-split Shenzhen radiograph (true label Tuberculosis). Left: predict
 ---
 layout: bullets
 title: Limitations
-- Single run per model (seed 42), CPU, time-boxed: no variance estimate
+- Three seeds for the served recipe (SD is rough), one ablation seed; CPU, time-boxed
 - Classes assumed mutually exclusive; co-findings not modelled
 - Patient identity unknown for TBX11K and COVID-19 Radiography rows
 - Effusion and nodule data from NIH only; VinDr-CXR and JSRT not available
 - External cohort is binary and small ({{NExternal}} scans)
 - Heuristic CXR gate; Grad-CAM is not clinical reasoning; no clinical validity claimed
-> I want to be clear about what this work does not show. There is one run per model, so no variance.
+> I want to be clear about what this work does not show. Variability is measured with only three seeds, and the ablation is a single run.
 > Labels are single and exclusive, patient identity is unknown for two sources, and some classes rely on one source dataset.
 > The external cohort is small, and the gate is a heuristic. Nothing here establishes clinical validity.
 ---
@@ -311,10 +325,10 @@ title: Conclusion
 - Showed how leakage and proxy labels inflated the earlier V5 result
 - Final model v6.1: {{TestAcc}}% internal accuracy, but external specificity {{ExtSpecK}}/{{ExtSpecN}} and TB recall {{ExtTBK}}/{{ExtTBN}}: internal metrics overstate behaviour
 - Class-source confounding is strong; build 2 changed where external errors fall, not the external gap (indirect evidence of a source shortcut)
-- Not shown: clinical utility, superiority over other methods, seed robustness, preprocessing benefit (pending)
+- Not shown: clinical utility, superiority over other methods, causal effect of preprocessing (one ablation seed), robustness beyond the training seed
 > To conclude, the contribution is an auditable rebuild and a reproducible pipeline, together with evidence of how an earlier pipeline overstated its results.
 > The final model is v6.1, run 2. Its internal accuracy is good, but on the external cohort specificity is low and no TB scan is recognised as TB, so internal metrics overstate generalisation.
-> With build 2 the COVID-19 calls fell but the external gap remained; this is consistent with a source shortcut, not proof of one. Seed robustness and the preprocessing ablation remain pending.
+> With build 2 the COVID-19 calls fell but the external gap remained; this is consistent with a source shortcut, not proof of one. Across three seeds the internal results are stable and the external gap persists; the single-seed ablation shows lower internal scores without the filters.
 > The claim I can defend is about method, not about clinical accuracy.
 ---
 layout: bullets
