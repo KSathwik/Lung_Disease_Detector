@@ -486,7 +486,7 @@ def parse_md(text):
             pending_caption = s[6:].strip()
             i += 1
             continue
-        m = re.match(r"^!\[([\w\-]+)\]\((.*)\)\s*(\{#[\w:\-]+\})?\s*$", s)
+        m = re.match(r"^!\[([\w\-/]+)\]\((.*)\)\s*(\{#[\w:\-]+\})?\s*$", s)  # stems may include a subfolder
         if m:
             flush()
             lab = m.group(3)[2:-1] if m.group(3) else None

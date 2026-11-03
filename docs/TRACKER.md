@@ -43,7 +43,8 @@ Legend: DONE · IN PROGRESS · PENDING · BLOCKED (needs someone outside this se
 
 1. Contact details (emails, mobiles): placeholders `[TO BE PROVIDED]`.
 2. Author order and corresponding author for manuscripts: `[AUTHORS TO CONFIRM]`.
-3. No official KUCE&T / Kakatiya University template found (kucet.ac.in unreachable); report uses an Osmania-based standard — confirm with the department, and ask whether a published paper is required before dissertation submission.
+3. RESOLVED: no prescribed KUCE&T report format and no paper required before dissertation submission (student, 2026-11-03); the report uses the documented Osmania-based standard (docs/publication/REPORT_TEMPLATE_FINDINGS.md).
+8. EMBC 2027 requires one author to act as a reciprocal reviewer (named at submission; reviews a few EMBC papers): `[TO BE CONFIRMED]` in docs/manuscripts/conference/SUBMISSION_CHECKLIST.md.
 4. No LaTeX compiler here: manuscripts compile on Overleaf.
 5. Journal strength: one run per model (single seed). Additional seeds (≈5 h CPU each) would strengthen a BSPC submission.
 6. Commit/push approval.

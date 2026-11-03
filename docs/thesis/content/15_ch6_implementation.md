@@ -75,6 +75,12 @@ The frontend is a React 18 application with four pages. The Analyze page uploads
 
 The code enforces several rules. Class names and order come from the API response, so the frontend has no class list of its own. A malformed response (a missing or out-of-range score, or a predicted class that is not in the order) raises an error that is displayed as such, and a missing value is never drawn as zero. Scores are labelled "uncalibrated softmax" and not as probability of disease. Errors are never replaced with mock results, and the errors module maps the 401, 413, 422, 503 and network failures to specific messages.
 
+[[fig:uiresult]] and [[fig:uigradcam]] show the Analyze page of the running application with the final model, for a test-split Shenzhen radiograph whose true label is Tuberculosis. They were captured with `scripts/capture_screenshots.py`, which drives the installed Microsoft Edge against the backend serving the production build. A single correctly classified example illustrates the interface only; it is not evidence of accuracy. Full-page captures of the upload, Model Performance and History pages are in `docs/figures/screenshots/`.
+
+![screenshots/07_result_card](Analyze page: predicted class with its top-class score, the model identity and the six softmax scores for a test-split radiograph (true label Tuberculosis).) {#fig:uiresult}
+
+![screenshots/08_gradcam_card](Analyze page: Grad-CAM overlay for the predicted class, with the disclaimer shown by the application.) {#fig:uigradcam}
+
 ## The chest X-ray input gate
 
 ### Purpose and design

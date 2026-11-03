@@ -282,13 +282,15 @@ title: Robustness: seeds and ablation
 > These experiments are still running on the laptop CPU. I will fill this slide when they finish.
 > Until then every number in this talk is from a single seed, and I make no claim about run-to-run variance or about the benefit of the preprocessing.
 ---
-layout: placeholder
-title: Application demo
-caption: Demo screenshots to be inserted: upload page, prediction with probabilities, Grad-CAM overlay, history
-> At this point I will show the running application: upload an image, read the six-class probabilities, and open the Grad-CAM overlay.
-> I will also show the history page and the metrics page, which serves the same figures that appear in this presentation.
-> Grad-CAM shows image regions that influenced the score; it is not radiological reasoning.
-> Screenshots will be added before the presentation.
+layout: figs2
+title: Application demo (model v{{ModelVersion}})
+figure: screenshots/07_result_card, screenshots/08_gradcam_card
+caption: A test-split Shenzhen radiograph (true label Tuberculosis) analysed by the running application. Left: prediction and six-class scores. Right: Grad-CAM overlay. Captured with scripts/capture_screenshots.py.
+> These are screenshots of the running application with the final model, not mock-ups. The image comes from the held-out test split of the final dataset, and its true label is Tuberculosis.
+> The left panel shows the predicted class with its top-class score and all six softmax scores; the same values are returned by the API and stored in the history.
+> The right panel shows the Grad-CAM overlay. It shows image regions that influenced the score; it is not radiological reasoning, and on this image part of the attention falls outside the lung fields.
+> One correctly classified example is not evidence of accuracy; the test and external results on the previous slides are.
+> Full-page captures of the upload, metrics and history pages are in docs/figures/screenshots/ if the live demo is not possible.
 ---
 layout: bullets
 title: Limitations
