@@ -261,6 +261,10 @@ def flat_results(r: Dict[str, Any]) -> Dict[str, str]:
         out.update({"VFiveAcc": p1(h["internal_test"]["metrics"]["accuracy"]), "VFiveN": f"{h['internal_test']['n']:,}",
                     "VFiveExtSpecK": str(h["external_binary_abnormality"]["specificity"]["successes"]),
                     "VFiveExtSpecN": str(h["external_binary_abnormality"]["specificity"]["n"])})
+    # Novelty extension (Spec/Inlp/Loso/Bs macros): merged only when artifacts/novelty/*.json exist
+    from lungai.novelty.render_novelty import NOVELTY_JSONS, novelty_macros
+    if any(p.is_file() for p in NOVELTY_JSONS):
+        out.update(novelty_macros())
     return out
 
 
