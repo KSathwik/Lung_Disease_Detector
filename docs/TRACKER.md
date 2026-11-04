@@ -1,5 +1,7 @@
 # Project and submission tracker
 
+> This is the single status page. Related: `PROJECT_EXECUTION_STATUS.md` (handoff context), `docs/publication/SUBMISSION_TRACKER.md` (venue table), `artifacts/execution_state.json` (machine state for the pipeline scripts, not edited by hand).
+
 Owner: main session. Updated: 2026-11-04 ~05:40. Student: Katkam Sathwik (24567T7604), M.Tech CSE, KUCE&T, Kakatiya University. Supervisor: Prof. Nagavelli Ramana.
 
 Legend: DONE · IN PROGRESS · PENDING · BLOCKED (needs someone outside this session).
@@ -19,7 +21,7 @@ Checked 2026-11-04 ~05:40 from files and logs (refresh at each milestone: re-rea
 | Rebuild report/slides, pytest, Jest, build, final audit | auto | done | pptx and docx rebuilt 2026-11-04 (docx after Word was closed; 0 missing tokens); pytest 150 passed 1 skipped; Jest 19/19; frontend build OK; audit in `docs/AUDIT_FINDINGS.md` (2026-11-04) | none | done |
 | Commit and push (branch `research/lungai-clean-baseline`) | auto | see git log | committed and pushed after the 2026-11-04 audit fixes | none | done |
 | Novelty literature search | auto | done | `docs/publication/lit_search/` (4 files, 22:28-22:37) | none until student decides scope | done |
-| `NOVELTY_ROADMAP.md` | auto | done (verified draft) | `docs/publication/NOVELTY_ROADMAP.md`; nothing run | student review | done |
+| `docs/publication/archive/NOVELTY_ROADMAP.md` | auto | done (verified draft) | `docs/publication/archive/NOVELTY_ROADMAP.md`; nothing run | student review | done |
 | `NOVELTY_PROTOCOL.md` | student | done (approved) | approved in chat 2026-11-04 ("Proceed with your findings"); approval commit `f427c04`; section 13 log | changes only through section 13 | done |
 | C1/C3/C4 novelty runs | auto | in progress | code being written in `lungai/novelty/` (not run yet) | time 200 images, feature cache, then C1 → C3 → C4 → C2-lite in the protocol order | 4 Nov |
 | C2 (band-selective suppression) | student | waiting | roadmap section 3 go/no-go rule on validation only | decide after C2-lite | after C2-lite |

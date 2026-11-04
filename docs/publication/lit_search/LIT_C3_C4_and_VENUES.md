@@ -30,7 +30,7 @@ Unverified lead (do not cite): one search snippet described a medical-imaging st
 | 5 | The pitfalls of using open data to develop deep learning solutions for COVID-19 detection in chest X-rays | Harkness, Hall, Frangi, Ravikumar, Zucker | arXiv 2109.08020, MedInfo 2021 | https://arxiv.org/abs/2109.08020 (opened) | Train on open set, test on external and hospital data; COVIDx inflated | LOW-MEDIUM (external-set evaluation, no LOSO) |
 | 6 | Trivedi et al. (first author per Crossref, corrected 2026-11-04), PLOS ONE 2022 (see C3 #5) | | | | Page did not mention leave-one-source-out | LOW for C4 |
 
-Search-result mentions (not opened, do not cite): Zech et al. 2018 and the npj Digital Medicine 2024 paper are in NOVELTY_PLAN.md as already-read items.
+Search-result mentions (not opened, do not cite): Zech et al. 2018 and the npj Digital Medicine 2024 paper are in docs/publication/archive/NOVELTY_PLAN.md as already-read items.
 
 ## 2. Verdict and safe wording
 

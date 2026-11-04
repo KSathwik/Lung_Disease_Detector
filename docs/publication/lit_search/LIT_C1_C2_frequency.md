@@ -24,7 +24,7 @@ Search date: 2026-11-03. Method: WebSearch (standard, then extended) and WebFetc
 - A 2026 source-free domain adaptation paper for multi-institutional chest X-rays using Laplacian-pyramid frequency-band statistics (search summary pointed to J Appl Clin Med Phys 2026, DOI 10.1002/acm2.70626, PMC13240487). Both pages were blocked (verification screen / 403). Authors and exact title unverified. It may be a "per-band chest X-ray" prior for C2-like ideas, so open it manually.
 - "Homogenization of multi-institutional chest x-ray images in various data transformation schemes", J Med Imaging 10(6):061103 (2023), SPIE. Page returned empty; unverified; per the search snippet it uses Laplacian-pyramid decomposition to standardise images across institutions, which would be a close C2-style precedent.
 - Ben Ahmed et al., IEEE Access 2022 (shortcut mitigation for multisite generalisation; doaj page 403). Unverified.
-- Wang and Xia, BSPC 81 (2023) DELCOM; Teixeira et al., Sensors 2021; Bassi and Attux arXiv:2104.06176; npj Digital Medicine 2024 s41746-024-01118-4; Wang et al. ICCV 2023 (frequency shortcuts). These are already in NOVELTY_PLAN.md; I did not re-open them in this search.
+- Wang and Xia, BSPC 81 (2023) DELCOM; Teixeira et al., Sensors 2021; Bassi and Attux arXiv:2104.06176; npj Digital Medicine 2024 s41746-024-01118-4; Wang et al. ICCV 2023 (frequency shortcuts). These are already in docs/publication/archive/NOVELTY_PLAN.md; I did not re-open them in this search.
 
 ## 3. Verdict
 
@@ -134,7 +134,7 @@ Method: Crossref API (curl), Europe PMC REST search and full-text XML, arXiv abs
 (Dack and Dai: year inferred from the arXiv ID 2507; confirm before submission. The first name "Hyoyi" is as shown in the Europe PMC record.)
 
 ### Final novelty verdict (as of 2026-11-03)
-- C1 stands, with the scoped wording already in NOVELTY_ROADMAP.md ("to our knowledge, within the searches described"). No opened paper does a per-band source-versus-disease probe on chest X-ray CNN features. Both Laplacian-pyramid chest X-ray leads are harmonisation/adaptation papers, not probes. Caveats: do not claim frequency-filtered dataset classification as new in general (an unverified natural-image precedent exists), and cite Dack and Dai for source identifiability.
+- C1 stands, with the scoped wording already in docs/publication/archive/NOVELTY_ROADMAP.md ("to our knowledge, within the searches described"). No opened paper does a per-band source-versus-disease probe on chest X-ray CNN features. Both Laplacian-pyramid chest X-ray leads are harmonisation/adaptation papers, not probes. Caveats: do not claim frequency-filtered dataset classification as new in general (an unverified natural-image precedent exists), and cite Dack and Dai for source identifiability.
 - C2 is weakened: Kim 2023 (MFB) is a published per-band chest X-ray harmonisation. C2 is novel only as probe-driven band suppression; keep it optional and cite it.
 - C3 is modestly weakened: INLP/ComBat removal with a segmentation entanglement test exists in brain MRI (Rahbar, v1). The chest X-ray, six-source, disease-head-retrain version stands as a diagnostic, not a method.
 - Still unverified: DeGrave full text (abstract level only), arXiv 2412.01876, Ben Ahmed IEEE Access 2022, Rafferty and Rajan journal details.

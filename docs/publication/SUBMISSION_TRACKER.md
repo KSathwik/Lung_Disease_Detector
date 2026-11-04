@@ -1,5 +1,7 @@
 # Submission tracker
 
+> Status pointer (2026-11-04): `docs/TRACKER.md` is the single status page (see `PROJECT_EXECUTION_STATUS.md` for the handoff). This file is the venue-specific submission table only.
+
 > Decision (2026-11-04, student): target journal is Informatics in Medicine Unlocked (IMU); Biomedical Signal Processing and Control (BSPC) is the fallback. Reason: diagnostic study after the C2 NO-GO. EMBC 2027 is unchanged.
 
 > Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md` (the fallback order in the table below is the earlier one).

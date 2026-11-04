@@ -12,3 +12,5 @@ Everything under `docs/archive/` predates branch `research/lungai-clean-baseline
 | `thesis_tooling/` | Scripts that generated the above | Hardcode old figures and claims |
 
 The binary documents (DOCX, PDF, PPTX) were not edited. Correct them from [../experiment_results.md](../experiment_results.md), [../model_card.md](../model_card.md) and [../thesis_methodology.md](../thesis_methodology.md) before any submission.
+
+See also [DUPLICATES.md](DUPLICATES.md): byte-identical copies removed on 2026-11-04 and the copy that was kept for each.

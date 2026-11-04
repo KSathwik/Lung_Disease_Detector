@@ -122,7 +122,7 @@ Judgement note: the ratings and the two recommendations below are my reading of 
 ### S2 (S1 + C2): Biomedical Signal Processing and Control; fallback Informatics in Medicine Unlocked
 - Why BSPC: C2 supplies a method component, which is what the full-paper definition asks for, and band-stop filtering sits inside the signal-processing scope. Risk: one exploratory seed will draw a major-revision or reject; present C2 as exploratory in the title, abstract and highlights, and lead with the S1 measurements.
 - Fallback IMU: if the C2 evidence is weak or the BSPC length cut is not acceptable to the student, the same paper fits IMU with fewer constraints, at the APC.
-- Manuscript changes: as for BSPC above, plus a matched-energy random band-stop control and the seed spread of runs 2-4 stated beside the single C2 seed (already planned in `NOVELTY_ROADMAP.md`). Do not claim an improvement from one run.
+- Manuscript changes: as for BSPC above, plus a matched-energy random band-stop control and the seed spread of runs 2-4 stated beside the single C2 seed (already planned in `docs/publication/archive/NOVELTY_ROADMAP.md`). Do not claim an improvement from one run.
 
 ### Further fallbacks if both fail
 CMPB Update (gold OA USD 2,990) for S1 or S2; ISWA or Array (gold OA, novelty line) as last resorts. Do not use CBM, AIIM, PRL, CMPB or CMIG for these scopes.
@@ -132,4 +132,4 @@ CMPB Update (gold OA USD 2,990) for S1 or S2; ISWA or Array (gold OA, novelty li
 - Re-open the Insights pages on submission day; figures change.
 - Confirm the student's APC under Geographical Pricing for IMU/CMPB Update/ISWA/Array (not shown on pages).
 - Similar-paper searches for CMPB, CMPB Update, ISWA, Array, PRL and CMIG were limited (ScienceDirect search returned blank pages after repeated queries); the absence of a verified example there does not show absence.
-- Per the thesis-first rule in `NOVELTY_ROADMAP.md`, nothing is submitted until the thesis is final; the EMBC overlap must be declared.
+- Per the thesis-first rule in `docs/publication/archive/NOVELTY_ROADMAP.md`, nothing is submitted until the thesis is final; the EMBC overlap must be declared.

@@ -34,7 +34,7 @@ Venue: IEEE EMBC 2027, Suntec Singapore, 11 to 15 July 2027. Full paper deadline
 - [ ] AI-assistance disclosure reviewed by the authors against IEEE policy.
 - [ ] Acknowledgement and funding completed.
 - [ ] Originality/plagiarism check; not under review elsewhere; supervisor approval (no signature implied here).
-- [ ] Copyright form and registration completed by the authors at acceptance; read the post-publication policy before planning journal reuse (`docs/publication/CONFERENCE_VS_JOURNAL.md`).
+- [ ] Copyright form and registration completed by the authors at acceptance; read the post-publication policy before planning journal reuse (`docs/publication/archive/CONFERENCE_VS_JOURNAL.md`).
 
 ## Reciprocal reviewer (EMBC requirement)
 

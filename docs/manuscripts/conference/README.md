@@ -11,7 +11,7 @@ Working title: Leakage-Controlled Multi-Source Chest X-Ray Classification: Inter
 - Text is filled from `docs/manuscripts/shared/RESULTS_FACTS.md` (final model: run 2, `v6_build_002`). No `\pending` blocks remain and the macro was removed from `main.tex`.
 - Length: about 2,300 to 2,500 words including captions and macro-expanded numbers (estimate, not a compiled count). **Page count must be confirmed after compiling on Overleaf**; if it is under 4 pages there is room (for example for `fig_dataset_composition`); if over, shorten Related Work and Limitations first.
 - 20 references (the maximum). Figures: `fig_confusion_matrix`, `fig_external_breakdown`. Tables: per-class test results; test accuracy by source.
-- Journal-only material is deliberately excluded (seed variability, preprocessing ablation, source-identifiability probe, calibration, gate); see `docs/publication/CONFERENCE_VS_JOURNAL.md`. One sentence says further analyses (seed variability, preprocessing ablation) are not part of this paper and are reported in the extended version, with no results.
+- Journal-only material is deliberately excluded (seed variability, preprocessing ablation, source-identifiability probe, calibration, gate); see `docs/publication/archive/CONFERENCE_VS_JOURNAL.md`. One sentence says further analyses (seed variability, preprocessing ablation) are not part of this paper and are reported in the extended version, with no results.
 - Run-1 historical numbers come from the `\RRunOne…` macros (generated from `artifacts/evaluation_reports/v6_external/metrics_external.json`); all other numbers are macros.
 
 ## Layout

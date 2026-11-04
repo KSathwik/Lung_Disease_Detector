@@ -2,7 +2,7 @@
 
 Status: **APPROVED by the student on 2026-11-04 (morning) and binding from the approval commit** (hash in section 13). Drafted 2026-11-03 (evening) while runs 4 and 5 were still training and before any number of the novelty extension (spectral map, INLP, leave-one-source-out, band-stop) existed; committed first as an unapproved draft (`e3e1aa1`). Nothing in `artifacts/novelty/` exists yet. Style and purpose follow `docs/data/run_selection_protocol.md`.
 
-Inputs read for this draft: `docs/publication/NOVELTY_ROADMAP.md`, `docs/publication/lit_search/SCOPE_MERGE_REVIEW.md` (flags F1-F6, rule B8), `docs/publication/lit_search/INVENTORY_AND_WORKPLAN.md`, `docs/manuscripts/shared/WRITING_BRIEF.md`, `lungai/evaluation/source_probe.py`, `lungai/training/train_v6.py`, `lungai/config.py`, and the manifest of `data/derived/v6_build_002` (metadata columns only; no image was opened).
+Inputs read for this draft: `docs/publication/archive/NOVELTY_ROADMAP.md`, `docs/publication/lit_search/SCOPE_MERGE_REVIEW.md` (flags F1-F6, rule B8), `docs/publication/lit_search/INVENTORY_AND_WORKPLAN.md`, `docs/manuscripts/shared/WRITING_BRIEF.md`, `lungai/evaluation/source_probe.py`, `lungai/training/train_v6.py`, `lungai/config.py`, and the manifest of `data/derived/v6_build_002` (metadata columns only; no image was opened).
 
 ## 1. Purpose and wording
 

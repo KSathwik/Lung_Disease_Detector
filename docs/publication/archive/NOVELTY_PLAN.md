@@ -1,3 +1,5 @@
+> **Archived 2026-11-04 (superseded):** superseded by [NOVELTY_ROADMAP.md](NOVELTY_ROADMAP.md) (plan) and [NOVELTY_PROTOCOL.md](../NOVELTY_PROTOCOL.md) (approved decision rules). Kept for traceability; relative paths such as `lit_search/` below are relative to `docs/publication/`.
+
 # Novelty plan: spectral localisation and suppression of source shortcuts
 
 Status: **proposal, superseded by `NOVELTY_ROADMAP.md` (plan) and `NOVELTY_PROTOCOL.md` (decision rules, draft)** (2026-11-03). Nothing in this file has been run yet. It extends the BSPC journal manuscript; the IEEE EMBC 2027 paper stays as it is (see `CONFERENCE_VS_JOURNAL.md`). Every claim of novelty below must be re-checked with a deeper literature search before writing.

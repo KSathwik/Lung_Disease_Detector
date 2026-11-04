@@ -1,3 +1,5 @@
+> **Archived 2026-11-04 (superseded):** superseded by the approved [NOVELTY_PROTOCOL.md](../NOVELTY_PROTOCOL.md) and by [JOURNAL_SCOPE_MATCH.md](../JOURNAL_SCOPE_MATCH.md) (venue choice). Kept for traceability; relative paths such as `lit_search/` below are relative to `docs/publication/`.
+
 # Novelty roadmap (fast track)
 
 Status: **verified draft** (2026-11-03). Built from `NOVELTY_PLAN.md` and the reports in `lit_search/`

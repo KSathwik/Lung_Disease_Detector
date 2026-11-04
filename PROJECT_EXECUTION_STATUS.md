@@ -1,5 +1,7 @@
 # Project execution status and handoff
 
+> Status pointer (2026-11-04): `docs/TRACKER.md` is the single status page. This file is the handoff context; `docs/publication/SUBMISSION_TRACKER.md` holds the venue table; `artifacts/execution_state.json` is machine state used by the pipeline scripts.
+
 Read this file first in any new chat. It is the complete context needed to continue. Then read `docs/TRACKER.md`.
 
 ## UPDATE — 2026-11-04 afternoon (newest; read before the handoff below)
@@ -34,7 +36,7 @@ Read this file first in any new chat. It is the complete context needed to conti
 **Next steps (in order)**
 Steps 1–5 of the previous handoff (aggregate, fill placeholders, rebuild, pytest 150 passed 1 skipped, Jest 19/19, frontend build, pre-commit audit in `docs/AUDIT_FINDINGS.md` 2026-11-04, commit, push) are DONE, except:
 1. **Report .docx:** Word had it open, so the committed `docs/thesis/LungAI_MTech_Project_Report.docx` is the 3 Nov build. Close Word, run `python docs/thesis/build_report.py`, delete `LungAI_MTech_Project_Report_NEW.docx`, commit the rebuilt .docx.
-2. **Novelty extension** (docs in `docs/publication/`; nothing run): `RESEARCH_BRIEF.md` (teaching brief: problem statement, novelty, methodology, venues, viva questions, supervisor review), `NOVELTY_ROADMAP.md` (verified plan), `NOVELTY_PROTOCOL.md` (**committed as a draft, NOT approved**), `JOURNAL_SCOPE_MATCH.md` (S1 = C1+C3+C4 → Informatics in Medicine Unlocked, fallback BSPC; S2 = with C2 → BSPC, fallback IMU), `lit_search/`. Next after approval: write `lungai/novelty/*` and tests, time 200 images, then C1 → C3 → C4 → C2-lite in the protocol's logged order.
+2. **Novelty extension** (docs in `docs/publication/`; nothing run): `RESEARCH_BRIEF.md` (teaching brief: problem statement, novelty, methodology, venues, viva questions, supervisor review), `docs/publication/archive/NOVELTY_ROADMAP.md` (verified plan), `NOVELTY_PROTOCOL.md` (**committed as a draft, NOT approved**), `JOURNAL_SCOPE_MATCH.md` (S1 = C1+C3+C4 → Informatics in Medicine Unlocked, fallback BSPC; S2 = with C2 → BSPC, fallback IMU), `lit_search/`. Next after approval: write `lungai/novelty/*` and tests, time 200 images, then C1 → C3 → C4 → C2-lite in the protocol's logged order.
 3. **Decisions waiting for the student:** (a) approve `NOVELTY_PROTOCOL.md` (then record the approval commit hash in its section 13); (b) scope S1 or S2 and journal (IMU APC vs BSPC free route); (c) C2 night only if the go/no-go rule passes; (d) contacts, corresponding author, EMBC reciprocal reviewer, acknowledgement personalisation.
 
 **Where things are**: report `docs/thesis/LungAI_MTech_Project_Report.docx`; slides `docs/presentation/LungAI_MTech_Presentation.pptx`; EMBC paper `docs/manuscripts/conference/` (complete, 19 refs); BSPC paper `docs/manuscripts/journal_bspc/`; macros `docs/manuscripts/shared/`; figures `docs/figures/` (+ `screenshots/`); venues `docs/publication/`; tracker `docs/TRACKER.md`.

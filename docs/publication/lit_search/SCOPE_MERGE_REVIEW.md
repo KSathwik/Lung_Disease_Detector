@@ -1,6 +1,6 @@
 # Scope merge review: novelty extension (C1-C4) versus the current repository
 
-Independent verifier, 2026-11-03 (late evening). Read-only review: nothing was run and no other file was edited. Statements about code and data come from opening the files named (manifest counts were computed from `manifest_v6.csv`). Time figures are estimates that must be measured. Part A is Phase 1 (scope merge); Part B ("Verification and decision") checks `NOVELTY_ROADMAP.md` against the literature files, the repository and Part A.
+Independent verifier, 2026-11-03 (late evening). Read-only review: nothing was run and no other file was edited. Statements about code and data come from opening the files named (manifest counts were computed from `manifest_v6.csv`). Time figures are estimates that must be measured. Part A is Phase 1 (scope merge); Part B ("Verification and decision") checks `docs/publication/archive/NOVELTY_ROADMAP.md` against the literature files, the repository and Part A.
 
 # Part A. Scope merge
 
@@ -29,7 +29,7 @@ Test split, source by class (computed from the manifest): Normal from 5 sources 
 
 There is no `lungai/novelty/` yet. New code needs synthetic-array tests, run after training ends.
 
-### Flags found while verifying (several are not in NOVELTY_PLAN.md or the roadmap)
+### Flags found while verifying (several are not in docs/publication/archive/NOVELTY_PLAN.md or the roadmap)
 
 - **F1. Resampling and resolution confound C1.** Sources differ in native resolution and field of view (paediatric Kermany JPEGs, NIH 1024 px, Shenzhen large); all are low-passed and resized to 224x224, so per-band source information partly reflects how different pixel grids were resampled. The band map is not a map of scanner physics. Do not write "scanner fingerprint" as a finding; use the no-filters cache as sensitivity check.
 - **F2. C3/C4 on the trained backbone are not true held-out-source tests.** The run-2 backbone was trained on images of all six sources, so features of a "held-out" source were already shaped by it. Valid leave-one-source-out needs ImageNet features (no project training) or retraining per source (unaffordable). Call the trained-backbone version "linear-head leave-one-source-out on frozen features"; make the ImageNet matrix the primary one.
@@ -68,7 +68,7 @@ C1 (within-source disease probing, within-Normal source probe, no-filters sensit
 
 # Part B. Verification and decision
 
-Inputs checked: `NOVELTY_ROADMAP.md`, `LIT_C1_C2_frequency.md`, `LIT_C3_C4_and_VENUES.md`, `INVENTORY_AND_WORKPLAN.md`, Part A. I did not re-open the cited papers or journal pages myself (the verifier had no web step in this run); statements below about papers are checked against what the literature files say they opened, and each is marked as such.
+Inputs checked: `docs/publication/archive/NOVELTY_ROADMAP.md`, `LIT_C1_C2_frequency.md`, `LIT_C3_C4_and_VENUES.md`, `INVENTORY_AND_WORKPLAN.md`, Part A. I did not re-open the cited papers or journal pages myself (the verifier had no web step in this run); statements below about papers are checked against what the literature files say they opened, and each is marked as such.
 
 ## B1. Verdict on the roadmap
 
@@ -105,7 +105,7 @@ The literature files (publisher "Insights" pages as reported by their authors) g
 - The roadmap's word limits for BSPC (about 5,000 words) were carried from `JOURNALS.md` and not re-checked today; check the live Guide for Authors before condensing, because the manuscript is 13k words.
 - Recommended decision for the student: submit to BSPC first (no fee), name IMU as the fallback if the time or fee situation changes. Do not submit anywhere before the thesis is final. The EMBC paper is unchanged; the journal version must disclose overlap.
 
-## B6. Corrections the roadmap needs (NOVELTY_ROADMAP.md is not edited)
+## B6. Corrections the roadmap needs (docs/publication/archive/NOVELTY_ROADMAP.md is not edited)
 
 1. Add flags F1-F6 to the roadmap's risks, especially F2 (C4 on the trained backbone is not held-out) and F3 (disease probe confounded by source; primary disease score within-source).
 2. Section 1, C4 row: state that the ImageNet-feature matrix is the clean one and the trained-backbone matrix is "linear-head leave-one-source-out on frozen features".
@@ -124,7 +124,7 @@ Owner: A = automatic (agent does it without the student), S = needs the student'
 
 | # | When | Action | Owner | Inputs | Output |
 |---|---|---|---|---|---|
-| 1 | Now | Decide scope: MVNS (C1+C3+C4) confirmed; C2 conditional on the rule in B8 | S | This file, `NOVELTY_PLAN.md` section 9 | One-line decision in `PROJECT_EXECUTION_STATUS.md` |
+| 1 | Now | Decide scope: MVNS (C1+C3+C4) confirmed; C2 conditional on the rule in B8 | S | This file, `docs/publication/archive/NOVELTY_PLAN.md` section 9 | One-line decision in `PROJECT_EXECUTION_STATUS.md` |
 | 2 | Now (no CPU) | Close the unverified literature leads (two Laplacian-pyramid chest X-ray papers, DeGrave 2021, the unidentified INLP/ComBat lead); add only verified entries to `references.bib` and `REFERENCES_STATUS.md` | A | `LIT_C1_C2_frequency.md` section 2, `LIT_C3_C4_and_VENUES.md` | Updated lit files and bib |
 | 3 | Now (no CPU) | Write `docs/publication/NOVELTY_PROTOCOL.md` with every fixed item from A2 flags and B4 (band edges on the 224 grid, variant list, SDS definition on within-source disease score, sample sizes and seed, minimum cell count, INLP layer and iteration cap, LOSO inclusion rule, evaluation order including test and Montgomery access log, C2 rule from B8, hypotheses, how negative results are reported); commit it before any result | A writes, S approves commit and push (branch `research/lungai-clean-baseline` only) | A2 flags | Committed protocol |
 | 4 | Now (no CPU) | Write `lungai/novelty/` (`spectral.py`, `spectral_map.py`, `features.py`, `inlp.py`, `inlp_eval.py`, `loso.py`) and synthetic-array tests; do not run TensorFlow or pytest | A | Protocol, `source_probe.py` | Code, tests (unrun) |
