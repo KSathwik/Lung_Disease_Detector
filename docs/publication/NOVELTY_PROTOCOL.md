@@ -246,7 +246,7 @@ After this file is committed, any change to a setting, threshold, variant list, 
 |---|---|---|---|---|
 | 2026-11-03 | Draft committed as `e3e1aa1` (2026-11-04 ~05:50), labelled not approved | - | none (no novelty result existed) | not approved |
 | 2026-11-04 | Protocol approved unchanged; scope C1 + C3 + C4 + C2-lite, C2 only by the section 10 rule; journal choice left open | Student's reply in chat to the request for approval: "Proceed with your findings" | none (no novelty result existed; `artifacts/novelty/` absent) | student, in chat |
-| 2026-11-04 | Approval commit hash: entered in the next commit (a commit cannot contain its own hash); see `git log -- docs/publication/NOVELTY_PROTOCOL.md` | - | none | - |
+| 2026-11-04 | Approval commit: `f427c04` (pushed to `research/lungai-clean-baseline`); hash entered in the following commit because a commit cannot contain its own hash | - | none | - |
 
 Access log (appended as steps complete): step number, date and time, code commit hash, output file, remarks.
 

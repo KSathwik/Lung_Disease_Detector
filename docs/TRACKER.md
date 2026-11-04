@@ -16,12 +16,12 @@ Checked 2026-11-04 ~05:40 from files and logs (refresh at each milestone: re-rea
 | Run 5 (no-filter ablation, seed 42) | auto | done | `followups.out` "end v6r5_densenet121_seed42_nofilters rc=0" 04:52 on 4 Nov; `v6_r5abl_{val,test,external}`; 16 of 16 epochs; same split fingerprint as run 2 | none | done |
 | Aggregate seeds + ablation, render docs | auto | done | `artifacts/evaluation_reports/multi_seed_summary.json`; macros regenerated; F9/F10 in `RESULTS_FACTS.md` | none | done |
 | Fill result placeholders | auto | done | 0 `[PENDING` in thesis content and `slides.md`; 0 active `\pending` in the BSPC sections | none | done |
-| Rebuild report/slides, pytest, Jest, build, final audit | auto | done (docx blocked) | pptx rebuilt; pytest 150 passed 1 skipped; Jest 19/19; frontend build OK; audit in `docs/AUDIT_FINDINGS.md` (2026-11-04); the .docx could not be overwritten while Word had it open, so it was built to `LungAI_MTech_Project_Report_NEW.docx` (not committed) | student closes Word, then `python docs/thesis/build_report.py` and deletes the `_NEW` file | student |
+| Rebuild report/slides, pytest, Jest, build, final audit | auto | done | pptx and docx rebuilt 2026-11-04 (docx after Word was closed; 0 missing tokens); pytest 150 passed 1 skipped; Jest 19/19; frontend build OK; audit in `docs/AUDIT_FINDINGS.md` (2026-11-04) | none | done |
 | Commit and push (branch `research/lungai-clean-baseline`) | auto | see git log | committed and pushed after the 2026-11-04 audit fixes | none | done |
 | Novelty literature search | auto | done | `docs/publication/lit_search/` (4 files, 22:28-22:37) | none until student decides scope | done |
 | `NOVELTY_ROADMAP.md` | auto | done (verified draft) | `docs/publication/NOVELTY_ROADMAP.md`; nothing run | student review | done |
-| `NOVELTY_PROTOCOL.md` | student | waiting (draft committed, NOT approved) | section 13 holds the approval and the hash of the approval commit | student approves; then record the approval commit hash | student |
-| C1/C3/C4 novelty runs | auto | blocked | protocol not approved or committed; `artifacts/novelty/` absent | start only after protocol commit | after approval; roadmap places C3/C4/C2-lite on 4 Nov evening |
+| `NOVELTY_PROTOCOL.md` | student | done (approved) | approved in chat 2026-11-04 ("Proceed with your findings"); approval commit `f427c04`; section 13 log | changes only through section 13 | done |
+| C1/C3/C4 novelty runs | auto | in progress | code being written in `lungai/novelty/` (not run yet) | time 200 images, feature cache, then C1 → C3 → C4 → C2-lite in the protocol order | 4 Nov |
 | C2 (band-selective suppression) | student | waiting | roadmap section 3 go/no-go rule on validation only | decide after C2-lite | after C2-lite |
 | `JOURNAL_SCOPE_MATCH.md` | auto | done | S1 (C1+C3+C4) → Informatics in Medicine Unlocked, fallback BSPC; S2 (with C2) → BSPC, fallback IMU | student chooses scope and journal | student |
 | Docker build, CI | student | blocked | Docker not installed; branch CI unrun | outside this session | - |
