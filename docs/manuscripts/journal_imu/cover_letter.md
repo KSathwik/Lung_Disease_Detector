@@ -18,7 +18,7 @@ We submit **"Where does source information live in chest radiograph features? A 
 
 **Why it fits IMU.** The paper is an imaging-informatics study of data construction, evaluation and dataset bias, an evaluation-style contribution without a new architecture. It reports negative and null results as such.
 
-**Honest scope.**
+**Scope and limits.**
 - No new network architecture; no claim of clinical validity; the analyses use frozen features, linear methods, one benchmark and one run each.
 - The external cohort (138 images, normal and TB only) is not untouched: run 2 was started after run 1's external results were seen, and the cohort was scored for the follow-up runs and once each in two novelty analyses (all logged).
 - Patient identity is unknown for two sources; the paper states this on every leakage statement.
