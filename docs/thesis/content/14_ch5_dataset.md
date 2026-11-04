@@ -57,7 +57,7 @@ Table: Label rules of the V6 dataset. {#tab:rules}
 
 Tuberculosis is labelled only from a source label of TB: active TB in TBX11K or a TB manifestation in Shenzhen. An image is never labelled TB because it comes from a TB-related dataset.
 
-The NIH rule deserves a comment. It uses only images whose label set is exactly one of the target findings, and for "No Finding" it takes at most one image per patient so that healthy patients with many follow-up studies do not dominate the Normal class. It therefore discards most of the collection. The consequence is a cleaner but less representative sample, since many real patients have several findings.
+The NIH rule uses only images whose label set is exactly one of the target findings. For "No Finding" it takes at most one image per patient, so that healthy patients with many follow-up studies do not dominate the Normal class. It therefore discards most of the collection and yields a cleaner but less representative sample, since many real patients have several findings.
 
 ## Caps
 
@@ -109,7 +109,7 @@ Two builds were made. Run 1 (build 001) uses four development sources and the ex
 
 ![fig_dataset_composition](Number of images per class and source in the training, validation and test splits.) {#fig:composition}
 
-The tables show a point that influences the interpretation of every result: in run 1 every COVID-19 image comes from the Cohen collection, which gathers figures from publications and websites; in run 2 a second COVID-19 source is added, but both are web-collected sets. The Tuberculosis class is similarly dominated by Shenzhen in run 1 and by Shenzhen and TBX11K in run 2. Classes that have a single kind of source can be recognised by their image style. This is examined in Chapters 7 and 8.
+The tables bear on the interpretation of every result. In run 1 every COVID-19 image comes from the Cohen collection, which gathers figures from publications and websites. Run 2 adds a second COVID-19 source, but both are web-collected sets. The Tuberculosis class is similarly dominated by Shenzhen in run 1 and by Shenzhen and TBX11K in run 2. Classes that have a single kind of source can be recognised by their image style. This is examined in Chapters 7 and 8.
 
 ## External cohort
 

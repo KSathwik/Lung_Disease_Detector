@@ -7,7 +7,7 @@ Many published multi-class chest radiograph classifiers are trained and tested o
 
 This study began as an audit of our own earlier pipeline (here called V5). V5 pooled eight public sources into a six-class dataset and reported a high internal test accuracy (\RVFiveAcc\% on $N=\RVFiveN$ test images). The audit, summarised in Section~\ref{sec:disc-audit}, found that 154 test images shared a patient with training images, that part of the Pneumonia and Tuberculosis classes consisted of proxy or latent-disease labels, and that on an external hospital cohort the model called none of the \RVFiveExtSpecN{} normal radiographs Normal. The high internal number was therefore not evidence of a useful classifier. We rebuilt the dataset from official sources under rules fixed before training (V6), retrained the classifier, and evaluated it with the external cohort and per-source analyses that V5 lacked.
 
-The question this paper addresses is not ``how accurate can a six-class chest radiograph classifier be'', but ``how much of the internal accuracy of a multi-source chest radiograph classifier survives a leakage-controlled split, per-source analysis and an unseen hospital''. We make no claim of clinical validity.
+This paper asks how much of the internal accuracy of a multi-source chest radiograph classifier survives a leakage-controlled split, per-source analysis and an unseen hospital. We make no claim of clinical validity.
 
 \paragraph{Contributions}
 \begin{enumerate}

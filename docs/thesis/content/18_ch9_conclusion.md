@@ -12,22 +12,22 @@ For the final model, {{ModelVersion}}, the answers to the three research questio
 2. **Source shortcuts.** The source of an image is predictable from the features (balanced accuracy {{ProbeMdlBalAcc}}% against a chance of {{ProbeMdlChance}}%), also within a class. The first run's COVID-19 assignments on Montgomery largely disappeared in the final run, which used build 2 (several sources added at once), but the external errors moved to other classes. The evidence is consistent with source shortcuts and is indirect; it does not prove them.
 3. **Cost.** The pipeline, from acquisition to served metrics, runs on a laptop CPU; training the final model (run 2) took about 5.8 hours, and every run is time-boxed.
 
-Two follow-up experiments qualify these answers. Across three seeds of the final recipe (same split), internal test accuracy is {{MSTestAccMean}} ± {{MSTestAccSD}}% (mean ± sample SD, a rough estimate), the served run is the highest of the three seeds within a spread of under one percentage point (a small favourable draw cannot be ruled out), and the external failure recurs in every seed (specificity {{MSExtSpecMin}}% to {{MSExtSpecMax}}%, no exact tuberculosis recognition). In one ablation run at the same seed, the run without the blur, CLAHE and low-pass filter had an internal test accuracy of {{AblTestAcc}}% and unchanged external specificity; the run with the filters scored higher internally in this single-seed comparison, which also selected its last epoch, so a convergence-speed difference cannot be excluded; this does not show that the filters improve generalisation.
+Two follow-up experiments qualify these answers. Across three seeds of the final recipe (same split), internal test accuracy is {{MSTestAccMean}} ± {{MSTestAccSD}}% (mean ± sample SD, a rough estimate), the served run is the highest of the three seeds within a spread of under one percentage point (a small favourable draw cannot be ruled out), and the external failure recurs in every seed (specificity {{MSExtSpecMin}}% to {{MSExtSpecMax}}%, no exact tuberculosis recognition). In one ablation run at the same seed, the run without the blur, CLAHE and low-pass filter had an internal test accuracy of {{AblTestAcc}}% and unchanged external specificity. The run with the filters scored higher internally in this single-seed comparison. The ablation run also selected its last epoch, so a difference in convergence speed cannot be excluded, and the comparison does not show that the filters improve generalisation.
 
 Conclusions that do not depend on the final model are the following.
 
 1. A pipeline in which every step is scripted, hashed and checked can be built and run on commodity hardware within a night, and the checks (zero groups, files and external images spanning splits) can be made part of the build.
-2. Audit findings of the earlier system show that a high internal accuracy is not evidence of generalisation, and that external sensitivity without specificity is not a result.
+2. The audit of the earlier system shows that a high internal accuracy is no evidence of generalisation, and that external sensitivity without specificity is not a result.
 3. The honest evaluation of a multi-source benchmark requires per-source reporting and an external cohort, because the class label is partly a label of the source.
 4. A research prototype can be built so that it cannot show a number that it did not compute: the application serves the generated metrics of the checkpoint it loaded and refuses to run with an unverified one.
 
 ## Contributions revisited
 
-The four contributions stated in Chapter 1 stand as pipeline and audit contributions: the auditable rebuild, the reproducible end-to-end pipeline, the evidence about internal versus external behaviour (internal metrics of {{TestAcc}}% accuracy against an external specificity of {{ExtSpecK}} of {{ExtSpecN}}), and the audit of the earlier pipeline. The project does not claim a new architecture or a clinically useful classifier.
+The four contributions stated in Chapter 1 are pipeline and audit contributions: the auditable rebuild, the reproducible end-to-end pipeline, the evidence about internal versus external behaviour (internal metrics of {{TestAcc}}% accuracy against an external specificity of {{ExtSpecK}} of {{ExtSpecN}}), and the audit of the earlier pipeline. The project does not claim a new architecture or a clinically useful classifier.
 
 ## Future scope
 
-The most valuable extensions follow from the limitations.
+The extensions below follow from the limitations.
 
 - **More seeds and ablation seeds.** Three seeds were run for the final recipe and one for the ablation. Train at least five seeds per configuration (about six hours of CPU time each for the final build), also for the ablation and for other splits, and report mean and spread, so that differences between configurations can be judged.
 - **Better data for the weak classes.** Obtain VinDr-CXR and JSRT through credentialing and registration, to give Pleural Effusion and Nodule / Mass radiologist-read labels and a second source. Add a source with real patient identifiers for COVID-19 and TB.

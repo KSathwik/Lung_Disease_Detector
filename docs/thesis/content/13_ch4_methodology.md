@@ -2,7 +2,7 @@
 
 ## Overview of the methodology
 
-The methodology has seven stages, each of which produces a file that the next stage reads. Keeping the stages separate, and recording a hash or fingerprint at each boundary, is what makes the final numbers auditable.
+The methodology has seven stages, each of which produces a file that the next stage reads. Because the stages are separate and a hash or fingerprint is recorded at each boundary, the final numbers can be audited.
 
 1. **Acquisition.** Each source is downloaded from its official distribution point by one script. The script resumes interrupted transfers, compares the final size with the server's stated length, rejects HTML error pages saved as data, and logs URL, time, size and SHA-256 for every file.
 2. **Build.** A builder applies the label rules, the exclusions and the per-cell caps, decodes and hashes every image, merges duplicates into groups, assigns whole groups to training, validation and test sets, runs the leakage checks, preprocesses each image once and caches the result. It writes a manifest and a build report.

@@ -51,7 +51,7 @@ d_H(h_i,h_j)=\sum_{b=1}^{64}\left[h_{i,b}\neq h_{j,b}\right]\le 6
 \rho_{ij}=\mathbf{t}_i^{\top}\mathbf{t}_j\ge 0.97 .
 \label{eq:neardup}
 \end{equation}
-The Hamming test is a cheap candidate filter; the thumbnail correlation confirms the match and rejects pairs that share a coarse layout only, which is common among chest radiographs. The comparison runs across all sources, including the external cohort.
+The Hamming test is an inexpensive candidate filter; the thumbnail correlation confirms the match and rejects pairs that share a coarse layout only, which is common among chest radiographs. The comparison runs across all sources, including the external cohort.
 
 \subsection{Per-source caps}
 To bound CPU training time and to stop a single source from dominating a class, the number of images per (source, class) pair was capped before splitting. Capping samples whole patient groups with a fixed seed (20261102). The caps were: NIH Normal 1,200, NIH Pleural Effusion 3,000 and NIH Nodule/Mass 3,000 (NIH Pneumonia uncapped); Kermany Normal 1,000 and Pneumonia 2,200; TBX11K Normal 1,000 (Tuberculosis uncapped); COVID-19 Radiography Database COVID-19 2,500; Shenzhen and the COVID-19 image data collection uncapped.

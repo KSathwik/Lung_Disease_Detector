@@ -40,7 +40,7 @@ The project has the following objectives.
 
 ## Success criteria
 
-The project is judged on process rather than on a headline accuracy. The criteria are:
+The project is judged on its process, with no target for headline accuracy. The criteria are:
 
 - the build report shows zero patient groups, zero identical files and zero external-cohort files spanning development splits;
 - the training run reads only the training and validation splits, and its metadata records the build and split fingerprints;

@@ -16,7 +16,7 @@ Validation here means the checks that make the reported numbers trustworthy, not
 
 ### The V5 audit as a validation case
 
-The audit of the earlier pipeline is itself a validation result. [[tab:v5]] compares what V5 recorded with what the audit found. The comparison shows how the same architecture can produce an attractive internal accuracy and a useless external behaviour when the data are not controlled.
+The audit of the earlier pipeline is itself a validation result. [[tab:v5]] compares what V5 recorded with what the audit found. The same architecture produced an attractive internal accuracy and a useless external behaviour when the data were not controlled.
 
 Table: Recorded results of the earlier V5 model and what the audit found. These numbers describe a superseded model whose checkpoint is lost; they are history and are not comparable with the V6 results. {#tab:v5}
 
@@ -33,7 +33,7 @@ Table: Recorded results of the earlier V5 model and what the audit found. These 
 
 The main findings of the final model, {{ModelVersion}}, are discussed in five points.
 
-**Internal and external performance.** The internal test accuracy is {{TestAcc}}% on a split that is free of known patient and duplicate leakage, and the macro ROC-AUC is {{TestMacroAUC}}. On the external cohort the same model calls {{ExtSpecK}} of {{ExtSpecN}} normal scans Normal and none of the {{ExtTBN}} tuberculosis scans Tuberculosis. Removing leakage therefore does not remove the gap: a clean internal split measures performance on the same sources, not on a new hospital.
+**Internal and external performance.** The internal test accuracy is {{TestAcc}}% on a split that is free of known patient and duplicate leakage, and the macro ROC-AUC is {{TestMacroAUC}}. On the external cohort the same model calls {{ExtSpecK}} of {{ExtSpecN}} normal scans Normal and none of the {{ExtTBN}} tuberculosis scans Tuberculosis. Removing leakage therefore does not remove the gap, because a clean internal split still measures performance on the same sources.
 
 **Weak classes.** Pulmonary Nodule / Mass (F1 {{FOneNodule}}%) and Normal ({{FOneNormal}}%) are the weakest. Nodule / Mass and Pleural Effusion come from NIH alone, with labels mined from reports, and are confused with Normal and with each other. Label noise is a plausible contributor but was not measured.
 
@@ -47,11 +47,11 @@ The main findings of the final model, {{ModelVersion}}, are discussed in five po
 
 Three observations hold whichever model is selected.
 
-First, the dominant cost of a trustworthy result was not the network but the data. Most of the work went into acquisition, label rules, duplicate handling and checks. The training itself is a standard transfer-learning recipe.
+First, the data, rather than the network, were the dominant cost of a trustworthy result. Most of the work went into acquisition, label rules, duplicate handling and checks, while the training itself is a standard transfer-learning recipe.
 
 Second, the external cohort contains only normal and TB scans. It can say whether the model separates abnormal from normal at a hospital it has not seen, and whether it can name TB, but it cannot assess the other four classes. Any statement about those four classes outside the internal test set would be unsupported.
 
-Third, sources define classes in this benchmark. A class with a single type of source (COVID-19 from web-collected sets, TB mostly from two screening sets) is exposed to the risk of being recognised by image style. Per-source reporting is therefore not an extra; it is required for an honest reading of the overall accuracy. The reasoning is supported by the literature on shortcut learning [@geirhos2020shortcut; @degrave2021ai; @zech2018variable], although the extent in this project is a result of the final model and is given in the discussion above.
+Third, sources define classes in this benchmark. A class with a single type of source (COVID-19 from web-collected sets, TB mostly from two screening sets) is exposed to the risk of being recognised by image style. Per-source reporting is therefore required for an honest reading of the overall accuracy. The reasoning is supported by the literature on shortcut learning [@geirhos2020shortcut; @degrave2021ai; @zech2018variable], although the extent in this project is a result of the final model and is given in the discussion above.
 
 ## Threats to validity
 
@@ -63,7 +63,7 @@ Third, sources define classes in this benchmark. A class with a single type of s
 
 ## Limitations
 
-The following limitations come from the project's limitation record. Those that depend on the final model's behaviour are listed at the end of the first group.
+The limitations below come from the project's limitation record. Those that depend on the final model's behaviour come last in the first group.
 
 ### Model and training
 
