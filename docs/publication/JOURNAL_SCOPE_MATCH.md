@@ -1,5 +1,7 @@
 # Journal match per scope option (S1, S2)
 
+> Decision (2026-11-04, student): target journal is Informatics in Medicine Unlocked (IMU); Biomedical Signal Processing and Control (BSPC) is the fallback. Reason: diagnostic study after the C2 NO-GO. EMBC 2027 is unchanged.
+
 Prepared 2026-11-03. All pages below were opened on 2026-11-03 (access date) in the browser pane (scripted fetches of ScienceDirect return HTTP 403). Only what those pages show is recorded; "not stated" means the page text I read did not contain it. No impact-factor claims are made except where a page shows them (CiteScore/Impact Factor figures are copied from each Insights page header). The earlier table in `lit_search/LIT_C3_C4_and_VENUES.md` was re-checked, not copied blindly: every APC, timeline and indexing figure in it that I re-opened matched today's pages (BSPC, IMU, CBM, CMPB, ISWA, Array, CMIG).
 
 Scopus: "Scopus" below means the journal's own ScienceDirect Insights page lists it under "Abstracting and indexing". I did not query the Scopus Sources list; check each ISSN there before submission.

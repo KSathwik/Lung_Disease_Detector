@@ -2,7 +2,15 @@
 
 Read this file first in any new chat. It is the complete context needed to continue. Then read `docs/TRACKER.md`.
 
-## HANDOFF — 2026-11-04 ~05:45 (newest; supersedes older sections where they differ)
+## UPDATE — 2026-11-04 afternoon (newest; read before the handoff below)
+
+- **CI green** again from `18d55d5` (frontend `npm ci` failed on Node 18 because the npm-11 lock file lacked one entry; lock regenerated with npm 10).
+- **Novelty extension done** per the approved protocol (`f427c04`; clarifications logged and acknowledged): C1 spectral map, C3 INLP/LEACE, C4 leave-one-source-out, C2-lite; **C2 NO-GO** (no band met criterion 1). Results `artifacts/novelty/*.json` (feature caches ignored), figures `docs/figures/fig_{spectral_map,inlp,loso_matrix}`, macros `\RSpec…/\RInlp…/\RLoso…/\RBs…`, facts F11-F14, audits in `docs/AUDIT_FINDINGS.md` (N1-N11, W1-W14 applied except student items). Headline: source information is spread across all bands and entangled with disease; erasure costs disease performance; held-out-source performance drops sharply.
+- **Target journal: Informatics in Medicine Unlocked** (student, 2026-11-04); BSPC fallback. IMU manuscript `docs/manuscripts/journal_imu/` (abstract 233 words, 5 highlights, ~8.3k words, supplementary.tex); thesis ch4/7/8/9 and slides 24-26 updated; bibliography 64 verified entries (`REFERENCES_STATUS.md`).
+- **Prose:** humanize plugin (harshaneel/humanize 1.1.0, user scope) used only for clarity/style; hedges, numbers and citations verified unchanged.
+- **Before any submission (student):** written confirmation of protocol approval and the seven clarifications (audit N7/W9); ethics statement [STUDENT TO CONFIRM]; AI-use declaration and CRediT [AUTHORS TO CONFIRM]; contacts, corresponding author, funding, repository URL/licence; IMU APC; Scopus/Google Scholar novelty check.
+
+## HANDOFF — 2026-11-04 ~05:45 (supersedes older sections where they differ)
 
 **Owner and rules (from the user)**
 - Student Katkam Sathwik (Roll 24567T7604), M.Tech CSE, KUCE&T, Kakatiya University. Guide: Prof. Nagavelli Ramana (Principal & HoD CSE & IT, KUCE&T). Supporting faculty: Dr. P. Tirupathi (Asst. Prof., CSE, JNTUH UCE Manthani), Dr. K. Srinivas (Asst. Prof., CSE, Swathi Reddy Institute of Technology for Women, Warangal). Author order confirmed in that order. Contacts stay `[TO BE PROVIDED]`, corresponding author `[TO BE CONFIRMED]`, EMBC reciprocal reviewer `[TO BE CONFIRMED]` — never invent them.

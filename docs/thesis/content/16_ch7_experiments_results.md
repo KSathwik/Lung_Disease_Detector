@@ -194,6 +194,140 @@ Table: Preprocessing ablation. Run 2 (with the filters) and run 5 (without them)
 
 Without the filters, internal accuracy and macro-F1 are lower, by more than the seed-to-seed spread of the previous section, and the run-5 internal values lie below the whole range of runs 2 to 4. In this comparison the run with the filters therefore scored higher internally. Montgomery specificity is unchanged, so the main external failure is present with and without the filters. The run without filters named a small number of Montgomery tuberculosis scans Tuberculosis ({{AblExtTB}}% of the scans) where no filtered run did; this is a small count from one run and is reported as an observation, not as an effect. Run 5 also selected its last epoch, so a difference in convergence speed cannot be excluded. The comparison is a single ablation seed of one alternative: it does not show that the preprocessing improves generalisation, and it does not identify which filter matters.
 
+## Source-information analyses
+
+The probe of the previous section gives one number for the whole image. This section reports four further analyses on frozen features whose procedures are given in Chapter 4: a map of source and disease information over spatial-frequency bands, linear source erasure, leave-one-source-out linear heads, and a band-stop screening with a go/no-go decision. The ImageNet features are the primary extractor. The backbone of the final model is secondary, because it was trained on all six sources. The no-filter cache is a sensitivity check. All results describe the cached 224 × 224 images, one run and one fixed probe sample, and all are subject to the patient-identity caveat of Chapter 5.
+
+### Spectral map
+
+[[fig:spectral]] shows the band-pass and band-stop results on the test sample of {{SpecMainTestN}} images; [[tab:specsrc]] and [[tab:specdis]] give the values of panel (a), and [[tab:specstop]] the values of panel (b).
+
+![fig_spectral_map](Spectral map of source and disease information on the test sample. Panel (a), band-pass images A to F: source balanced accuracy (BA, blue) and within-source disease macro-F1 (orange). Solid lines with circles are ImageNet features (primary), dashed lines with squares the run-2 backbone (secondary; it saw all six sources), dotted lines with triangles ImageNet features of the no-filter cache (sensitivity check). Dash-dot horizontal lines are the full-image levels of the primary extractor and the grey dotted line is chance for the source task (16.7%). The vertical axis mixes balanced accuracy (blue) and macro-F1 (orange). Panel (b), band-stop differences for ImageNet features: full image minus band-stop image, so a positive value is information lost by removing the band (ΔS for source BA, ΔD for within-source macro-F1). Error bars are 95% bootstrap intervals over scored images only; each probe was fitted once.) {#fig:spectral}
+
+Table: Source balanced accuracy (BA, %) of a linear probe on band-pass images, test sample (chance 16.7%). The within-Normal column is the source accuracy among Normal images of four sources (nominal chance 25%). Intervals are 95% bootstrap intervals over test images. {#tab:specsrc}
+
+| Variant | Source BA, ImageNet (95% interval) | Source BA, run-2 backbone | Source BA, no-filter cache | Within-Normal source accuracy, ImageNet |
+|---|---|---|---|---|
+| Full image | {{SpecMainTestFullSrcBA}} ({{SpecMainTestFullSrcBALo}} to {{SpecMainTestFullSrcBAHi}}) | {{SpecServedTestFullSrcBA}} | {{SpecNofilterTestFullSrcBA}} | {{SpecMainTestFullNormBA}} |
+| Band-pass A | {{SpecMainTestPassASrcBA}} ({{SpecMainTestPassASrcBALo}} to {{SpecMainTestPassASrcBAHi}}) | {{SpecServedTestPassASrcBA}} | {{SpecNofilterTestPassASrcBA}} | {{SpecMainTestPassANormBA}} |
+| Band-pass B | {{SpecMainTestPassBSrcBA}} ({{SpecMainTestPassBSrcBALo}} to {{SpecMainTestPassBSrcBAHi}}) | {{SpecServedTestPassBSrcBA}} | {{SpecNofilterTestPassBSrcBA}} | {{SpecMainTestPassBNormBA}} |
+| Band-pass C | {{SpecMainTestPassCSrcBA}} ({{SpecMainTestPassCSrcBALo}} to {{SpecMainTestPassCSrcBAHi}}) | {{SpecServedTestPassCSrcBA}} | {{SpecNofilterTestPassCSrcBA}} | {{SpecMainTestPassCNormBA}} |
+| Band-pass D | {{SpecMainTestPassDSrcBA}} ({{SpecMainTestPassDSrcBALo}} to {{SpecMainTestPassDSrcBAHi}}) | {{SpecServedTestPassDSrcBA}} | {{SpecNofilterTestPassDSrcBA}} | {{SpecMainTestPassDNormBA}} |
+| Band-pass E | {{SpecMainTestPassESrcBA}} ({{SpecMainTestPassESrcBALo}} to {{SpecMainTestPassESrcBAHi}}) | {{SpecServedTestPassESrcBA}} | {{SpecNofilterTestPassESrcBA}} | {{SpecMainTestPassENormBA}} |
+| Band-pass F | {{SpecMainTestPassFSrcBA}} ({{SpecMainTestPassFSrcBALo}} to {{SpecMainTestPassFSrcBAHi}}) | {{SpecServedTestPassFSrcBA}} | {{SpecNofilterTestPassFSrcBA}} | {{SpecMainTestPassFNormBA}} |
+
+Table: Within-source disease macro-F1 (%) of a linear probe on band-pass images, test sample. Same probe sample and intervals as in [[tab:specsrc]]. {#tab:specdis}
+
+| Variant | Within-source F1, ImageNet (95% interval) | Within-source F1, run-2 backbone | Within-source F1, no-filter cache |
+|---|---|---|---|
+| Full image | {{SpecMainTestFullFWs}} ({{SpecMainTestFullFWsLo}} to {{SpecMainTestFullFWsHi}}) | {{SpecServedTestFullFWs}} | {{SpecNofilterTestFullFWs}} |
+| Band-pass A | {{SpecMainTestPassAFWs}} ({{SpecMainTestPassAFWsLo}} to {{SpecMainTestPassAFWsHi}}) | {{SpecServedTestPassAFWs}} | {{SpecNofilterTestPassAFWs}} |
+| Band-pass B | {{SpecMainTestPassBFWs}} ({{SpecMainTestPassBFWsLo}} to {{SpecMainTestPassBFWsHi}}) | {{SpecServedTestPassBFWs}} | {{SpecNofilterTestPassBFWs}} |
+| Band-pass C | {{SpecMainTestPassCFWs}} ({{SpecMainTestPassCFWsLo}} to {{SpecMainTestPassCFWsHi}}) | {{SpecServedTestPassCFWs}} | {{SpecNofilterTestPassCFWs}} |
+| Band-pass D | {{SpecMainTestPassDFWs}} ({{SpecMainTestPassDFWsLo}} to {{SpecMainTestPassDFWsHi}}) | {{SpecServedTestPassDFWs}} | {{SpecNofilterTestPassDFWs}} |
+| Band-pass E | {{SpecMainTestPassEFWs}} ({{SpecMainTestPassEFWsLo}} to {{SpecMainTestPassEFWsHi}}) | {{SpecServedTestPassEFWs}} | {{SpecNofilterTestPassEFWs}} |
+| Band-pass F | {{SpecMainTestPassFFWs}} ({{SpecMainTestPassFFWsLo}} to {{SpecMainTestPassFFWsHi}}) | {{SpecServedTestPassFFWs}} | {{SpecNofilterTestPassFFWs}} |
+
+Source information is present in every band-pass image. With ImageNet features the source balanced accuracy is {{SpecMainTestPassASrcBA}}% in band A, dips to {{SpecMainTestPassBSrcBA}}% in band B and rises to {{SpecMainTestPassESrcBA}}% in band E and {{SpecMainTestPassFSrcBA}}% in band F, against {{SpecMainTestFullSrcBA}}% for the full image and a chance level of 16.7%. Within Normal images alone, where the class is the same, the source accuracy is above the nominal 25% in every band, from {{SpecMainTestPassANormBA}}% in band A to {{SpecMainTestPassFNormBA}}% in band F. Disease information, measured as the within-source macro-F1, is also spread over the bands ({{SpecMainTestPassBFWs}}% in band B, {{SpecMainTestPassFFWs}}% in band F, {{SpecMainTestFullFWs}}% for the full image). Both curves are highest in the two highest bands. The run-2 backbone and the no-filter cache give profiles of the same shape, with a dip at band B and a rise toward the high bands. In the no-filter cache the source accuracy in band E ({{SpecNofilterTestPassESrcBA}}%, against {{SpecMainTestPassESrcBA}}% for the filtered cache) and band F ({{SpecNofilterTestPassFSrcBA}}% against {{SpecMainTestPassFSrcBA}}%) is lower and the intervals for band E do not overlap, while bands A to C are slightly higher. This is consistent with the pre-filters and the resampling contributing to the high-band source signal. It is a sensitivity result and not a test.
+
+Table: Band-stop differences on the test sample for ImageNet features (percentage points; full image minus band-stop image, so a positive value is information lost by removing the band). ΔS is the change in source balanced accuracy and ΔD the change in within-source disease macro-F1. The last column is the validation value of ΔS used for selection. {#tab:specstop}
+
+| Band removed | ΔS, test (95% interval) | ΔD, test (95% interval) | ΔS, validation |
+|---|---|---|---|
+| A | {{SpecMainTestStopADeltaS}} ({{SpecMainTestStopADeltaSLo}} to {{SpecMainTestStopADeltaSHi}}) | {{SpecMainTestStopADeltaD}} ({{SpecMainTestStopADeltaDLo}} to {{SpecMainTestStopADeltaDHi}}) | {{SpecMainValStopADeltaS}} |
+| B | {{SpecMainTestStopBDeltaS}} ({{SpecMainTestStopBDeltaSLo}} to {{SpecMainTestStopBDeltaSHi}}) | {{SpecMainTestStopBDeltaD}} ({{SpecMainTestStopBDeltaDLo}} to {{SpecMainTestStopBDeltaDHi}}) | {{SpecMainValStopBDeltaS}} |
+| C | {{SpecMainTestStopCDeltaS}} ({{SpecMainTestStopCDeltaSLo}} to {{SpecMainTestStopCDeltaSHi}}) | {{SpecMainTestStopCDeltaD}} ({{SpecMainTestStopCDeltaDLo}} to {{SpecMainTestStopCDeltaDHi}}) | {{SpecMainValStopCDeltaS}} |
+| D | {{SpecMainTestStopDDeltaS}} ({{SpecMainTestStopDDeltaSLo}} to {{SpecMainTestStopDDeltaSHi}}) | {{SpecMainTestStopDDeltaD}} ({{SpecMainTestStopDDeltaDLo}} to {{SpecMainTestStopDDeltaDHi}}) | {{SpecMainValStopDDeltaS}} |
+| E | {{SpecMainTestStopEDeltaS}} ({{SpecMainTestStopEDeltaSLo}} to {{SpecMainTestStopEDeltaSHi}}) | {{SpecMainTestStopEDeltaD}} ({{SpecMainTestStopEDeltaDLo}} to {{SpecMainTestStopEDeltaDHi}}) | {{SpecMainValStopEDeltaS}} |
+| F | {{SpecMainTestStopFDeltaS}} ({{SpecMainTestStopFDeltaSLo}} to {{SpecMainTestStopFDeltaSHi}}) | {{SpecMainTestStopFDeltaD}} ({{SpecMainTestStopFDeltaDLo}} to {{SpecMainTestStopFDeltaDHi}}) | {{SpecMainValStopFDeltaS}} |
+
+Removing a single band leaves the source information nearly intact. The largest loss is {{SpecMainTestStopFDeltaS}} points, for band F, with an interval from {{SpecMainTestStopFDeltaSLo}} to {{SpecMainTestStopFDeltaSHi}}. Band D shows a small change in the opposite direction ({{SpecMainTestStopDDeltaS}} points, interval {{SpecMainTestStopDDeltaSLo}} to {{SpecMainTestStopDDeltaSHi}}), and the other four intervals include zero. No band-stop change reaches the 5-point threshold fixed in advance. The intervals of ΔD all include zero; the largest point estimate is {{SpecMainTestStopEDeltaD}} points, for band E. The plain finding is a null result: no band stands out as the carrier of source information, and no band is necessary for it in these features.
+
+### Linear source erasure
+
+[[fig:inlp]] shows how the source accuracy that a fresh linear probe can reach and the within-source disease macro-F1 change as INLP [@ravfogel2020null] removes source directions; [[tab:inlp]] gives the test values at the start and at the end, and the values after a one-step removal with LEACE [@belrose2023leace].
+
+![fig_inlp](Source balanced accuracy (BA, blue) and within-source disease macro-F1 (orange) against the INLP iteration k, on the validation split (solid) and the test split (dashed, lighter). Left, ImageNet features (primary); right, run-2 backbone (secondary; trained on all six sources, so not held-out). The grey dotted line is chance for the source task (16.7%), the vertical dashed line is the iteration cap (k = {{InlpImgKStar}}), and the values at k = 0 are the levels of the full image. The vertical axis mixes balanced accuracy and macro-F1. The figure has no error bars; intervals for the change at k = {{InlpImgKStar}} are in the table. One run, one fit per iteration.) {#fig:inlp}
+
+Table: Linear source erasure on frozen features of the full image, internal test split ({{InlpImgNTest}} images). BA is balanced accuracy of a fresh source probe (chance 16.7%); the F1 columns are macro-F1 (%); k is the INLP iteration. {#tab:inlp}
+
+| Features and step | Source BA | Within-source F1 | Six-class macro-F1 | Accuracy | Macro ROC-AUC |
+|---|---|---|---|---|---|
+| ImageNet, unprojected (k = 0) | {{InlpImgTestSrcBAKZero}} | {{InlpImgTestFWsKZero}} | {{InlpImgTestFAllKZero}} | {{InlpImgTestAccKZero}} | {{InlpImgTestAUCKZero}} |
+| ImageNet, INLP at k = {{InlpImgKStar}} | {{InlpImgTestSrcBAKStar}} | {{InlpImgTestFWsKStar}} | {{InlpImgTestFAllKStar}} | {{InlpImgTestAccKStar}} | {{InlpImgTestAUCKStar}} |
+| ImageNet, LEACE | {{InlpImgLeaceTestSrcBA}} | {{InlpImgLeaceTestFWs}} | {{InlpImgLeaceTestFAll}} | {{InlpImgLeaceTestAcc}} | {{InlpImgLeaceTestAUC}} |
+| Run-2 backbone, unprojected (k = 0) | {{InlpMdlTestSrcBAKZero}} | {{InlpMdlTestFWsKZero}} | {{InlpMdlTestFAllKZero}} | {{InlpMdlTestAccKZero}} | {{InlpMdlTestAUCKZero}} |
+| Run-2 backbone, INLP at k = {{InlpMdlKStar}} | {{InlpMdlTestSrcBAKStar}} | {{InlpMdlTestFWsKStar}} | {{InlpMdlTestFAllKStar}} | {{InlpMdlTestAccKStar}} | {{InlpMdlTestAUCKStar}} |
+| Run-2 backbone, LEACE | {{InlpMdlLeaceTestSrcBA}} | {{InlpMdlLeaceTestFWs}} | {{InlpMdlLeaceTestFAll}} | {{InlpMdlLeaceTestAcc}} | {{InlpMdlLeaceTestAUC}} |
+
+Both extractors reached the iteration cap of {{InlpImgKStar}} and were not stopped by the rule on source accuracy (stopped by: {{InlpImgStoppedBy}}). With ImageNet features, {{InlpImgKStar}} iterations lowered the source accuracy that a fresh probe reaches from {{InlpImgTestSrcBAKZero}}% to {{InlpImgTestSrcBAKStar}}%. It remained well above chance, so this linear route did not remove the source information within the cap. The within-source disease macro-F1 fell from {{InlpImgTestFWsKZero}}% to {{InlpImgTestFWsKStar}}% (change {{InlpImgTestChangeFWsKStar}} points, 95% interval {{InlpImgTestChangeFWsKStarLo}} to {{InlpImgTestChangeFWsKStarHi}}) and the six-class macro-F1 from {{InlpImgTestFAllKZero}}% to {{InlpImgTestFAllKStar}}% (change {{InlpImgTestChangeFAllKStar}} points, interval {{InlpImgTestChangeFAllKStarLo}} to {{InlpImgTestChangeFAllKStarHi}}). The six-class loss is the larger of the two. LEACE removes all linearly decodable source information in one step, with source accuracy at chance in the fit and at {{InlpImgLeaceTestSrcBA}}% on the test split. It changed the six-class macro-F1 by {{InlpImgTestChangeFAllLeace}} points and the within-source macro-F1 by {{InlpImgTestChangeFWsLeace}} points. The trained backbone behaves in the same way (source accuracy from {{InlpMdlTestSrcBAKZero}}% to {{InlpMdlTestSrcBAKStar}}%, within-source macro-F1 change {{InlpMdlTestChangeFWsKStar}} points with interval {{InlpMdlTestChangeFWsKStarLo}} to {{InlpMdlTestChangeFWsKStarHi}}, six-class change {{InlpMdlTestChangeFAllKStar}}).
+
+[[tab:inlpext]] gives the Montgomery results of the same heads. They were computed once, Montgomery is not untouched, and the cohort has only 138 images.
+
+Table: Montgomery results of the linear heads before and after INLP (Normal against Tuberculosis; one evaluation per head). Sensitivity and specificity are reported together. The same 138 scans are scored at both steps, so the two rows of one extractor are not independent. {#tab:inlpext}
+
+| Features and step | Sensitivity | Specificity (Wilson 95% interval) | ROC-AUC of P(abnormal) |
+|---|---|---|---|
+| ImageNet, unprojected (k = 0) | {{InlpImgExtSensKZeroK}} / {{InlpImgExtSensKZeroN}} ({{InlpImgExtSensKZero}}%) | {{InlpImgExtSpecKZeroK}} / {{InlpImgExtSpecKZeroN}} ({{InlpImgExtSpecKZero}}%; {{InlpImgExtSpecKZeroLo}} to {{InlpImgExtSpecKZeroHi}}) | {{InlpImgExtAUCKZero}} |
+| ImageNet, INLP, k = {{InlpImgKStar}} | {{InlpImgExtSensKStarK}} / {{InlpImgExtSensKStarN}} ({{InlpImgExtSensKStar}}%) | {{InlpImgExtSpecKStarK}} / {{InlpImgExtSpecKStarN}} ({{InlpImgExtSpecKStar}}%; {{InlpImgExtSpecKStarLo}} to {{InlpImgExtSpecKStarHi}}) | {{InlpImgExtAUCKStar}} |
+| Run-2 backbone, unprojected (k = 0) | {{InlpMdlExtSensKZeroK}} / {{InlpMdlExtSensKZeroN}} ({{InlpMdlExtSensKZero}}%) | {{InlpMdlExtSpecKZeroK}} / {{InlpMdlExtSpecKZeroN}} ({{InlpMdlExtSpecKZero}}%; {{InlpMdlExtSpecKZeroLo}} to {{InlpMdlExtSpecKZeroHi}}) | {{InlpMdlExtAUCKZero}} |
+| Run-2 backbone, INLP, k = {{InlpMdlKStar}} | {{InlpMdlExtSensKStarK}} / {{InlpMdlExtSensKStarN}} ({{InlpMdlExtSensKStar}}%) | {{InlpMdlExtSpecKStarK}} / {{InlpMdlExtSpecKStarN}} ({{InlpMdlExtSpecKStar}}%; {{InlpMdlExtSpecKStarLo}} to {{InlpMdlExtSpecKStarHi}}) | {{InlpMdlExtAUCKStar}} |
+
+For ImageNet features the specificity is {{InlpImgExtSpecKStar}}% at the last iteration against {{InlpImgExtSpecKZero}}% before projection, with overlapping intervals; for the trained backbone it is {{InlpMdlExtSpecKStar}}% at both steps. No conclusion about a change in specificity is drawn from 138 scans.
+
+### Leave-one-source-out
+
+The held-out design follows Yao et al. [@yao2019strong]. [[fig:loso]] and [[tab:losoimg]] give the results for ImageNet features, and [[tab:losomdl]] those for the trained backbone.
+
+![fig_loso_matrix](Linear-head leave-one-source-out on frozen features. Rows are the held-out sources; columns are the macro-F1 on the held-out test split (LOSO), the macro-F1 of the in-distribution reference trained on all six sources, and the gap (reference minus LOSO), all as fractions. Macro-F1 is computed on the evaluated classes of the source, and predictions of any other class count as errors. Left, ImageNet features (primary); right, run-2 backbone (secondary; it saw all sources, so these are not held-out results). The colour scale is shared by the three columns and is not comparable between F1 and gap; the printed values carry the information. There are no intervals in the figure; they are in the tables. Test images per source: {{LosoImgCohenN}} (Cohen), {{LosoImgKermanyN}} (Kermany), {{LosoImgNIHN}} (NIH), {{LosoImgShenzhenN}} (Shenzhen) and {{LosoImgTBXkN}} (TBX11K).) {#fig:loso}
+
+Table: Linear-head leave-one-source-out, ImageNet features (primary). Macro-F1 is in percent over the evaluated classes; the gap is the reference minus the leave-one-source-out value, in percentage points. The binary column is the ROC-AUC of 1 − P(Normal) for abnormal against normal and is not computed for Cohen (fewer than 20 normal test images). {#tab:losoimg}
+
+| Held-out source | Test images | Evaluated classes | LOSO macro-F1 (95% interval) | Reference macro-F1 | Gap (95% interval) | Binary ROC-AUC (95% interval) |
+|---|---|---|---|---|---|---|
+| Cohen | {{LosoImgCohenN}} | COVID-19, Pneumonia | {{LosoImgCohenMacroFOne}} ({{LosoImgCohenMacroFOneLo}} to {{LosoImgCohenMacroFOneHi}}) | {{LosoImgCohenRefMacroFOne}} | {{LosoImgCohenGap}} ({{LosoImgCohenGapLo}} to {{LosoImgCohenGapHi}}) | n/a |
+| Kermany | {{LosoImgKermanyN}} | Normal, Pneumonia | {{LosoImgKermanyMacroFOne}} ({{LosoImgKermanyMacroFOneLo}} to {{LosoImgKermanyMacroFOneHi}}) | {{LosoImgKermanyRefMacroFOne}} | {{LosoImgKermanyGap}} ({{LosoImgKermanyGapLo}} to {{LosoImgKermanyGapHi}}) | {{LosoImgKermanyBinAUC}} ({{LosoImgKermanyBinAUCLo}} to {{LosoImgKermanyBinAUCHi}}) |
+| NIH ChestX-ray14 | {{LosoImgNIHN}} | Normal, Pneumonia | {{LosoImgNIHMacroFOne}} ({{LosoImgNIHMacroFOneLo}} to {{LosoImgNIHMacroFOneHi}}) | {{LosoImgNIHRefMacroFOne}} | {{LosoImgNIHGap}} ({{LosoImgNIHGapLo}} to {{LosoImgNIHGapHi}}) | {{LosoImgNIHBinAUC}} ({{LosoImgNIHBinAUCLo}} to {{LosoImgNIHBinAUCHi}}) |
+| Shenzhen | {{LosoImgShenzhenN}} | Normal, Tuberculosis | {{LosoImgShenzhenMacroFOne}} ({{LosoImgShenzhenMacroFOneLo}} to {{LosoImgShenzhenMacroFOneHi}}) | {{LosoImgShenzhenRefMacroFOne}} | {{LosoImgShenzhenGap}} ({{LosoImgShenzhenGapLo}} to {{LosoImgShenzhenGapHi}}) | {{LosoImgShenzhenBinAUC}} ({{LosoImgShenzhenBinAUCLo}} to {{LosoImgShenzhenBinAUCHi}}) |
+| TBX11K | {{LosoImgTBXkN}} | Normal, Tuberculosis | {{LosoImgTBXkMacroFOne}} ({{LosoImgTBXkMacroFOneLo}} to {{LosoImgTBXkMacroFOneHi}}) | {{LosoImgTBXkRefMacroFOne}} | {{LosoImgTBXkGap}} ({{LosoImgTBXkGapLo}} to {{LosoImgTBXkGapHi}}) | {{LosoImgTBXkBinAUC}} ({{LosoImgTBXkBinAUCLo}} to {{LosoImgTBXkBinAUCHi}}) |
+
+Table: Linear-head leave-one-source-out on frozen features of the run-2 backbone, which was trained on all six sources (secondary; not held-out and not external). Columns as in [[tab:losoimg]]. {#tab:losomdl}
+
+| Held-out source | Test images | Evaluated classes | LOSO macro-F1 (95% interval) | Reference macro-F1 | Gap (95% interval) | Binary ROC-AUC (95% interval) |
+|---|---|---|---|---|---|---|
+| Cohen | {{LosoMdlCohenN}} | COVID-19, Pneumonia | {{LosoMdlCohenMacroFOne}} ({{LosoMdlCohenMacroFOneLo}} to {{LosoMdlCohenMacroFOneHi}}) | {{LosoMdlCohenRefMacroFOne}} | {{LosoMdlCohenGap}} ({{LosoMdlCohenGapLo}} to {{LosoMdlCohenGapHi}}) | n/a |
+| Kermany | {{LosoMdlKermanyN}} | Normal, Pneumonia | {{LosoMdlKermanyMacroFOne}} ({{LosoMdlKermanyMacroFOneLo}} to {{LosoMdlKermanyMacroFOneHi}}) | {{LosoMdlKermanyRefMacroFOne}} | {{LosoMdlKermanyGap}} ({{LosoMdlKermanyGapLo}} to {{LosoMdlKermanyGapHi}}) | {{LosoMdlKermanyBinAUC}} ({{LosoMdlKermanyBinAUCLo}} to {{LosoMdlKermanyBinAUCHi}}) |
+| NIH ChestX-ray14 | {{LosoMdlNIHN}} | Normal, Pneumonia | {{LosoMdlNIHMacroFOne}} ({{LosoMdlNIHMacroFOneLo}} to {{LosoMdlNIHMacroFOneHi}}) | {{LosoMdlNIHRefMacroFOne}} | {{LosoMdlNIHGap}} ({{LosoMdlNIHGapLo}} to {{LosoMdlNIHGapHi}}) | {{LosoMdlNIHBinAUC}} ({{LosoMdlNIHBinAUCLo}} to {{LosoMdlNIHBinAUCHi}}) |
+| Shenzhen | {{LosoMdlShenzhenN}} | Normal, Tuberculosis | {{LosoMdlShenzhenMacroFOne}} ({{LosoMdlShenzhenMacroFOneLo}} to {{LosoMdlShenzhenMacroFOneHi}}) | {{LosoMdlShenzhenRefMacroFOne}} | {{LosoMdlShenzhenGap}} ({{LosoMdlShenzhenGapLo}} to {{LosoMdlShenzhenGapHi}}) | {{LosoMdlShenzhenBinAUC}} ({{LosoMdlShenzhenBinAUCLo}} to {{LosoMdlShenzhenBinAUCHi}}) |
+| TBX11K | {{LosoMdlTBXkN}} | Normal, Tuberculosis | {{LosoMdlTBXkMacroFOne}} ({{LosoMdlTBXkMacroFOneLo}} to {{LosoMdlTBXkMacroFOneHi}}) | {{LosoMdlTBXkRefMacroFOne}} | {{LosoMdlTBXkGap}} ({{LosoMdlTBXkGapLo}} to {{LosoMdlTBXkGapHi}}) | {{LosoMdlTBXkBinAUC}} ({{LosoMdlTBXkBinAUCLo}} to {{LosoMdlTBXkBinAUCHi}}) |
+
+With ImageNet features the head trained on five sources scores far below its in-distribution reference on four of the five held-out sources: the gap is {{LosoImgTBXkGap}} points for TBX11K, {{LosoImgShenzhenGap}} for Shenzhen, {{LosoImgKermanyGap}} for Kermany and {{LosoImgCohenGap}} for Cohen. The two tuberculosis sources have binary ROC-AUCs of only {{LosoImgShenzhenBinAUC}} (Shenzhen) and {{LosoImgTBXkBinAUC}} (TBX11K), whereas the Kermany value is {{LosoImgKermanyBinAUC}}. The trained backbone gives gaps of the same order ({{LosoMdlTBXkGap}} points for TBX11K, {{LosoMdlShenzhenGap}} for Shenzhen). NIH shows a negative gap ({{LosoImgNIHGap}} points, interval {{LosoImgNIHGapLo}} to {{LosoImgNIHGapHi}}). This is a feature of the metric and not better generalisation: only two NIH classes can be evaluated, the reference is low ({{LosoImgNIHRefMacroFOne}}%) because the six-class head also predicts Pleural Effusion and Nodule / Mass, which count as errors for the two evaluated classes, and the absolute held-out value is low as well ({{LosoImgNIHMacroFOne}}%). Cohen has only {{LosoImgCohenN}} test images in its evaluated classes, and its reference ({{LosoImgCohenRefMacroFOne}}%) is also low, so it is very uncertain. The balanced accuracy of a two-class source can fall below 50% (TBX11K {{LosoImgTBXkBalAcc}}%) because predictions of the other classes are counted as errors; it is not a result worse than chance on a binary question, which the binary AUC addresses.
+
+The head trained on all six sources and scored once on Montgomery gives a sensitivity of {{LosoImgExtSens}}% and a specificity of {{LosoImgExtSpec}}% for ImageNet features, and {{LosoMdlExtSens}}% and {{LosoMdlExtSpec}}% for the trained backbone.
+
+### Band-stop screening and the go/no-go decision
+
+The decision rule of Chapter 4 was applied to the validation numbers. No band satisfied criterion 1 (the band with the largest source drop is band {{BsBand}}, and the number of bands satisfying the criterion is {{BsNBandsSatisfying}}), so the random control was not run. [[tab:c2crit]] gives the outcome and [[tab:c2lite]] the screening results for band {{BsBand}}, with a training sample of {{BsLiteValNTrain}} images.
+
+Table: Go/no-go criteria for a band-suppression retraining (analysis C2) and their outcome. {#tab:c2crit}
+
+| Criterion | Outcome |
+|---|---|
+| 1. A band with ΔS of at least 5 points (lower interval bound above zero) and ΔD of at most 2 points (upper bound below 3) | {{BsConditionOne}} |
+| 2. A matched-energy random control removes less source information than the band | {{BsConditionTwo}} (control not run, because no band met criterion 1) |
+| 3. Screening: source accuracy falls by at least 5 points with a loss of at most 2 points of within-source F1 (validation) | {{BsConditionThree}} |
+| 4. Student approves one night of CPU time | {{BsConditionFour}} (moot while criteria 1 to 3 fail) |
+| Decision | {{BsDecision}} |
+
+Table: Band-stop screening for band {{BsBand}} (exploratory; ImageNet features; linear heads; percentage points, full image minus band-stop image; 95% bootstrap intervals over scored images). The validation row decides; the test row was computed once. {#tab:c2lite}
+
+| Split | ΔS (source BA) | ΔD (within-source F1) |
+|---|---|---|
+| Validation | {{BsLiteValDeltaS}} ({{BsLiteValDeltaSLo}} to {{BsLiteValDeltaSHi}}) | {{BsLiteValDeltaD}} ({{BsLiteValDeltaDLo}} to {{BsLiteValDeltaDHi}}) |
+| Test (exploratory) | {{BsLiteTestDeltaS}} ({{BsLiteTestDeltaSLo}} to {{BsLiteTestDeltaSHi}}) | {{BsLiteTestDeltaD}} ({{BsLiteTestDeltaDLo}} to {{BsLiteTestDeltaDHi}}) |
+
+Removing the best single band lowered the source accuracy of a linear head by {{BsLiteValDeltaS}} points on validation, below the 5-point threshold. The validation disease change was not distinguishable from zero, but the upper bound of the selection-step disease difference ({{SpecMainValStopFDeltaDHi}} points) also exceeded the 3-point limit of criterion 1. The decision is {{BsDecision}}. The band-suppression retraining was therefore not started, no network was trained on band-stopped images, and no number for it exists. This is a negative result of the band-stop idea within this protocol, for frozen-feature linear heads only. It is not evidence that source information is unimportant.
+
 ## Interpretation
 
 ### Internal results

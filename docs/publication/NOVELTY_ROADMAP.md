@@ -10,7 +10,7 @@ M.Tech deliverables (seed/ablation placeholders, report, slides, tests) stay fir
 | Part | What it is | Literature verdict (searches so far) | Role in the paper |
 |---|---|---|---|
 | C1 | Per-band probe of source vs disease information in frozen CNN features (radial Fourier octave bands on the 224x224 grid) | No prior chest X-ray study found that does this. Closest: Halimi et al. arXiv 2610.29830 (preprint, abstract-level; spectral failure slices, no source/disease probe); Lu et al. SPIE 2025 (CT/MRI, injected artefacts); Zhang et al. Sci Rep 2023 (contrast/sharpness shortcuts, no bands). Two unopened chest X-ray leads must be checked. | **Main contribution** (measurement) |
-| C3 | Linear source erasure (INLP; LEACE as a check) on frozen features, then a retrained linear disease head | Erasure methods are published (ACL 2020, NeurIPS 2023); no chest X-ray application with a disease-head retrain found. Closest: Bouaziz & Chebouba arXiv 2604.00263 (preprint, abstract-level); Robinson et al. PLOS ONE 2022. One unverified lead. | **Second contribution** (diagnostic: how entangled source and disease are) |
+| C3 | Linear source erasure (INLP; LEACE as a check) on frozen features, then a retrained linear disease head | Erasure methods are published (ACL 2020, NeurIPS 2023); no chest X-ray application with a disease-head retrain found. Closest: Bouaziz & Chebouba arXiv 2604.00263 (preprint, abstract-level); Trivedi et al. PLOS ONE 2022. One unverified lead. | **Second contribution** (diagnostic: how entangled source and disease are) |
 | C4 | Leave-one-source-out matrix with linear heads. **Primary: ImageNet features** (clean held-out). Secondary: the trained backbone, described as "linear-head leave-one-source-out on frozen features" (F2) | Protocol not new (Yao et al. 2019; Compton et al. MLHC 2023). New only as a six-class, leakage-controlled matrix tied to the source probe and to C1/C3. | **Supporting evaluation** (partly addresses "one external cohort") |
 | C2-lite | Linear head on ImageNet features of band-stopped images (minutes, no training) | — | Cheap test of whether suppression could help; input to the C2 decision |
 | C2 | Band-stop of source-heavy bands chosen from C1, then retraining (one exploratory seed) | Frequency-based domain generalisation exists (FACT/AmpMix, PASTA). Probe-driven band selection on chest X-ray not found. | **Optional**, rule in section 3 |
@@ -48,6 +48,8 @@ Safe claim wording: "To our knowledge, within the searches described, we are not
 Otherwise NO-GO: C2-lite is reported as exploratory and C2 as future work. A GO gives one exploratory seed, compared with the seed spread of runs 2–4 and with run 5; no improvement claim from one run.
 
 ## 4. Venue (student decision)
+
+**Decision 2026-11-04 (student):** target Informatics in Medicine Unlocked, BSPC fallback; reason: diagnostic study after the C2 NO-GO.
 
 **Updated by `JOURNAL_SCOPE_MATCH.md` (journal pages opened 2026-11-03):** for scope S1 (C1+C3+C4, no training) the best fit is **Informatics in Medicine Unlocked** (no stated length cap; gold OA, APC about USD 2,710 before geographical pricing), fallback BSPC. BSPC full papers are "normally about 5,000 words" and expect a new technique, so BSPC fits **S2** (with C2) better, with the manuscript cut to about 5–6.5k words plus highlights and a graphical abstract; fallback IMU. CMPB, PRL, CMIG, AIIM and CBM fit poorly.
 

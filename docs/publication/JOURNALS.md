@@ -1,5 +1,7 @@
 # Track A: journal venues
 
+> Decision (2026-11-04, student): target journal is Informatics in Medicine Unlocked (IMU); Biomedical Signal Processing and Control (BSPC) is the fallback. Reason: diagnostic study after the C2 NO-GO. EMBC 2027 is unchanged.
+
 > Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md`; the ranking below is the earlier one and is kept for reference.
 
 Prepared 2026-11-03. All "accessed" dates are 2026-11-03. Figures are copied from the pages named; they change, so re-check on the submission day.

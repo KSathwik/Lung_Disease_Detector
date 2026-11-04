@@ -37,6 +37,7 @@ The project has the following objectives.
 5. **Application.** Provide a FastAPI and React application that serves predictions with Grad-CAM, rejects inputs that are not chest radiographs, stores results, and shows the metrics of the checkpoint that is loaded.
 6. **Reproducibility.** Make every step scriptable, record hashes and fingerprints, test the code, and document how to reproduce each result and what cannot be reproduced without the images.
 7. **Transparency about the past.** Document the audit of the earlier version so that the reasons for the rebuild are on record.
+8. **Source information.** Measure, on frozen features and with decision rules fixed in advance, in which spatial-frequency bands source and disease information lie, how much of the source information a linear projection can remove and at what cost to disease information, and how linear heads behave on a source left out of training.
 
 ## Success criteria
 
@@ -46,17 +47,19 @@ The project is judged on its process, with no target for headline accuracy. The 
 - the training run reads only the training and validation splits, and its metadata records the build and split fingerprints;
 - the test split and the external cohort are evaluated once, after the checkpoint is chosen;
 - the application shows the same numbers as the evaluation reports, from a generated file;
+- the settings and decision rules of the source-information analyses are written down before their results exist, and every access to the test split and the external cohort is logged;
 - every claim in the report can be traced to a generated artifact, and every limitation that the artifacts reveal is stated.
 
 ## Research questions
 
-The work is organised around three questions.
+The work is organised around four questions.
 
 1. How different are internal and external results when the internal split is free of leakage of known patient identities and of duplicates?
 2. Do per-source and external breakdowns show that any class is recognised by its source rather than by disease?
 3. Can a leakage-controlled six-class pipeline be built, trained and served on a laptop CPU, and what does it cost in time and memory?
+4. Where in the image and in its features does source information lie, and what happens to disease information when the source information is removed or when a source is held out?
 
-The answers to the first two questions depend on the final model and are given in Chapters 7 and 8. In brief: for the final model the internal test accuracy is {{TestAcc}}% while the external specificity is {{ExtSpecK}} / {{ExtSpecN}} and no tuberculosis scan is named Tuberculosis ({{ExtTBK}} / {{ExtTBN}}), so the gap is large even with a leakage-controlled split (question 1); the per-source, probe, external and Grad-CAM evidence is consistent with source cues being available to the classifier, but does not prove that they are used (question 2). The third is answered in Chapter 6.
+The answers to the first two questions depend on the final model and are given in Chapters 7 and 8. In brief: for the final model the internal test accuracy is {{TestAcc}}% while the external specificity is {{ExtSpecK}} / {{ExtSpecN}} and no tuberculosis scan is named Tuberculosis ({{ExtTBK}} / {{ExtTBN}}), so the gap is large even with a leakage-controlled split (question 1); the per-source, probe, external and Grad-CAM evidence is consistent with source cues being available to the classifier, but does not prove that they are used (question 2). The third is answered in Chapter 6. The fourth is answered by the analyses of Chapter 7: source information is present in every spatial-frequency band of the cached images and is not concentrated in one band; linear erasure lowered it from {{InlpImgTestSrcBAKZero}}% to {{InlpImgTestSrcBAKStar}}%, not to chance, while changing the disease scores; and a linear head on a left-out source scored far below its in-distribution reference for four of five sources. This evidence is indirect and concerns frozen features.
 
 ## Constraints
 

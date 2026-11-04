@@ -40,7 +40,7 @@ This report describes V6, a rebuild of the data pipeline and of the model around
 
 ## Objectives of the project
 
-The objectives are stated precisely in Chapter 3. In brief, the project aims to (i) obtain a defensible multi-source six-class benchmark from official sources, (ii) train and serve a DenseNet-121 classifier on it, (iii) measure internal and external behaviour honestly, and (iv) document everything needed to reproduce the result or to find its faults.
+The objectives are stated precisely in Chapter 3. In brief, the project aims to (i) obtain a defensible multi-source six-class benchmark from official sources, (ii) train and serve a DenseNet-121 classifier on it, (iii) measure internal and external behaviour honestly, (iv) measure where source information lies in the features and how far it can be removed, and (v) document everything needed to reproduce the result or to find its faults.
 
 ## Contributions
 
@@ -50,8 +50,9 @@ The contributions that this report can defend are the following.
 2. A reproducible end-to-end pipeline: acquisition, patient-grouped splitting, training, once-only test and external evaluation, and serving of the resulting metrics by the same application that serves predictions.
 3. Evidence that internal metrics overstate generalisation, from an external cohort and from a per-source analysis that looks for indirect signs of source shortcuts.
 4. An audit that documents how the leakage and proxy labels of the earlier pipeline inflated its results.
+5. A measurement of source information in frozen features of the benchmark: a band-by-band map of source and disease information, a linear source-erasure analysis, linear-head leave-one-source-out results, and a go/no-go decision on band suppression that came out negative. The results are diagnostic and indirect. To our knowledge, within the searches described, we are not aware of prior work that quantifies source versus disease information band by band in features of chest radiographs.
 
-The report does not claim a new network architecture, a new state-of-the-art accuracy, or any clinical validity.
+The report does not claim a new network architecture, a new state-of-the-art accuracy, a method for suppressing source information, or any clinical validity.
 
 ## Scope and limits
 
@@ -59,4 +60,4 @@ The classifier solves a single-label problem over six mutually exclusive classes
 
 ## Organisation of the report
 
-Chapter 2 reviews the datasets, models and evaluation pitfalls relevant to chest X-ray classification. Chapter 3 defines the problem and objectives and lists the defects of the earlier pipeline that the new one must remove. Chapter 4 presents the methodology and the system architecture. Chapter 5 describes data collection, label rules, the split and preprocessing. Chapter 6 covers model development, training, the backend, the frontend, the input gate and testing. Chapter 7 gives the experimental setup and results. Chapter 8 covers validation, discussion and limitations. Chapter 9 concludes and lists future work. The appendices contain the API reference, the configuration, the reproduction commands, the test summary and the history of the V5 audit.
+Chapter 2 reviews the datasets, models and evaluation pitfalls relevant to chest X-ray classification. Chapter 3 defines the problem and objectives and lists the defects of the earlier pipeline that the new one must remove. Chapter 4 presents the methodology, including the source-information analyses, and the system architecture. Chapter 5 describes data collection, label rules, the split and preprocessing. Chapter 6 covers model development, training, the backend, the frontend, the input gate and testing. Chapter 7 gives the experimental setup and results. Chapter 8 covers validation, discussion and limitations. Chapter 9 concludes and lists future work. The appendices contain the API reference, the configuration, the reproduction commands, the test summary and the history of the V5 audit.

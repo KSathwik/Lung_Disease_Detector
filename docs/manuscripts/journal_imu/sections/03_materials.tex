@@ -1,0 +1,49 @@
+\section{Data and benchmark construction}
+\label{sec:materials}
+
+\subsection{Task, sources and acquisition}
+\label{sec:sources}
+The task is single-label classification of a frontal chest radiograph into six classes: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule/Mass and Tuberculosis. Table~\ref{tab:sources} lists the sources. Each was downloaded from its official distribution point by a script that resumes interrupted transfers, compares the size with the server's \texttt{Content-Length}, rejects HTML error pages and records URL, size and SHA-256 digest per file; publisher checksums were verified where available. The COVID-19 image data collection is identified by its Git commit. VinDr-CXR~\cite{nguyen2022vindr} and JSRT~\cite{shiraishi2000development} require credentialed access and were not used. A TB archive aggregated from several hospitals~\cite{rahman2020reliable}, used in V5, was excluded because it is described as containing Montgomery images, and was replaced by the official Shenzhen set.
+
+\begin{table}[t]
+\centering
+\caption{Data sources, the classes they contribute and the patient-identity status used for grouping. Licence terms were not verified for this manuscript (``see source terms''); the images are not redistributed.}
+\label{tab:sources}
+\small
+\begin{tabular}{@{}p{3.3cm}p{1.2cm}p{3.6cm}p{2.4cm}p{2.9cm}@{}}
+\toprule
+Source & Builds & Classes contributed & Patient identity & Licence / terms \\
+\midrule
+NIH ChestX-ray14~\cite{wang2017chestxray8} & 1, 2 & Normal, Pleural Effusion, Nodule/Mass, Pneumonia & Genuine (patient ID) & See source terms \\
+Kermany et al.~\cite{kermany2018identifying} & 1, 2 & Normal, Pneumonia (paediatric) & Derived from file name & See source terms \\
+Shenzhen (NLM)~\cite{jaeger2014two,candemir2014lung} & 1, 2 & Normal, Tuberculosis & One image per subject & See source terms (NLM) \\
+COVID-19 image data collection~\cite{cohen2020covid} & 1, 2 & COVID-19, Pneumonia, Normal, Tuberculosis & Genuine (collection ID) & See source terms (per image) \\
+TBX11K~\cite{liu2020rethinking} & 2 & Normal, Tuberculosis & Unknown (grouped per image) & See source terms \\
+COVID-19 Radiography Database~\cite{chowdhury2020can,rahman2021exploring} & 2 & COVID-19 & Unknown (grouped per image) & See source terms \\
+Montgomery County (NLM)~\cite{jaeger2014two,candemir2014lung} & external & Normal vs Tuberculosis & One image per subject & See source terms (NLM) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Labelling rules}
+\label{sec:labels}
+The labelling rules were written into a versioned configuration file before any V6 training and were not changed afterwards (SHA-256 recorded in both build reports). Labels come only from each source's own labels; an image is never labelled by the name of its archive, and every excluded image records the reason. For NIH ChestX-ray14, exactly one finding is required (Effusion, Nodule and/or Mass, or Pneumonia), and \emph{No Finding} images are Normal with at most one per patient; these labels are mined from reports, not read from the images~\cite{wang2017chestxray8,oakdenrayner2020exploring}. Kermany \emph{NORMAL} and \emph{PNEUMONIA} map directly (paediatric population). Shenzhen and Montgomery use the file-name suffix. For TBX11K, \emph{Healthy} is Normal and \emph{active TB only} is Tuberculosis; ``sick but non-TB'' images are excluded because the cause of the abnormality is unspecified, and so are images with any latent-TB annotation. For the COVID-19 image data collection only frontal views are used, with findings mapped to the six classes. From the COVID-19 Radiography Database only the COVID folder is used.
+
+\subsection{Duplicates, caps, grouping and leakage checks}
+\label{sec:split}
+For every image the builder computes MD5 and SHA-256 digests and a 64-bit perceptual hash (pHash). With $h_i$ the pHash and $\mathbf{t}_i$ the unit-normalised $64\times64$ grey-level thumbnail of image $i$, two images are near-duplicates when
+\begin{equation}
+d_H(h_i,h_j)\le 6\quad\text{and}\quad \mathbf{t}_i^{\top}\mathbf{t}_j\ge 0.97 .
+\label{eq:neardup}
+\end{equation}
+The comparison runs across all sources, including the external cohort. To stop a source from dominating a class, the number of images per (source, class) pair was capped before splitting, sampling whole patient groups with a fixed seed (caps and seed are in the configuration file).
+
+The unit of partitioning is the patient group: the genuine patient identifier where the source provides one (NIH, COVID-19 image data collection), an identifier derived from the file name (Kermany), one subject per image where the publisher documents it (Shenzhen, Montgomery), and otherwise one image (TBX11K, COVID-19 Radiography Database). Groups are merged by union--find over every pair of images sharing an MD5 digest or satisfying Eq.~\eqref{eq:neardup}. Whole groups are assigned to training, validation and test at a target ratio of 70/15/15, stratified by each group's majority (class, source) pair. Montgomery is external and never part of a development split; any development image that matches a Montgomery image is excluded. The \emph{split fingerprint} (SHA-256 of the sorted \texttt{image\_id<TAB>split} lines) is carried through every report.
+
+The build report records three checks: patient groups present in more than one split, identical files in more than one split, and external files in the development data. All three are zero (Table~S1 in the supplement). \emph{Patient-identity caveat:} the patient-group check proves patient-level separation only for rows with known identity. Images from TBX11K and the COVID-19 Radiography Database (4,130 rows) are grouped per image, and Kermany identities are derived from file names, so the same patient could appear in two splits. This caveat applies to every leakage statement and to every held-out-source number in this paper.
+
+\subsection{Dataset builds and external cohort}
+\label{sec:builds}
+Two builds were produced with the same rules. Build~1 (\texttt{v6\_build\_001}) used five sources; every COVID-19 image came from one collection, and almost all Tuberculosis images from Shenzhen. Build~2 (\texttt{v6\_build\_002}) added TBX11K, the COVID-19 Radiography Database and two further NIH archives, so that COVID-19 and Tuberculosis each have two sources. The model and all analyses reported here use build \RDatasetBuild, with $N_{\text{train}}=\RNTrain$, $N_{\text{val}}=\RNVal$, $N_{\text{test}}=\RNTest$ and $N_{\text{external}}=\RNExternal$. Class and source remain confounded: Pleural Effusion and Nodule/Mass occur only in NIH, and Pneumonia comes mostly from Kermany. The composition of both builds is in Tables~S1 and~S2 of the supplement.
+
+The external Montgomery County set contains 138 frontal radiographs (80 normal, 58 with TB manifestations)~\cite{jaeger2014two,candemir2014lung}. It shares no source with the development data and was never used for training or for selecting the served model, but it is not untouched: it was scored once for each of runs 1--5 and once each in the C3 and C4 analyses (Section~\ref{sec:eval-order}), and run~2 was started after run~1's external results had been seen (Section~\ref{sec:design}). It contains only normal and TB images, so it tests abnormal-versus-normal behaviour at an unseen hospital and exact TB recall, not six-class accuracy.

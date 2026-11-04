@@ -296,6 +296,42 @@ colw: 2.4, 1.9, 1.7
 > Runs 3 and 4 stopped early by the same patience rule; run 2 completed its schedule. External specificity ranges from {{MSExtSpecMin}} to {{MSExtSpecMax}} percent and no seed names any Montgomery TB scan Tuberculosis, so the external failure is not a one-seed artefact.
 > The ablation, run 5, uses the same split, seed and schedule as run 2, without blur, CLAHE and low-pass filter. Internal accuracy is {{AblTestAcc}} against {{MSRunOneTestAcc}} percent, a gap larger than the seed spread, so the run with the filters scored higher internally in this single comparison. Run 5 selected its last epoch (16 of 16, validation still rising), so a convergence-speed difference cannot be excluded. External specificity is the same. Exact TB recall is {{AblExtTB}} percent without filters against {{MSRunOneExtTB}}: a handful of scans from one run, an observation and not an effect. One ablation seed cannot support a general claim about preprocessing.
 ---
+layout: bullets
+title: Extension: where does source information live?
+- Question: is source information in CXR features tied to particular frequency bands, and is it entangled with disease information?
+- Six octave bands A-F; band-pass and band-stop images; linear probes for source and for disease (macro-F1 within source) on frozen DenseNet-121 features
+- Linear source erasure (INLP, LEACE) on the same features, then re-scoring disease
+- Leave-one-source-out: train the head on five sources, score the sixth
+- Rules, thresholds and the C2 go/no-go fixed in advance and recorded in the repository
+- Diagnostic study: no new architecture, served model untouched
+> This extension asks a diagnostic question about the shortcut concern from the previous slides: where in the image spectrum is source information, and can it be separated from disease information?
+> The cached 224 by 224 images are split into six octave bands, A to F. For each band I build band-pass and band-stop variants and fit linear probes on frozen DenseNet-121 features: one probe for the source, one for disease, scored as macro-F1 within each source so source cues cannot buy the score.
+> Two published erasure methods, INLP and LEACE, are applied as a measurement on frozen features; I make no novelty claim for them. Leave-one-source-out trains the linear head on five sources and scores the held-out one.
+> The analysis rules and the go/no-go criteria for a possible band-suppression training experiment (C2) were fixed in advance and recorded in the repository, not registered externally.
+> Within the searches described in the roadmap, I am not aware of prior work that quantifies source versus disease information band by band; this is no stronger than that.
+---
+layout: figs2
+title: Extension results: spectral map and leave-one-source-out
+figure: fig_spectral_map, fig_loso_matrix
+caption: Left: source and disease information per band. Right: held-out-source macro-F1 (ImageNet features, linear head).
+- Full-image source accuracy {{SpecMainTestFullSrcBA}}% (chance 16.7%); held-out TBX11K macro-F1 {{LosoImgTBXkMacroFOne}}%
+> Left: with frozen ImageNet features on the test sample, the full image gives source balanced accuracy {{SpecMainTestFullSrcBA}} percent against chance of 16.7, and within-source disease macro-F1 {{SpecMainTestFullFWs}} percent. Source is readable in every band-pass image, from {{SpecMainTestPassASrcBA}} percent in band A to {{SpecMainTestPassFSrcBA}} percent in band F, and both source and disease information are highest in bands E and F. No band stands out as the carrier; that null result is stated plainly.
+> Removing a single band barely changes source accuracy: the largest change is {{SpecMainTestStopFDeltaS}} points (band F), and the disease intervals all include zero.
+> Right: when a source is left out, a linear head scores far below its in-distribution reference on four of five sources, for example TBX11K {{LosoImgTBXkMacroFOne}} percent, a gap of {{LosoImgTBXkGap}} points, and Shenzhen {{LosoImgShenzhenMacroFOne}} percent. NIH shows a negative gap ({{LosoImgNIHGap}}) only because its reference is low with two testable classes; that is not better generalisation. Cohen has very few images and is very uncertain.
+> Caveats: F1, the cache is resampled to 224 by 224 after filtering, so band maps partly reflect resampling and the pre-filters. F2, the trained backbone saw all six sources and is not held out. F3, class and source are confounded (Effusion and Nodule/Mass exist only in NIH), so the within-source score is primary. F5, intervals cover test-sample variation only; samples are small. Patient-identity caveat: 4,130 TBX11K and COVID-19 Radiography rows are grouped per image. Test was scored once; Montgomery was not untouched in the extension and these are not external validation. Availability in frozen features is indirect evidence, not proof that the trained model uses it.
+---
+layout: bullets
+title: Extension takeaway: erasure costs disease performance
+- Source information is spread across all bands and not concentrated in one
+- Linear erasure (INLP, 20 steps): source accuracy {{InlpImgTestSrcBAKZero}}% to {{InlpImgTestSrcBAKStar}}%, but disease macro-F1 within source also falls ({{InlpImgTestChangeFWsKStar}} points)
+- One-step LEACE: six-class macro-F1 falls {{InlpImgTestChangeFAllLeace}} points: source and disease are entangled
+- Sharp drop when a source is held out (gap {{LosoImgTBXkGap}} points for TBX11K)
+- C2 band suppression: {{BsDecision}}; no band meets the rule fixed in advance. Future work, no C2 number exists
+> The takeaway is a diagnostic one. Source information is available in every band and is redundant across bands, so no single band is a carrier to suppress.
+> Erasing it linearly with INLP lowered the source accuracy a fresh probe can recover from {{InlpImgTestSrcBAKZero}} to {{InlpImgTestSrcBAKStar}} percent after 20 steps, which is not chance, and disease measures fell too: within-source macro-F1 by {{InlpImgTestChangeFWsKStar}} points. LEACE, which removes all linearly decodable source information in one step, lowered six-class macro-F1 by {{InlpImgTestChangeFAllLeace}} points. This is consistent with source and disease information being entangled in these features. I do not present removing the shortcut as an achievement.
+> The C2 go/no-go decision is {{BsDecision}}: removing the best band, band {{BsBand}}, lowered source accuracy by a few points, below the 5-point threshold fixed in advance, and {{BsNBandsSatisfying}} bands satisfied the first criterion. Only a frozen-feature linear head was examined, so band-suppression training is future work and nothing here says it works or fails for a trained network.
+> Caveats: one run, no seeds; INLP and LEACE are published methods applied as measurements; the served model, gate, backend and frontend are untouched; Montgomery was not untouched; patient-identity caveat as before.
+---
 layout: figs2
 title: Application demo (model {{ModelVersion}})
 figure: screenshots/07_result_card, screenshots/08_gradcam_card
@@ -325,11 +361,13 @@ title: Conclusion
 - Showed how leakage and proxy labels inflated the earlier V5 result
 - Final model v6.1: {{TestAcc}}% internal accuracy, but external specificity {{ExtSpecK}}/{{ExtSpecN}} and TB recall {{ExtTBK}}/{{ExtTBN}}: internal metrics overstate behaviour
 - Class-source confounding is strong; build 2 changed where external errors fall, not the external gap (indirect evidence of a source shortcut)
+- Extension: source information is spread across bands and entangled with disease; erasure costs disease performance; C2 band suppression is {{BsDecision}}
 - Not shown: clinical utility, superiority over other methods, causal effect of preprocessing (one ablation seed), robustness beyond the training seed
+> The extension adds a diagnostic result, not an improvement: source information is available in every band, linear erasure lowers disease scores too, and held-out sources score far lower. It is indirect evidence about frozen features, not proof about the trained model.
 > To conclude, the contribution is an auditable rebuild and a reproducible pipeline, together with evidence of how an earlier pipeline overstated its results.
 > The final model is v6.1, run 2. Its internal accuracy is good, but on the external cohort specificity is low and no TB scan is recognised as TB, so internal metrics overstate generalisation.
 > With build 2 the COVID-19 calls fell but the external gap remained; this is consistent with a source shortcut, not proof of one. Across three seeds the internal results are stable and the external gap persists; the single-seed ablation shows lower internal scores without the filters.
-> The claim I can defend is about method, not about clinical accuracy.
+> The claim I can defend is about evaluation method, not about clinical accuracy.
 ---
 layout: bullets
 title: Future scope
@@ -337,17 +375,21 @@ title: Future scope
 - Multi-label formulation for co-findings
 - Several seeds and a larger, multi-site external cohort
 - Train a CXR gate on real radiographs and non-radiographs
+- Band-suppression training (C2): not started; the go/no-go gave {{BsDecision}}, so it needs a new decision
 - Clinician-reviewed prospective evaluation, reported per TRIPOD+AI and CLAIM [collins2024tripodai, mongan2020claim]
+> Band-suppression training, C2, is future work: the criteria fixed in advance were not met on frozen features, and it is not started without a new decision.
 > Future work follows the limitations. The most useful steps are better data, a multi-label formulation, repeated runs for variance, and a larger multi-site external cohort.
 > A trained gate would fix the weakest part of the application.
 > Any clinical use would need prospective evaluation with clinicians and reporting following TRIPOD+AI and CLAIM.
 ---
 layout: bullets
 title: Publications plan
-- Conference (IEEE) and journal (Elsevier, BSPC) drafts in preparation; not submitted [AUTHORS TO CONFIRM]
+- Conference (IEEE EMBC) and journal drafts in preparation; not submitted [AUTHORS TO CONFIRM]
+- Journal target: Informatics in Medicine Unlocked (Elsevier); fallback BSPC (decision 2026-11-04: diagnostic study after C2 NO-GO)
 - Author order: K. Sathwik, N. Ramana, P. Tirupathi, K. Srinivas; corresponding author [TO BE CONFIRMED]
 > I plan one conference paper and one journal paper from this work.
 > The author order is confirmed by the project owner. The corresponding author is still to be confirmed, and all authors must verify contributions and approve the manuscripts before submission.
+> On 2026-11-04 the target journal became Informatics in Medicine Unlocked, with Biomedical Signal Processing and Control as fallback, because the work is now a diagnostic study after the C2 no-go. The EMBC conference plan is unchanged.
 > Nothing has been submitted yet; the venue comparison is maintained separately.
 ---
 layout: refs

@@ -74,3 +74,24 @@ Corrections made relative to the brief or to registrar metadata:
 | nayak2021application | partial | https://doi.org/10.1016/j.bspc.2020.102365 | BSPC paper: comparison of deep CNNs for COVID-19 CXR. Related work. Cited from title only |
 
 "partial" for the additional keys means the bibliographic record is verified (DOI/PMLR) but only the title (not the abstract) was read, so the notes make no claim about their results beyond the title. Only works with a resolving DOI or an official proceedings page were kept; no candidate was dropped for being non-existent. Citation counts and impact factors were not checked.
+
+## Novelty-analysis keys (added 2026-11-04)
+
+Merged from the former `journal_imu/references_novelty.bib` (removed). All fields come from records fetched on 2026-11-04. `degrave2021ai` already existed and was re-checked against Crossref (authors, volume 3, issue 7, pp. 610-619 agree); no duplicate was added.
+
+| key | verified | source used to verify | notes |
+|---|---|---|---|
+| kim2023homogenization | yes | Crossref API 10.1117/1.JMI.10.6.061103 | J Med Imaging 10(6); Crossref page field is 1-19, article number 061103 taken from the DOI suffix (noted in the entry) |
+| rahbar2026site | yes | arXiv API id_list=2608.10295v1 | v1 title confirmed; v2 has a different title ("Site Is Decodable Before Pretraining ..."), so cite v1 only |
+| halimi2026spectral | yes | arXiv API 2610.29830 (journal_ref); PMLR v315 index lists the title | MIDL 2026, PMLR 315:2682-2710 from arXiv journal-ref |
+| lu2025spectral | yes | arXiv API 2407.11379 (journal_ref, DOI); Crossref 10.1117/12.3047670 | SPIE 13406, Medical Imaging 2025: Image Processing, page 112 |
+| zhang2023certified | yes | Crossref API 10.1038/s41598-023-39855-3 | Sci Rep 13(1), 12690 |
+| dack2025bias | yes | arXiv API 2507.07722 | preprint (v4 current), published 2025-07-10; no journal version found |
+| ravfogel2020null | yes | Crossref API 10.18653/v1/2020.acl-main.647 | ACL 2020, pp. 7237-7256 |
+| belrose2023leace | yes | NeurIPS proceedings page (citation meta); arXiv API 2306.03819 | NeurIPS 36, pp. 66044-66063, DOI 10.52202/075280-2884 from the proceedings page |
+| yao2019strong | yes | arXiv API 1904.01638; PDF text read | Multi-source multi-target domain adaptation/generalisation on ten chest X-ray datasets; Section with leave-one-domain-out training (one of five source domains left out, Figure 1). Confirmed as the leave-one-domain-out precedent. arXiv only |
+| compton2023more | yes | PMLR page https://proceedings.mlr.press/v219/compton23a.html | MLHC 2023, PMLR 219:110-127 |
+| bouaziz2026site | yes | arXiv API 2604.00263 | preprint, v1; full author names from arXiv |
+| robinson2022shortcut | yes | Crossref API 10.1371/journal.pone.0274098 | PLOS ONE 17(10), e0274098; Crossref lists Trivedi first, Robinson second (first-author name in the text corrected to Trivedi) |
+
+Unverified entries: none.

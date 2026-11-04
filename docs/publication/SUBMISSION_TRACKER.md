@@ -1,5 +1,7 @@
 # Submission tracker
 
+> Decision (2026-11-04, student): target journal is Informatics in Medicine Unlocked (IMU); Biomedical Signal Processing and Control (BSPC) is the fallback. Reason: diagnostic study after the C2 NO-GO. EMBC 2027 is unchanged.
+
 > Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md` (the fallback order in the table below is the earlier one).
 
 Updated 2026-11-03. Statuses: not started / drafting / ready / submitted. Owner is a placeholder: [AUTHORS TO CONFIRM]. Sources for rows are in JOURNALS.md and CONFERENCES.md.
@@ -28,3 +30,16 @@ Suggested order: submit EMBC 2027 by 24 Jan 2027; submit the extended journal pa
    - IEEE EMBC 2027: disclosure per IEEE policy; unacknowledged generative AI prohibited (https://embc.embs.org/2027/author-guidelines/). Use the IEEE-required acknowledgements-section disclosure; exact wording not read.
    - Springer (JIIM, PESM, MBEC), Nature (Sci Rep), MDPI: policies not read; check at submission.
 9. Reviewer duty: EMBC reciprocal review means one author must be qualified and willing to review.
+
+## IMU submission checklist (added 2026-11-04)
+
+- [ ] APC: check Informatics in Medicine Unlocked gold OA fee under geographical pricing and any institutional agreement before choosing OA
+- [ ] Highlights file (3 to 5 bullets)
+- [ ] Ethics statement (public datasets only; no new patient data)
+- [ ] Generative-AI declaration section
+- [ ] Data and code availability statement
+- [ ] CRediT author statement
+- [ ] Cover letter (state overlap with the EMBC paper)
+- [ ] Scopus / Google Scholar novelty check immediately before submission
+- [ ] All author approvals of the final manuscript
+- [ ] Author contacts and corresponding author confirmed [AUTHORS TO CONFIRM]

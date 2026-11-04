@@ -67,6 +67,78 @@ Evaluation follows the definitions below.
 
 The evaluator validates its inputs before computing anything: columns, a single split and checkpoint, unique image identifiers, agreement of the stored class index with the arg-max of the stored probabilities, agreement of the identifier set with the manifest, true labels that agree with the manifest, and well-formed probabilities. It never skips an image silently. The metric code is tested against hand-computed values and against scikit-learn.
 
+## Source-information analyses on frozen features
+
+The source-identifiability probe of Chapter 7 shows that the source of an image can be predicted from the features. Four further analyses ask where that information lies, how much of it a linear projection can remove, how a linear head behaves on a source it was not trained on, and whether removing one frequency band could be a cheap remedy. They are measurements on frozen features. No network was retrained for them, and the served model, the input gate, the backend and the frontend were not changed. They do not propose a clinical method.
+
+### Questions and wording
+
+A probe fitted on frozen features shows that information is available in those features. It does not show that the trained network uses it. Statements about shortcuts therefore stay at the level of indirect evidence and of consistency with a shortcut. The thresholds and procedures described in this section were fixed in advance and recorded in the repository (see the last subsection), and every number in Chapter 7 is read from the generated result files.
+
+### Data and probe samples
+
+All analyses use the cached 224 × 224 images of build {{DatasetBuild}} and the input normalisation of the trained model. Each cache image has already passed the Gaussian pre-blur, CLAHE and the Gaussian low-pass filter at its native resolution and was then resized to 224 × 224. Sources differ in native resolution and field of view, so the band-wise results partly reflect how different pixel grids were resampled and not only properties of the scanners. For this reason the results are described as a map of the cached images. A second cache, built without the three filters (the build of the ablation run), is used as a sensitivity check.
+
+The spectral and band-stop analyses use one fixed sample per split, drawn with sampling seed 0 and the same for every variant, extractor and cache, so that comparisons are paired. A (source, class) cell contributes at most 150 training, 100 validation and 100 test images. This gives {{SpecMainTestNTrain}} training images and {{SpecMainTestN}} test images. Because class and source are confounded (Pleural Effusion and Nodule / Mass occur only in NIH, Pneumonia mostly in Kermany), the primary disease score is computed within each source: the macro-F1 over the classes that a source contains with at least 20 images in the scored sample, averaged over the {{SpecMainTestNWithinSources}} qualifying sources. The six-class macro-F1 over the whole sample is secondary, because it can be raised by source cues. A further score is the accuracy of the source probe among Normal images only, over the four sources that contain enough of them.
+
+### Spectral map of source and disease information
+
+Each cached image is split into six octave bands of radial spatial frequency, labelled A to F ([[tab:bands]]). The band masks have raised-cosine transitions of a quarter octave on either side of each edge, and the six masks add up to one at every frequency. Multi-frequency (Laplacian-pyramid) standardisation has been used to harmonise multi-institutional chest radiographs [@kim2023homogenization]; here the bands serve for measurement only. The mean brightness (the zero-frequency term) is kept in every variant, the result is clipped and rounded to the cache data type, and band-pass images are not rescaled in contrast.
+
+Table: Octave bands of the spectral analysis on the 224 × 224 grid. {#tab:bands}
+
+| Band | Radial frequency (cycles per pixel) | Period (pixels) |
+|---|---|---|
+| A | 0 to 1/64 | 64 and longer |
+| B | 1/64 to 1/32 | 64 to 32 |
+| C | 1/32 to 1/16 | 32 to 16 |
+| D | 1/16 to 1/8 | 16 to 8 |
+| E | 1/8 to 1/4 | 8 to 4 |
+| F | 1/4 and above | 4 to 2 |
+
+Thirteen variants of every image are analysed: the full image, six band-pass variants (one band plus the mean brightness) and six band-stop variants (everything except one band). Three extractors or caches are used. The primary extractor is the ImageNet-initialised DenseNet-121 without its top, with global average pooling (1,024 features). The secondary extractor is the backbone of the final model, which was trained on all six sources and therefore measures what the served network can represent, not an untouched model; the band-pass variants only were run for it. The sensitivity check applies the ImageNet extractor to the no-filter cache, again for the band-pass variants only.
+
+For every variant, two multinomial logistic-regression probes with standardised inputs (class-balanced weights, regularisation constant 1) are fitted on the training sample and scored on the validation or test sample: one predicts the source, the other the class. The reported quantities are the source balanced accuracy (chance 1/6, that is 16.7%), the within-source disease macro-F1, the six-class macro-F1 and the within-Normal source accuracy. The band-stop differences are ΔS, the source balanced accuracy of the full image minus that of the band-stop image, and ΔD, the same difference for the within-source disease macro-F1; a positive value means that information was lost by removing the band. Intervals are percentile-bootstrap 95% intervals with 1,000 resamples, the unit being the scored image, with the same resampled indices for all variants. Each probe is fitted once, so the intervals describe variation of the scored sample and not training variance.
+
+### Linear source erasure (INLP and LEACE)
+
+The second analysis removes linearly decodable source information from the features of the full image and measures what remains. It uses the iterative nullspace projection (INLP) [@ravfogel2020null] and the closed-form LEACE estimator [@belrose2023leace], which are published methods; here they serve only as a measurement on frozen features. The features of all training, validation, test and Montgomery images are standardised with training statistics. At each iteration a logistic-regression classifier is fitted to predict the source from the current training features, the row space of its coefficients is removed by projection, and the process repeats for at most 20 iterations. The rule fixed in advance stops earlier if a freshly fitted source classifier reaches a validation balanced accuracy of at most 21.7% (chance plus five points). A disease head (multinomial logistic regression, regularisation chosen once on the validation split from three values) is retrained on the projected training features at every iteration, and the source accuracy is re-measured with a fresh classifier. LEACE, fitted on the training features with the six source labels, is scored as a one-row check. The disease scores use the complete validation and test splits ({{InlpImgNTest}} test images). The change relative to the unprojected features is reported as a paired difference with a bootstrap interval over test images. After the test table was written, the heads on the unprojected features and at the last iteration were scored once on the Montgomery cohort (Normal against Tuberculosis, sensitivity and specificity together, Wilson intervals). Both extractors are used, the ImageNet one as primary and the trained backbone as secondary.
+
+### Linear-head leave-one-source-out
+
+The third analysis, called here linear-head leave-one-source-out on frozen features, trains a multinomial logistic-regression head on the training split of five sources and scores it on the test split of the sixth, following the leave-one-domain-out training of Yao et al. [@yao2019strong] for chest X-ray datasets. The regularisation constant is chosen on the validation images of the five training sources. A held-out source is included if it has at least two evaluated classes, where an evaluated class has at least 20 test images in the held-out source and at least 50 training images in the other sources. Five sources qualify: Cohen (COVID-19, Pneumonia), Kermany (Normal, Pneumonia), NIH (Normal, Pneumonia), Shenzhen (Normal, Tuberculosis) and TBX11K (Normal, Tuberculosis). The COVID-19 Radiography Database has a single class and is excluded; the NIH classes Pleural Effusion and Nodule / Mass cannot be tested because no other source contains them.
+
+The primary metric is the macro-F1 over the evaluated classes, where a prediction of any other class counts as an error. The in-distribution reference uses the same recipe, trained on the training splits of all six sources and scored on the same test images. The gap is the reference minus the held-out value, in percentage points. A binary view, abnormal against normal, uses 1 − P(Normal) as score and reports the ROC-AUC for sources with at least 20 normal and 20 abnormal test images. Intervals are bootstrap 95% intervals over held-out test images. The head trained on all six sources is also scored once on Montgomery. ImageNet features give the primary matrix. The matrix from the trained backbone is secondary, is described only as frozen-feature results from a backbone that saw all six sources, and is never called held-out or external. Every number carries the patient-identity caveat of Chapter 5: patient separation is established only for rows with known identity, 4,130 TBX11K and COVID-19 Radiography rows are grouped per image, and Kermany identities are derived from file names.
+
+### Band-stop screening and the decision rule for suppression
+
+A fourth step examines whether removing a band could suppress source information at little cost to disease information. A band-suppression retraining of the network (analysis C2) was made conditional on a go/no-go rule written down before any spectral result existed. The rule uses validation data, the ImageNet extractor and the paired probe sample, and it calls for a GO only if all four criteria hold:
+
+1. some band has ΔS of at least 5 points with the lower bound of its interval above zero, and ΔD of at most 2 points with the upper bound of its interval below 3 points;
+2. a matched-energy random band-stop control, which removes the same share of spectral energy, lowers source accuracy by less than the selected band does;
+3. a linear head on ImageNet features of band-stopped images (the exploratory screening step described next) lowers source balanced accuracy by at least 5 points and loses at most 2 points of within-source disease macro-F1 on validation;
+4. the earlier deliverables are finished and the student approves a night of CPU time.
+
+The screening step uses the candidate band with the largest ΔS (or, if no band qualifies under criterion 1, the band with the largest ΔS and a NO-GO outcome), a larger training sample of up to 400 images per cell ({{BsLiteValNTrain}} images), and the same two probes as above on the full image and on the band-stop image. Its validation table decides, and its test table is written once and labelled exploratory. If no band satisfies criterion 1, the random control is not run. Otherwise the outcome is NO-GO, the screening is reported as exploratory and the retraining is listed as future work.
+
+### Rules fixed in advance, approval and access log
+
+All settings above (bands, variants, samples, minimum cell sizes, stopping rule, inclusion rules, intervals and the go/no-go thresholds) are written in a protocol file of the repository (docs/publication/NOVELTY_PROTOCOL.md). It was drafted before any result of these analyses existed, was approved by the student in chat on 4 November 2026, and is recorded in the repository by a commit. Any later change would have been entered in its change log, with date and reason, before the affected result was computed. A few implementation details that the protocol left open were logged before the first image-level result. The words "fixed in advance and recorded in the repository" are used deliberately: the protocol was not registered with any external body.
+
+Selection steps (the INLP stopping check, the regularisation constants and the candidate band) use the validation split only. The test split is scored once per analysis, in a logged order, and Montgomery is scored in exactly two analyses ([[tab:accesslog]]). Montgomery is not untouched: it had already been evaluated for runs 1 to 5, and run 2 was started after the external results of run 1 were known. It was never used for training or for selecting the served model. No p-values are computed. With 13 variants, six bands, five folds and up to 20 iterations, each with several intervals, about one interval in twenty can miss the true value by chance. A statement about a single band, fold or iteration is therefore made only if its interval excludes the reference value and the same pattern appears in neighbouring bands or iterations or in the secondary extractor. Otherwise the result is reported as not distinguishable.
+
+Table: Order in which the source-information analyses read the test split and the Montgomery cohort. All analyses ran on 4 November 2026; dates, code commits and output files are in the access log of the protocol. {#tab:accesslog}
+
+| Order | Analysis | Splits scored | Montgomery |
+|---|---|---|---|
+| 1 | Spectral map, ImageNet features | Validation, then test | Not used |
+| 2 | Spectral map, trained backbone | Test | Not used |
+| 3 | Spectral map, no-filter cache | Test | Not used |
+| 4 | INLP and LEACE | Validation, then test | Once |
+| 5 | Leave-one-source-out | Validation (constant), then test | Once |
+| 6 | Band-stop screening | Validation (decision), then test (exploratory) | Not used |
+| 7 | Go/no-go decision | Validation numbers only | Not used |
+
 ## Technology stack
 
 [[tab:stack]] lists the tools used.
