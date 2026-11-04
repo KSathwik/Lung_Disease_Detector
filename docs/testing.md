@@ -8,12 +8,12 @@ cd frontend && CI=true npm run build
 
 CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs the same commands. **CI has not run yet**, because the branch has not been pushed.
 
-## Results on branch `research/lungai-clean-baseline` (2026-11-02, Windows 11, Python 3.12.4, TF 2.16.1, Node 18)
+## Results on branch `research/lungai-clean-baseline` / `main` (2026-11-04, Windows 11, Python 3.12, TF 2.16.1; CI on Node 18)
 
 | Suite | Result |
 |---|---|
-| `python -m pytest` (tests/ + backend/tests) | **128 passed, 2 skipped** |
-| Frontend Jest (`errors`, `prediction`, `metrics`) | **18 passed** |
+| `python -m pytest` (tests/ + backend/tests, incl. `tests/ml/test_novelty*.py`) | **173 passed, 1 skipped** |
+| Frontend Jest (`errors`, `prediction`, `metrics`) | **19 passed** |
 | Frontend production build (`CI=true`, warnings are errors) | **Compiled successfully** |
 | `python -m lungai.data.validate` | Runs; overall **FAIL**. This is the expected result: it detects the known V5 patient leakage. Image checks are BLOCKED |
 | `python -m lungai.evaluation.historical` | Runs; 5/5 recorded runs consistent |
