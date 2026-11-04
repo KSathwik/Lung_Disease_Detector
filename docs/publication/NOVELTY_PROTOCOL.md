@@ -244,7 +244,7 @@ After this file is committed, any change to a setting, threshold, variant list, 
 
 | Date | Change | Reason | Affected results computed before the change? | Approved |
 |---|---|---|---|---|
-| 2026-11-03 | Draft committed as `e3e1aa1` (2026-11-04 ~05:50), labelled not approved | - | none (no novelty result existed) | not approved |
+| 2026-11-03 | Draft committed as `e3e1aa1` (2026-11-04 05:14 +0530), labelled not approved | - | none (no novelty result existed) | not approved |
 | 2026-11-04 | Protocol approved unchanged; scope C1 + C3 + C4 + C2-lite, C2 only by the section 10 rule; journal choice left open | Student's reply in chat to the request for approval: "Proceed with your findings" | none (no novelty result existed; `artifacts/novelty/` absent) | student, in chat |
 | 2026-11-04 | Approval commit: `f427c04` (pushed to `research/lungai-clean-baseline`); hash entered in the following commit because a commit cannot contain its own hash | - | none | - |
 | 2026-11-04 | Implementation clarifications where this protocol is silent (no setting changed): (1) feature cache stored as one file per variant and set, same rows as section 7; (2) F1_ws scores only images of qualifying cells, so cohen Normal/TB images are not scored; (3) C3: ties in C go to the smaller C; (4) C4: the in-distribution reference head chooses C on validation images of all six sources; (5) C4: a class present in validation with no training images stops the run (cannot occur with the section 3.2 counts); (6) C4 binary view: P(abnormal) of exactly 0.5 counts as abnormal; (7) section 10 criterion 3 states no interval condition, so point estimates are used. Also: matched-energy q pools the three channels weighted by the smooth mask; the control mask is 0/1; the INLP stopping check uses the same fit whose row space is removed | Code written in `lungai/novelty/` (174 tests pass) before any real-image result | none (no novelty result existed; `artifacts/novelty/` absent) | logged before results; acknowledged by the student in chat on 2026-11-04 ("Proceed"), before any result |
@@ -253,4 +253,11 @@ Access log (appended as steps complete): step number, date and time, code commit
 
 | Step | Date/time | Code commit | Output | Remarks |
 |---|---|---|---|---|
-| (none yet) | | | | |
+| 0 | 2026-11-04 02:46 UTC (timing file); feature cache finished before 04:39 UTC | `a3827d7` | `artifacts/novelty/timing.json`, `features_*.npy` | Timing on 200 images and feature cache; no metric computed. |
+| 1 | 2026-11-04 04:39-04:40 UTC (val, then test; access marker 04:40:19) | `c60e0c7` | `artifacts/novelty/c1_spectral_map.json` | C1-main, ImageNet, main cache; val written first, then test; completed. |
+| 2 | 2026-11-04 05:08 UTC (access marker 05:08:28) | `d3a6788` | `artifacts/novelty/c1_spectral_map.json` | C1-served (run-2 backbone, train and test); completed. |
+| 3 | 2026-11-04 05:36 UTC (access marker 05:36:51) | `d3a6788` | `artifacts/novelty/c1_spectral_map.json` | C1-nofilter (ImageNet, no-filter cache); completed. |
+| 4 | 2026-11-04 05:37-05:49 UTC (test marker 05:46:47; Montgomery marker 05:49:05) | `d3a6788` | `artifacts/novelty/c3_inlp.json` | C3 INLP val curve, then test table, LEACE check, Montgomery once (k = 0 and k*, both extractors). Both extractors stopped by the iteration cap (k* = 20), not by the 0.2167 rule. |
+| 5 | 2026-11-04 05:49-05:54 UTC (main marker 05:49:08; Montgomery marker 05:54:42) | `d3a6788` | `artifacts/novelty/c4_loso.json` | C4 LOSO ImageNet and trained backbone, Montgomery once (both extractors); completed. |
+| 6 | 2026-11-04 ~05:55-06:15 UTC (test marker 06:15:40) | `d3a6788` | `artifacts/novelty/c2_decision.json` | C2-lite: `--part select` gave b* = F (no band satisfies criterion 1; control not run, per section 9); train400 features for `full` and `stop_F`; val, then test (exploratory), once. |
+| 7 | 2026-11-04 ~06:16 UTC | `d3a6788` | `artifacts/novelty/c2_decision.json` | C2 go/no-go from validation numbers: NO-GO (criteria 1, 2 and 3 do not hold; criterion 4 requires student approval). C2 training not started. |

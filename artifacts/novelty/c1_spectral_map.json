@@ -1,0 +1,3193 @@
+{
+  "protocol": "docs/publication/NOVELTY_PROTOCOL.md",
+  "timing": {
+    "images": 200,
+    "extractor": "imagenet",
+    "variant": "stop_C",
+    "batch": 16,
+    "seconds_per_image": 0.11337015986442565,
+    "projected_hours": {
+      "c3c4": 0.99,
+      "c1-main": 1.64,
+      "c1-served": 0.66,
+      "c1-nofilter": 0.66,
+      "c2-lite": 0.27,
+      "c2-control": 0.28
+    },
+    "note": "timing does not change any setting (protocol 4.2)",
+    "code_commit": "a3827d769887099ca595cd91210916df4b542589",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "a3827d769887099ca595cd91210916df4b542589",
+    "generated_at": "2026-11-04T02:46:57+00:00"
+  },
+  "stages": {
+    "c1-main": {
+      "val": {
+        "status": "complete",
+        "extractor": "imagenet",
+        "build": "main",
+        "scored_split": "val",
+        "train_set": "train150",
+        "scored_set": "val100",
+        "n_train": 1952,
+        "n_scored": 1019,
+        "train_cells": {
+          "cohen_covid|COVID-19": 150,
+          "cohen_covid|Normal": 11,
+          "cohen_covid|Pneumonia": 133,
+          "cohen_covid|Tuberculosis": 8,
+          "covid_radiography|COVID-19": 150,
+          "kermany|Normal": 150,
+          "kermany|Pneumonia": 150,
+          "nih_cxr14|Normal": 150,
+          "nih_cxr14|Pleural Effusion": 150,
+          "nih_cxr14|Pneumonia": 150,
+          "nih_cxr14|Pulmonary Nodule / Mass": 150,
+          "shenzhen|Normal": 150,
+          "shenzhen|Tuberculosis": 150,
+          "tbx11k|Normal": 150,
+          "tbx11k|Tuberculosis": 150
+        },
+        "scored_cells": {
+          "cohen_covid|COVID-19": 60,
+          "cohen_covid|Normal": 3,
+          "cohen_covid|Pneumonia": 29,
+          "cohen_covid|Tuberculosis": 2,
+          "covid_radiography|COVID-19": 100,
+          "kermany|Normal": 81,
+          "kermany|Pneumonia": 100,
+          "nih_cxr14|Normal": 100,
+          "nih_cxr14|Pleural Effusion": 100,
+          "nih_cxr14|Pneumonia": 49,
+          "nih_cxr14|Pulmonary Nodule / Mass": 100,
+          "shenzhen|Normal": 49,
+          "shenzhen|Tuberculosis": 51,
+          "tbx11k|Normal": 100,
+          "tbx11k|Tuberculosis": 95
+        },
+        "duplicates_train": {
+          "rows_with_shared_hash": 4,
+          "distinct_hashes_shared": 2,
+          "by_source": {
+            "kermany": 4
+          }
+        },
+        "duplicates_scored": {
+          "rows_with_shared_hash": 0,
+          "distinct_hashes_shared": 0,
+          "by_source": {}
+        },
+        "within_source_cells": {
+          "cohen_covid": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "kermany": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "nih_cxr14": [
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass"
+          ],
+          "shenzhen": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "tbx11k": [
+            "Normal",
+            "Tuberculosis"
+          ]
+        },
+        "within_source_excluded": [
+          "cohen_covid Normal (3 images)",
+          "cohen_covid Tuberculosis (2 images)",
+          "covid_radiography COVID-19 (100 images)"
+        ],
+        "within_normal_sources": [
+          "kermany",
+          "nih_cxr14",
+          "shenzhen",
+          "tbx11k"
+        ],
+        "c_D": 0.45,
+        "chance_source": 0.16666666666666666,
+        "chance_within_normal": 0.25,
+        "probe": "StandardScaler + LogisticRegression(C=1.0, max_iter=2000, class_weight='balanced', random_state=0), lbfgs multinomial",
+        "bootstrap": {
+          "B": 1000,
+          "seed": 1,
+          "unit": "scored image",
+          "interval": "95% percentile"
+        },
+        "uncertainty_note": "Percentile bootstrap over scored images (B = 1000, seed 1, same indices for every variant). Probes are fitted once on the fixed train sample: intervals describe sample variation of the scored images, not training or seed variation.",
+        "variants": {
+          "full": {
+            "BA_src": {
+              "estimate": 0.9330667920000573,
+              "ci95": {
+                "lower": 0.9150601406718141,
+                "upper": 0.9499120289489862,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.7133727096942118,
+              "ci95": {
+                "lower": 0.6816480181810894,
+                "upper": 0.7441379603911775,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.646438495367954,
+              "ci95": {
+                "lower": 0.6161573191312902,
+                "upper": 0.6767583431137006,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9737251196775005,
+              "ci95": {
+                "lower": 0.9541939271523135,
+                "upper": 0.9898155571562584,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9196801504000687,
+              "ci95": {
+                "lower": 0.8980721688061769,
+                "upper": 0.9398944347387834,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4788594721712942,
+              "ci95": {
+                "lower": 0.42117821487470797,
+                "upper": 0.5347962916203227,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.44082067822877447,
+              "ci95": {
+                "lower": 0.3793512838274293,
+                "upper": 0.5053774697697191,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_A": {
+            "BA_src": {
+              "estimate": 0.6859758785891082,
+              "ci95": {
+                "lower": 0.6562500700814936,
+                "upper": 0.7139927739472878,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5950430347543773,
+              "ci95": {
+                "lower": 0.5586122092406149,
+                "upper": 0.625560108958318,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.44834912258990606,
+              "ci95": {
+                "lower": 0.41598619716115226,
+                "upper": 0.4796752867369864,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.825486898463089,
+              "ci95": {
+                "lower": 0.7861232045575944,
+                "upper": 0.861718619310213,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6231710543069299,
+              "ci95": {
+                "lower": 0.5875000840977923,
+                "upper": 0.6567913287367454,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.2637146086443222,
+              "ci95": {
+                "lower": 0.1974767440738453,
+                "upper": 0.31920019810603273,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.35945644566260765,
+              "ci95": {
+                "lower": 0.2965873398443117,
+                "upper": 0.4321982452686168,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_B": {
+            "BA_src": {
+              "estimate": 0.6309506444797034,
+              "ci95": {
+                "lower": 0.6017513728276108,
+                "upper": 0.6630623198456184,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.565845316312356,
+              "ci95": {
+                "lower": 0.5281234059781689,
+                "upper": 0.5978459348484325,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4274441244199881,
+              "ci95": {
+                "lower": 0.3943759954050283,
+                "upper": 0.45669315007037414,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.7506916099773243,
+              "ci95": {
+                "lower": 0.7027980439203423,
+                "upper": 0.7984821270232701,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.557140773375644,
+              "ci95": {
+                "lower": 0.522101647393133,
+                "upper": 0.5956747838147421,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.21062784784064725,
+              "ci95": {
+                "lower": 0.14204255632394333,
+                "upper": 0.2688107906335137,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3465129255349968,
+              "ci95": {
+                "lower": 0.28166904200361487,
+                "upper": 0.4275704969729005,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_C": {
+            "BA_src": {
+              "estimate": 0.7051290121868489,
+              "ci95": {
+                "lower": 0.676721093950677,
+                "upper": 0.7331250990597281,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5687150804295211,
+              "ci95": {
+                "lower": 0.5326144777555415,
+                "upper": 0.5987176372653341,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4457994824121985,
+              "ci95": {
+                "lower": 0.4133592635769185,
+                "upper": 0.4758652405926557,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8433169564121945,
+              "ci95": {
+                "lower": 0.8045574312187727,
+                "upper": 0.8778826757549931,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6461548146242186,
+              "ci95": {
+                "lower": 0.6120653127408124,
+                "upper": 0.6797501188716738,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.21584560078094747,
+              "ci95": {
+                "lower": 0.1502081413737118,
+                "upper": 0.2703957041187893,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.43030921384327114,
+              "ci95": {
+                "lower": 0.3668988911442297,
+                "upper": 0.5027375579220933,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_D": {
+            "BA_src": {
+              "estimate": 0.791405418160691,
+              "ci95": {
+                "lower": 0.7653798259529953,
+                "upper": 0.8166071956194371,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6480177568224468,
+              "ci95": {
+                "lower": 0.6140561953282556,
+                "upper": 0.6798653095200089,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5151025089849203,
+              "ci95": {
+                "lower": 0.4847400519895948,
+                "upper": 0.5471615766044496,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9098481985386748,
+              "ci95": {
+                "lower": 0.8782843315275242,
+                "upper": 0.9415146037104061,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.7496865017928293,
+              "ci95": {
+                "lower": 0.7184557911435943,
+                "upper": 0.7799286347433244,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.36003228513172136,
+              "ci95": {
+                "lower": 0.29828399150591933,
+                "upper": 0.41793692640001606,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3896542166611079,
+              "ci95": {
+                "lower": 0.3302955364767746,
+                "upper": 0.4551534144259587,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_E": {
+            "BA_src": {
+              "estimate": 0.9082553342079662,
+              "ci95": {
+                "lower": 0.8864438343581292,
+                "upper": 0.9298747623723497,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6760792511137432,
+              "ci95": {
+                "lower": 0.6410792929351808,
+                "upper": 0.7066258721681595,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5741448788597386,
+              "ci95": {
+                "lower": 0.5433864133452245,
+                "upper": 0.6054126293303038,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9529346182917612,
+              "ci95": {
+                "lower": 0.924961251138844,
+                "upper": 0.9747183344152389,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8899064010495594,
+              "ci95": {
+                "lower": 0.863732601229755,
+                "upper": 0.9158497148468197,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.41105318384316947,
+              "ci95": {
+                "lower": 0.3474168962457833,
+                "upper": 0.4665924948511991,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.47885321720638996,
+              "ci95": {
+                "lower": 0.41606552687114806,
+                "upper": 0.5492632253267287,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_F": {
+            "BA_src": {
+              "estimate": 0.9519837401714101,
+              "ci95": {
+                "lower": 0.937192154053152,
+                "upper": 0.966314582426166,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6630246862454587,
+              "ci95": {
+                "lower": 0.6271201661252164,
+                "upper": 0.6948185727782615,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6013817519115748,
+              "ci95": {
+                "lower": 0.5714471192451547,
+                "upper": 0.6309820792369428,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9763271604938272,
+              "ci95": {
+                "lower": 0.9603986588411718,
+                "upper": 0.9896945809748567,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9423804882056921,
+              "ci95": {
+                "lower": 0.9246305848637825,
+                "upper": 0.9595774989113991,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.38731761135537945,
+              "ci95": {
+                "lower": 0.32203666568221145,
+                "upper": 0.4451246777786573,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5550628768503126,
+              "ci95": {
+                "lower": 0.49614499056376204,
+                "upper": 0.6223980058713838,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_A": {
+            "BA_src": {
+              "estimate": 0.9362167077873762,
+              "ci95": {
+                "lower": 0.9188934344109919,
+                "upper": 0.9530852866556164,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6890678977129866,
+              "ci95": {
+                "lower": 0.6569637003121535,
+                "upper": 0.7182439311495744,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6204577676214342,
+              "ci95": {
+                "lower": 0.5912900521426668,
+                "upper": 0.6506286887366434,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9718115394305871,
+              "ci95": {
+                "lower": 0.9517463550629173,
+                "upper": 0.9880952380952381,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9234600493448515,
+              "ci95": {
+                "lower": 0.9026721212931902,
+                "upper": 0.9437023439867396,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4346689049327028,
+              "ci95": {
+                "lower": 0.3762976369311881,
+                "upper": 0.48771623845377154,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.48879114441214866,
+              "ci95": {
+                "lower": 0.43287754332070205,
+                "upper": 0.5532226517078023,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_B": {
+            "BA_src": {
+              "estimate": 0.9432735839617111,
+              "ci95": {
+                "lower": 0.9253341599731791,
+                "upper": 0.9599488958845416,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6875097191455521,
+              "ci95": {
+                "lower": 0.6550199697502354,
+                "upper": 0.7170676307120604,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6367870385614004,
+              "ci95": {
+                "lower": 0.6069719382172493,
+                "upper": 0.6660017440549288,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9737251196775008,
+              "ci95": {
+                "lower": 0.9550762514064298,
+                "upper": 0.9890903742716272,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9319283007540533,
+              "ci95": {
+                "lower": 0.9104009919678149,
+                "upper": 0.9519386750614499,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.43183585299191296,
+              "ci95": {
+                "lower": 0.3727635813640643,
+                "upper": 0.4855775103855643,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5000924477621403,
+              "ci95": {
+                "lower": 0.44189339253148985,
+                "upper": 0.5645729176126332,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_C": {
+            "BA_src": {
+              "estimate": 0.9319119797767619,
+              "ci95": {
+                "lower": 0.9130431913998477,
+                "upper": 0.9508941320501869,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.7289522978645395,
+              "ci95": {
+                "lower": 0.6992064969491665,
+                "upper": 0.7589743447882042,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6506387449430036,
+              "ci95": {
+                "lower": 0.6223502072317806,
+                "upper": 0.6785500026224031,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9807407407407407,
+              "ci95": {
+                "lower": 0.964452474198511,
+                "upper": 0.9942531279108675,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9182943757321143,
+              "ci95": {
+                "lower": 0.8956518296798173,
+                "upper": 0.9410729584602243,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.5071859961173445,
+              "ci95": {
+                "lower": 0.45310272172575716,
+                "upper": 0.5617715359785531,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.41110837961476976,
+              "ci95": {
+                "lower": 0.3494251190191646,
+                "upper": 0.4707852104544831,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_D": {
+            "BA_src": {
+              "estimate": 0.9379519735031545,
+              "ci95": {
+                "lower": 0.9195053790833942,
+                "upper": 0.9543286060264409,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6915650826073195,
+              "ci95": {
+                "lower": 0.6594570761453783,
+                "upper": 0.7236254555603789,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6019194858651616,
+              "ci95": {
+                "lower": 0.5726177665962775,
+                "upper": 0.6310868930003418,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9706386999244142,
+              "ci95": {
+                "lower": 0.9498312314469953,
+                "upper": 0.987071563333347,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9255423682037854,
+              "ci95": {
+                "lower": 0.9034064549000731,
+                "upper": 0.9451943272317291,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4392092411042173,
+              "ci95": {
+                "lower": 0.3808310475370515,
+                "upper": 0.4975008282915981,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.48633312709956816,
+              "ci95": {
+                "lower": 0.4238848925588621,
+                "upper": 0.5462613938661309,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_E": {
+            "BA_src": {
+              "estimate": 0.9387212042723854,
+              "ci95": {
+                "lower": 0.9209773309675208,
+                "upper": 0.9551234349946146,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6983339361055181,
+              "ci95": {
+                "lower": 0.6643215571907202,
+                "upper": 0.7300468125488992,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6227345909948022,
+              "ci95": {
+                "lower": 0.5931019340998709,
+                "upper": 0.6526991745621482,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9787251196775006,
+              "ci95": {
+                "lower": 0.9606580632486615,
+                "upper": 0.9933012247687132,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9264654451268625,
+              "ci95": {
+                "lower": 0.905172797161025,
+                "upper": 0.9461481219935375,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4515162474645783,
+              "ci95": {
+                "lower": 0.389675558528582,
+                "upper": 0.5091760228161804,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.47494919766228416,
+              "ci95": {
+                "lower": 0.4156199549438752,
+                "upper": 0.5377583094245462,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_F": {
+            "BA_src": {
+              "estimate": 0.9046279281310081,
+              "ci95": {
+                "lower": 0.8830504378212511,
+                "upper": 0.9256590130426087,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.705456333751919,
+              "ci95": {
+                "lower": 0.6730653858807168,
+                "upper": 0.7358755545997016,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6295771335145631,
+              "ci95": {
+                "lower": 0.5978861900843625,
+                "upper": 0.6584072188602385,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9655366591080876,
+              "ci95": {
+                "lower": 0.9397107599714859,
+                "upper": 0.9857843477788963,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8855535137572097,
+              "ci95": {
+                "lower": 0.8596605253855014,
+                "upper": 0.9107908156511305,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4644660613671253,
+              "ci95": {
+                "lower": 0.4055734288740305,
+                "upper": 0.519773735635821,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.4210874523900844,
+              "ci95": {
+                "lower": 0.35786626528220444,
+                "upper": 0.4886252828627946,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_stop": {
+          "A": {
+            "dS": {
+              "estimate": -0.0031499157873189354,
+              "ci95": {
+                "lower": -0.021202839061960767,
+                "upper": 0.015231548988296211,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.02430481198122525,
+              "ci95": {
+                "lower": -0.005027717356605046,
+                "upper": 0.05338691247536578,
+                "resamples": 1000
+              }
+            }
+          },
+          "B": {
+            "dS": {
+              "estimate": -0.01020679196165386,
+              "ci95": {
+                "lower": -0.026010572024769973,
+                "upper": 0.005399456694088579,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.025862990548659703,
+              "ci95": {
+                "lower": -0.008506433177059758,
+                "upper": 0.05829164640355909,
+                "resamples": 1000
+              }
+            }
+          },
+          "C": {
+            "dS": {
+              "estimate": 0.0011548122232953872,
+              "ci95": {
+                "lower": -0.01714259322197536,
+                "upper": 0.02035195824216252,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": -0.015579588170327674,
+              "ci95": {
+                "lower": -0.049893318035997156,
+                "upper": 0.01793454498468362,
+                "resamples": 1000
+              }
+            }
+          },
+          "D": {
+            "dS": {
+              "estimate": -0.004885181503097247,
+              "ci95": {
+                "lower": -0.021518028071508835,
+                "upper": 0.010498062028124595,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.021807627086892323,
+              "ci95": {
+                "lower": -0.013825137386940665,
+                "upper": 0.05509835129574221,
+                "resamples": 1000
+              }
+            }
+          },
+          "E": {
+            "dS": {
+              "estimate": -0.005654412272328102,
+              "ci95": {
+                "lower": -0.021482285983121574,
+                "upper": 0.010912361819783216,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.015038773588693766,
+              "ci95": {
+                "lower": -0.020727259101568744,
+                "upper": 0.052321299380422986,
+                "resamples": 1000
+              }
+            }
+          },
+          "F": {
+            "dS": {
+              "estimate": 0.028438863869049147,
+              "ci95": {
+                "lower": 0.01130097917376933,
+                "upper": 0.04641824931340206,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.007916375942292886,
+              "ci95": {
+                "lower": -0.025507720928536058,
+                "upper": 0.04085974550795709,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_pass_retention": {
+          "A": {
+            "S": 0.6775954162279627,
+            "D": 0.5507139859812319
+          },
+          "B": {
+            "S": 0.605798410603168,
+            "D": 0.4398531512504006
+          },
+          "C": {
+            "S": 0.7025864528479122,
+            "D": 0.45074936035459
+          },
+          "D": {
+            "S": 0.8151600330470428,
+            "D": 0.7518537400946163
+          },
+          "E": {
+            "S": 0.9676259737284126,
+            "D": 0.8584004446635034
+          },
+          "F": {
+            "S": 1.024682861531532,
+            "D": 0.8088335594556871
+          }
+        },
+        "hypotheses": {
+          "H1a_full_BA_src_above_chance": {
+            "point": true,
+            "ci_lower_above_chance": true
+          },
+          "H1c_BA_norm_above_0.25_in_a_pass_variant": {
+            "point": true,
+            "variants_above": [
+              "pass_A",
+              "pass_B",
+              "pass_C",
+              "pass_D",
+              "pass_E",
+              "pass_F"
+            ]
+          },
+          "H1b": "descriptive: band profiles of BA_src and F1_ws are reported; no band was predicted"
+        },
+        "code_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "code_uncommitted_changes_in_lungai_novelty": false,
+        "protocol_commit": "f427c04",
+        "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "generated_at": "2026-11-04T04:40:17+00:00"
+      },
+      "test": {
+        "status": "complete",
+        "extractor": "imagenet",
+        "build": "main",
+        "scored_split": "test",
+        "train_set": "train150",
+        "scored_set": "test100",
+        "n_train": 1952,
+        "n_scored": 1033,
+        "train_cells": {
+          "cohen_covid|COVID-19": 150,
+          "cohen_covid|Normal": 11,
+          "cohen_covid|Pneumonia": 133,
+          "cohen_covid|Tuberculosis": 8,
+          "covid_radiography|COVID-19": 150,
+          "kermany|Normal": 150,
+          "kermany|Pneumonia": 150,
+          "nih_cxr14|Normal": 150,
+          "nih_cxr14|Pleural Effusion": 150,
+          "nih_cxr14|Pneumonia": 150,
+          "nih_cxr14|Pulmonary Nodule / Mass": 150,
+          "shenzhen|Normal": 150,
+          "shenzhen|Tuberculosis": 150,
+          "tbx11k|Normal": 150,
+          "tbx11k|Tuberculosis": 150
+        },
+        "scored_cells": {
+          "cohen_covid|COVID-19": 77,
+          "cohen_covid|Normal": 4,
+          "cohen_covid|Pneumonia": 29,
+          "cohen_covid|Tuberculosis": 1,
+          "covid_radiography|COVID-19": 100,
+          "kermany|Normal": 81,
+          "kermany|Pneumonia": 100,
+          "nih_cxr14|Normal": 100,
+          "nih_cxr14|Pleural Effusion": 100,
+          "nih_cxr14|Pneumonia": 48,
+          "nih_cxr14|Pulmonary Nodule / Mass": 100,
+          "shenzhen|Normal": 49,
+          "shenzhen|Tuberculosis": 50,
+          "tbx11k|Normal": 100,
+          "tbx11k|Tuberculosis": 94
+        },
+        "duplicates_train": {
+          "rows_with_shared_hash": 4,
+          "distinct_hashes_shared": 2,
+          "by_source": {
+            "kermany": 4
+          }
+        },
+        "duplicates_scored": {
+          "rows_with_shared_hash": 0,
+          "distinct_hashes_shared": 0,
+          "by_source": {}
+        },
+        "within_source_cells": {
+          "cohen_covid": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "kermany": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "nih_cxr14": [
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass"
+          ],
+          "shenzhen": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "tbx11k": [
+            "Normal",
+            "Tuberculosis"
+          ]
+        },
+        "within_source_excluded": [
+          "cohen_covid Normal (4 images)",
+          "cohen_covid Tuberculosis (1 images)",
+          "covid_radiography COVID-19 (100 images)"
+        ],
+        "within_normal_sources": [
+          "kermany",
+          "nih_cxr14",
+          "shenzhen",
+          "tbx11k"
+        ],
+        "c_D": 0.45,
+        "chance_source": 0.16666666666666666,
+        "chance_within_normal": 0.25,
+        "probe": "StandardScaler + LogisticRegression(C=1.0, max_iter=2000, class_weight='balanced', random_state=0), lbfgs multinomial",
+        "bootstrap": {
+          "B": 1000,
+          "seed": 1,
+          "unit": "scored image",
+          "interval": "95% percentile"
+        },
+        "uncertainty_note": "Percentile bootstrap over scored images (B = 1000, seed 1, same indices for every variant). Probes are fitted once on the fixed train sample: intervals describe sample variation of the scored images, not training or seed variation.",
+        "variants": {
+          "full": {
+            "BA_src": {
+              "estimate": 0.937811343016743,
+              "ci95": {
+                "lower": 0.920901240252714,
+                "upper": 0.9539899936455686,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.686300909378352,
+              "ci95": {
+                "lower": 0.6558024914767754,
+                "upper": 0.7134826237625056,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6211874427894714,
+              "ci95": {
+                "lower": 0.5909715348459068,
+                "upper": 0.6506616816354459,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9650522801713278,
+              "ci95": {
+                "lower": 0.9441501877439352,
+                "upper": 0.9831537428089039,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9253736116200916,
+              "ci95": {
+                "lower": 0.9050814883032569,
+                "upper": 0.9447879923746823,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.42963801705154897,
+              "ci95": {
+                "lower": 0.3741863481395916,
+                "upper": 0.47905931593182827,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.4957355945685426,
+              "ci95": {
+                "lower": 0.4439099336149763,
+                "upper": 0.5543571512915204,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_A": {
+            "BA_src": {
+              "estimate": 0.6439008322288102,
+              "ci95": {
+                "lower": 0.6168536388552511,
+                "upper": 0.6729961307227913,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5784743994067508,
+              "ci95": {
+                "lower": 0.5419494642815862,
+                "upper": 0.6111290871759565,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.45390463613602083,
+              "ci95": {
+                "lower": 0.42225195849743163,
+                "upper": 0.4829251329627999,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.80890589569161,
+              "ci95": {
+                "lower": 0.7662108400678171,
+                "upper": 0.8528735100885894,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.5726809986745723,
+              "ci95": {
+                "lower": 0.5402243666263014,
+                "upper": 0.6075953568673496,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.23358981710318327,
+              "ci95": {
+                "lower": 0.1671808441483386,
+                "upper": 0.2929619766835573,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.33909118157138907,
+              "ci95": {
+                "lower": 0.2817098260798912,
+                "upper": 0.4133327391093635,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_B": {
+            "BA_src": {
+              "estimate": 0.6042234359051701,
+              "ci95": {
+                "lower": 0.5738827388940752,
+                "upper": 0.6342544359320376,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5292791873763865,
+              "ci95": {
+                "lower": 0.4920025783360129,
+                "upper": 0.5584724594326289,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4122307748366876,
+              "ci95": {
+                "lower": 0.3803632920130805,
+                "upper": 0.4415749291807422,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.7727330561854372,
+              "ci95": {
+                "lower": 0.7291968335184426,
+                "upper": 0.8145514033755521,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.5250681230862042,
+              "ci95": {
+                "lower": 0.48865928667289016,
+                "upper": 0.5611053231184451,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.14414397704797535,
+              "ci95": {
+                "lower": 0.07636832424729612,
+                "upper": 0.1972226535138708,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3809241460382289,
+              "ci95": {
+                "lower": 0.3179230375463807,
+                "upper": 0.4580072153758578,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_C": {
+            "BA_src": {
+              "estimate": 0.6890971566620832,
+              "ci95": {
+                "lower": 0.6616339360824345,
+                "upper": 0.7188229566898268,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5637223405297319,
+              "ci95": {
+                "lower": 0.5278312431989705,
+                "upper": 0.595082410007525,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.44341448275118894,
+              "ci95": {
+                "lower": 0.41057602506972896,
+                "upper": 0.4734893630508573,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8375264550264551,
+              "ci95": {
+                "lower": 0.8013431962441034,
+                "upper": 0.8757663423407414,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6269165879944998,
+              "ci95": {
+                "lower": 0.5939607232989214,
+                "upper": 0.6625875480277922,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.20676789187223982,
+              "ci95": {
+                "lower": 0.1415113512708553,
+                "upper": 0.2637862000136818,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.42014869612225997,
+              "ci95": {
+                "lower": 0.3599111027884996,
+                "upper": 0.49047133966396217,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_D": {
+            "BA_src": {
+              "estimate": 0.7457410833916422,
+              "ci95": {
+                "lower": 0.7177883357955406,
+                "upper": 0.7713124318703478,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6034147483744101,
+              "ci95": {
+                "lower": 0.5707891687242117,
+                "upper": 0.6336507429792774,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.494199253412412,
+              "ci95": {
+                "lower": 0.46203889042392965,
+                "upper": 0.5244630826489707,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8936753590325018,
+              "ci95": {
+                "lower": 0.8616955609494091,
+                "upper": 0.9235935283924325,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6948893000699707,
+              "ci95": {
+                "lower": 0.6613460029546487,
+                "upper": 0.7255749182444174,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.27893590613529107,
+              "ci95": {
+                "lower": 0.21961667040765764,
+                "upper": 0.3339104417805042,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.41595339393467967,
+              "ci95": {
+                "lower": 0.35360440370008805,
+                "upper": 0.4807531019589149,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_E": {
+            "BA_src": {
+              "estimate": 0.8995943293446991,
+              "ci95": {
+                "lower": 0.8793482866883335,
+                "upper": 0.9187339840895092,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6610407490837595,
+              "ci95": {
+                "lower": 0.6266783011492085,
+                "upper": 0.6898527544405766,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5791687822620232,
+              "ci95": {
+                "lower": 0.5482235108902483,
+                "upper": 0.6093395090193812,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9600522801713278,
+              "ci95": {
+                "lower": 0.9367793988522239,
+                "upper": 0.9793623153449883,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8795131952136389,
+              "ci95": {
+                "lower": 0.8552179440260002,
+                "upper": 0.902480780907411,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.38371045287956274,
+              "ci95": {
+                "lower": 0.3212332748167428,
+                "upper": 0.4360959171646846,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.4958027423340762,
+              "ci95": {
+                "lower": 0.43769954675931055,
+                "upper": 0.5597369080381499,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_F": {
+            "BA_src": {
+              "estimate": 0.9342870059707828,
+              "ci95": {
+                "lower": 0.9192580784967189,
+                "upper": 0.9503634028395498,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6752712160428571,
+              "ci95": {
+                "lower": 0.6434846725769247,
+                "upper": 0.7021127046274505,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6090042928087099,
+              "ci95": {
+                "lower": 0.5803104840780379,
+                "upper": 0.6367433649278376,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9549502393550012,
+              "ci95": {
+                "lower": 0.9304073268078973,
+                "upper": 0.9765651611807064,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9211444071649394,
+              "ci95": {
+                "lower": 0.9031096941960626,
+                "upper": 0.9404360834074598,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4095840291688311,
+              "ci95": {
+                "lower": 0.35179031377622655,
+                "upper": 0.4583867356862734,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5115603779961083,
+              "ci95": {
+                "lower": 0.461989082552791,
+                "upper": 0.5708913882868001,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_A": {
+            "BA_src": {
+              "estimate": 0.9349754692992481,
+              "ci95": {
+                "lower": 0.9182821217988634,
+                "upper": 0.9508147208678582,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6997759266015235,
+              "ci95": {
+                "lower": 0.6716799762372503,
+                "upper": 0.7291561255253632,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6391017039491066,
+              "ci95": {
+                "lower": 0.609189503094495,
+                "upper": 0.6688516844576402,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9776543209876543,
+              "ci95": {
+                "lower": 0.9623999139789694,
+                "upper": 0.9915008445945946,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9219705631590978,
+              "ci95": {
+                "lower": 0.901938546158636,
+                "upper": 0.9409776650414299,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.45413804836640637,
+              "ci95": {
+                "lower": 0.40305450224954587,
+                "upper": 0.5075565918642968,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.4678325147926914,
+              "ci95": {
+                "lower": 0.4137159802181533,
+                "upper": 0.5203261608916795,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_B": {
+            "BA_src": {
+              "estimate": 0.9461915092374502,
+              "ci95": {
+                "lower": 0.9314415585098837,
+                "upper": 0.9610894619701257,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6847902846180668,
+              "ci95": {
+                "lower": 0.6526548051897937,
+                "upper": 0.7135086511215152,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6063438035779614,
+              "ci95": {
+                "lower": 0.5760053242712967,
+                "upper": 0.6366106702190324,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9751543209876543,
+              "ci95": {
+                "lower": 0.958662037037037,
+                "upper": 0.9897860415937828,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9354298110849403,
+              "ci95": {
+                "lower": 0.9177298702118604,
+                "upper": 0.9533073543641509,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4268914265783032,
+              "ci95": {
+                "lower": 0.36846328216326124,
+                "upper": 0.47910663840275475,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5085383845066371,
+              "ci95": {
+                "lower": 0.4534781074027476,
+                "upper": 0.5726836269004478,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_C": {
+            "BA_src": {
+              "estimate": 0.9495363287610412,
+              "ci95": {
+                "lower": 0.9340706663181478,
+                "upper": 0.9640514559118195,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6760527889334453,
+              "ci95": {
+                "lower": 0.6446069320119335,
+                "upper": 0.7022530509158291,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.60552047201059,
+              "ci95": {
+                "lower": 0.5752474183954157,
+                "upper": 0.6341332575678583,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9812251196775006,
+              "ci95": {
+                "lower": 0.9636266093363925,
+                "upper": 0.9947375521913255,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9394435945132494,
+              "ci95": {
+                "lower": 0.9208847995817774,
+                "upper": 0.9568617470941834,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.41100507078808235,
+              "ci95": {
+                "lower": 0.3538307854762428,
+                "upper": 0.4586419107560528,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5284385237251671,
+              "ci95": {
+                "lower": 0.481435772294068,
+                "upper": 0.5839349627047459,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_D": {
+            "BA_src": {
+              "estimate": 0.9550725091333808,
+              "ci95": {
+                "lower": 0.9404362300509135,
+                "upper": 0.9683617184725501,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6698775324245665,
+              "ci95": {
+                "lower": 0.6415799074205678,
+                "upper": 0.6964564978407886,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.595927695489871,
+              "ci95": {
+                "lower": 0.566593265951147,
+                "upper": 0.6258539263744466,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9749502393550012,
+              "ci95": {
+                "lower": 0.9546171951880992,
+                "upper": 0.9914361869195147,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.946087010960057,
+              "ci95": {
+                "lower": 0.9285234760610962,
+                "upper": 0.9620340621670602,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.3997773316810299,
+              "ci95": {
+                "lower": 0.3483271044010324,
+                "upper": 0.44810272334688817,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5463096792790271,
+              "ci95": {
+                "lower": 0.4970515350636114,
+                "upper": 0.6014943665209977,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_E": {
+            "BA_src": {
+              "estimate": 0.9411576038587173,
+              "ci95": {
+                "lower": 0.9265981090332901,
+                "upper": 0.9560569252950037,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6651575101929751,
+              "ci95": {
+                "lower": 0.6362837266394604,
+                "upper": 0.6925457155216639,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6110977370973893,
+              "ci95": {
+                "lower": 0.5813278473256674,
+                "upper": 0.6416622161549009,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9682407407407407,
+              "ci95": {
+                "lower": 0.9513617899268227,
+                "upper": 0.9853716974085183,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9293891246304608,
+              "ci95": {
+                "lower": 0.9119177308399482,
+                "upper": 0.9472683103540045,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.39119547307813646,
+              "ci95": {
+                "lower": 0.3386976847990189,
+                "upper": 0.4409922100393887,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5381936515523242,
+              "ci95": {
+                "lower": 0.48864400479971387,
+                "upper": 0.588562463595983,
+                "resamples": 1000
+              }
+            }
+          },
+          "stop_F": {
+            "BA_src": {
+              "estimate": 0.9092466727938581,
+              "ci95": {
+                "lower": 0.8876114065665355,
+                "upper": 0.9287207351090306,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6773081694145283,
+              "ci95": {
+                "lower": 0.6443401989596879,
+                "upper": 0.7078302673531061,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5925151719558686,
+              "ci95": {
+                "lower": 0.5595298410471602,
+                "upper": 0.62174904814007,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9555366591080876,
+              "ci95": {
+                "lower": 0.9312020748031065,
+                "upper": 0.9775092436299333,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8910960073526297,
+              "ci95": {
+                "lower": 0.8651336878798426,
+                "upper": 0.9144648821308368,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.41328758075368777,
+              "ci95": {
+                "lower": 0.35334581629034156,
+                "upper": 0.46878230427837464,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.47780842659894196,
+              "ci95": {
+                "lower": 0.42358446175788067,
+                "upper": 0.5428997474938927,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_stop": {
+          "A": {
+            "dS": {
+              "estimate": 0.00283587371749483,
+              "ci95": {
+                "lower": -0.01319893131815344,
+                "upper": 0.017592539762336185,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": -0.01347501722317157,
+              "ci95": {
+                "lower": -0.04418936914048148,
+                "upper": 0.013933593450432307,
+                "resamples": 1000
+              }
+            }
+          },
+          "B": {
+            "dS": {
+              "estimate": -0.008380166220707252,
+              "ci95": {
+                "lower": -0.02223114732313085,
+                "upper": 0.005624316285839791,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.0015106247602851841,
+              "ci95": {
+                "lower": -0.028284270131012597,
+                "upper": 0.03244100939381697,
+                "resamples": 1000
+              }
+            }
+          },
+          "C": {
+            "dS": {
+              "estimate": -0.011724985744298255,
+              "ci95": {
+                "lower": -0.026996249450868655,
+                "upper": 0.0013207734578851438,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.010248120444906639,
+              "ci95": {
+                "lower": -0.022840846564469604,
+                "upper": 0.0434158762648198,
+                "resamples": 1000
+              }
+            }
+          },
+          "D": {
+            "dS": {
+              "estimate": -0.01726116611663786,
+              "ci95": {
+                "lower": -0.03281127844722413,
+                "upper": -0.0020011157842720045,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.016423376953785485,
+              "ci95": {
+                "lower": -0.011862288838827392,
+                "upper": 0.04591867330550163,
+                "resamples": 1000
+              }
+            }
+          },
+          "E": {
+            "dS": {
+              "estimate": -0.0033462608419743134,
+              "ci95": {
+                "lower": -0.02313237106757716,
+                "upper": 0.014273065402922792,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.021143399185376888,
+              "ci95": {
+                "lower": -0.012744078105163962,
+                "upper": 0.050875336094017884,
+                "resamples": 1000
+              }
+            }
+          },
+          "F": {
+            "dS": {
+              "estimate": 0.02856467022288489,
+              "ci95": {
+                "lower": 0.010059011566540987,
+                "upper": 0.04792902335279451,
+                "resamples": 1000
+              }
+            },
+            "dD": {
+              "estimate": 0.00899273996382366,
+              "ci95": {
+                "lower": -0.021789024153435914,
+                "upper": 0.04067433220301022,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_pass_retention": {
+          "A": {
+            "S": 0.618864630980729,
+            "D": 0.5436898222048088
+          },
+          "B": {
+            "S": 0.5674120338994157,
+            "D": 0.33550098298373027
+          },
+          "C": {
+            "S": 0.6774740279193069,
+            "D": 0.48126069776416297
+          },
+          "D": {
+            "S": 0.7509283724369425,
+            "D": 0.649234693078438
+          },
+          "E": {
+            "S": 0.9504411884772002,
+            "D": 0.8931017220329556
+          },
+          "F": {
+            "S": 0.9954297330266983,
+            "D": 0.9533235256499385
+          }
+        },
+        "hypotheses": {
+          "H1a_full_BA_src_above_chance": {
+            "point": true,
+            "ci_lower_above_chance": true
+          },
+          "H1c_BA_norm_above_0.25_in_a_pass_variant": {
+            "point": true,
+            "variants_above": [
+              "pass_A",
+              "pass_B",
+              "pass_C",
+              "pass_D",
+              "pass_E",
+              "pass_F"
+            ]
+          },
+          "H1b": "descriptive: band profiles of BA_src and F1_ws are reported; no band was predicted"
+        },
+        "code_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "code_uncommitted_changes_in_lungai_novelty": false,
+        "protocol_commit": "f427c04",
+        "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "generated_at": "2026-11-04T04:40:50+00:00"
+      }
+    },
+    "c1-served": {
+      "test": {
+        "status": "complete",
+        "extractor": "served",
+        "build": "main",
+        "scored_split": "test",
+        "train_set": "train150",
+        "scored_set": "test100",
+        "n_train": 1952,
+        "n_scored": 1033,
+        "train_cells": {
+          "cohen_covid|COVID-19": 150,
+          "cohen_covid|Normal": 11,
+          "cohen_covid|Pneumonia": 133,
+          "cohen_covid|Tuberculosis": 8,
+          "covid_radiography|COVID-19": 150,
+          "kermany|Normal": 150,
+          "kermany|Pneumonia": 150,
+          "nih_cxr14|Normal": 150,
+          "nih_cxr14|Pleural Effusion": 150,
+          "nih_cxr14|Pneumonia": 150,
+          "nih_cxr14|Pulmonary Nodule / Mass": 150,
+          "shenzhen|Normal": 150,
+          "shenzhen|Tuberculosis": 150,
+          "tbx11k|Normal": 150,
+          "tbx11k|Tuberculosis": 150
+        },
+        "scored_cells": {
+          "cohen_covid|COVID-19": 77,
+          "cohen_covid|Normal": 4,
+          "cohen_covid|Pneumonia": 29,
+          "cohen_covid|Tuberculosis": 1,
+          "covid_radiography|COVID-19": 100,
+          "kermany|Normal": 81,
+          "kermany|Pneumonia": 100,
+          "nih_cxr14|Normal": 100,
+          "nih_cxr14|Pleural Effusion": 100,
+          "nih_cxr14|Pneumonia": 48,
+          "nih_cxr14|Pulmonary Nodule / Mass": 100,
+          "shenzhen|Normal": 49,
+          "shenzhen|Tuberculosis": 50,
+          "tbx11k|Normal": 100,
+          "tbx11k|Tuberculosis": 94
+        },
+        "duplicates_train": {
+          "rows_with_shared_hash": 4,
+          "distinct_hashes_shared": 2,
+          "by_source": {
+            "kermany": 4
+          }
+        },
+        "duplicates_scored": {
+          "rows_with_shared_hash": 0,
+          "distinct_hashes_shared": 0,
+          "by_source": {}
+        },
+        "within_source_cells": {
+          "cohen_covid": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "kermany": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "nih_cxr14": [
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass"
+          ],
+          "shenzhen": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "tbx11k": [
+            "Normal",
+            "Tuberculosis"
+          ]
+        },
+        "within_source_excluded": [
+          "cohen_covid Normal (4 images)",
+          "cohen_covid Tuberculosis (1 images)",
+          "covid_radiography COVID-19 (100 images)"
+        ],
+        "within_normal_sources": [
+          "kermany",
+          "nih_cxr14",
+          "shenzhen",
+          "tbx11k"
+        ],
+        "c_D": 0.45,
+        "chance_source": 0.16666666666666666,
+        "chance_within_normal": 0.25,
+        "probe": "StandardScaler + LogisticRegression(C=1.0, max_iter=2000, class_weight='balanced', random_state=0), lbfgs multinomial",
+        "bootstrap": {
+          "B": 1000,
+          "seed": 1,
+          "unit": "scored image",
+          "interval": "95% percentile"
+        },
+        "uncertainty_note": "Percentile bootstrap over scored images (B = 1000, seed 1, same indices for every variant). Probes are fitted once on the fixed train sample: intervals describe sample variation of the scored images, not training or seed variation.",
+        "variants": {
+          "full": {
+            "BA_src": {
+              "estimate": 0.9380263571777223,
+              "ci95": {
+                "lower": 0.921619912195106,
+                "upper": 0.9540692523389849,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6970762171006395,
+              "ci95": {
+                "lower": 0.6660772395956556,
+                "upper": 0.7241795562592528,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6249968349032959,
+              "ci95": {
+                "lower": 0.5946453642134919,
+                "upper": 0.6559502844280164,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9675522801713279,
+              "ci95": {
+                "lower": 0.9470437892503211,
+                "upper": 0.9851906419254766,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9256316286132668,
+              "ci95": {
+                "lower": 0.9059438946341273,
+                "upper": 0.9448831028067819,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.4492294856375263,
+              "ci95": {
+                "lower": 0.3928677083557374,
+                "upper": 0.4985082841077323,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.47640214297574046,
+              "ci95": {
+                "lower": 0.42474984578359076,
+                "upper": 0.5365847301944731,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_A": {
+            "BA_src": {
+              "estimate": 0.6580064426842999,
+              "ci95": {
+                "lower": 0.6294308358463476,
+                "upper": 0.6870216319759529,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5882112750226907,
+              "ci95": {
+                "lower": 0.5529199645886076,
+                "upper": 0.6194854784606996,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4675710886696896,
+              "ci95": {
+                "lower": 0.4389207500048968,
+                "upper": 0.4975628472761553,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.7634977324263038,
+              "ci95": {
+                "lower": 0.7160750298961459,
+                "upper": 0.8082153138869278,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.5896077312211598,
+              "ci95": {
+                "lower": 0.5553170030156171,
+                "upper": 0.6244259583711436,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.25129322731398296,
+              "ci95": {
+                "lower": 0.18712720834292282,
+                "upper": 0.30815541538309,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3383145039071769,
+              "ci95": {
+                "lower": 0.2742851414259195,
+                "upper": 0.4146585708555061,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_B": {
+            "BA_src": {
+              "estimate": 0.6087005952257556,
+              "ci95": {
+                "lower": 0.5793207052460903,
+                "upper": 0.6399084742393045,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5591358536281124,
+              "ci95": {
+                "lower": 0.5203697044419939,
+                "upper": 0.5897164908464421,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4290310025694069,
+              "ci95": {
+                "lower": 0.3973826209603274,
+                "upper": 0.45770828768695093,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.7574269337364575,
+              "ci95": {
+                "lower": 0.71111759030292,
+                "upper": 0.8049739179997706,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.5304407142709068,
+              "ci95": {
+                "lower": 0.4951848462953083,
+                "upper": 0.5678901690871655,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.19842882477838605,
+              "ci95": {
+                "lower": 0.12794491716726172,
+                "upper": 0.25402998335716737,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3320118894925207,
+              "ci95": {
+                "lower": 0.2654147194644076,
+                "upper": 0.4100237262096836,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_C": {
+            "BA_src": {
+              "estimate": 0.7050714466691197,
+              "ci95": {
+                "lower": 0.6771907100481603,
+                "upper": 0.7350893542062753,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5913270521621578,
+              "ci95": {
+                "lower": 0.5550915060257156,
+                "upper": 0.6218900548661985,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.45735959629251083,
+              "ci95": {
+                "lower": 0.42588788272510414,
+                "upper": 0.4888511406460169,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8087515747039558,
+              "ci95": {
+                "lower": 0.7668225372138395,
+                "upper": 0.8540210683271586,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6460857360029436,
+              "ci95": {
+                "lower": 0.6126288520577924,
+                "upper": 0.6821072250475304,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.2569582766584686,
+              "ci95": {
+                "lower": 0.19107546550130092,
+                "upper": 0.31252737248399726,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.389127459344475,
+              "ci95": {
+                "lower": 0.33120681755383286,
+                "upper": 0.46311910229779385,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_D": {
+            "BA_src": {
+              "estimate": 0.7429194558952902,
+              "ci95": {
+                "lower": 0.7161400268263788,
+                "upper": 0.7722265147787285,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6104775411525409,
+              "ci95": {
+                "lower": 0.5756683665642988,
+                "upper": 0.6383696363511382,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4880072523430283,
+              "ci95": {
+                "lower": 0.4572000682562455,
+                "upper": 0.516510696882017,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8937773998488284,
+              "ci95": {
+                "lower": 0.8604891378179422,
+                "upper": 0.9230198120915033,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6915033470743482,
+              "ci95": {
+                "lower": 0.6593680321916546,
+                "upper": 0.7266718177344743,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.2917773475500744,
+              "ci95": {
+                "lower": 0.2284879392078158,
+                "upper": 0.3424902479111604,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.39972599952427385,
+              "ci95": {
+                "lower": 0.3450786095976894,
+                "upper": 0.4669448177313881,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_E": {
+            "BA_src": {
+              "estimate": 0.8929947532709375,
+              "ci95": {
+                "lower": 0.8720220074540201,
+                "upper": 0.9121972529480293,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.639810676138574,
+              "ci95": {
+                "lower": 0.606648616561741,
+                "upper": 0.6698856819703523,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5482091576371902,
+              "ci95": {
+                "lower": 0.5180563401526768,
+                "upper": 0.5781024897882309,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9443638196019148,
+              "ci95": {
+                "lower": 0.9167506470203879,
+                "upper": 0.968172398242887,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8715937039251249,
+              "ci95": {
+                "lower": 0.8464264089448241,
+                "upper": 0.8946367035376351,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.3451103202519527,
+              "ci95": {
+                "lower": 0.2848156664758926,
+                "upper": 0.3997921490370041,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5264833836731722,
+              "ci95": {
+                "lower": 0.46769639917130984,
+                "upper": 0.5857952671599072,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_F": {
+            "BA_src": {
+              "estimate": 0.9297346165908071,
+              "ci95": {
+                "lower": 0.9142728004861292,
+                "upper": 0.9462927969368157,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6529113591778185,
+              "ci95": {
+                "lower": 0.6203642729749397,
+                "upper": 0.6822767140315205,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5919767145350231,
+              "ci95": {
+                "lower": 0.5633788201267331,
+                "upper": 0.6200134262646638,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9594658604182413,
+              "ci95": {
+                "lower": 0.9363297403503668,
+                "upper": 0.9792796995180375,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9156815399089686,
+              "ci95": {
+                "lower": 0.897127360583355,
+                "upper": 0.9355513563241787,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.36892974395967,
+              "ci95": {
+                "lower": 0.3097532235907993,
+                "upper": 0.42232129823912795,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5467517959492987,
+              "ci95": {
+                "lower": 0.49205925026025804,
+                "upper": 0.6107043522378972,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_stop": {},
+        "band_pass_retention": {
+          "A": {
+            "S": 0.6369788077623055,
+            "D": 0.5593872070916247
+          },
+          "B": {
+            "S": 0.5730581128321917,
+            "D": 0.4417092624647841
+          },
+          "C": {
+            "S": 0.6979944462041295,
+            "D": 0.571997798171696
+          },
+          "D": {
+            "S": 0.7470610615481265,
+            "D": 0.6495062253894512
+          },
+          "E": {
+            "S": 0.9416204859279727,
+            "D": 0.7682272230243027
+          },
+          "F": {
+            "S": 0.9892504875625254,
+            "D": 0.8212500642875245
+          }
+        },
+        "hypotheses": {
+          "H1a_full_BA_src_above_chance": {
+            "point": true,
+            "ci_lower_above_chance": true
+          },
+          "H1c_BA_norm_above_0.25_in_a_pass_variant": {
+            "point": true,
+            "variants_above": [
+              "pass_A",
+              "pass_B",
+              "pass_C",
+              "pass_D",
+              "pass_E",
+              "pass_F"
+            ]
+          },
+          "H1b": "descriptive: band profiles of BA_src and F1_ws are reported; no band was predicted"
+        },
+        "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+        "code_uncommitted_changes_in_lungai_novelty": false,
+        "protocol_commit": "f427c04",
+        "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "generated_at": "2026-11-04T05:08:49+00:00"
+      }
+    },
+    "c1-nofilter": {
+      "test": {
+        "status": "complete",
+        "extractor": "imagenet",
+        "build": "nofilter",
+        "scored_split": "test",
+        "train_set": "train150",
+        "scored_set": "test100",
+        "n_train": 1952,
+        "n_scored": 1033,
+        "train_cells": {
+          "cohen_covid|COVID-19": 150,
+          "cohen_covid|Normal": 11,
+          "cohen_covid|Pneumonia": 133,
+          "cohen_covid|Tuberculosis": 8,
+          "covid_radiography|COVID-19": 150,
+          "kermany|Normal": 150,
+          "kermany|Pneumonia": 150,
+          "nih_cxr14|Normal": 150,
+          "nih_cxr14|Pleural Effusion": 150,
+          "nih_cxr14|Pneumonia": 150,
+          "nih_cxr14|Pulmonary Nodule / Mass": 150,
+          "shenzhen|Normal": 150,
+          "shenzhen|Tuberculosis": 150,
+          "tbx11k|Normal": 150,
+          "tbx11k|Tuberculosis": 150
+        },
+        "scored_cells": {
+          "cohen_covid|COVID-19": 77,
+          "cohen_covid|Normal": 4,
+          "cohen_covid|Pneumonia": 29,
+          "cohen_covid|Tuberculosis": 1,
+          "covid_radiography|COVID-19": 100,
+          "kermany|Normal": 81,
+          "kermany|Pneumonia": 100,
+          "nih_cxr14|Normal": 100,
+          "nih_cxr14|Pleural Effusion": 100,
+          "nih_cxr14|Pneumonia": 48,
+          "nih_cxr14|Pulmonary Nodule / Mass": 100,
+          "shenzhen|Normal": 49,
+          "shenzhen|Tuberculosis": 50,
+          "tbx11k|Normal": 100,
+          "tbx11k|Tuberculosis": 94
+        },
+        "duplicates_train": {
+          "rows_with_shared_hash": 4,
+          "distinct_hashes_shared": 2,
+          "by_source": {
+            "kermany": 4
+          }
+        },
+        "duplicates_scored": {
+          "rows_with_shared_hash": 0,
+          "distinct_hashes_shared": 0,
+          "by_source": {}
+        },
+        "within_source_cells": {
+          "cohen_covid": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "kermany": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "nih_cxr14": [
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass"
+          ],
+          "shenzhen": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "tbx11k": [
+            "Normal",
+            "Tuberculosis"
+          ]
+        },
+        "within_source_excluded": [
+          "cohen_covid Normal (4 images)",
+          "cohen_covid Tuberculosis (1 images)",
+          "covid_radiography COVID-19 (100 images)"
+        ],
+        "within_normal_sources": [
+          "kermany",
+          "nih_cxr14",
+          "shenzhen",
+          "tbx11k"
+        ],
+        "c_D": 0.45,
+        "chance_source": 0.16666666666666666,
+        "chance_within_normal": 0.25,
+        "probe": "StandardScaler + LogisticRegression(C=1.0, max_iter=2000, class_weight='balanced', random_state=0), lbfgs multinomial",
+        "bootstrap": {
+          "B": 1000,
+          "seed": 1,
+          "unit": "scored image",
+          "interval": "95% percentile"
+        },
+        "uncertainty_note": "Percentile bootstrap over scored images (B = 1000, seed 1, same indices for every variant). Probes are fitted once on the fixed train sample: intervals describe sample variation of the scored images, not training or seed variation.",
+        "variants": {
+          "full": {
+            "BA_src": {
+              "estimate": 0.9253082760381842,
+              "ci95": {
+                "lower": 0.9079343911774708,
+                "upper": 0.9429574454135868,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6934253406056836,
+              "ci95": {
+                "lower": 0.6646566190016584,
+                "upper": 0.7199654733058354,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.6052050026173496,
+              "ci95": {
+                "lower": 0.5764573494405191,
+                "upper": 0.6360685267878751,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9651543209876543,
+              "ci95": {
+                "lower": 0.9458029089930132,
+                "upper": 0.9823692050735546,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.9103699312458211,
+              "ci95": {
+                "lower": 0.8895212694129649,
+                "upper": 0.9315489344963042,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.44259152837397014,
+              "ci95": {
+                "lower": 0.390284761821197,
+                "upper": 0.4908463151015189,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.46777840287185096,
+              "ci95": {
+                "lower": 0.41814063661192324,
+                "upper": 0.5246832968790665,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_A": {
+            "BA_src": {
+              "estimate": 0.6881506827382036,
+              "ci95": {
+                "lower": 0.6617176900644449,
+                "upper": 0.715063193658829,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5882372544375792,
+              "ci95": {
+                "lower": 0.5527705220828686,
+                "upper": 0.6185408507794947,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4827665873118964,
+              "ci95": {
+                "lower": 0.4522116813499107,
+                "upper": 0.51259632031364,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8149766943814563,
+              "ci95": {
+                "lower": 0.770883164223651,
+                "upper": 0.8572689016060312,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6257808192858443,
+              "ci95": {
+                "lower": 0.594061228077334,
+                "upper": 0.6580758323905948,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.2513404626137804,
+              "ci95": {
+                "lower": 0.18685549469612464,
+                "upper": 0.30643791050817226,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3744403566720639,
+              "ci95": {
+                "lower": 0.3105315995812243,
+                "upper": 0.4499426419772103,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_B": {
+            "BA_src": {
+              "estimate": 0.639586554041757,
+              "ci95": {
+                "lower": 0.6126781217987942,
+                "upper": 0.6682979533351047,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.5587039746689181,
+              "ci95": {
+                "lower": 0.5238572873406532,
+                "upper": 0.5893180546932822,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.42595202512132896,
+              "ci95": {
+                "lower": 0.3945650304074524,
+                "upper": 0.4570542764670971,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.786609977324263,
+              "ci95": {
+                "lower": 0.7433166030086341,
+                "upper": 0.8309561711543182,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.5675038648501084,
+              "ci95": {
+                "lower": 0.535213746158553,
+                "upper": 0.6019575440021255,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.19764359030712375,
+              "ci95": {
+                "lower": 0.13428597698300584,
+                "upper": 0.253305553987786,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.36986027454298465,
+              "ci95": {
+                "lower": 0.3056831174713031,
+                "upper": 0.4422735461099959,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_C": {
+            "BA_src": {
+              "estimate": 0.7228376290857706,
+              "ci95": {
+                "lower": 0.6957447153862324,
+                "upper": 0.7503550949228128,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.602395259637899,
+              "ci95": {
+                "lower": 0.5659035206967877,
+                "upper": 0.633128811670779,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.4635793191478053,
+              "ci95": {
+                "lower": 0.43340891667414033,
+                "upper": 0.4961681009243831,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.8564556563366087,
+              "ci95": {
+                "lower": 0.8164134624744859,
+                "upper": 0.893059304081142,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.6674051549029248,
+              "ci95": {
+                "lower": 0.6348936584634788,
+                "upper": 0.7004261139073754,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.27708229025072534,
+              "ci95": {
+                "lower": 0.21073367399415954,
+                "upper": 0.3329614757650527,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.3903228646521995,
+              "ci95": {
+                "lower": 0.3286111169765298,
+                "upper": 0.46341864709739256,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_D": {
+            "BA_src": {
+              "estimate": 0.7472235076805216,
+              "ci95": {
+                "lower": 0.7225844779432746,
+                "upper": 0.7741815456576728,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6233070429247118,
+              "ci95": {
+                "lower": 0.5906061116760093,
+                "upper": 0.6537143910317923,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5006713221294002,
+              "ci95": {
+                "lower": 0.47138333111987274,
+                "upper": 0.5314928600799037,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9011753590325019,
+              "ci95": {
+                "lower": 0.867858482503766,
+                "upper": 0.9329742087102089,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.696668209216626,
+              "ci95": {
+                "lower": 0.6671013735319296,
+                "upper": 0.7290178547892074,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.31510371440856694,
+              "ci95": {
+                "lower": 0.25564747577456237,
+                "upper": 0.370389801875986,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.38156449480805904,
+              "ci95": {
+                "lower": 0.3216504250445621,
+                "upper": 0.4548109066616087,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_E": {
+            "BA_src": {
+              "estimate": 0.8220446923685537,
+              "ci95": {
+                "lower": 0.7964852037041108,
+                "upper": 0.8465884644096269,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6363569911205339,
+              "ci95": {
+                "lower": 0.6017016155795643,
+                "upper": 0.6652064882093618,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.5224396167969493,
+              "ci95": {
+                "lower": 0.49447884746001647,
+                "upper": 0.5523211711082869,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9476543209876543,
+              "ci95": {
+                "lower": 0.9236979342988875,
+                "upper": 0.9677298298919048,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.7864536308422645,
+              "ci95": {
+                "lower": 0.755782244444933,
+                "upper": 0.8159061572915521,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.3388308929464252,
+              "ci95": {
+                "lower": 0.27582111923557134,
+                "upper": 0.3912845240170214,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.4476227378958393,
+              "ci95": {
+                "lower": 0.38588840653685974,
+                "upper": 0.5187868988443978,
+                "resamples": 1000
+              }
+            }
+          },
+          "pass_F": {
+            "BA_src": {
+              "estimate": 0.9023863275683063,
+              "ci95": {
+                "lower": 0.8834483662573837,
+                "upper": 0.9218857960959657,
+                "resamples": 1000
+              }
+            },
+            "F1_ws": {
+              "estimate": 0.6527498525223517,
+              "ci95": {
+                "lower": 0.6185218733463258,
+                "upper": 0.6790629244846824,
+                "resamples": 1000
+              }
+            },
+            "F1_all": {
+              "estimate": 0.550466293204666,
+              "ci95": {
+                "lower": 0.520367025187159,
+                "upper": 0.5795629967141955,
+                "resamples": 1000
+              }
+            },
+            "BA_norm": {
+              "estimate": 0.9445679012345679,
+              "ci95": {
+                "lower": 0.9198449314954682,
+                "upper": 0.9655181952160294,
+                "resamples": 1000
+              }
+            },
+            "S_star": {
+              "estimate": 0.8828635930819675,
+              "ci95": {
+                "lower": 0.8601380395088604,
+                "upper": 0.9062629553151588,
+                "resamples": 1000
+              }
+            },
+            "D_star": {
+              "estimate": 0.36863609549518495,
+              "ci95": {
+                "lower": 0.30640340608422867,
+                "upper": 0.41647804451760434,
+                "resamples": 1000
+              }
+            },
+            "SDS": {
+              "estimate": 0.5142274975867825,
+              "ci95": {
+                "lower": 0.46224814219781457,
+                "upper": 0.5775433099085963,
+                "resamples": 1000
+              }
+            }
+          }
+        },
+        "band_stop": {},
+        "band_pass_retention": {
+          "A": {
+            "S": 0.6873917929489137,
+            "D": 0.5678835822664208
+          },
+          "B": {
+            "S": 0.6233772067509874,
+            "D": 0.4465598133639009
+          },
+          "C": {
+            "S": 0.7331142341109571,
+            "D": 0.6260451736812349
+          },
+          "D": {
+            "S": 0.7652583694886,
+            "D": 0.7119515268767601
+          },
+          "E": {
+            "S": 0.8638835750715318,
+            "D": 0.7655611805116346
+          },
+          "F": {
+            "S": 0.9697855374834142,
+            "D": 0.8329036410830346
+          }
+        },
+        "hypotheses": {
+          "H1a_full_BA_src_above_chance": {
+            "point": true,
+            "ci_lower_above_chance": true
+          },
+          "H1c_BA_norm_above_0.25_in_a_pass_variant": {
+            "point": true,
+            "variants_above": [
+              "pass_A",
+              "pass_B",
+              "pass_C",
+              "pass_D",
+              "pass_E",
+              "pass_F"
+            ]
+          },
+          "H1b": "descriptive: band profiles of BA_src and F1_ws are reported; no band was predicted"
+        },
+        "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+        "code_uncommitted_changes_in_lungai_novelty": false,
+        "protocol_commit": "f427c04",
+        "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+        "generated_at": "2026-11-04T05:37:15+00:00"
+      }
+    }
+  },
+  "last_written": {
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T05:37:15+00:00"
+  }
+}

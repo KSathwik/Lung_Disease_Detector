@@ -1,0 +1,495 @@
+{
+  "protocol": "docs/publication/NOVELTY_PROTOCOL.md",
+  "criterion_1": {
+    "per_band": {
+      "A": {
+        "dS": -0.0031499157873189354,
+        "dS_ci_lower": -0.021202839061960767,
+        "dD": 0.02430481198122525,
+        "dD_ci_upper": 0.05338691247536578,
+        "satisfied": false
+      },
+      "B": {
+        "dS": -0.01020679196165386,
+        "dS_ci_lower": -0.026010572024769973,
+        "dD": 0.025862990548659703,
+        "dD_ci_upper": 0.05829164640355909,
+        "satisfied": false
+      },
+      "C": {
+        "dS": 0.0011548122232953872,
+        "dS_ci_lower": -0.01714259322197536,
+        "dD": -0.015579588170327674,
+        "dD_ci_upper": 0.01793454498468362,
+        "satisfied": false
+      },
+      "D": {
+        "dS": -0.004885181503097247,
+        "dS_ci_lower": -0.021518028071508835,
+        "dD": 0.021807627086892323,
+        "dD_ci_upper": 0.05509835129574221,
+        "satisfied": false
+      },
+      "E": {
+        "dS": -0.005654412272328102,
+        "dS_ci_lower": -0.021482285983121574,
+        "dD": 0.015038773588693766,
+        "dD_ci_upper": 0.052321299380422986,
+        "satisfied": false
+      },
+      "F": {
+        "dS": 0.028438863869049147,
+        "dS_ci_lower": 0.01130097917376933,
+        "dD": 0.007916375942292886,
+        "dD_ci_upper": 0.04085974550795709,
+        "satisfied": false
+      }
+    },
+    "satisfied": false,
+    "bands_satisfying": [],
+    "b_star": "F",
+    "b_star_rule": "no band satisfies criterion 1: largest dS overall (decision is NO-GO)"
+  },
+  "last_written": {
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T06:15:50+00:00"
+  },
+  "c2_lite_val": {
+    "status": "complete",
+    "band": "F",
+    "train_set": "train400",
+    "scored_set": "val100",
+    "n_train": 4358,
+    "n_scored": 1019,
+    "within_source_cells": {
+      "cohen_covid": [
+        "COVID-19",
+        "Pneumonia"
+      ],
+      "kermany": [
+        "Normal",
+        "Pneumonia"
+      ],
+      "nih_cxr14": [
+        "Normal",
+        "Pleural Effusion",
+        "Pneumonia",
+        "Pulmonary Nodule / Mass"
+      ],
+      "shenzhen": [
+        "Normal",
+        "Tuberculosis"
+      ],
+      "tbx11k": [
+        "Normal",
+        "Tuberculosis"
+      ]
+    },
+    "dS_lite": {
+      "estimate": 0.024644551662089564,
+      "ci95": {
+        "lower": 0.0073310210960563565,
+        "upper": 0.04210786002081866,
+        "resamples": 1000
+      }
+    },
+    "dD_lite": {
+      "estimate": 0.013280981236466705,
+      "ci95": {
+        "lower": -0.019652445708402293,
+        "upper": 0.04839200159145574,
+        "resamples": 1000
+      }
+    },
+    "variants": {
+      "full": {
+        "BA_src": {
+          "estimate": 0.9533081466234562,
+          "ci95": {
+            "lower": 0.9369070860620886,
+            "upper": 0.9684018639157803,
+            "resamples": 1000
+          }
+        },
+        "F1_ws": {
+          "estimate": 0.7094523957309394,
+          "ci95": {
+            "lower": 0.6749437738603683,
+            "upper": 0.740464486426882,
+            "resamples": 1000
+          }
+        },
+        "F1_all": {
+          "estimate": 0.6506610625772588,
+          "ci95": {
+            "lower": 0.6192345448706535,
+            "upper": 0.6787060266066385,
+            "resamples": 1000
+          }
+        },
+        "BA_norm": {
+          "estimate": 0.9761230788611741,
+          "ci95": {
+            "lower": 0.9547434994978465,
+            "upper": 0.9922910865777377,
+            "resamples": 1000
+          }
+        },
+        "S_star": {
+          "estimate": 0.9439697759481475,
+          "ci95": {
+            "lower": 0.9242885032745063,
+            "upper": 0.9620822366989363,
+            "resamples": 1000
+          }
+        },
+        "D_star": {
+          "estimate": 0.471731628601708,
+          "ci95": {
+            "lower": 0.4089886797461241,
+            "upper": 0.5281172480488762,
+            "resamples": 1000
+          }
+        },
+        "SDS": {
+          "estimate": 0.4722381473464395,
+          "ci95": {
+            "lower": 0.413010876589796,
+            "upper": 0.5370127642884805,
+            "resamples": 1000
+          }
+        }
+      },
+      "stop_F": {
+        "BA_src": {
+          "estimate": 0.9286635949613666,
+          "ci95": {
+            "lower": 0.9081722063397917,
+            "upper": 0.9468754599265836,
+            "resamples": 1000
+          }
+        },
+        "F1_ws": {
+          "estimate": 0.6961714144944727,
+          "ci95": {
+            "lower": 0.6618752938549043,
+            "upper": 0.7258723240002295,
+            "resamples": 1000
+          }
+        },
+        "F1_all": {
+          "estimate": 0.6169966719829464,
+          "ci95": {
+            "lower": 0.5863918907851375,
+            "upper": 0.6460325230918429,
+            "resamples": 1000
+          }
+        },
+        "BA_norm": {
+          "estimate": 0.9711230788611741,
+          "ci95": {
+            "lower": 0.9492094680672564,
+            "upper": 0.9888487061491263,
+            "resamples": 1000
+          }
+        },
+        "S_star": {
+          "estimate": 0.91439631395364,
+          "ci95": {
+            "lower": 0.88980664760775,
+            "upper": 0.9362505519119003,
+            "resamples": 1000
+          }
+        },
+        "D_star": {
+          "estimate": 0.44758438998995037,
+          "ci95": {
+            "lower": 0.3852278070089169,
+            "upper": 0.5015860436367808,
+            "resamples": 1000
+          }
+        },
+        "SDS": {
+          "estimate": 0.4668119239636896,
+          "ci95": {
+            "lower": 0.40623946762465346,
+            "upper": 0.5295869575769158,
+            "resamples": 1000
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "B": 1000,
+      "seed": 1,
+      "unit": "scored image"
+    },
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T06:15:38+00:00"
+  },
+  "control": {
+    "status": "not run",
+    "reason": "no band satisfies criterion 1 (section 9)"
+  },
+  "c2_lite_test": {
+    "status": "complete",
+    "band": "F",
+    "train_set": "train400",
+    "scored_set": "test100",
+    "n_train": 4358,
+    "n_scored": 1033,
+    "within_source_cells": {
+      "cohen_covid": [
+        "COVID-19",
+        "Pneumonia"
+      ],
+      "kermany": [
+        "Normal",
+        "Pneumonia"
+      ],
+      "nih_cxr14": [
+        "Normal",
+        "Pleural Effusion",
+        "Pneumonia",
+        "Pulmonary Nodule / Mass"
+      ],
+      "shenzhen": [
+        "Normal",
+        "Tuberculosis"
+      ],
+      "tbx11k": [
+        "Normal",
+        "Tuberculosis"
+      ]
+    },
+    "dS_lite": {
+      "estimate": 0.026720464635659136,
+      "ci95": {
+        "lower": 0.008922205061797476,
+        "upper": 0.043311327817444754,
+        "resamples": 1000
+      }
+    },
+    "dD_lite": {
+      "estimate": -0.019336357257229486,
+      "ci95": {
+        "lower": -0.04902762216378484,
+        "upper": 0.014036311394248172,
+        "resamples": 1000
+      }
+    },
+    "variants": {
+      "full": {
+        "BA_src": {
+          "estimate": 0.9531887830444944,
+          "ci95": {
+            "lower": 0.9380301703482825,
+            "upper": 0.9674288055427942,
+            "resamples": 1000
+          }
+        },
+        "F1_ws": {
+          "estimate": 0.6719664607154734,
+          "ci95": {
+            "lower": 0.6430910236842662,
+            "upper": 0.6987535876599407,
+            "resamples": 1000
+          }
+        },
+        "F1_all": {
+          "estimate": 0.6374972511070719,
+          "ci95": {
+            "lower": 0.6091123537875617,
+            "upper": 0.6663482726771015,
+            "resamples": 1000
+          }
+        },
+        "BA_norm": {
+          "estimate": 0.9863271604938272,
+          "ci95": {
+            "lower": 0.9730641129165651,
+            "upper": 0.9971925546363748,
+            "resamples": 1000
+          }
+        },
+        "S_star": {
+          "estimate": 0.9438265396533932,
+          "ci95": {
+            "lower": 0.925636204417939,
+            "upper": 0.9609145666513531,
+            "resamples": 1000
+          }
+        },
+        "D_star": {
+          "estimate": 0.40357538311904245,
+          "ci95": {
+            "lower": 0.3510745885168476,
+            "upper": 0.45227925029080107,
+            "resamples": 1000
+          }
+        },
+        "SDS": {
+          "estimate": 0.5402511565343509,
+          "ci95": {
+            "lower": 0.48864251026670946,
+            "upper": 0.5974599022711029,
+            "resamples": 1000
+          }
+        }
+      },
+      "stop_F": {
+        "BA_src": {
+          "estimate": 0.9264683184088353,
+          "ci95": {
+            "lower": 0.9092571195840901,
+            "upper": 0.9451972849360699,
+            "resamples": 1000
+          }
+        },
+        "F1_ws": {
+          "estimate": 0.6913028179727029,
+          "ci95": {
+            "lower": 0.6609526135850335,
+            "upper": 0.7187317737214363,
+            "resamples": 1000
+          }
+        },
+        "F1_all": {
+          "estimate": 0.6312072219609887,
+          "ci95": {
+            "lower": 0.6001361093867043,
+            "upper": 0.6590196459498343,
+            "resamples": 1000
+          }
+        },
+        "BA_norm": {
+          "estimate": 0.9705366591080876,
+          "ci95": {
+            "lower": 0.9478355619260033,
+            "upper": 0.9886732589352074,
+            "resamples": 1000
+          }
+        },
+        "S_star": {
+          "estimate": 0.9117619820906023,
+          "ci95": {
+            "lower": 0.8911085435009081,
+            "upper": 0.9342367419232839,
+            "resamples": 1000
+          }
+        },
+        "D_star": {
+          "estimate": 0.4387323963140052,
+          "ci95": {
+            "lower": 0.3835502065182427,
+            "upper": 0.4886032249480658,
+            "resamples": 1000
+          }
+        },
+        "SDS": {
+          "estimate": 0.47302958577659715,
+          "ci95": {
+            "lower": 0.41928865033896007,
+            "upper": 0.534895591673408,
+            "resamples": 1000
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "B": 1000,
+      "seed": 1,
+      "unit": "scored image"
+    },
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T06:15:49+00:00",
+    "label": "exploratory"
+  },
+  "decision": {
+    "b_star": "F",
+    "condition_1": {
+      "per_band": {
+        "A": {
+          "dS": -0.0031499157873189354,
+          "dS_ci_lower": -0.021202839061960767,
+          "dD": 0.02430481198122525,
+          "dD_ci_upper": 0.05338691247536578,
+          "satisfied": false
+        },
+        "B": {
+          "dS": -0.01020679196165386,
+          "dS_ci_lower": -0.026010572024769973,
+          "dD": 0.025862990548659703,
+          "dD_ci_upper": 0.05829164640355909,
+          "satisfied": false
+        },
+        "C": {
+          "dS": 0.0011548122232953872,
+          "dS_ci_lower": -0.01714259322197536,
+          "dD": -0.015579588170327674,
+          "dD_ci_upper": 0.01793454498468362,
+          "satisfied": false
+        },
+        "D": {
+          "dS": -0.004885181503097247,
+          "dS_ci_lower": -0.021518028071508835,
+          "dD": 0.021807627086892323,
+          "dD_ci_upper": 0.05509835129574221,
+          "satisfied": false
+        },
+        "E": {
+          "dS": -0.005654412272328102,
+          "dS_ci_lower": -0.021482285983121574,
+          "dD": 0.015038773588693766,
+          "dD_ci_upper": 0.052321299380422986,
+          "satisfied": false
+        },
+        "F": {
+          "dS": 0.028438863869049147,
+          "dS_ci_lower": 0.01130097917376933,
+          "dD": 0.007916375942292886,
+          "dD_ci_upper": 0.04085974550795709,
+          "satisfied": false
+        }
+      },
+      "satisfied": false,
+      "bands_satisfying": [],
+      "b_star": "F",
+      "b_star_rule": "no band satisfies criterion 1: largest dS overall (decision is NO-GO)"
+    },
+    "condition_2": {
+      "satisfied": false,
+      "evaluated": false,
+      "reason": "control not run: no band satisfies criterion 1"
+    },
+    "condition_3": {
+      "satisfied": false,
+      "evaluated": true,
+      "dS_lite": 0.024644551662089564,
+      "dD_lite": 0.013280981236466705
+    },
+    "condition_4": {
+      "satisfied": null,
+      "status": "requires student approval",
+      "text": "Run 5 and all M.Tech deliverables (handoff steps 1-5) are finished, and the student approves one night of CPU time before 22:00."
+    },
+    "conditions_1_to_3_hold": false,
+    "decision": "NO-GO",
+    "if_no_go": "report C1, C3, C4 and C2-lite (exploratory); list C2 as future work",
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T06:15:50+00:00",
+    "data": "validation only (C1-main val100, ImageNet; C2-lite val100); no new data access"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "images": 200,
+  "extractor": "imagenet",
+  "variant": "stop_C",
+  "batch": 16,
+  "seconds_per_image": 0.11337015986442565,
+  "projected_hours": {
+    "c3c4": 0.99,
+    "c1-main": 1.64,
+    "c1-served": 0.66,
+    "c1-nofilter": 0.66,
+    "c2-lite": 0.27,
+    "c2-control": 0.28
+  },
+  "note": "timing does not change any setting (protocol 4.2)",
+  "code_commit": "a3827d769887099ca595cd91210916df4b542589",
+  "code_uncommitted_changes_in_lungai_novelty": false,
+  "protocol_commit": "f427c04",
+  "protocol_last_commit": "a3827d769887099ca595cd91210916df4b542589",
+  "generated_at": "2026-11-04T02:46:57+00:00"
+}

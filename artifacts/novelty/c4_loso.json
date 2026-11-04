@@ -1,0 +1,1262 @@
+{
+  "protocol": "docs/publication/NOVELTY_PROTOCOL.md",
+  "matrices": {
+    "imagenet": {
+      "status": "complete",
+      "label": "ImageNet DenseNet-121 features (primary matrix)",
+      "reference_C_selection": {
+        "C": 0.01,
+        "val_macro_f1": {
+          "0.01": 0.7839374709937234,
+          "0.1": 0.7635410964996918,
+          "1.0": 0.7289591650090489
+        },
+        "labels": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "folds": {
+        "cohen_covid": {
+          "included": true,
+          "evaluated_classes": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "excluded_classes": {
+            "Normal": "4 test images in cohen_covid, 2141 train images in the other sources",
+            "Tuberculosis": "1 test images in cohen_covid, 676 train images in the other sources"
+          },
+          "binary_view": false,
+          "test_normal": 4,
+          "test_abnormal": 107,
+          "train_images": 10464,
+          "val_images_for_C": 2254,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.794337529886049,
+              "0.1": 0.7804890882747132,
+              "1.0": 0.750737863760185
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.12036199095022625,
+            "balanced_accuracy": 0.10143304970891177,
+            "recall": {
+              "COVID-19": 0.06493506493506493,
+              "Pneumonia": 0.13793103448275862
+            },
+            "n": 106
+          },
+          "reference": {
+            "macro_f1": 0.4597122302158273,
+            "balanced_accuracy": 0.4108822212270488,
+            "recall": {
+              "COVID-19": 0.6493506493506493,
+              "Pneumonia": 0.1724137931034483
+            },
+            "n": 106
+          },
+          "gap_macro_f1": 0.33935023926560104,
+          "gap_balanced_accuracy": 0.30944917151813706,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.05264591678721116,
+              "upper": 0.1934021549031262,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.037495941558441555,
+              "upper": 0.17379694835680748,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.37417718735197736,
+              "upper": 0.5523734493115808,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.32596036585365856,
+              "upper": 0.5058866037696683,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.2362183836447816,
+              "upper": 0.44439708113411835,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.21874461206896548,
+              "upper": 0.40675769966819486,
+              "resamples": 1000
+            }
+          }
+        },
+        "covid_radiography": {
+          "included": false,
+          "evaluated_classes": [
+            "COVID-19"
+          ],
+          "excluded_classes": {},
+          "binary_view": false,
+          "test_normal": 0,
+          "test_abnormal": 374
+        },
+        "kermany": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 81,
+          "test_abnormal": 317,
+          "train_images": 9109,
+          "val_images_for_C": 1951,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.6540525652104292,
+              "0.1": 0.6396866573016724,
+              "1.0": 0.615457117890781
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.5019854776491944,
+            "balanced_accuracy": 0.36026404953849744,
+            "recall": {
+              "Normal": 0.37037037037037035,
+              "Pneumonia": 0.3501577287066246
+            },
+            "n": 398
+          },
+          "reference": {
+            "macro_f1": 0.9221958550862206,
+            "balanced_accuracy": 0.8903298671963236,
+            "recall": {
+              "Normal": 0.7901234567901234,
+              "Pneumonia": 0.9905362776025236
+            },
+            "n": 398
+          },
+          "gap_macro_f1": 0.42021037743702616,
+          "gap_balanced_accuracy": 0.5300658176578261,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.43643991602644094,
+              "upper": 0.5602785807302505,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.30408670776082336,
+              "upper": 0.41745977718390304,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.8874049136914978,
+              "upper": 0.953093334337034,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.8440199225335223,
+              "upper": 0.9329443949754752,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.36335446432579654,
+              "upper": 0.48639200713778247,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.4713219592226424,
+              "upper": 0.5916640470165373,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.865911126689255,
+            "balanced_accuracy": 0.6095338240448651,
+            "sensitivity": 0.9968454258675079,
+            "specificity": 0.2222222222222222,
+            "n_normal": 81,
+            "n_abnormal": 317,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.8162561511544741,
+                "upper": 0.912612241548612,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.5654761904761905,
+                "upper": 0.6563499045153268,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "nih_cxr14": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "excluded_classes": {
+            "Pleural Effusion": "444 test images in nih_cxr14, 0 train images in the other sources",
+            "Pulmonary Nodule / Mass": "449 test images in nih_cxr14, 0 train images in the other sources"
+          },
+          "binary_view": true,
+          "test_normal": 183,
+          "test_abnormal": 941,
+          "train_images": 5687,
+          "val_images_for_C": 1220,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pneumonia",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.9280454122859725,
+              "0.1": 0.9181822878501849,
+              "1.0": 0.9172297006902389
+            },
+            "labels": [
+              0,
+              1,
+              3,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.3276748356246264,
+            "balanced_accuracy": 0.26434426229508196,
+            "recall": {
+              "Normal": 0.2786885245901639,
+              "Pneumonia": 0.25
+            },
+            "n": 231
+          },
+          "reference": {
+            "macro_f1": 0.2531017369727047,
+            "balanced_accuracy": 0.16888661202185792,
+            "recall": {
+              "Normal": 0.31693989071038253,
+              "Pneumonia": 0.020833333333333332
+            },
+            "n": 231
+          },
+          "gap_macro_f1": -0.07457309865192169,
+          "gap_balanced_accuracy": -0.09545765027322403,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.26337325860169764,
+              "upper": 0.3953832706961349,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.19588478231612946,
+              "upper": 0.3374492604059167,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.2033178153358297,
+              "upper": 0.3066705330019332,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.13153903554175295,
+              "upper": 0.2089568215824147,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": -0.14349800782751979,
+              "upper": 0.0005178209983643428,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": -0.1670915657621459,
+              "upper": -0.026184038822262844,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.7431577847075835,
+            "balanced_accuracy": 0.5705010946383048,
+            "sensitivity": 0.922422954303932,
+            "specificity": 0.2185792349726776,
+            "n_normal": 183,
+            "n_abnormal": 941,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.7030450712940163,
+                "upper": 0.777513863842951,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.5389192221847782,
+                "upper": 0.6035791742444542,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "shenzhen": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 49,
+          "test_abnormal": 50,
+          "train_images": 10494,
+          "val_images_for_C": 2248,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.7908633291906471,
+              "0.1": 0.7639389746340361,
+              "1.0": 0.7430565832298487
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.3305084745762712,
+            "balanced_accuracy": 0.3979591836734694,
+            "recall": {
+              "Normal": 0.7959183673469388,
+              "Tuberculosis": 0.0
+            },
+            "n": 99
+          },
+          "reference": {
+            "macro_f1": 0.846795205836373,
+            "balanced_accuracy": 0.8381632653061224,
+            "recall": {
+              "Normal": 0.8163265306122449,
+              "Tuberculosis": 0.86
+            },
+            "n": 99
+          },
+          "gap_macro_f1": 0.5162867312601018,
+          "gap_balanced_accuracy": 0.440204081632653,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.2767857142857143,
+              "upper": 0.37777777777777777,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.3392274844720497,
+              "upper": 0.45372474747474745,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.7710841539435909,
+              "upper": 0.9121094100745264,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.762797619047619,
+              "upper": 0.9076507263922519,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.42834594777127244,
+              "upper": 0.5946114363712928,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.3499969237079573,
+              "upper": 0.5210255102040816,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.653469387755102,
+            "balanced_accuracy": 0.5769387755102041,
+            "sensitivity": 0.46,
+            "specificity": 0.6938775510204082,
+            "n_normal": 49,
+            "n_abnormal": 50,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.5493756440564951,
+                "upper": 0.7670226093751438,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.4844608843537415,
+                "upper": 0.676557480311347,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "tbx11k": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 150,
+          "test_abnormal": 94,
+          "train_images": 9816,
+          "val_images_for_C": 2103,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.7464050957198873,
+              "0.1": 0.7280993477903294,
+              "1.0": 0.6982767571553742
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.22689180737961223,
+            "balanced_accuracy": 0.15191489361702126,
+            "recall": {
+              "Normal": 0.24,
+              "Tuberculosis": 0.06382978723404255
+            },
+            "n": 244
+          },
+          "reference": {
+            "macro_f1": 0.950219298245614,
+            "balanced_accuracy": 0.9368085106382978,
+            "recall": {
+              "Normal": 0.98,
+              "Tuberculosis": 0.8936170212765957
+            },
+            "n": 244
+          },
+          "gap_macro_f1": 0.7233274908660018,
+          "gap_balanced_accuracy": 0.7848936170212766,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.17073336882764484,
+              "upper": 0.28788583016123304,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.10998353528946589,
+              "upper": 0.19555300043781,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.9214554083156719,
+              "upper": 0.975270137650411,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.9035659843205573,
+              "upper": 0.9676012290921929,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.6586733319003427,
+              "upper": 0.7841142349677004,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.7317814476385249,
+              "upper": 0.8338566266109368,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.6048936170212766,
+            "balanced_accuracy": 0.5294326241134751,
+            "sensitivity": 0.925531914893617,
+            "specificity": 0.13333333333333333,
+            "n_normal": 150,
+            "n_abnormal": 94,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.5261061665676544,
+                "upper": 0.6804398235681282,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.4915876203004916,
+                "upper": 0.5666254371346164,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        }
+      },
+      "bootstrap": {
+        "B": 1000,
+        "seed": 1,
+        "unit": "held-out test image"
+      },
+      "caveat": "Patient-identity caveat: separation is proven only for rows with known patient identity; 4,130 TBX11K and COVID-19 Radiography rows are grouped per image, and Kermany identities are derived from file names.",
+      "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+      "code_uncommitted_changes_in_lungai_novelty": false,
+      "protocol_commit": "f427c04",
+      "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+      "generated_at": "2026-11-04T05:52:02+00:00"
+    },
+    "served": {
+      "status": "complete",
+      "label": "linear-head leave-one-source-out on frozen features (secondary matrix; the run-2 backbone saw all six sources in training: not held-out, not external)",
+      "reference_C_selection": {
+        "C": 0.01,
+        "val_macro_f1": {
+          "0.01": 0.7788088915816931,
+          "0.1": 0.7603616362262343,
+          "1.0": 0.7349095260283697
+        },
+        "labels": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "folds": {
+        "cohen_covid": {
+          "included": true,
+          "evaluated_classes": [
+            "COVID-19",
+            "Pneumonia"
+          ],
+          "excluded_classes": {
+            "Normal": "4 test images in cohen_covid, 2141 train images in the other sources",
+            "Tuberculosis": "1 test images in cohen_covid, 676 train images in the other sources"
+          },
+          "binary_view": false,
+          "test_normal": 4,
+          "test_abnormal": 107,
+          "train_images": 10464,
+          "val_images_for_C": 2254,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.7970697514640085,
+              "0.1": 0.774890293608447,
+              "1.0": 0.755397309446281
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.1471264367816092,
+            "balanced_accuracy": 0.11442006269592477,
+            "recall": {
+              "COVID-19": 0.09090909090909091,
+              "Pneumonia": 0.13793103448275862
+            },
+            "n": 106
+          },
+          "reference": {
+            "macro_f1": 0.47714285714285715,
+            "balanced_accuracy": 0.4281236005373936,
+            "recall": {
+              "COVID-19": 0.6493506493506493,
+              "Pneumonia": 0.20689655172413793
+            },
+            "n": 106
+          },
+          "gap_macro_f1": 0.33001642036124795,
+          "gap_balanced_accuracy": 0.31370353784146887,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.06913560694281655,
+              "upper": 0.22628504388974666,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.048594463470319635,
+              "upper": 0.18444475004154287,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.38272077410337235,
+              "upper": 0.5696114693922611,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.33775925925925926,
+              "upper": 0.5197739978902953,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.2203663262680711,
+              "upper": 0.4372842764452813,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.21456731654014266,
+              "upper": 0.4136393328408824,
+              "resamples": 1000
+            }
+          }
+        },
+        "covid_radiography": {
+          "included": false,
+          "evaluated_classes": [
+            "COVID-19"
+          ],
+          "excluded_classes": {},
+          "binary_view": false,
+          "test_normal": 0,
+          "test_abnormal": 374
+        },
+        "kermany": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 81,
+          "test_abnormal": 317,
+          "train_images": 9109,
+          "val_images_for_C": 1951,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.6532528411082584,
+              "0.1": 0.6329274380949336,
+              "1.0": 0.6259226741238982
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.552930883639545,
+            "balanced_accuracy": 0.4075242434863886,
+            "recall": {
+              "Normal": 0.5185185185185185,
+              "Pneumonia": 0.29652996845425866
+            },
+            "n": 398
+          },
+          "reference": {
+            "macro_f1": 0.8997267273241265,
+            "balanced_accuracy": 0.8716750399189936,
+            "recall": {
+              "Normal": 0.7654320987654321,
+              "Pneumonia": 0.9779179810725552
+            },
+            "n": 398
+          },
+          "gap_macro_f1": 0.3467958436845815,
+          "gap_balanced_accuracy": 0.46415079643260504,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.49496932507212427,
+              "upper": 0.6084942793869713,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.3490757318078747,
+              "upper": 0.46940993962432914,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.8612502655948735,
+              "upper": 0.934371052888976,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.8249407430886264,
+              "upper": 0.9171544316712499,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.29558652084545023,
+              "upper": 0.40436479720781066,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.40720535663306967,
+              "upper": 0.524378652310138,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.9010398411029326,
+            "balanced_accuracy": 0.680453323986447,
+            "sensitivity": 0.9905362776025236,
+            "specificity": 0.37037037037037035,
+            "n_normal": 81,
+            "n_abnormal": 317,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.8589171829715503,
+                "upper": 0.9405682485804738,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.6268171896184047,
+                "upper": 0.7352031951315432,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "nih_cxr14": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Pneumonia"
+          ],
+          "excluded_classes": {
+            "Pleural Effusion": "444 test images in nih_cxr14, 0 train images in the other sources",
+            "Pulmonary Nodule / Mass": "449 test images in nih_cxr14, 0 train images in the other sources"
+          },
+          "binary_view": true,
+          "test_normal": 183,
+          "test_abnormal": 941,
+          "train_images": 5687,
+          "val_images_for_C": 1220,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pneumonia",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.9246403740672466,
+              "0.1": 0.9201559310164815,
+              "1.0": 0.9143086434849318
+            },
+            "labels": [
+              0,
+              1,
+              3,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.36819196428571427,
+            "balanced_accuracy": 0.3025956284153005,
+            "recall": {
+              "Normal": 0.3551912568306011,
+              "Pneumonia": 0.25
+            },
+            "n": 231
+          },
+          "reference": {
+            "macro_f1": 0.23394945303658998,
+            "balanced_accuracy": 0.15249316939890709,
+            "recall": {
+              "Normal": 0.28415300546448086,
+              "Pneumonia": 0.020833333333333332
+            },
+            "n": 231
+          },
+          "gap_macro_f1": -0.13424251124912429,
+          "gap_balanced_accuracy": -0.15010245901639344,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.2998909155710717,
+              "upper": 0.43120492403377525,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.2349794425952893,
+              "upper": 0.3766775147928994,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.18518518518518517,
+              "upper": 0.29029613747799826,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.1169750599760096,
+              "upper": 0.19197549002303574,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": -0.20694737520537138,
+              "upper": -0.057414237747255584,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": -0.22687077167019032,
+              "upper": -0.07589384959669489,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.7447605442413895,
+            "balanced_accuracy": 0.5942550362072669,
+            "sensitivity": 0.9043570669500531,
+            "specificity": 0.28415300546448086,
+            "n_normal": 183,
+            "n_abnormal": 941,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.7064990057719434,
+                "upper": 0.7785049380665233,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.5591492087493329,
+                "upper": 0.6311131170996922,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "shenzhen": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 49,
+          "test_abnormal": 50,
+          "train_images": 10494,
+          "val_images_for_C": 2248,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.7862015085125983,
+              "0.1": 0.7638205730986497,
+              "1.0": 0.742126084710947
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.3333333333333333,
+            "balanced_accuracy": 0.3979591836734694,
+            "recall": {
+              "Normal": 0.7959183673469388,
+              "Tuberculosis": 0.0
+            },
+            "n": 99
+          },
+          "reference": {
+            "macro_f1": 0.8099409033347404,
+            "balanced_accuracy": 0.7975510204081633,
+            "recall": {
+              "Normal": 0.7551020408163265,
+              "Tuberculosis": 0.84
+            },
+            "n": 99
+          },
+          "gap_macro_f1": 0.47660757000140713,
+          "gap_balanced_accuracy": 0.3995918367346939,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.2856815203145478,
+              "upper": 0.37880094043887147,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.34481800766283527,
+              "upper": 0.45652173913043476,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.7332248519467075,
+              "upper": 0.8876291913985213,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.718743606792144,
+              "upper": 0.8774591503267973,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.39044209845664446,
+              "upper": 0.5555876130940356,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.3101208897485494,
+              "upper": 0.4806866364162139,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.6163265306122448,
+            "balanced_accuracy": 0.6073469387755102,
+            "sensitivity": 0.48,
+            "specificity": 0.7346938775510204,
+            "n_normal": 49,
+            "n_abnormal": 50,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.50750644690238,
+                "upper": 0.7268302900107411,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.5073965454379729,
+                "upper": 0.7008046096345516,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        },
+        "tbx11k": {
+          "included": true,
+          "evaluated_classes": [
+            "Normal",
+            "Tuberculosis"
+          ],
+          "excluded_classes": {},
+          "binary_view": true,
+          "test_normal": 150,
+          "test_abnormal": 94,
+          "train_images": 9816,
+          "val_images_for_C": 2103,
+          "classes_in_training": [
+            "COVID-19",
+            "Normal",
+            "Pleural Effusion",
+            "Pneumonia",
+            "Pulmonary Nodule / Mass",
+            "Tuberculosis"
+          ],
+          "C_selection": {
+            "C": 0.01,
+            "val_macro_f1": {
+              "0.01": 0.7353088056257121,
+              "0.1": 0.7252628476801822,
+              "1.0": 0.6972587108769729
+            },
+            "labels": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          "loso": {
+            "macro_f1": 0.2758246178600161,
+            "balanced_accuracy": 0.1952482269503546,
+            "recall": {
+              "Normal": 0.32666666666666666,
+              "Tuberculosis": 0.06382978723404255
+            },
+            "n": 244
+          },
+          "reference": {
+            "macro_f1": 0.962164802952991,
+            "balanced_accuracy": 0.9527659574468085,
+            "recall": {
+              "Normal": 0.98,
+              "Tuberculosis": 0.925531914893617
+            },
+            "n": 244
+          },
+          "gap_macro_f1": 0.6863401850929749,
+          "gap_balanced_accuracy": 0.7575177304964539,
+          "ci95": {
+            "loso_macro_f1": {
+              "lower": 0.2175019644926904,
+              "upper": 0.3397308144359589,
+              "resamples": 1000
+            },
+            "loso_balanced_accuracy": {
+              "lower": 0.15077536489157928,
+              "upper": 0.2439387900586863,
+              "resamples": 1000
+            },
+            "ref_macro_f1": {
+              "lower": 0.9337036068860758,
+              "upper": 0.9843120416432165,
+              "resamples": 1000
+            },
+            "ref_balanced_accuracy": {
+              "lower": 0.9202000593913153,
+              "upper": 0.9797707851568145,
+              "resamples": 1000
+            },
+            "gap_macro_f1": {
+              "lower": 0.6234445695961705,
+              "upper": 0.7471479525399881,
+              "resamples": 1000
+            },
+            "gap_balanced_accuracy": {
+              "lower": 0.7049585930013342,
+              "upper": 0.8122332467293428,
+              "resamples": 1000
+            }
+          },
+          "binary": {
+            "roc_auc": 0.6240425531914894,
+            "balanced_accuracy": 0.5454609929078015,
+            "sensitivity": 0.9042553191489362,
+            "specificity": 0.18666666666666668,
+            "n_normal": 150,
+            "n_abnormal": 94,
+            "ci95": {
+              "roc_auc": {
+                "lower": 0.5495216143364103,
+                "upper": 0.6994188262195121,
+                "resamples": 1000
+              },
+              "balanced_accuracy": {
+                "lower": 0.5013208102385388,
+                "upper": 0.5864072111455242,
+                "resamples": 1000
+              }
+            },
+            "abnormal_definition": "any non-Normal label, including classes absent from training"
+          }
+        }
+      },
+      "bootstrap": {
+        "B": 1000,
+        "seed": 1,
+        "unit": "held-out test image"
+      },
+      "caveat": "Patient-identity caveat: separation is proven only for rows with known patient identity; 4,130 TBX11K and COVID-19 Radiography rows are grouped per image, and Kermany identities are derived from file names.",
+      "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+      "code_uncommitted_changes_in_lungai_novelty": false,
+      "protocol_commit": "f427c04",
+      "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+      "generated_at": "2026-11-04T05:54:41+00:00"
+    }
+  },
+  "last_written": {
+    "code_commit": "d3a6788a9d4f512389bfaebfd70bc9c62fbd5a80",
+    "code_uncommitted_changes_in_lungai_novelty": false,
+    "protocol_commit": "f427c04",
+    "protocol_last_commit": "c60e0c7573f721f406db8b58f5fc03c1b87f3ba4",
+    "generated_at": "2026-11-04T05:55:50+00:00"
+  },
+  "montgomery": {
+    "imagenet": {
+      "label": "ImageNet DenseNet-121 features (primary matrix)",
+      "C_selection": {
+        "C": 0.01,
+        "val_macro_f1": {
+          "0.01": 0.7839374709937234,
+          "0.1": 0.7635410964996918,
+          "1.0": 0.7289591650090489
+        },
+        "labels": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "n": 138,
+      "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+      "tp": 46,
+      "fn": 12,
+      "tn": 34,
+      "fp": 46,
+      "sensitivity": {
+        "estimate": 0.7931034482758621,
+        "lower": 0.6723078207851659,
+        "upper": 0.8774851603050945,
+        "successes": 46,
+        "n": 58
+      },
+      "specificity": {
+        "estimate": 0.425,
+        "lower": 0.3225656178960177,
+        "upper": 0.5343071015343113,
+        "successes": 34,
+        "n": 80
+      },
+      "accuracy": {
+        "estimate": 0.5797101449275363,
+        "lower": 0.49629083327975365,
+        "upper": 0.6588119144141406,
+        "successes": 80,
+        "n": 138
+      },
+      "prevalence": 0.42028985507246375,
+      "roc_auc_p_abnormal": 0.7426724137931034,
+      "exact_tuberculosis_recall": 0.0,
+      "note": "Montgomery was already used for runs 1-5; it is not untouched. Patient-identity caveat: separation is proven only for rows with known patient identity; 4,130 TBX11K and COVID-19 Radiography rows are grouped per image, and Kermany identities are derived from file names."
+    },
+    "served": {
+      "label": "linear-head leave-one-source-out on frozen features (secondary matrix; the run-2 backbone saw all six sources in training: not held-out, not external)",
+      "C_selection": {
+        "C": 0.01,
+        "val_macro_f1": {
+          "0.01": 0.7788088915816931,
+          "0.1": 0.7603616362262343,
+          "1.0": 0.7349095260283697
+        },
+        "labels": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "n": 138,
+      "definition": "positive = predicted class is not 'Normal'; reference positive = TB-confirmed scan",
+      "tp": 50,
+      "fn": 8,
+      "tn": 41,
+      "fp": 39,
+      "sensitivity": {
+        "estimate": 0.8620689655172413,
+        "lower": 0.7507409056616204,
+        "upper": 0.9284151298028188,
+        "successes": 50,
+        "n": 58
+      },
+      "specificity": {
+        "estimate": 0.5125,
+        "lower": 0.40493334216542254,
+        "upper": 0.6189212045961893,
+        "successes": 41,
+        "n": 80
+      },
+      "accuracy": {
+        "estimate": 0.6594202898550725,
+        "lower": 0.5769936671468141,
+        "upper": 0.7332118282409743,
+        "successes": 91,
+        "n": 138
+      },
+      "prevalence": 0.42028985507246375,
+      "roc_auc_p_abnormal": 0.7547413793103448,
+      "exact_tuberculosis_recall": 0.0,
+      "note": "Montgomery was already used for runs 1-5; it is not untouched. Patient-identity caveat: separation is proven only for rows with known patient identity; 4,130 TBX11K and COVID-19 Radiography rows are grouped per image, and Kermany identities are derived from file names."
+    }
+  }
+}

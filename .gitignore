@@ -77,3 +77,7 @@ scratch/
 backend/static/
 # Per-image predictions of the run comparison (same policy as the per-split report folders)
 artifacts/evaluation_reports/run_comparison_predictions.csv
+
+# Novelty feature caches (large, regenerable with lungai.novelty.features); results JSON and access log stay tracked
+artifacts/novelty/**/features_*
+artifacts/novelty/*.pkl
