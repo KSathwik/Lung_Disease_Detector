@@ -1,6 +1,6 @@
 # Novelty extension protocol (C1-C4): decision rules fixed in advance
 
-Status: **DRAFT, NOT APPROVED** (committed as a draft on 2026-11-04 so its history is visible). Drafted 2026-11-03 (evening) while runs 4 and 5 were still training and before any number of the novelty extension (spectral map, INLP, leave-one-source-out, band-stop) existed. It becomes binding only when the student approves it; the hash and time of that approval commit (not of this draft commit) are then entered in section 13. Nothing in `artifacts/novelty/` exists yet. Style and purpose follow `docs/data/run_selection_protocol.md`.
+Status: **APPROVED by the student on 2026-11-04 (morning) and binding from the approval commit** (hash in section 13). Drafted 2026-11-03 (evening) while runs 4 and 5 were still training and before any number of the novelty extension (spectral map, INLP, leave-one-source-out, band-stop) existed; committed first as an unapproved draft (`e3e1aa1`). Nothing in `artifacts/novelty/` exists yet. Style and purpose follow `docs/data/run_selection_protocol.md`.
 
 Inputs read for this draft: `docs/publication/NOVELTY_ROADMAP.md`, `docs/publication/lit_search/SCOPE_MERGE_REVIEW.md` (flags F1-F6, rule B8), `docs/publication/lit_search/INVENTORY_AND_WORKPLAN.md`, `docs/manuscripts/shared/WRITING_BRIEF.md`, `lungai/evaluation/source_probe.py`, `lungai/training/train_v6.py`, `lungai/config.py`, and the manifest of `data/derived/v6_build_002` (metadata columns only; no image was opened).
 
@@ -244,7 +244,9 @@ After this file is committed, any change to a setting, threshold, variant list, 
 
 | Date | Change | Reason | Affected results computed before the change? | Approved |
 |---|---|---|---|---|
-| (commit) | Protocol committed; commit hash [TO CONFIRM: filled at commit] | - | none (no novelty result existed) | [TO CONFIRM: student approval] |
+| 2026-11-03 | Draft committed as `e3e1aa1` (2026-11-04 ~05:50), labelled not approved | - | none (no novelty result existed) | not approved |
+| 2026-11-04 | Protocol approved unchanged; scope C1 + C3 + C4 + C2-lite, C2 only by the section 10 rule; journal choice left open | Student's reply in chat to the request for approval: "Proceed with your findings" | none (no novelty result existed; `artifacts/novelty/` absent) | student, in chat |
+| 2026-11-04 | Approval commit hash: entered in the next commit (a commit cannot contain its own hash); see `git log -- docs/publication/NOVELTY_PROTOCOL.md` | - | none | - |
 
 Access log (appended as steps complete): step number, date and time, code commit hash, output file, remarks.
 
