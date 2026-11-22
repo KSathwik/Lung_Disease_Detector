@@ -131,7 +131,7 @@ Nothing here rewrites git history, force-pushes, or removes the integrity record
 
 ## Done (2026-11-04)
 
-Student approved steps 1 to 5 only (plan table items 3, 4 cross-link, 5, 8 conditional, 9 decision). Applied to the working tree, not committed.
+Student approved steps 1 to 5 only (plan table items 3, 4 cross-link, 5, 8 conditional, 9 decision). Applied and committed in `f0ea013` (2026-11-04).
 
 - Step 1 (superseded planning): `git mv` of `NOVELTY_PLAN.md`, `NOVELTY_ROADMAP.md`, `CONFERENCE_VS_JOURNAL.md` to `docs/publication/archive/`, each with a "superseded by" header, plus `docs/publication/archive/README.md`. All references (13 files: PROJECT_EXECUTION_STATUS, TRACKER, AUDIT_FINDINGS, conference README and checklist, RESULTS_FACTS, JOURNAL_SCOPE_MATCH, NOVELTY_PROTOCOL (link text only), RESEARCH_BRIEF, four lit_search files) now point to `docs/publication/archive/...`. `NOVELTY_PROTOCOL.md` was not moved.
 - Step 2 (duplicates): 70 byte-identical files removed with `git rm` (about 17.5 MB in the working tree), one canonical copy kept per group (the `experiments/` copy where one exists, else `submission_package`, `screenshots/application`, `thesis_drafts/...Report.md`, `thesis_drafts/MANUSCRIPT_BSPC_LUNGAI.md`, the non-`_root_copy` pptx, `CXR_GATE_FINAL_FORENSIC_AUDIT.md`). Mapping in `docs/archive/DUPLICATES.md`. `docs/archive/old_screenshots/` is not byte-identical to `images/` (different blobs), so it was kept. `experiments/densenet_v3/class_mapping.json` duplicate and the empty-blob pair were left (code paths).

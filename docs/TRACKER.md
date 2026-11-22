@@ -1,92 +1,60 @@
 # Project and submission tracker
 
-> This is the single status page. Related: `PROJECT_EXECUTION_STATUS.md` (handoff context), `docs/publication/SUBMISSION_TRACKER.md` (venue table), `artifacts/execution_state.json` (machine state for the pipeline scripts, not edited by hand).
+> This is the single status page. Related: `PROJECT_EXECUTION_STATUS.md` (handoff context), `docs/publication/SUBMISSION_TRACKER.md` (venue table), `docs/README.md` (catalogue of every document), `artifacts/execution_state.json` (machine state for the pipeline scripts, not edited by hand).
 
-Owner: main session. Updated: 2026-11-04 ~05:40. Student: Katkam Sathwik (24567T7604), M.Tech CSE, KUCE&T, Kakatiya University. Supervisor: Prof. Nagavelli Ramana.
+Updated: 2026-11-22. Student: Katkam Sathwik (24567T7604), M.Tech CSE, KUCE&T, Kakatiya University. Supervisor: Prof. Nagavelli Ramana.
 
-Legend: DONE · IN PROGRESS · PENDING · BLOCKED (needs someone outside this session).
+Legend: DONE · OPEN (work left) · STUDENT (needs the student or the authors) · BLOCKED (needs something outside the project).
 
-## Status board (monitor)
+## Framing
 
-Checked 2026-11-04 ~05:40 from files and logs (refresh at each milestone: re-read `followups.out`, `runs/*/state.json`, `artifacts/evaluation_reports/`, the placeholder greps, `git status`). Owner: auto = this session or its agents; student = needs the student.
-
-| Task | Owner | State | Evidence | Next action | ETA |
-|---|---|---|---|---|---|
-| Run 2 (seed 42) train + eval | auto | done | `artifacts/evaluation_reports/v6_r2_{val,test,external}` | none; served as v6.1 | done |
-| Run 3 (seed 43) train + eval | auto | done | `followups.out` "end v6r3_densenet121_seed43 rc=0" 19:55; `v6_r3_{val,test,external}` exist; state.json: 9 epochs, best epoch 6, bad_epochs 3 (early stop) | none | done |
-| Run 4 (seed 44) train + eval | auto | done | `followups.out` "end v6r4_densenet121_seed44 rc=0" 23:31; `v6_r4_{val,test,external}` exist; early stop after 10 epochs (best 7) | none | done |
-| Run 5 (no-filter ablation, seed 42) | auto | done | `followups.out` "end v6r5_densenet121_seed42_nofilters rc=0" 04:52 on 4 Nov; `v6_r5abl_{val,test,external}`; 16 of 16 epochs; same split fingerprint as run 2 | none | done |
-| Aggregate seeds + ablation, render docs | auto | done | `artifacts/evaluation_reports/multi_seed_summary.json`; macros regenerated; F9/F10 in `RESULTS_FACTS.md` | none | done |
-| Fill result placeholders | auto | done | 0 `[PENDING` in thesis content and `slides.md`; 0 active `\pending` in the BSPC sections | none | done |
-| Rebuild report/slides, pytest, Jest, build, final audit | auto | done | pptx and docx rebuilt 2026-11-04 (docx after Word was closed; 0 missing tokens); pytest 150 passed 1 skipped; Jest 19/19; frontend build OK; audit in `docs/AUDIT_FINDINGS.md` (2026-11-04) | none | done |
-| Commit and push (branch `research/lungai-clean-baseline`) | auto | see git log | committed and pushed after the 2026-11-04 audit fixes | none | done |
-| Novelty literature search | auto | done | `docs/publication/lit_search/` (4 files, 22:28-22:37) | none until student decides scope | done |
-| `docs/publication/archive/NOVELTY_ROADMAP.md` | auto | done (verified draft) | `docs/publication/archive/NOVELTY_ROADMAP.md`; nothing run | student review | done |
-| `NOVELTY_PROTOCOL.md` | student | done (approved) | approved in chat 2026-11-04 ("Proceed with your findings"); approval commit `f427c04`; section 13 log | changes only through section 13 | done |
-| C1/C3/C4 novelty runs | auto | in progress | code being written in `lungai/novelty/` (not run yet) | time 200 images, feature cache, then C1 → C3 → C4 → C2-lite in the protocol order | 4 Nov |
-| C2 (band-selective suppression) | student | waiting | roadmap section 3 go/no-go rule on validation only | decide after C2-lite | after C2-lite |
-| `JOURNAL_SCOPE_MATCH.md` | auto | done | S1 (C1+C3+C4) → Informatics in Medicine Unlocked, fallback BSPC; S2 (with C2) → BSPC, fallback IMU | student chooses scope and journal | student |
-| Docker build, CI | student | blocked | Docker not installed; branch CI unrun | outside this session | - |
-| Contacts, corresponding author, EMBC reciprocal reviewer | student | blocked | placeholders `[TO BE PROVIDED]` / `[TO BE CONFIRMED]` | student supplies | - |
-| VinDr-CXR, JSRT, Kaggle token (Covid-Radiography, Rahman TB) | student | blocked | `artifacts/execution_state.json` blockers | student credentials | - |
-
-### Risks and inconsistencies
-- `NOVELTY_PROTOCOL.md` is committed as a draft but is binding only after the student's approval; running any novelty analysis before that would break "fixed in advance".
-- Run 2 (served) is the highest of the three seeds on the internal test (spread under one point): never call it "representative" or "not a lucky seed". The ablation is one seed and run 5 selected its last epoch: keep its wording non-causal.
-- Word had the report open on 4 Nov (lock file `docs/thesis/~$ngAI_MTech_Project_Report.docx`, untracked): the committed .docx is the 3 Nov build; rebuild after closing Word. Do not commit the lock file or the `_NEW` file.
-- A second Claude session worked in parallel on 4 Nov 04:55 (thesis content, `build_presentation.py`); it handed ownership to this session and stopped. Only one session should write to the repository at a time.
-- Laptop has 8 GB RAM: one heavy job at a time.
-
-### Decisions waiting for the student
-1. Approve `NOVELTY_PROTOCOL.md` so it can be committed before any novelty number exists.
-2. Journal choice (BSPC first per `JOURNALS.md`; `JOURNAL_SCOPE_MATCH.md` still in progress).
-3. Scope: C1+C3+C4 only (no training, about one day) or the full plan with C2 (2-3 nights); C2 go/no-go after C2-lite.
-4. Approve commit and push of the uncommitted work.
-5. Contact details, corresponding author, EMBC reciprocal reviewer.
+Since 2026-11-16 the thesis, the EMBC conference paper, the slides and the viva guide present LungAI as a **system designed and developed to predict lung disease** (data pipeline, DenseNet-121 classifier, web application, honest evaluation). The source-information analyses (C1-C4) are supplementary: thesis Appendix G and backup slides. The IMU journal draft keeps the earlier source-shortcut framing; it was not changed.
 
 ## 1. Engineering
 
 | Item | Status | Notes |
 |---|---|---|
-| Data acquisition from official sources | DONE | NIH (12/12), Montgomery, Shenzhen, Kermany, Cohen, TBX11K, COVID-19 Radiography DB, Rahman TB (unused). Provenance + SHA-256 in `data/raw/_provenance/` |
-| VinDr-CXR, JSRT | BLOCKED | PhysioNet credentialing / JSRT registration (user) |
-| V6 builds (rules, caps, patient-grouped split, leakage checks) | DONE | `v6_build_001`, `v6_build_002`; all leakage checks 0 |
-| Run 1 training + evaluation | DONE | Integrated in the app as v6.0 |
-| Run 2 training + evaluation | DONE | 16 epochs (schedule completed); test acc 77.4%, macro-F1 78.8%, ROC-AUC 0.955; Montgomery sens 55/58, spec 19/80, exact TB 0/58, COVID-19 calls 3 (run 1: 71) |
-| Fair comparison of runs on a common unseen validation set | DONE | 2,018 images; macro-F1 run 1 59.4% vs run 2 79.6% → run 2 selected (rule fixed in advance in the repository); shared sources only: acc 67.6% vs 67.8%, macro-F1 62.2% vs 68.5% |
-| Integrate final model, regenerate metrics/docs/macros | DONE | v6.1 = run 2 (`densenet121_v6r2_seed42.h5`, sha 7992b8da…); figures + Grad-CAM regenerated; run 1 = v6.0 history |
-| Run 3 (seed 43) | DONE | Early-stopped at epoch 9 (best 6); test acc 77.1%, macro-F1 78.5%, AUC 0.954; Montgomery 54/58, 25/80, TB 0/58 |
-| Runs 4 (seed 44), 5 (no-filter ablation) | IN PROGRESS | Sequential queue (`scripts/pipeline/run_followups.py`); see the status board for current epoch and ETA |
-| Source-identifiability probe | DONE | Source predictable from frozen features: 93.8% balanced acc (6 sources, chance 16.7%); within Normal 97.2% (5 sources); within TB 98.9% |
-| Backend/frontend integration | DONE (run 1) | Metrics endpoint, generated limitation notice, Metrics page |
-| CXR gate recalibration (heuristic threshold 0.83 → 0.703) | DONE | Validation pass 38.7% → 91.0%; test rejection 9.3% (build 2), Montgomery 13.0%; all synthetic negatives rejected; no real negative set |
-| Tests: pytest / Jest / build | pytest green for v6.1 (3 fixes: version source, root route with static build, literature names excluded from the model-name check); Jest/build pending re-run | Final full run at the end |
-| Browser end-to-end check | DONE for v6.1 | Metrics page = API; TB test image → Tuberculosis 96.8%, v6.1, hash verified, Grad-CAM rendered, generated notice; History version label added afterwards (API-tested) |
-| Docker image build | BLOCKED | Docker not installed on this laptop; Dockerfile fixed but unbuilt |
-| CI | BLOCKED | Branch not pushed (push needs user approval) |
-| Commit | PENDING | Needs user approval; nothing committed after `c1c82f7` |
+| Data acquisition from official sources | DONE | NIH (12/12), Montgomery, Shenzhen, Kermany, Cohen, TBX11K, COVID-19 Radiography DB, Rahman TB (overlap check only). Provenance and SHA-256 in `data/raw/_provenance/` |
+| VinDr-CXR, JSRT | BLOCKED | PhysioNet credentialing / JSRT registration |
+| V6 builds (rules, caps, patient-grouped split, leakage checks) | DONE | `v6_build_001`, `v6_build_002`; all leakage checks 0; identity unknown for 4,130 TBX11K and COVID-19 Radiography rows (grouped per image) |
+| Runs 1-5 | DONE | Run 1 (v6.0, superseded); run 2 = served v6.1 (seed 42); runs 3-4 seeds 43 and 44; run 5 no-filter ablation |
+| Run selection (common validation set, rule fixed in advance) | DONE | 2,018 images; run 2 selected |
+| Source-identifiability probe | DONE | 93.8% balanced accuracy (chance 16.7%) |
+| Source-information analyses C1, C3, C4, C2-lite | DONE | Protocol approved at `f427c04`; C2 NO-GO; reported as supplementary (thesis Appendix G) |
+| CXR gate recalibration | DONE | Heuristic threshold 0.83 → 0.703 on validation; no real non-radiograph set |
+| Backend and frontend serving v6.1 | DONE | Browser check done; metrics page equals the API |
+| Tests | DONE | pytest 173 passed, 1 skipped (2026-11-22); Jest 19/19; frontend production build OK |
+| CI (GitHub Actions) | DONE | Green on `research/lungai-clean-baseline` and `main` for `9b9a1fd` (2026-11-22) |
+| Docker image build | BLOCKED | Docker not installed on the laptop; Dockerfile unbuilt |
+| Commit and push | DONE | Work goes on `research/lungai-clean-baseline`; `main` is fast-forwarded to it. GitHub's default branch is still `develop` (only the owner can change it in Settings) |
 
 ## 2. Academic deliverables
 
-| Deliverable | Folder | Status | Result-dependent parts |
+| Deliverable | Folder | Status | Left to do |
 |---|---|---|---|
-| Shared results macros / JSON | `docs/manuscripts/shared/` | DONE (run 1 values) | Regenerate after final model |
-| Verified bibliography | `docs/manuscripts/shared/references.bib` | DONE | 53 entries; 37 requested all verified; title-only extras flagged in REFERENCES_STATUS.md |
-| Figures and diagrams | `docs/figures/` | DONE (run 1 data) | `python -m lungai.evaluation.make_figures`; re-run on final model; Grad-CAM figure still to implement; pipeline box must list build-2 sources if run 2 wins |
-| M.Tech report (.docx) | `docs/thesis/` | FILLED for v6.1 | ~22.5k words (~98 pp. est.); seed and ablation sections filled 2026-11-04 (rebuild after closing Word); remaining: contacts, personalisation; update fields in Word |
-| Presentation (.pptx) | `docs/presentation/` | FILLED for v6.1 | 30 slides; seeds/ablation slide filled 2026-11-04; remaining: demo screenshots (manual), author confirmations; check visually in PowerPoint |
-| Conference manuscript (IEEE LaTeX) | `docs/manuscripts/conference/` | COMPLETE DRAFT (EMBC) | ~2.4k words, 20 refs, 2 figs, 2 tables, no pending; page count to confirm on Overleaf; name the EMBC reciprocal reviewer |
-| Journal manuscript (BSPC, elsarticle) | `docs/manuscripts/journal_bspc/` | FILLED | seed and ablation tables filled 2026-11-04 (0 `\pending`); probe + per-source + run comparison done; length likely above BSPC guidance — condense; REVIEWER_RISK: major revision likely |
-| Venue comparison + submission tracker | `docs/publication/` | DONE | BSPC first (then JIIM, Sci. Rep.); EMBC 2027 first (CONECCT 2027 backup); no official KU template found |
-| Thesis binaries in `docs/archive/` (old V5 DOCX/PDF/PPTX) | `docs/archive/` | PENDING | Kept as history; superseded by the new report |
+| M.Tech report (.docx) | `docs/thesis/` | DONE (system framing, rebuilt 2026-11-22) | Contacts and acknowledgement personalisation (13 `[TO BE PROVIDED]` markers); update fields in Word (Ctrl+A, F9) before printing |
+| Presentation (.pptx) | `docs/presentation/` | DONE (system framing, 30 slides + 3 backup, rebuilt 2026-11-22) | Corresponding author; check visually in PowerPoint |
+| Viva guide (.md and .docx) | `docs/viva/` | DONE (story and Q3/Q4 aligned, rebuilt 2026-11-22) | Read it before the viva |
+| Conference paper, IEEE EMBC 2027 | `docs/manuscripts/conference/` | COMPLETE DRAFT (system framing) | Compile on Overleaf and confirm 4 pages; corresponding author; reciprocal reviewer; CRediT and approvals |
+| Journal paper, Informatics in Medicine Unlocked | `docs/manuscripts/journal_imu/` | COMPLETE DRAFT (source-shortcut framing) | Student decisions below; disclose overlap with the EMBC paper |
+| Journal paper, BSPC (fallback) | `docs/manuscripts/journal_bspc/` | FILLED (older framing) | Only if IMU is dropped |
+| Shared results macros, facts, bibliography | `docs/manuscripts/shared/` | DONE | 64 verified references; regenerate macros only if a model changes |
+| Figures | `docs/figures/` | DONE | Regenerate only if a model changes |
 
-## 3. Blockers and decisions for the user
+## 3. Decisions and inputs waiting for the student
 
-1. Contact details (emails, mobiles): placeholders `[TO BE PROVIDED]`.
-2. Author order and corresponding author for manuscripts: `[AUTHORS TO CONFIRM]`.
-3. RESOLVED: no prescribed KUCE&T report format and no paper required before dissertation submission (student, 2026-11-03); the report uses the documented Osmania-based standard (docs/publication/REPORT_TEMPLATE_FINDINGS.md).
-8. EMBC 2027 requires one author to act as a reciprocal reviewer (named at submission; reviews a few EMBC papers): `[TO BE CONFIRMED]` in docs/manuscripts/conference/SUBMISSION_CHECKLIST.md.
-4. No LaTeX compiler here: manuscripts compile on Overleaf.
-5. Journal strength: three seeds of the final recipe and one ablation seed (done 2026-11-04); more ablation seeds (≈5 h CPU each) would strengthen a journal submission.
-6. Commit/push approval.
-7. Real non-radiograph image set to validate the CXR gate properly.
+1. Corresponding author for every paper and the EMBC reciprocal reviewer.
+2. Contact details in the thesis (13 `[TO BE PROVIDED]` markers) and the acknowledgement text.
+3. Author emails are now in the conference paper and the repository is public: confirm every author agrees.
+4. Ethics statement, AI-use declaration and CRediT roles approved by all authors.
+5. Written confirmation of the novelty-protocol approval and its seven clarifications (audit items N7/W9), needed for the journal paper.
+6. Journal paper: keep the IMU draft in its source-shortcut framing, or align it with the system framing. IMU APC and a Scopus / Google Scholar novelty check before submission.
+7. A real set of non-radiograph images, if the input gate is to be validated.
+
+## 4. Risks
+
+- Run 2 (served) is the highest of three seeds within a spread of under one point: never call it "representative". The ablation is one seed and selected its last epoch: keep its wording non-causal.
+- The conference paper is about 2,490 words with three figures and one table and may exceed 4 pages; the conference README lists what to cut first.
+- Never commit the Word lock file (`~$*.docx`) or a `_NEW` copy of the report.
+- Only one Claude session should write to the repository at a time.
+- Laptop has 8 GB RAM: one heavy job at a time.

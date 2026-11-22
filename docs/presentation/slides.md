@@ -5,24 +5,24 @@
 # Unfilled tokens are drawn in red by the build script; no placeholders remain at present.
 
 layout: title
-title: LungAI DenseNet-121: Six-Class Chest X-Ray Classifier
-subtitle: An auditable, leakage-controlled rebuild with patient-grouped evaluation
+title: LungAI: A Deep Learning System for Lung Disease Detection
+subtitle: Design and development of a six-class chest X-ray classifier
 > Good morning. I am Katkam Sathwik, and this is my M.Tech project review under the guidance of Prof. Nagavelli Ramana.
-> The project is LungAI, a six-class chest X-ray classifier with a web application.
-> Its main point is not a high accuracy number but an evaluation that can be trusted: data rebuilt from official sources, patient-grouped splits and a once-only test.
+> The project is LungAI, a system I designed and developed to predict six lung conditions from a chest X-ray: a DenseNet-121 classifier, the data pipeline that trains it, and a web application that serves it.
+> I will show how the system was built, how well it works, and where it still falls short.
 > I will take about twenty minutes and then welcome questions.
 ---
 layout: bullets
 title: Outline
-- Motivation, problem statement and objectives
-- Literature review and research gap
-- Audit of the earlier V5 model
-- Methodology: data, preprocessing, model, training, evaluation
-- System implementation and the CXR input gate
+- Motivation, problem statement, requirements and objectives
+- Literature review and positioning
+- Lessons from the first version (V5)
+- System design: data pipeline, preprocessing, model, training, application
+- Implementation, input gate and testing
 - Results, demo, limitations, conclusion and future scope
-> This is the plan of the talk. First I explain why the problem matters and what was wrong with the earlier version of the system.
-> Then I describe the V6 method in the order in which it was executed: data, preprocessing, model, training and evaluation.
-> After the application, I present results, limitations and the way forward.
+> This is the plan of the talk. First I explain why the problem matters and what the system has to do.
+> Then I describe the design in the order the system works: data, preprocessing, model, training and the application that serves it.
+> After the implementation, I present results, a demo, limitations and the way forward.
 ---
 layout: bullets
 title: Motivation
@@ -30,22 +30,24 @@ title: Motivation
 - Radiologist access is limited, especially outside large centres
 - Public CXR datasets make deep-learning decision-support research feasible [wang2017chestxray8, rajpurkar2017chexnet]
 - Reported accuracies often fail to carry over to new hospitals [zech2018variable]
-- A decision-support tool is only useful if its evaluation is honest
+- Goal: a working prediction tool whose reported performance can be trusted
 > Chest radiography is cheap and common, but reading it needs trained radiologists who are not available everywhere.
 > Large public datasets have made research on automatic CXR classification possible.
 > However, studies show that models often lose performance on data from another hospital.
-> So the motivation is twofold: build a working tool, and make the evaluation trustworthy enough that its numbers mean something.
+> So the goal is twofold: build a working tool that predicts the disease, and evaluate it honestly enough that its numbers mean something.
 ---
 layout: bullets
 title: Problem statement and objectives
-- Classify a frontal CXR into six exclusive classes: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass, Tuberculosis
-- O1-O2: rebuild the data from official sources with rule-based labels; patient-grouped splits; leakage checks pass (identity unknown for two sources)
-- O3-O4: train DenseNet-121 reproducibly; evaluate once on test and on an external cohort, with confidence intervals
-- O5: end-to-end application (FastAPI, React, Grad-CAM, SQLite)
-- O6: report limitations without overclaiming
-> The problem is single-label, six-class classification of chest X-rays. The classes are treated as mutually exclusive, which is itself a limitation I return to.
-> The harder part is methodological: traceable labels, no patient crossing splits, and an external cohort.
-> O1 and O2 are about data integrity, O3 and O4 about training and evaluation, O5 the software, O6 honest reporting. The model is a research prototype, not a clinical device.
+- Predict one of six classes from a frontal CXR: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass, Tuberculosis
+- O1: design an end-to-end system with one shared configuration and preprocessing
+- O2-O3: build the dataset from official sources; patient-grouped splits with leakage checks
+- O4: train DenseNet-121 on a laptop CPU
+- O5: web application with input check, Grad-CAM, inconclusive outcome, history, patients and reports
+- O6-O7: evaluate once on test and an external cohort (three seeds, one ablation); test and document everything
+> The problem is single-label, six-class prediction from one chest X-ray. The classes are treated as mutually exclusive, which is itself a limitation I return to.
+> O1 is the system design. O2 and O3 build the data the system needs, O4 trains the classifier, and O5 is the application a user works with.
+> O6 and O7 are about trust: a once-only evaluation including an external hospital, automated tests and reproducibility. The thesis also lists functional and non-functional requirements in Chapter 3.
+> The system is a research prototype, not a clinical device.
 ---
 layout: table
 title: Literature review in brief
@@ -63,19 +65,18 @@ colw: 2.4, 5.2
 > Full citations are in the references slide and the report.
 ---
 layout: bullets
-title: Research gap
-- Some CXR studies report results on a random image-level split
-- Patient identity and label provenance are often undocumented
-- External evaluation is often missing, and specificity is not always reported with sensitivity [roberts2021common, zech2018variable]
-- Source and acquisition shortcuts are not always tested [degrave2021ai, geirhos2020shortcut]
-- Some projects do not release an auditable pipeline from raw data to served metrics
-> The gap is not a missing architecture. DenseNet-121 is well known.
-> The gap is in evaluation hygiene: patient-grouped splits, documented label rules, external testing and a reproducible path from raw data to the numbers shown in the application.
-> Our contribution is therefore a leakage-controlled, auditable rebuild rather than a new network.
-> We make no claim of novelty beyond that.
+title: Positioning
+- DenseNet-121 transfer learning is well established: no new architecture is needed
+- Many published systems stop at a model; few cover data, serving and evaluation end to end
+- Image-level splits and undocumented labels inflate reported accuracy [roberts2021common, zech2018variable]
+- External testing is often missing; source shortcuts are rarely checked [degrave2021ai, geirhos2020shortcut]
+- This project: a complete, tested system whose reported numbers trace back to the data
+> The gap is not a missing architecture. DenseNet-121 is well known and works well on chest X-rays.
+> What is often missing is the rest of the system: controlled data, an application that serves the model safely, and an evaluation that includes an external hospital.
+> My contribution is that complete system, designed and built end to end. I make no novelty claim for the network itself.
 ---
 layout: bullets
-title: Why rebuild? Audit of the V5 model
+title: Lessons from the first version (V5)
 - V5 recorded {{VFiveAcc}}% internal accuracy (N = {{VFiveN}} test images)
 - Patient leakage: 154 test images (9.8%) shared a patient with training
 - Proxy labels: half of "Pneumonia" was TBX11K "sick but not TB"; 124 TB labels were latent TB
@@ -83,10 +84,10 @@ title: Why rebuild? Audit of the V5 model
 - V5 checkpoint is lost, so it cannot be re-evaluated; V6 starts from the raw sources
 > Before this project's V6, an earlier model reported nearly 83 percent internal accuracy.
 > My audit found that 154 of its 1,570 test images came from patients also present in training, that several labels were proxies rather than true diagnoses, and that on an external cohort it called none of 80 normal scans normal.
-> The V5 checkpoint was lost, so I could not re-evaluate it. These findings motivated rebuilding everything from official sources with patient-grouped splits.
+> The V5 checkpoint was lost, so I could not re-evaluate it. These findings shaped the design of the current version: the data pipeline was rebuilt from official sources with patient-grouped splits, and the application was changed so it can never show a prediction the model did not make.
 ---
 layout: fig
-title: Methodology: end-to-end pipeline
+title: System design: end-to-end pipeline
 figure: fig_pipeline
 caption: Acquisition, build (labels, caps, grouped split, leakage checks), training, once-only evaluation, served metrics.
 > This is the whole pipeline. Raw data is acquired from official sources with recorded hashes.
@@ -296,42 +297,6 @@ colw: 2.4, 1.9, 1.7
 > Runs 3 and 4 stopped early by the same patience rule; run 2 completed its schedule. External specificity ranges from {{MSExtSpecMin}} to {{MSExtSpecMax}} percent and no seed names any Montgomery TB scan Tuberculosis, so the external failure is not a one-seed artefact.
 > The ablation, run 5, uses the same split, seed and schedule as run 2, without blur, CLAHE and low-pass filter. Internal accuracy is {{AblTestAcc}} against {{MSRunOneTestAcc}} percent, a gap larger than the seed spread, so the run with the filters scored higher internally in this single comparison. Run 5 selected its last epoch (16 of 16, validation still rising), so a convergence-speed difference cannot be excluded. External specificity is the same. Exact TB recall is {{AblExtTB}} percent without filters against {{MSRunOneExtTB}}: a handful of scans from one run, an observation and not an effect. One ablation seed cannot support a general claim about preprocessing.
 ---
-layout: bullets
-title: Extension: where does source information live?
-- Question: is source information in CXR features tied to particular frequency bands, and is it entangled with disease information?
-- Six octave bands A-F; band-pass and band-stop images; linear probes for source and for disease (macro-F1 within source) on frozen DenseNet-121 features
-- Linear source erasure (INLP, LEACE) on the same features, then re-scoring disease
-- Leave-one-source-out: train the head on five sources, score the sixth
-- Rules, thresholds and the C2 go/no-go fixed in advance and recorded in the repository
-- Diagnostic study: no new architecture, served model untouched
-> This extension asks a diagnostic question about the shortcut concern from the previous slides: where in the image spectrum is source information, and can it be separated from disease information?
-> The cached 224 by 224 images are split into six octave bands, A to F. For each band I build band-pass and band-stop variants and fit linear probes on frozen DenseNet-121 features: one probe for the source, one for disease, scored as macro-F1 within each source so source cues cannot buy the score.
-> Two published erasure methods, INLP and LEACE, are applied as a measurement on frozen features; I make no novelty claim for them. Leave-one-source-out trains the linear head on five sources and scores the held-out one.
-> The analysis rules and the go/no-go criteria for a possible band-suppression training experiment (C2) were fixed in advance and recorded in the repository, not registered externally.
-> Within the searches described in the roadmap, I am not aware of prior work that quantifies source versus disease information band by band; this is no stronger than that.
----
-layout: figs2
-title: Extension results: spectral map and leave-one-source-out
-figure: fig_spectral_map, fig_loso_matrix
-caption: Left: source and disease information per band. Right: held-out-source macro-F1 (ImageNet features, linear head).
-- Full-image source accuracy {{SpecMainTestFullSrcBA}}% (chance 16.7%); held-out TBX11K macro-F1 {{LosoImgTBXkMacroFOne}}%
-> Left: with frozen ImageNet features on the test sample, the full image gives source balanced accuracy {{SpecMainTestFullSrcBA}} percent against chance of 16.7, and within-source disease macro-F1 {{SpecMainTestFullFWs}} percent. Source is readable in every band-pass image, from {{SpecMainTestPassASrcBA}} percent in band A to {{SpecMainTestPassFSrcBA}} percent in band F, and both source and disease information are highest in bands E and F. No band stands out as the carrier; that null result is stated plainly.
-> Removing a single band barely changes source accuracy: the largest change is {{SpecMainTestStopFDeltaS}} points (band F), and the disease intervals all include zero.
-> Right: when a source is left out, a linear head scores far below its in-distribution reference on four of five sources, for example TBX11K {{LosoImgTBXkMacroFOne}} percent, a gap of {{LosoImgTBXkGap}} points, and Shenzhen {{LosoImgShenzhenMacroFOne}} percent. NIH shows a negative gap ({{LosoImgNIHGap}}) only because its reference is low with two testable classes; that is not better generalisation. Cohen has very few images and is very uncertain.
-> Caveats: F1, the cache is resampled to 224 by 224 after filtering, so band maps partly reflect resampling and the pre-filters. F2, the trained backbone saw all six sources and is not held out. F3, class and source are confounded (Effusion and Nodule/Mass exist only in NIH), so the within-source score is primary. F5, intervals cover test-sample variation only; samples are small. Patient-identity caveat: 4,130 TBX11K and COVID-19 Radiography rows are grouped per image. Test was scored once; Montgomery was not untouched in the extension and these are not external validation. Availability in frozen features is indirect evidence, not proof that the trained model uses it.
----
-layout: bullets
-title: Extension takeaway: erasure costs disease performance
-- Source information is spread across all bands and not concentrated in one
-- Linear erasure (INLP, 20 steps): source accuracy {{InlpImgTestSrcBAKZero}}% to {{InlpImgTestSrcBAKStar}}%, but disease macro-F1 within source also falls ({{InlpImgTestChangeFWsKStar}} points)
-- One-step LEACE: six-class macro-F1 falls {{InlpImgTestChangeFAllLeace}} points: source and disease are entangled
-- Sharp drop when a source is held out (gap {{LosoImgTBXkGap}} points for TBX11K)
-- C2 band suppression: {{BsDecision}}; no band meets the rule fixed in advance. Future work, no C2 number exists
-> The takeaway is a diagnostic one. Source information is available in every band and is redundant across bands, so no single band is a carrier to suppress.
-> Erasing it linearly with INLP lowered the source accuracy a fresh probe can recover from {{InlpImgTestSrcBAKZero}} to {{InlpImgTestSrcBAKStar}} percent after 20 steps, which is not chance, and disease measures fell too: within-source macro-F1 by {{InlpImgTestChangeFWsKStar}} points. LEACE, which removes all linearly decodable source information in one step, lowered six-class macro-F1 by {{InlpImgTestChangeFAllLeace}} points. This is consistent with source and disease information being entangled in these features. I do not present removing the shortcut as an achievement.
-> The C2 go/no-go decision is {{BsDecision}}: removing the best band, band {{BsBand}}, lowered source accuracy by a few points, below the 5-point threshold fixed in advance, and {{BsNBandsSatisfying}} bands satisfied the first criterion. Only a frozen-feature linear head was examined, so band-suppression training is future work and nothing here says it works or fails for a trained network.
-> Caveats: one run, no seeds; INLP and LEACE are published methods applied as measurements; the served model, gate, backend and frontend are untouched; Montgomery was not untouched; patient-identity caveat as before.
----
 layout: figs2
 title: Application demo (model {{ModelVersion}})
 figure: screenshots/07_result_card, screenshots/08_gradcam_card
@@ -356,41 +321,40 @@ title: Limitations
 ---
 layout: bullets
 title: Conclusion
-- Rebuilt a six-class CXR benchmark from official sources with patient-grouped splits
-- Delivered a reproducible pipeline from raw data to served metrics, and a working application
-- Showed how leakage and proxy labels inflated the earlier V5 result
-- Final model v6.1: {{TestAcc}}% internal accuracy, but external specificity {{ExtSpecK}}/{{ExtSpecN}} and TB recall {{ExtTBK}}/{{ExtTBN}}: internal metrics overstate behaviour
-- Class-source confounding is strong; build 2 changed where external errors fall, not the external gap (indirect evidence of a source shortcut)
-- Extension: source information is spread across bands and entangled with disease; erasure costs disease performance; C2 band suppression is {{BsDecision}}
-- Not shown: clinical utility, superiority over other methods, causal effect of preprocessing (one ablation seed), robustness beyond the training seed
-> The extension adds a diagnostic result, not an improvement: source information is available in every band, linear erasure lowers disease scores too, and held-out sources score far lower. It is indirect evidence about frozen features, not proof about the trained model.
-> To conclude, the contribution is an auditable rebuild and a reproducible pipeline, together with evidence of how an earlier pipeline overstated its results.
-> The final model is v6.1, run 2. Its internal accuracy is good, but on the external cohort specificity is low and no TB scan is recognised as TB, so internal metrics overstate generalisation.
-> With build 2 the COVID-19 calls fell but the external gap remained; this is consistent with a source shortcut, not proof of one. Across three seeds the internal results are stable and the external gap persists; the single-seed ablation shows lower internal scores without the filters.
-> The claim I can defend is about evaluation method, not about clinical accuracy.
+- Designed and developed LungAI: data pipeline, DenseNet-121 classifier and a tested web application
+- The application checks its input, explains with Grad-CAM, flags inconclusive results and records each prediction with its model
+- Internal test: {{TestAcc}}% accuracy, macro-F1 {{TestMacroFOne}}%, macro ROC-AUC {{TestMacroAUC}}; stable over three seeds ({{MSTestAccMean}} ± {{MSTestAccSD}}%)
+- External hospital: specificity {{ExtSpecK}}/{{ExtSpecN}}, exact TB recall {{ExtTBK}}/{{ExtTBN}}: the system does not yet transfer
+- Source cues are available in the features (indirect evidence; thesis Appendix G)
+- Not shown: clinical utility, superiority over other methods, causal effect of preprocessing (one ablation seed)
+> To conclude, I designed and built a complete system that predicts six lung conditions from a chest X-ray, from the data pipeline to a working web application.
+> The application was built so that it cannot overstate itself: it checks the input, shows what the prediction is based on, flags low-confidence results, and serves the metrics of the model it loaded.
+> On the internal test the final model, v6.1, reaches {{TestAcc}} percent accuracy, and three seeds give almost the same result.
+> On an external hospital, specificity is low and no TB scan is named TB, so the system does not yet transfer. The source of an image can be read from its features, which is consistent with source shortcuts; that evidence is indirect.
+> The claim I can defend is a working, honestly evaluated system, not clinical accuracy.
 ---
 layout: bullets
 title: Future scope
+- Close the external gap: more sources with patient identity, a second external cohort
+- Retrain with a source held out and test lung masking, to measure source dependence directly
 - Add VinDr-CXR and JSRT after access to strengthen effusion and nodule classes
-- Multi-label formulation for co-findings
-- Several seeds and a larger, multi-site external cohort
-- Train a CXR gate on real radiographs and non-radiographs
-- Band-suppression training (C2): not started; the go/no-go gave {{BsDecision}}, so it needs a new decision
+- Multi-label formulation for co-findings; calibrated scores
+- Train a CXR gate on real radiographs and non-radiographs; build and test the Docker image
 - Clinician-reviewed prospective evaluation, reported per TRIPOD+AI and CLAIM [collins2024tripodai, mongan2020claim]
-> Band-suppression training, C2, is future work: the criteria fixed in advance were not met on frozen features, and it is not started without a new decision.
-> Future work follows the limitations. The most useful steps are better data, a multi-label formulation, repeated runs for variance, and a larger multi-site external cohort.
-> A trained gate would fix the weakest part of the application.
+> Future work follows the limitations. The most important step is to make the system work at a new hospital: better data with patient identity and a second external cohort.
+> Retraining with a source held out, and masking everything outside the lungs, would show directly how much the model depends on the source.
+> A trained input gate would fix the weakest part of the application.
 > Any clinical use would need prospective evaluation with clinicians and reporting following TRIPOD+AI and CLAIM.
 ---
 layout: bullets
 title: Publications plan
-- Conference (IEEE EMBC) and journal drafts in preparation; not submitted [AUTHORS TO CONFIRM]
-- Journal target: Informatics in Medicine Unlocked (Elsevier); fallback BSPC (decision 2026-11-04: diagnostic study after C2 NO-GO)
+- Conference: "Deep Learning-Based Lung Disease Detection Using Chest X-Ray Images", IEEE EMBC 2027 (deadline 24 Jan 2027); not submitted
+- Journal: Informatics in Medicine Unlocked (fallback BSPC), an extended study of the source analysis; not submitted
 - Author order: K. Sathwik, N. Ramana, P. Tirupathi, K. Srinivas; corresponding author [TO BE CONFIRMED]
 > I plan one conference paper and one journal paper from this work.
+> The conference paper presents the system and its evaluation. The journal paper extends the supplementary source analysis and will disclose its overlap with the conference paper.
 > The author order is confirmed by the project owner. The corresponding author is still to be confirmed, and all authors must verify contributions and approve the manuscripts before submission.
-> On 2026-11-04 the target journal became Informatics in Medicine Unlocked, with Biomedical Signal Processing and Control as fallback, because the work is now a diagnostic study after the C2 no-go. The EMBC conference plan is unchanged.
-> Nothing has been submitted yet; the venue comparison is maintained separately.
+> Nothing has been submitted yet.
 ---
 layout: refs
 title: Key references
@@ -421,3 +385,40 @@ title: Thank you
 subtitle: Questions and discussion
 > Thank you for your attention. I would be glad to answer questions about the data audit, the evaluation protocol, the application or the limitations.
 > If asked about accuracy, I will point to the confidence intervals and to the external cohort, and note that clinical validity is not claimed.
+
+---
+layout: bullets
+title: Backup: where does source information live?
+- Question: is source information in CXR features tied to particular frequency bands, and is it entangled with disease information?
+- Six octave bands A-F; band-pass and band-stop images; linear probes for source and for disease (macro-F1 within source) on frozen DenseNet-121 features
+- Linear source erasure (INLP, LEACE) on the same features, then re-scoring disease
+- Leave-one-source-out: train the head on five sources, score the sixth
+- Rules, thresholds and the C2 go/no-go fixed in advance and recorded in the repository
+- Diagnostic study: no new architecture, served model untouched
+> This backup slide covers the supplementary analysis in thesis Appendix G. It asks a diagnostic question about the shortcut concern from the previous slides: where in the image spectrum is source information, and can it be separated from disease information?
+> The cached 224 by 224 images are split into six octave bands, A to F. For each band I build band-pass and band-stop variants and fit linear probes on frozen DenseNet-121 features: one probe for the source, one for disease, scored as macro-F1 within each source so source cues cannot buy the score.
+> Two published erasure methods, INLP and LEACE, are applied as a measurement on frozen features; I make no novelty claim for them. Leave-one-source-out trains the linear head on five sources and scores the held-out one.
+> The analysis rules and the go/no-go criteria for a possible band-suppression training experiment (C2) were fixed in advance and recorded in the repository, not registered externally.
+> Within the searches described in the roadmap, I am not aware of prior work that quantifies source versus disease information band by band; this is no stronger than that.
+---
+layout: figs2
+title: Backup: spectral map and leave-one-source-out
+figure: fig_spectral_map, fig_loso_matrix
+caption: Left: source and disease information per band. Right: held-out-source macro-F1 (ImageNet features, linear head).
+- Full-image source accuracy {{SpecMainTestFullSrcBA}}% (chance 16.7%); held-out TBX11K macro-F1 {{LosoImgTBXkMacroFOne}}%
+> Left: with frozen ImageNet features on the test sample, the full image gives source balanced accuracy {{SpecMainTestFullSrcBA}} percent against chance of 16.7, and within-source disease macro-F1 {{SpecMainTestFullFWs}} percent. Source is readable in every band-pass image, from {{SpecMainTestPassASrcBA}} percent in band A to {{SpecMainTestPassFSrcBA}} percent in band F, and both source and disease information are highest in bands E and F. No band stands out as the carrier; that null result is stated plainly.
+> Removing a single band barely changes source accuracy: the largest change is {{SpecMainTestStopFDeltaS}} points (band F), and the disease intervals all include zero.
+> Right: when a source is left out, a linear head scores far below its in-distribution reference on four of five sources, for example TBX11K {{LosoImgTBXkMacroFOne}} percent, a gap of {{LosoImgTBXkGap}} points, and Shenzhen {{LosoImgShenzhenMacroFOne}} percent. NIH shows a negative gap ({{LosoImgNIHGap}}) only because its reference is low with two testable classes; that is not better generalisation. Cohen has very few images and is very uncertain.
+> Caveats: F1, the cache is resampled to 224 by 224 after filtering, so band maps partly reflect resampling and the pre-filters. F2, the trained backbone saw all six sources and is not held out. F3, class and source are confounded (Effusion and Nodule/Mass exist only in NIH), so the within-source score is primary. F5, intervals cover test-sample variation only; samples are small. Patient-identity caveat: 4,130 TBX11K and COVID-19 Radiography rows are grouped per image. Test was scored once; Montgomery was not untouched in the extension and these are not external validation. Availability in frozen features is indirect evidence, not proof that the trained model uses it.
+---
+layout: bullets
+title: Backup: erasure costs disease performance
+- Source information is spread across all bands and not concentrated in one
+- Linear erasure (INLP, 20 steps): source accuracy {{InlpImgTestSrcBAKZero}}% to {{InlpImgTestSrcBAKStar}}%, but disease macro-F1 within source also falls ({{InlpImgTestChangeFWsKStar}} points)
+- One-step LEACE: six-class macro-F1 falls {{InlpImgTestChangeFAllLeace}} points: source and disease are entangled
+- Sharp drop when a source is held out (gap {{LosoImgTBXkGap}} points for TBX11K)
+- C2 band suppression: {{BsDecision}}; no band meets the rule fixed in advance. Future work, no C2 number exists
+> The takeaway is a diagnostic one. Source information is available in every band and is redundant across bands, so no single band is a carrier to suppress.
+> Erasing it linearly with INLP lowered the source accuracy a fresh probe can recover from {{InlpImgTestSrcBAKZero}} to {{InlpImgTestSrcBAKStar}} percent after 20 steps, which is not chance, and disease measures fell too: within-source macro-F1 by {{InlpImgTestChangeFWsKStar}} points. LEACE, which removes all linearly decodable source information in one step, lowered six-class macro-F1 by {{InlpImgTestChangeFAllLeace}} points. This is consistent with source and disease information being entangled in these features. I do not present removing the shortcut as an achievement.
+> The C2 go/no-go decision is {{BsDecision}}: removing the best band, band {{BsBand}}, lowered source accuracy by a few points, below the 5-point threshold fixed in advance, and {{BsNBandsSatisfying}} bands satisfied the first criterion. Only a frozen-feature linear head was examined, so band-suppression training is future work and nothing here says it works or fails for a trained network.
+> Caveats: one run, no seeds; INLP and LEACE are published methods applied as measurements; the served model, gate, backend and frontend are untouched; Montgomery was not untouched; patient-identity caveat as before.

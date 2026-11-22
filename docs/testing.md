@@ -6,9 +6,9 @@ cd frontend && CI=true npx react-scripts test --watchAll=false
 cd frontend && CI=true npm run build
 ```
 
-CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs the same commands. **CI has not run yet**, because the branch has not been pushed.
+CI ([.github/workflows/ci.yml](../.github/workflows/ci.yml)) runs the same commands on every push. It is green on `research/lungai-clean-baseline` and `main` (latest checked: `9b9a1fd`, 2026-11-22).
 
-## Results on branch `research/lungai-clean-baseline` / `main` (2026-11-04, Windows 11, Python 3.12, TF 2.16.1; CI on Node 18)
+## Results on branch `research/lungai-clean-baseline` / `main` (pytest re-run 2026-11-22; Jest and build 2026-11-04; Windows 11, Python 3.12, TF 2.16.1; CI on Node 18)
 
 | Suite | Result |
 |---|---|

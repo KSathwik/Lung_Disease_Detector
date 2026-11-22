@@ -11,8 +11,7 @@ D:\LungAI\.venv-audit\Scripts\python.exe docs\presentation\build_presentation.py
 D:\LungAI\.venv-audit\Scripts\python.exe docs\presentation\build_presentation.py --verify-only
 ```
 
-After the final model is chosen
-1. Regenerate `results.json` and the figures, then rebuild.
-2. Replace every red `[PENDING FINAL RESULTS: ...]` text in `slides.md` with interpretation written from the final numbers; update the speaker notes that say interpretation is pending.
-3. Slide titles that say "run 1 values" (internal and per-class results) should be renamed.
-4. Add demo screenshots (slide 25 is a placeholder), confirm author order (`[AUTHORS TO CONFIRM]`), and check the datasets table against `data/derived/<build>/v6_build_report.json`.
+Status (2026-11-22)
+- Framed as a designed-and-developed system: 30 main slides, then 3 backup slides on the supplementary source analysis (thesis Appendix G) after "Thank you".
+- Built from the final model v6.1; demo screenshots are real captures (`docs/figures/screenshots/`). No overflow; the only marker left is the corresponding author `[TO BE CONFIRMED]` on the publications slide.
+- If a model or the results change: regenerate `results.json` and the figures, then rebuild.

@@ -26,7 +26,7 @@
       "sha256": "7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6",
       "sha256_source": "runs/v6r2_densenet121_seed42/run_metadata.json (checkpoint_sha256), written by lungai.training.train_v6",
       "produced_by": "python -m lungai.training.train_v6 --build data/derived/v6_build_002 --run-name v6r2_densenet121_seed42 --phase2-epochs 14",
-      "selection": "chosen over run 1 by the pre-registered rule in docs/data/run_selection_protocol.md (artifacts/evaluation_reports/run_comparison.json)",
+      "selection": "chosen over run 1 by the rule fixed in advance and recorded in docs/data/run_selection_protocol.md (artifacts/evaluation_reports/run_comparison.json)",
       "availability": "NOT IN REPOSITORY (*.h5 is gitignored; 28.7 MB). Install with scripts/install_checkpoint.py into models/ (or set MODELS_DIR). The backend refuses a file whose SHA-256 differs unless LUNGAI_ALLOW_UNVERIFIED_CHECKPOINT=true."
     },
     "historical_checkpoints": [

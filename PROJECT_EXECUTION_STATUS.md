@@ -4,7 +4,15 @@
 
 Read this file first in any new chat. It is the complete context needed to continue. Then read `docs/TRACKER.md`.
 
-## UPDATE — 2026-11-22 (newest; read first)
+## UPDATE — 2026-11-22, later (newest; read first)
+
+- **Whole document set brought up to date.** `docs/README.md` is now a full catalogue of every document with its purpose and state (current / record / history). `docs/TRACKER.md` rewritten (was stale since 4 Nov).
+- **Slides** reframed to the designed-and-developed system (title, outline, objectives, positioning, conclusion, future scope, publications); the three source-analysis slides are now backup slides after "Thank you". Presentation .pptx and viva guide .docx rebuilt.
+- **Stale facts fixed:** CI is green for `9b9a1fd` on both branches (`docs/testing.md`); every active reference to the superseded run-1 checkpoint now names `densenet121_v6r2_seed42.h5` (models/README, .env.example, Dockerfile, install script docstring, architecture, api, deployment); figures README build command; config wording "pre-registered" replaced by "fixed in advance and recorded".
+- **Left as written on purpose:** dated records (audits, protocols, run-selection rules, literature search), `docs/archive/`, `experiments/`, and the IMU and BSPC journal drafts.
+- The repository is public, so the four author emails in the conference paper are publicly visible.
+
+## UPDATE — 2026-11-22 (read before the older entries)
 
 - **Framing changed by the student (2026-11-16):** the thesis and the EMBC conference paper present LungAI as a system *designed and developed to predict the disease*, not as a dataset or source-shortcut study. The student's own 4-page draft (`LUNG_AI_Paper.pdf`, outside the repo) was the model. The IMU journal draft (`docs/manuscripts/journal_imu/`) still uses the shortcut framing and was **not** changed; ask the student before touching it.
 - **Conference paper** (`docs/manuscripts/conference/`): retitled "Deep Learning-Based Lung Disease Detection Using Chest X-Ray Images"; new System Design section (`sections/system.tex`, `fig_system_architecture`); seed variability and the preprocessing ablation now included; author block with roles and emails as the student supplied them. 20 references, every macro resolves; **page count not yet confirmed on Overleaf** (about 2,490 words plus 3 figures and 1 table; may exceed 4 pages).

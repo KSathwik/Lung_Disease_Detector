@@ -37,7 +37,7 @@ COPY artifacts/evaluation_reports/model_metrics.json ./artifacts/evaluation_repo
 COPY --from=frontend-build /app/frontend/build ./static
 
 # The checkpoint is not in the image (.dockerignore excludes *.h5). Mount it at runtime; the backend verifies its SHA-256:
-#   -v /path/to/densenet121_v6_seed42.h5:/app/models/densenet121_v6_seed42.h5:ro
+#   -v /path/to/densenet121_v6r2_seed42.h5:/app/models/densenet121_v6r2_seed42.h5:ro
 RUN mkdir -p models uploads
 
 EXPOSE 8000

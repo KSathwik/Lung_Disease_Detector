@@ -21,9 +21,9 @@ Base path: `/api/v1`. Interactive documentation is at `/docs` when the backend i
 ```json
 {
   "prediction_id": "…", "scan_id": "…",
-  "model_id": "lungai-densenet121-6class", "model_version": "v6.0",
+  "model_id": "lungai-densenet121-6class", "model_version": "v6.1",
   "selected_model": "LungAI DenseNet-121 — Six-Class Chest X-Ray Classifier",
-  "model_sha256": "c51ed228…", "checkpoint_verified": true,
+  "model_sha256": "7992b8da…", "checkpoint_verified": true,
   "class_order": ["COVID-19", "Normal", "Pleural Effusion", "Pneumonia", "Pulmonary Nodule / Mass", "Tuberculosis"],
   "predicted_class": "Pneumonia", "predicted_index": 3,
   "confidence": 0.85, "inconclusive": false,

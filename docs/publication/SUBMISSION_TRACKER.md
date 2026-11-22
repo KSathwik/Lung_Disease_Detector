@@ -2,15 +2,17 @@
 
 > Status pointer (2026-11-04): `docs/TRACKER.md` is the single status page (see `PROJECT_EXECUTION_STATUS.md` for the handoff). This file is the venue-specific submission table only.
 
+> Framing (2026-11-16, student): the EMBC paper and the thesis present LungAI as a system designed and developed to predict lung disease; the paper is titled "Deep Learning-Based Lung Disease Detection Using Chest X-Ray Images". The journal paper (IMU) is the extended study of the source analysis; disclose its overlap with the EMBC paper.
+
 > Decision (2026-11-04, student): target journal is Informatics in Medicine Unlocked (IMU); Biomedical Signal Processing and Control (BSPC) is the fallback. Reason: diagnostic study after the C2 NO-GO. EMBC 2027 is unchanged.
 
 > Note (2026-11-03 night): the current venue analysis per scope is `docs/publication/JOURNAL_SCOPE_MATCH.md` (the fallback order in the table below is the earlier one).
 
-Updated 2026-11-03. Statuses: not started / drafting / ready / submitted. Owner is a placeholder: [AUTHORS TO CONFIRM]. Sources for rows are in JOURNALS.md and CONFERENCES.md.
+Updated 2026-11-22. Statuses: not started / drafting / ready / submitted. Owner is a placeholder: [AUTHORS TO CONFIRM]. Sources for rows are in JOURNALS.md and CONFERENCES.md.
 
 | Venue | Track | Deadline | Template | Page limit | Required items | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|
-| IEEE EMBC 2027 (Singapore, 11 to 15 Jul 2027) | B conference | 24 Jan 2027 (11:59 PM AoE, no extension); portal opens Dec 2026 | IEEE template from the EMBC paper management system | 4 pages technical + 5th page references only (max 20 refs) | IEEE-format PDF; named reviewer among authors; AI-use disclosure; ethics/data statement; author list (max 35) | drafting (`docs/manuscripts/conference/`) | [AUTHORS TO CONFIRM] | Final model selected after run 2 (2026-11-03 about 17:00); results macros regenerate. Registration fee unpublished. |
+| IEEE EMBC 2027 (Singapore, 11 to 15 Jul 2027) | B conference | 24 Jan 2027 (11:59 PM AoE, no extension); portal opens Dec 2026 | IEEE template from the EMBC paper management system | 4 pages technical + 5th page references only (max 20 refs) | IEEE-format PDF; named reviewer among authors; AI-use disclosure; ethics/data statement; author list (max 35) | complete draft (`docs/manuscripts/conference/`); compile on Overleaf to confirm 4 pages | [AUTHORS TO CONFIRM] | System framing since 2026-11-16; author emails from the authors' draft; corresponding author and reciprocal reviewer still to name. Registration fee unpublished. |
 | IEEE CONECCT 2027 (Bangalore, 29 to 31 Jul 2027) | B conference (backup) | 15 Dec 2026 | Not retrieved | Not retrieved | Not retrieved | not started | [AUTHORS TO CONFIRM] | Weak topical fit; re-check when CFP opens in Dec 2026. |
 | Biomedical Signal Processing and Control (Elsevier) | A journal | Rolling | Elsevier elsarticle (LaTeX) or Word single column | About 5,000 words (full paper); abstract under 250 words | Highlights file (3 to 5 bullets, 85 characters max); CRediT; declaration of interests (Word file); generative-AI declaration section; funding and data statements (Option C: repository link or reason); optional graphical abstract; figures as separate files (300 dpi+) | drafting (`docs/manuscripts/journal_bspc/`) | [AUTHORS TO CONFIRM] | Needs multi-seed, ablations, tests, baseline, more external cohorts before submission (JOURNALS.md section 1). APC USD 3,470 only if OA chosen after acceptance. |
 | JIIM (Springer) | A journal (fallback 1) | Rolling | Springer submission guidelines | Not stated in pages read | Declarations section; abstract 150 to 250 words | not started | [AUTHORS TO CONFIRM] | OA APC USD 4,890 optional. |

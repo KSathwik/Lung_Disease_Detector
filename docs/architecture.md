@@ -36,7 +36,7 @@ flowchart TB
   end
   BPRE --> PRE
   ENG --> MOD
-  ENG --> CK[("models/densenet121_v6_seed42.h5")]
+  ENG --> CK[("models/densenet121_v6r2_seed42.h5")]
   R1 --> ART
   FE["frontend/ — React<br/>AnalyzePage · HistoryPage · MetricsPage · PatientsPage<br/>services/api.js · prediction.js · metrics.js · errors.js"] -- "HTTP /api/v1 (X-API-Key)" --> MAIN
 ```

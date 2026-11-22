@@ -1,6 +1,6 @@
 # LungAI — Six-Class Chest X-Ray Classification
 
-LungAI is an M.Tech research project. It classifies a frontal chest X-ray into one of six classes and serves the result through a FastAPI backend and a React frontend.
+LungAI is an M.Tech project: a deep learning system designed and developed to predict lung disease from a chest X-ray. It classifies a frontal radiograph into one of six classes and serves the result, with a Grad-CAM overlay, through a FastAPI backend and a React frontend. The repository holds the data pipeline, the classifier, the application, and the thesis and papers that describe them.
 
 > **Research prototype. Not a medical device and not clinically validated.** Its outputs are uncalibrated softmax scores, not diagnoses.
 
@@ -183,6 +183,16 @@ experiments/       HISTORICAL experiment scripts and results (not the canonical 
 - Process: [reproducibility](docs/reproducibility.md), [testing](docs/testing.md), [deployment](docs/deployment.md), [troubleshooting](docs/troubleshooting.md)
 - [Limitations](docs/limitations.md) and [thesis methodology](docs/thesis_methodology.md)
 - Data recovery and V6: [source inventory](docs/data/dataset_source_inventory.md), [recovery plan](docs/data/data_recovery_plan.md), [V6 rules](docs/data/dataset_v6_proposal.md), [training plan](docs/data/training_plan_v6.md)
+
+## Project documents
+
+The full catalogue, with the purpose and status of every document, is [docs/README.md](docs/README.md). The main deliverables:
+
+- M.Tech report: [docs/thesis/LungAI_MTech_Project_Report.docx](docs/thesis/LungAI_MTech_Project_Report.docx) (built from [docs/thesis/content/](docs/thesis/content/))
+- Presentation: [docs/presentation/LungAI_MTech_Presentation.pptx](docs/presentation/LungAI_MTech_Presentation.pptx) and viva guide [docs/viva/](docs/viva/)
+- Conference paper (IEEE EMBC 2027): [docs/manuscripts/conference/](docs/manuscripts/conference/)
+- Journal paper (Informatics in Medicine Unlocked): [docs/manuscripts/journal_imu/](docs/manuscripts/journal_imu/)
+- Status: [docs/TRACKER.md](docs/TRACKER.md)
 
 ## Intended use
 

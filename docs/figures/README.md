@@ -5,9 +5,11 @@ Numbers are read from artifacts; only labels are typed in the script.
 
 Command (run from the repository root; needs matplotlib, numpy, pandas, scikit-learn, opencv; TensorFlow is not imported):
 
-    python -m lungai.evaluation.make_figures --eval-prefix v6 --run runs/v6_densenet121_seed42 --build data/derived/v6_build_001
+    python -m lungai.evaluation.make_figures --eval-prefix v6_r2 --run runs/v6r2_densenet121_seed42 --build data/derived/v6_build_002
 
-Options: `--only <stem> ...` builds a subset. `--gradcam` is a stub for `fig_gradcam_examples` and raises `NotImplementedError("run after final model selection")`.
+The figures in this folder come from the served model v6.1 (run 2, build 002). The script's built-in defaults still point at run 1 and build 001, so always pass the three options above.
+
+Options: `--only <stem> ...` builds a subset. `--gradcam` also builds `fig_gradcam_examples`; it loads TensorFlow and the installed checkpoint.
 Note: on this machine the Python 3.10 install has matplotlib; the 3.12 install does not.
 
 Common inputs: `lungai/configs/lungai_densenet121.json` (class order, architecture, preprocessing). EP = `artifacts/evaluation_reports/<prefix>_{val,test,external}/`.

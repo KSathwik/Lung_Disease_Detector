@@ -74,7 +74,7 @@ docker build -t lungai .
 # optional: --build-arg REACT_APP_API_KEY=<same value as LUNGAI_API_KEY>
 docker run --rm -p 8000:8000 \
   -e LUNGAI_API_KEY=<secret> \
-  -v /path/to/densenet121_v6_seed42.h5:/app/models/densenet121_v6_seed42.h5:ro \
+  -v /path/to/densenet121_v6r2_seed42.h5:/app/models/densenet121_v6r2_seed42.h5:ro \
   lungai
 ```
 
@@ -87,15 +87,15 @@ Facts from the files:
 
 ## 5. Model installation and verification
 
-The checkpoint `densenet121_v6_seed42.h5` is not in the repository (`*.h5` is gitignored) and has no public release (`scripts/install_checkpoint.py` docstring; `model.checkpoint.availability` in the config).
+The checkpoint `densenet121_v6r2_seed42.h5` is not in the repository (`*.h5` is gitignored) and has no public release (`scripts/install_checkpoint.py` docstring; `model.checkpoint.availability` in the config).
 
 ```bash
 python scripts/install_checkpoint.py --from runs/<run>/model.h5    # verify, then copy into models/
-python scripts/install_checkpoint.py --url https://<location you control>/densenet121_v6_seed42.h5
-python scripts/install_checkpoint.py --check                        # verify models/densenet121_v6_seed42.h5
+python scripts/install_checkpoint.py --url https://<location you control>/densenet121_v6r2_seed42.h5
+python scripts/install_checkpoint.py --check                        # verify models/densenet121_v6r2_seed42.h5
 ```
 
-The script stages the file in a temporary folder, computes its SHA-256 and moves it to `models/` only if the digest equals `model.checkpoint.sha256` in `lungai/configs/lungai_densenet121.json` (currently `c51ed228455c2aab93b4b0220ee721443c3c0486eea961a242829ce68ee6c0e6`). A mismatch prints "Not installed." and exits with code 1. `--url` is a plain `urllib` download; the hash is checked after the download, so use a location you control.
+The script stages the file in a temporary folder, computes its SHA-256 and moves it to `models/` only if the digest equals `model.checkpoint.sha256` in `lungai/configs/lungai_densenet121.json` (currently `7992b8da10ff97f90207dc730c3163ba968a4d6094e1bff263377612ee0597c6`). A mismatch prints "Not installed." and exits with code 1. `--url` is a plain `urllib` download; the hash is checked after the download, so use a location you control.
 
 At start-up the backend (`backend/ml/inference.py`) looks for the file in the folder returned by `resolve_models_dir()` (`backend/ml/paths.py`): `MODELS_DIR` if set (absolute, or relative to the repository root or `backend/`), otherwise `<repo>/models`, otherwise `backend/models`. It verifies the SHA-256 again. The loading rules (missing, mismatch, corrupt, canonical) are tabulated in [inference](inference.md). In short: without a verified checkpoint `/api/v1/health` reports `degraded` and `/api/v1/predict` returns 503 `MODEL_NOT_LOADED`; there is no fallback or mock model.
 
