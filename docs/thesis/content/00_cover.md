@@ -1,7 +1,7 @@
 @center[size=14,bold]: KAKATIYA UNIVERSITY
 @center[size=12]: Warangal, Telangana, India
 @spacer: 30
-@center[size=18,bold,spacing=1.3]: LUNGAI: A LEAKAGE-CONTROLLED DENSENET-121 SYSTEM FOR SIX-CLASS CHEST X-RAY CLASSIFICATION WITH GRAD-CAM EXPLANATIONS
+@center[size=18,bold,spacing=1.3]: LUNGAI: DESIGN AND DEVELOPMENT OF A DEEP LEARNING SYSTEM FOR SIX-CLASS LUNG DISEASE DETECTION FROM CHEST X-RAY IMAGES
 @spacer: 24
 @center[size=12,italic]: A Project Report submitted in partial fulfilment of the requirements for the award of the degree of
 @center[size=14,bold]: MASTER OF TECHNOLOGY

@@ -1,11 +1,14 @@
 \section{Evaluation Protocol}\label{sec:experiments}
-The test split and the external cohort are each evaluated once, after the checkpoint is fixed; nothing is
-tuned on them. We report accuracy with a Wilson interval, macro-F1, per-class precision, recall and F1, one-vs-rest ROC-AUC with
-macro average, expected calibration error (ECE, 15 bins), and Wilson intervals \cite{wilson1927probable}
-for all proportions (no interval is given for macro-F1). Intervals are two-sided at the conventional nominal level of ninety-five percent.
+The internal test split and the external cohort are each evaluated once, after the checkpoint is fixed.
+Internal performance is reported as accuracy with a Wilson 95\% confidence interval
+\cite{wilson1927probable}, macro-F1, per-class precision, recall and F1, one-vs-rest ROC-AUC with its
+macro average, and expected calibration error (ECE, 15 bins). Wilson intervals are used for all reported
+proportions; no interval is given for macro-F1.
 
-On the external cohort the task is binary. ``Sensitivity'' is the share of TB scans predicted as any class
-other than Normal; it is reported only together with specificity, the share of normal scans predicted
-Normal. Because any wrong abnormal class meets that definition, we also report the exact Tuberculosis
-recall and the ROC-AUC of the probability of ``abnormal'' (one minus the Normal probability). Everything is
-computed from saved per-image predictions.
+The external cohort contains only Normal and Tuberculosis labels, so it is not a six-class test.
+Sensitivity is the proportion of TB scans predicted as any class other than Normal, and specificity is
+the proportion of normal scans predicted as Normal. Because any non-Normal prediction counts as an
+abnormal flag under this definition, exact Tuberculosis-class recall is reported separately, together
+with the ROC-AUC of the abnormality score (one minus the predicted Normal probability). All metrics are
+computed from saved per-image predictions. The external cohort is small and its estimates are not
+clinical validation.

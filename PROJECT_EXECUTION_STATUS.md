@@ -4,7 +4,15 @@
 
 Read this file first in any new chat. It is the complete context needed to continue. Then read `docs/TRACKER.md`.
 
-## UPDATE — 2026-11-04 afternoon (newest; read before the handoff below)
+## UPDATE — 2026-11-22 (newest; read first)
+
+- **Framing changed by the student (2026-11-16):** the thesis and the EMBC conference paper present LungAI as a system *designed and developed to predict the disease*, not as a dataset or source-shortcut study. The student's own 4-page draft (`LUNG_AI_Paper.pdf`, outside the repo) was the model. The IMU journal draft (`docs/manuscripts/journal_imu/`) still uses the shortcut framing and was **not** changed; ask the student before touching it.
+- **Conference paper** (`docs/manuscripts/conference/`): retitled "Deep Learning-Based Lung Disease Detection Using Chest X-Ray Images"; new System Design section (`sections/system.tex`, `fig_system_architecture`); seed variability and the preprocessing ablation now included; author block with roles and emails as the student supplied them. 20 references, every macro resolves; **page count not yet confirmed on Overleaf** (about 2,490 words plus 3 figures and 1 table; may exceed 4 pages).
+- **Thesis:** new title ("LungAI: Design and Development of a Deep Learning System for Six-Class Lung Disease Detection from Chest X-Ray Images"); abstract, Ch1, Ch2 positioning, Ch3 (functional and non-functional requirements, objectives O1-O7, three evaluation questions) and Ch9 rewritten; the source-information analyses (method, results, interpretation, limits) moved verbatim from Ch4/7/8 to a new Appendix G (`content/31_appendix_source_analyses.md`). Report .docx rebuilt (no missing tokens, refs, figures or citations); update fields in Word (Ctrl+A, F9) before printing.
+- **Viva guide** story, Q3 and Q4 aligned (`docs/viva/LungAI_Viva_Guide.md`); its .docx and the slides (`docs/presentation/`) are **not** rebuilt and the slides still carry the old framing.
+- pytest 173 passed / 1 skipped after these edits.
+
+## UPDATE — 2026-11-04 afternoon (read before the handoff below)
 
 - **CI green** again from `18d55d5` (frontend `npm ci` failed on Node 18 because the npm-11 lock file lacked one entry; lock regenerated with npm 10).
 - **Novelty extension done** per the approved protocol (`f427c04`; clarifications logged and acknowledged): C1 spectral map, C3 INLP/LEACE, C4 leave-one-source-out, C2-lite; **C2 NO-GO** (no band met criterion 1). Results `artifacts/novelty/*.json` (feature caches ignored), figures `docs/figures/fig_{spectral_map,inlp,loso_matrix}`, macros `\RSpec…/\RInlp…/\RLoso…/\RBs…`, facts F11-F14, audits in `docs/AUDIT_FINDINGS.md` (N1-N11, W1-W14 applied except student items). Headline: source information is spread across all bands and entangled with disease; erasure costs disease performance; held-out-source performance drops sharply.

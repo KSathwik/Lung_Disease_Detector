@@ -1,7 +1,7 @@
 # LungAI Viva Guide
 
 Student: Katkam Sathwik, M.Tech (CSE), Kakatiya University College of Engineering and Technology. Supervisor: Prof. Nagavelli Ramana.
-Project: LungAI, a leakage-controlled DenseNet-121 system for six-class chest X-ray classification with Grad-CAM, a FastAPI backend and a React frontend.
+Project: LungAI, a deep learning system designed and developed to predict six lung conditions from a chest X-ray: a DenseNet-121 classifier with Grad-CAM, a FastAPI backend and a React frontend.
 
 How to use this guide. Part 1 is a one-page set of numbers to remember. Part 2 explains how to present. Part 3 holds about 70 expected questions with short answers you can say aloud. Part 4 is a checklist for the days before the viva. Every number comes from the repository files (mainly `docs/manuscripts/shared/results.json`, `RESULTS_FACTS.md` and `docs/presentation/slides.md`). If a question goes beyond these files, say "I would need to check that" and do not guess.
 
@@ -100,12 +100,12 @@ V5 recorded 82.93% internal accuracy (1,570 test images). The audit found: 154 t
 
 ## 2.1 The story in six steps
 
-1. Problem. Chest X-ray classifiers look accurate in papers but often fail in a new hospital. A decision-support tool is only useful if its evaluation is honest.
+1. Problem. Radiologists are scarce and chest X-rays are common. I set out to design and build a system that predicts one of six lung conditions from a chest X-ray and shows what its prediction is based on.
 2. Audit of V5. The earlier version reported 82.93% but had patient leakage, proxy labels and 0 of 80 normal scans correct on an external hospital. Its checkpoint is lost, so I rebuilt from the raw sources.
-3. Leakage-controlled rebuild. Official sources with logged hashes, written label rules, patient-grouped splits, automatic leakage checks, test and external sets used once.
-4. Honest external result. Internal accuracy is 77.4%, but on Montgomery specificity is 19 of 80 and no TB scan is named TB. Internal numbers overstate behaviour on a new hospital.
-5. Source-shortcut analysis as the research contribution. The source of an image can be read from the features (93.8%, chance 16.7%). Source information is spread over all frequency bands, is entangled with disease information, and a linear head drops sharply on a held-out source. A band-removal retraining idea was tested on frozen features and was a NO-GO under rules fixed in advance.
-6. What it means. The contribution is the evaluation method and the diagnostic evidence, not a new network or a clinical tool. The evidence about shortcuts is indirect.
+3. The system. A data pipeline (official sources with logged hashes, written label rules, patient-grouped splits, automatic leakage checks), a DenseNet-121 classifier trained on a laptop CPU, and a web application that checks the input, shows the six scores with a Grad-CAM overlay, marks low-confidence results as inconclusive and stores every prediction with the model identity.
+4. Results. Internal accuracy is 77.4% (77.1% over three seeds). On Montgomery, an external hospital, specificity is 19 of 80 and no TB scan is named TB, so the system does not yet transfer to a new hospital, and the application says so with every prediction.
+5. Why the external gap. The source of an image can be read from the features (93.8%, chance 16.7%), which is consistent with source cues contributing to the gap. Supplementary measurements on frozen features (thesis Appendix G) found that this information is spread over all frequency bands and cannot be removed cheaply. This evidence is indirect.
+6. What it means. The contribution is a complete, tested prediction system with an honest evaluation, not a new network or a clinical tool. The next step is better external performance: more sources with patient identity and a second external cohort.
 
 Keep one sentence ready for the end: "My claim is about how to evaluate such a system honestly, not about clinical accuracy."
 
@@ -193,10 +193,10 @@ Chest X-ray is the most widely available imaging test for lung disease, but trai
 Given one frontal chest X-ray, assign it to exactly one of six classes: COVID-19, Normal, Pleural Effusion, Pneumonia, Pulmonary Nodule / Mass or Tuberculosis. The harder part is methodological: traceable labels, no known patient crossing the splits, and an external cohort to test behaviour on a new hospital.
 
 **Q3. What are your objectives?**
-Six main objectives. O1 and O2: rebuild the data from official sources with written label rules and patient-grouped splits with leakage checks. O3 and O4: train DenseNet-121 reproducibly and evaluate once on test and on an external cohort, with confidence intervals. O5: an end-to-end application with FastAPI, React, Grad-CAM and SQLite. O6: report limitations without overclaiming. The thesis adds a further objective, the analysis of source information.
+Seven objectives (thesis Chapter 3). O1: design an end-to-end system that predicts one of six lung conditions, with one configuration and one preprocessing shared by training and serving. O2 and O3: build the data from official sources with written label rules and patient-grouped splits with leakage checks. O4: train DenseNet-121 on a laptop CPU. O5: a web application with FastAPI, React, Grad-CAM, an input check, an inconclusive outcome and SQLite. O6: evaluate once on test and on an external cohort, with confidence intervals, three seeds and one ablation. O7: test everything and make it reproducible. Chapter 3 also lists the functional and non-functional requirements.
 
 **Q4. What is your contribution, since you did not invent a new network?**
-The contribution is a leakage-controlled, auditable pipeline from raw data to served metrics; evidence that internal metrics overstate behaviour on a new hospital; and a measurement study of source shortcuts: where source information lives in the features and how entangled it is with disease information. Only the band-by-band comparison of source and disease information looks new, and I say that only "to our knowledge, within the searches described". I make no claim of a new method, state of the art, or clinical value.
+The contribution is the system: its end-to-end design, the data pipeline that builds its dataset under recorded rules, and a tested web application that checks its input, explains its output with Grad-CAM and cannot show a prediction or a metric that the loaded model did not produce. The evaluation is part of it: internal, three-seed and external results reported together with the limitations. Supplementary measurements of source information are in Appendix G. I make no claim of a new method, state of the art, or clinical value.
 
 **Q5. Why these six classes?**
 They are the classes that official public sources can supply with rules written in advance. VinDr-CXR and JSRT could not be obtained in time (credentials and registration), so Pleural Effusion and Nodule/Mass come from NIH only. The six classes are treated as mutually exclusive, which is itself a limitation because real X-rays often show several findings.

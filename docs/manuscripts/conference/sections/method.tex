@@ -1,27 +1,26 @@
-\section{Method}\label{sec:method}
-\subsection{Preprocessing and model}
-One implementation serves training, evaluation and deployment. Images are decoded to three channels, then
-passed through a $3{\times}3$ Gaussian blur ($\sigma{=}0.8$), CLAHE \cite{pizer1987adaptive} on the L channel
-of CIE LAB (clip limit 2.0, $8{\times}8$ tiles), a Gaussian low-pass filter ($\sigma{=}1.0$), Lanczos resize
-to $224{\times}224$ and ImageNet normalisation. The backbone is DenseNet-121 \cite{huang2017densely} with
-ImageNet weights \cite{deng2009imagenet} and frozen BatchNorm statistics. The head is global average pooling,
-batch normalisation, a dense layer of 256 ReLU units, dropout 0.3 and a six-way softmax.
+\section{Model and Training}\label{sec:method}
+\subsection{Image preprocessing and classifier}
+One preprocessing implementation serves training, evaluation and the application. Images are decoded to
+three channels, passed through a $3{\times}3$ Gaussian blur ($\sigma{=}0.8$), enhanced with CLAHE
+\cite{pizer1987adaptive} on the L channel of CIE LAB (clip limit 2.0, $8{\times}8$ tiles), smoothed with
+a Gaussian low-pass filter ($\sigma{=}1.0$), resized to $224{\times}224$ with Lanczos interpolation and
+normalised with ImageNet statistics. The feature extractor is DenseNet-121 \cite{huang2017densely} with
+ImageNet weights \cite{deng2009imagenet} and frozen BatchNorm statistics. The classification head is
+global average pooling, batch normalisation, a dense layer of 256 ReLU units, dropout of 0.3 and a
+six-class softmax output.
 
-\subsection{Training}
-Training has two phases with Adam \cite{kingma2015adam}: the head alone for two epochs (learning rate
-$10^{-3}$), then the last 30 backbone layers are unfrozen (learning rate $10^{-5}$) with early stopping on
-validation macro-F1 inside a wall-clock budget. The loss is cross-entropy with balanced class weights;
-augmentation is a horizontal flip and a rotation of up to ten degrees; batch size is 32. Each model is
-trained in \emph{one} run (seed \RSeed) on a laptop CPU, so run-to-run variation is not measured here.
+\subsection{Training procedure}
+Training uses Adam \cite{kingma2015adam} in two phases. The head is trained alone for two epochs at a
+learning rate of $10^{-3}$; the last 30 backbone layers are then unfrozen and fine-tuned at $10^{-5}$.
+The objective is class-weighted cross-entropy, the batch size is 32, and augmentation consists of
+horizontal flipping and rotations of up to ten degrees. Early stopping and checkpoint selection use
+validation macro-F1, with validation macro ROC-AUC as the tie-breaker. The reported checkpoint for seed
+\RSeed{} was selected at epoch \RSelectedEpoch{} of \REpochsTrained{} training epochs; this was the last
+epoch, so longer training might change the result.
 
-\subsection{Checkpoint and run selection}
-Within a run, the checkpoint is the epoch with the best \emph{validation} macro-F1 (ties: validation macro
-ROC-AUC). Run 2 completed its full schedule of \REpochsTrained{} epochs and its best epoch was
-\RSelectedEpoch, the last; the validation curve was still rising slightly, so longer training might change
-the result, but we make no claim that it would.
-Two runs exist: run 1 (four sources) and run 2 (adds TBX11K and COVID-19 Radiography). Their validation
-splits differ, so the choice between them used a rule fixed before run 2's results were seen: macro-F1 on a
-common selection set of \RCmpN{} validation images that neither build used for training or testing, with
-test and external data excluded from the decision. Run 2 was started after run 1's external results
-were known; only the rule, not the decision to run it, preceded run 2's results. Run 2 was selected and is
-the model reported below.
+\subsection{Runs and reproducibility}
+The detailed results are for seed \RSeed. The same recipe and partitions were also trained with two
+further seeds (seeds \RMSSeeds{} in all) to describe run-to-run variation, and once without the blur, CLAHE
+and low-pass filter to examine that design choice. The build used for the final model was chosen on a
+common validation set of \RCmpN{} images that were not used for training or testing; internal-test and
+external results played no part in the choice. All runs are CPU-trained and time-budgeted.

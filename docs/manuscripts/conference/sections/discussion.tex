@@ -1,23 +1,27 @@
 \section{Discussion}\label{sec:discussion}
-Internal accuracy of \RTestAcc\% did not predict external behaviour: the same model labels only
-\RExtSpecK/\RExtSpecN{} normal Montgomery scans Normal and names none of the \RExtTBN{} TB scans
-Tuberculosis. The internal split shares sources, acquisition styles and labelling practices with training,
-even when patients are separated; an external cohort breaks that link
-\cite{zech2018variable,degrave2021ai,geirhos2020shortcut}.
+The system does what it was designed to do within its development data: it accepts a radiograph,
+returns a class with an explanation overlay, and distinguishes several CXR categories on the internal
+test set (\RTestAcc\% accuracy, macro ROC-AUC \RTestMacroAUC), with little variation across three seeds.
+Aggregate metrics hide differences between classes, however: Pulmonary Nodule/Mass and Normal are less
+reliable than COVID-19, Tuberculosis and Pneumonia.
 
-\emph{Source confounding.} Class and source overlap in the merged data. In run 1 the external scans were
-frequently called COVID-19, a class supplied only by web-collected sources. COVID-19 calls fell from \RRunOneExtCovidCalls{} to
-\RExtCovidCalls{} of \RNExternal{} with build 2, yet specificity stayed low and the errors moved to Pneumonia and Nodule/Mass.
-Build 2 changed several sources at once (TBX11K, the COVID-19 Radiography Database and further NIH archives), so
-this is consistent with, but not proof of, the added COVID-19 source removing a source cue. Our evidence is
-indirect, and we do not claim that the model uses source cues.
+The external evaluation exposes the main limitation. Although \RExtSens\% of external TB images were
+flagged as abnormal, specificity for normal images was only \RExtSpec\% and none of the TB images was
+assigned to the Tuberculosis class, so a non-Normal prediction on a TB image cannot be treated as
+successful disease identification. The gap between internal and external behaviour is consistent with
+domain shift and possible source-related shortcuts, but these results do not show which visual cues the
+model uses \cite{zech2018variable,degrave2021ai,geirhos2020shortcut}. For this reason the application
+reports the external limitation with every prediction and returns low-confidence outputs as
+inconclusive.
 
 \emph{Limitations.}
-(i) One training run per model (seed \RSeed), CPU-trained and time-boxed; run 2's selection advantage is
-largest on sources that only it saw. (ii) NIH labels are mined from reports, not read from images.
-(iii) Patient identity is unknown for TBX11K and COVID-19 Radiography images, so residual patient overlap
-across splits is possible. (iv) Kermany images are paediatric, the other sources adult.
-(v) Pleural Effusion and Nodule/Mass come from NIH only. (vi) The single-label design excludes
-multi-finding images. (vii) The external cohort is small and binary, so intervals are wide.
-(viii) Data are retrospective and public; no clinical validity is claimed.
-Further analyses, including seed variability, are not part of this paper and are reported in the extended version.
+(i) The external cohort is small and contains only normal and TB images.
+(ii) NIH labels are mined from reports, not read from each image.
+(iii) Patient identity is unavailable for TBX11K and COVID-19 Radiography images, so residual patient
+overlap across partitions cannot be excluded.
+(iv) Kermany images are paediatric, while the other sources mainly contain adults.
+(v) Pleural Effusion and Pulmonary Nodule/Mass come from NIH only.
+(vi) The single-label design excludes images with several findings.
+(vii) Training was CPU-bound and time-budgeted, with three seeds and one ablation run.
+(viii) The input check is heuristic and Grad-CAM overlays were not compared with expert annotations.
+(ix) Retrospective evaluation on public data cannot establish clinical utility.

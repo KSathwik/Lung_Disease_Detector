@@ -1,6 +1,6 @@
 # Student Declaration
 
-I, **Katkam Sathwik** (Roll No. 24567T7604), a student of the Master of Technology programme in Computer Science and Engineering at Kakatiya University College of Engineering and Technology (KUCE&T), Kakatiya University, Warangal, declare that the project report entitled **"LungAI: A Leakage-Controlled DenseNet-121 System for Six-Class Chest X-Ray Classification with Grad-CAM Explanations"** is my own work, carried out under the guidance of Prof. Nagavelli Ramana.
+I, **Katkam Sathwik** (Roll No. 24567T7604), a student of the Master of Technology programme in Computer Science and Engineering at Kakatiya University College of Engineering and Technology (KUCE&T), Kakatiya University, Warangal, declare that the project report entitled **"LungAI: Design and Development of a Deep Learning System for Six-Class Lung Disease Detection from Chest X-Ray Images"** is my own work, carried out under the guidance of Prof. Nagavelli Ramana.
 
 All public datasets, software libraries and published work that I used are acknowledged and cited in the text and in the list of references. The datasets were downloaded from their official distribution points and are used under their published terms; no patient-identifying information was handled beyond what those datasets publish. The work reports a research prototype and makes no claim of clinical validity.
 

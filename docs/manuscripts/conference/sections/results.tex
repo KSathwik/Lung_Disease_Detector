@@ -1,23 +1,17 @@
 \section{Results}\label{sec:results}
-\subsection{Run selection}
-Run 2 was selected on the common selection set (\RCmpN{} images) by macro-F1 (\RCmpRunTwoMacroFOne\% against
-\RCmpRunOneMacroFOne\% for run 1). On the \RCmpRunOneSharedN{} images from the four sources both runs trained on,
-the macro-F1 gap is smaller (\RCmpRunOneSharedMacroFOne\% against \RCmpRunTwoSharedMacroFOne\%), so much of run 2's
-advantage lies on TBX11K and COVID-19 Radiography images, which are in-distribution for run 2 only.
-
-\subsection{Internal test}
-On the test split of \RNTest{} images the selected model reaches \RTestAcc\% accuracy (Wilson 95\% interval
-\RTestAccLo--\RTestAccHi\%), macro-F1 \RTestMacroFOne\%, macro ROC-AUC \RTestMacroAUC{} and ECE \RTestECE;
-validation accuracy was \RValAcc\%. The earlier leaky V5 model reported \RVFiveAcc\% on a different test
-set (N=\RVFiveN); the numbers are not comparable. Table~\ref{tab:perclass} gives per-class results and
-Fig.~\ref{fig:cm} the confusion matrix. COVID-19 (F1 \RFOneCovid\%), Tuberculosis (\RFOneTB\%) and
-Pneumonia (\RFOnePneumonia\%) are the strongest classes. Pulmonary Nodule/Mass is the weakest (\RFOneNodule\%),
-followed by Normal (\RFOneNormal\%). Nodule/Mass and Pleural Effusion are NIH-only classes with
-language-mined labels.
+\subsection{Internal classification performance}
+For seed \RSeed{} the system reached \RTestAcc\% accuracy on \RNTest{} internal-test images (Wilson 95\%
+interval \RTestAccLo--\RTestAccHi\%), macro-F1 of \RTestMacroFOne\%, macro ROC-AUC of \RTestMacroAUC{}
+and ECE of \RTestECE; validation accuracy was \RValAcc\%. Table~\ref{tab:perclass} gives the per-class
+results and Fig.~\ref{fig:cm} the confusion matrix. COVID-19 has the highest class F1 (\RFOneCovid\%),
+followed by Tuberculosis (\RFOneTB\%) and Pneumonia (\RFOnePneumonia\%). Pulmonary Nodule/Mass is the
+weakest class (\RFOneNodule\%), followed by Normal (\RFOneNormal\%); most of their errors are confusions
+among Normal, Pleural Effusion and Nodule/Mass; the last two come only from NIH images with
+report-mined labels.
 
 \begin{table}[t]
-\caption{Per-class test results (single run, seed \RSeed): support (N), precision (P), recall (R) and F1 in \%;
-one-vs-rest ROC-AUC.}
+\caption{Per-class internal-test results for seed \RSeed: support (N), precision (P), recall (R) and F1
+in \%; one-vs-rest ROC-AUC.}
 \label{tab:perclass}
 \centering
 \small
@@ -38,53 +32,38 @@ Tuberculosis & \RSupportTB & \RPrecisionTB & \RRecallTB & \RFOneTB & \RAUCTB\\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{../../figures/fig_confusion_matrix.pdf}
-\caption{Test confusion matrix (counts and row-normalised).}
+\caption{Internal-test confusion matrix, as counts and row-normalised proportions.}
 \label{fig:cm}
 \end{figure}
 
-\subsection{External validation (Montgomery County)}
-On the \RNExternal{} external scans the model flags \RExtSensK/\RExtSensN{} TB scans as abnormal
-(\RExtSens\%, Wilson interval \RExtSensLo--\RExtSensHi\%), calls \RExtSpecK/\RExtSpecN{} normal scans Normal
-(\RExtSpec\%, interval \RExtSpecLo--\RExtSpecHi\%), and names \RExtTBK/\RExtTBN{} TB scans Tuberculosis
-(\RExtTB\%). The ROC-AUC of the abnormality score is \RExtAUC. Most scans are assigned to Pneumonia and
-Pulmonary Nodule/Mass (Fig.~\ref{fig:ext}); only \RExtCovidCalls{} are called COVID-19. The low specificity
-means the model would flag most healthy patients from this hospital as abnormal.
+\subsection{Variation across seeds and the preprocessing choice}
+Across the \RMSNRuns{} seeds, mean accuracy was \RMSTestAccMean\% (SD \RMSTestAccSD), mean macro-F1
+\RMSTestMacroFOneMean\% (SD \RMSTestMacroFOneSD) and mean macro ROC-AUC \RMSTestMacroAUCMean{} (SD
+\RMSTestMacroAUCSD); the reported seed is the highest of the three. In the single run trained without
+the blur, CLAHE and low-pass filter, internal-test accuracy was \RAblTestAcc\% and macro-F1
+\RAblTestMacroFOne\%. This is one seed, so it is an observation in favour of the chosen preprocessing
+and not a measured effect.
 
-The first run behaved differently. Run 1 called \RRunOneExtCovidCalls{} of \RNExternal{} Montgomery scans COVID-19 and \RRunOneExtSpecK{} of \RExtSpecN{} normal scans
-Normal (each run evaluated once).
-Run 2 calls \RExtCovidCalls{} scans COVID-19 and \RExtSpecK{} of \RExtSpecN{} normals Normal. COVID-19 calls thus fell
-from \RRunOneExtCovidCalls{} to \RExtCovidCalls{} of \RNExternal{}. This is consistent with, but does not prove, the added
-COVID-19 source removing a source cue; build 2 changed several sources at once (TBX11K, COVID-19 Radiography,
-further NIH archives). The errors moved to other abnormal classes, and internal gains did not translate into better
-external specificity or any TB recognition.
+\subsection{External evaluation}
+On the \RNExternal{} Montgomery County scans the system flagged \RExtSensK{} of \RExtSensN{} TB scans as
+abnormal (sensitivity \RExtSens\%, Wilson interval \RExtSensLo--\RExtSensHi\%) but identified only
+\RExtSpecK{} of \RExtSpecN{} normal scans as Normal (specificity \RExtSpec\%, interval
+\RExtSpecLo--\RExtSpecHi\%). Exact Tuberculosis-class recall was \RExtTB\% (\RExtTBK{} of \RExtTBN), and
+the abnormality-score ROC-AUC was \RExtAUC. Most external scans were assigned to Pneumonia or Pulmonary
+Nodule/Mass (Fig.~\ref{fig:ext}), so the binary sensitivity must not be read as correct six-class
+diagnosis, and the low specificity means that most normal scans in this cohort were flagged as abnormal.
+The same pattern occurred in all three seeds (specificity \RMSExtSpecMin--\RMSExtSpecMax\%).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{../../figures/fig_external_breakdown.pdf}
-\caption{Montgomery County: predicted class for normal and TB scans (selected model).}
+\caption{Predicted classes for normal and TB scans in the external Montgomery County cohort.}
 \label{fig:ext}
 \end{figure}
 
-\subsection{Source effects}
-Test accuracy differs by source (Table~\ref{tab:source}): it is lowest for Cohen and NIH images and highest for
-the COVID-19 Radiography images. We do not read this as a ranking of data quality. Sources differ in
-which classes they contain, so source and class are confounded.
-
-\begin{table}[t]
-\caption{Test accuracy by source (N images, accuracy in \%).}
-\label{tab:source}
-\centering
-\small
-\begin{tabular}{lrr}
-\toprule
-Source & N & Accuracy\\
-\midrule
-NIH ChestX-ray14 & \RSrcNNIH & \RSrcAccNIH\\
-Kermany & \RSrcNKermany & \RSrcAccKermany\\
-COVID-19 Radiography & \RSrcNCovidRad & \RSrcAccCovidRad\\
-TBX11K & \RSrcNTBXk & \RSrcAccTBXk\\
-Cohen & \RSrcNCohen & \RSrcAccCohen\\
-Shenzhen & \RSrcNShenzhen & \RSrcAccShenzhen\\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Variation across data sources}
+Internal-test accuracy also differs by source: \RSrcAccCohen\% for Cohen images (N=\RSrcNCohen) and
+\RSrcAccNIH\% for NIH images (N=\RSrcNNIH), against \RSrcAccShenzhen\% for Shenzhen, \RSrcAccKermany\%
+for Kermany, \RSrcAccTBXk\% for TBX11K and \RSrcAccCovidRad\% for COVID-19 Radiography images. This is
+not a ranking of source quality: the sources contain different classes, so source and class are
+confounded.

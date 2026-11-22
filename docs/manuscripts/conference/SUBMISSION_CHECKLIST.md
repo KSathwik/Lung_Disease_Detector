@@ -6,7 +6,7 @@ Venue: IEEE EMBC 2027, Suntec Singapore, 11 to 15 July 2027. Full paper deadline
 - [x] Final model chosen (run 2, `v6_build_002`) and `results_macros.tex` regenerated from it.
 - [x] No `\pending` blocks remain; `\pending` macro removed from `main.tex`.
 - [x] Data section lists the final sources (six, incl. TBX11K and COVID-19 Radiography).
-- [x] Journal-only material (seed variability, ablation, source probe) not included; one sentence says further analyses are ongoing.
+- [x] Framing (2026-11-16): designed-and-developed prediction system; System Design section added; seed variability and one-seed ablation included with non-causal wording; source probe and frozen-feature analyses not included.
 - [x] Every `\cite` key exists in `shared/references.bib` (20 keys); every `\R...` macro exists in `shared/results_macros.tex`.
 - [ ] Re-run the key/macro check after any regeneration of the macros.
 
@@ -15,7 +15,6 @@ Venue: IEEE EMBC 2027, Suntec Singapore, 11 to 15 July 2027. Full paper deadline
 - [x] External sensitivity reported with specificity and exact TB recall.
 - [x] No numeric comparison with other papers.
 - [x] Patient identity unknown for TBX11K / COVID-19 Radiography stated.
-- [x] Run-1 historical numbers carry a source comment in `sections/results.tex`.
 - [ ] Authors re-read the shortcut interpretation (kept as indirect evidence).
 
 ## Format (EMBC)
@@ -29,10 +28,10 @@ Venue: IEEE EMBC 2027, Suntec Singapore, 11 to 15 July 2027. Full paper deadline
 ## Authors and declarations
 - [ ] Name one qualified author who agrees to review for EMBC 2027 (reciprocal review; non-compliance may cause desk rejection).
 - [ ] Corresponding author chosen ([TO BE CONFIRMED]); contributions verified and all authors approve ([AUTHORS TO CONFIRM]).
-- [ ] Emails and phone numbers supplied (currently [TO BE PROVIDED]).
+- [x] Emails supplied by the authors (2026-11-16 draft); confirm each author agrees to their address being printed.
 - [ ] Ethics/data statement confirmed by authors; licences of each dataset read.
-- [ ] AI-assistance disclosure reviewed by the authors against IEEE policy.
-- [ ] Acknowledgement and funding completed.
+- [ ] AI-assistance disclosure reviewed by the authors against IEEE policy (text taken from their draft).
+- [ ] Acknowledgement and funding: the section was removed in the authors' draft; add it back if there is funding to declare.
 - [ ] Originality/plagiarism check; not under review elsewhere; supervisor approval (no signature implied here).
 - [ ] Copyright form and registration completed by the authors at acceptance; read the post-publication policy before planning journal reuse (`docs/publication/archive/CONFERENCE_VS_JOURNAL.md`).
 

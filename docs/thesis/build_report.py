@@ -76,6 +76,7 @@ PLAN = [
     ("18_ch9_conclusion.md", "chapter"),
     (None, "refs"),
     ("30_appendices.md", "appendix"),
+    ("31_appendix_source_analyses.md", "appendix"),
 ]
 
 MARKER_RE = r"\[(?:PENDING[^\]]*|TO BE PROVIDED|TO BE CONFIRMED|STUDENT TO PERSONALISE[^\]]*|AUTHORS TO CONFIRM[^\]]*|Figure pending[^\]]*|CHECK[^\]]*)\]"
