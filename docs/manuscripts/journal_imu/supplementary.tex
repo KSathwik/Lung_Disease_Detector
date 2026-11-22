@@ -1,0 +1,201 @@
+%% Supplementary material for the IMU manuscript (main.tex). Compiles on its
+%% own. Tables moved out of the main text to shorten it: dataset builds, per-class
+%% results, run comparison, follow-up (hyper-parameter) runs, ablation and the
+%% C1 sensitivity profiles. Numbers: ../shared/results_macros.tex; dataset
+%% counts are copied from the build reports (not model results).
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[hidelinks]{hyperref}
+
+\renewcommand{\thetable}{S\arabic{table}}
+\input{../shared/results_macros.tex}
+
+\begin{document}
+
+\title{Supplementary material: Where does source information live in chest radiograph features? A diagnostic, leakage-controlled study of source shortcuts in multi-source classification}
+\author{Katkam Sathwik, Nagavelli Ramana, P. Tirupathi, K. Srinivas}
+\date{}
+\maketitle
+
+\section*{S1. Dataset composition}
+
+% Dataset counts below are copied from the build reports (not model results):
+%   data/derived/v6_build_001/v6_build_report.json  (split_fingerprint 872abd3b...56cb, generated 2026-11-02T22:26:21Z)
+%   data/derived/v6_build_002/v6_build_report.json  (split_fingerprint 5973233f...a7dfa5, generated 2026-11-03T04:37:23Z)
+\begin{table}[ht]
+\centering
+\caption{Images per class and split in the two V6 builds, with build-level checks. Counts are copied from the build reports; split fingerprints are abbreviated. Patient-identity caveat: separation is proven only for rows with known identity.}
+\label{tab:builds}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+ & \multicolumn{3}{c}{Build 1} & \multicolumn{3}{c}{Build 2} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Class & Train & Val & Test & Train & Val & Test \\
+\midrule
+COVID-19                & 334   & 73    & 71    & 2,083  & 444   & 451 \\
+Normal                  & 1,477 & 308   & 314   & 2,152  & 464   & 467 \\
+Pleural Effusion        & 2,112 & 448   & 440   & 2,099  & 457   & 444 \\
+Pneumonia               & 1,804 & 390   & 391   & 1,829  & 394   & 394 \\
+Pulmonary Nodule/Mass   & 2,085 & 458   & 457   & 2,110  & 441   & 449 \\
+Tuberculosis            & 242   & 54    & 51    & 684    & 148   & 145 \\
+\midrule
+Total                   & 8,054 & 1,731 & 1,724 & 10,957 & 2,348 & 2,350 \\
+\midrule
+External (Montgomery)   & \multicolumn{3}{c}{80 normal, 58 TB} & \multicolumn{3}{c}{80 normal, 58 TB} \\
+Patient identity: genuine / filename / unknown & \multicolumn{3}{c}{8,844 / 2,665 / 0} & \multicolumn{3}{c}{8,882 / 2,643 / 4,130} \\
+Near-duplicate pairs merged & \multicolumn{3}{c}{39} & \multicolumn{3}{c}{545} \\
+Groups / files spanning splits & \multicolumn{3}{c}{0 / 0} & \multicolumn{3}{c}{0 / 0} \\
+External files in development & \multicolumn{3}{c}{0} & \multicolumn{3}{c}{0} \\
+Split fingerprint & \multicolumn{3}{c}{\texttt{872abd3b\ldots}} & \multicolumn{3}{c}{\texttt{5973233f\ldots}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Images per source and split in the two V6 builds, and the number of source images excluded by the labelling rules, caps or decoding checks. Counts from the build reports.}
+\label{tab:sourcesplit}
+\small
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+ & \multicolumn{4}{c}{Build 1} & \multicolumn{4}{c}{Build 2} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+Source & Train & Val & Test & Excl. & Train & Val & Test & Excl. \\
+\midrule
+NIH ChestX-ray14              & 5,240 & 1,123 & 1,121 & 87,515 & 5,270 & 1,128 & 1,124 & 104,598 \\
+Kermany                       & 1,863 & 402   & 400   & 4,710  & 1,848 & 397   & 398   & 4,732 \\
+Shenzhen                      & 463   & 100   & 99    & 0      & 463   & 100   & 99    & 0 \\
+COVID-19 image data coll.     & 488   & 106   & 104   & 252    & 493   & 94    & 111   & 252 \\
+TBX11K                        & --    & --    & --    & --     & 1,141 & 245   & 244   & 6,770 \\
+COVID-19 Radiography DB       & --    & --    & --    & --     & 1,742 & 384   & 374   & 1,116 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{S2. Per-class results of the selected model}
+
+\begin{table}[ht]
+\centering
+\caption{Per-class results on the internal test split (one-vs-rest). Precision, recall, specificity and F1 in \%.}
+\label{tab:perclass}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+Class & Support & Precision & Recall & Specificity & F1 & ROC-AUC \\
+\midrule
+COVID-19              & \RSupportCovid     & \RPrecisionCovid     & \RRecallCovid     & \RSpecificityCovid     & \RFOneCovid     & \RAUCCovid \\
+Normal                & \RSupportNormal    & \RPrecisionNormal    & \RRecallNormal    & \RSpecificityNormal    & \RFOneNormal    & \RAUCNormal \\
+Pleural Effusion      & \RSupportEffusion  & \RPrecisionEffusion  & \RRecallEffusion  & \RSpecificityEffusion  & \RFOneEffusion  & \RAUCEffusion \\
+Pneumonia             & \RSupportPneumonia & \RPrecisionPneumonia & \RRecallPneumonia & \RSpecificityPneumonia & \RFOnePneumonia & \RAUCPneumonia \\
+Pulmonary Nodule/Mass & \RSupportNodule    & \RPrecisionNodule    & \RRecallNodule    & \RSpecificityNodule    & \RFOneNodule    & \RAUCNodule \\
+Tuberculosis          & \RSupportTB        & \RPrecisionTB        & \RRecallTB        & \RSpecificityTB        & \RFOneTB        & \RAUCTB \\
+\midrule
+Macro average         & \RNTest            & \RTestMacroPrecision & \RTestMacroRecall & --                     & \RTestMacroFOne & \RTestMacroAUC \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{S3. Comparison of run 1 and run 2}
+
+\begin{table}[ht]
+\centering
+\caption{Comparison of run~1 (build~1) and run~2 (build~2). Selection used only the macro-F1 on the common selection set. Shared sources: NIH, Kermany, Shenzhen and the COVID-19 image data collection, on which both runs trained. Single seed per run; discordant-pair counts are descriptive. Percentages except ROC-AUC. Test rows are not comparable between runs, because the builds have different test splits.}
+\label{tab:runs}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Quantity & Run 1 & Run 2 \\
+\midrule
+Common set: $N$ & \multicolumn{2}{c}{\RCmpN} \\
+Common set: macro-F1 (selection criterion) & \RCmpRunOneMacroFOne & \RCmpRunTwoMacroFOne \\
+Common set: macro ROC-AUC & \RCmpRunOneMacroAUC & \RCmpRunTwoMacroAUC \\
+Common set: accuracy & \RCmpRunOneAcc & \RCmpRunTwoAcc \\
+Shared sources only: $N$ & \multicolumn{2}{c}{\RCmpRunOneSharedN} \\
+Shared sources only: macro-F1 & \RCmpRunOneSharedMacroFOne & \RCmpRunTwoSharedMacroFOne \\
+Shared sources only: macro ROC-AUC & \RCmpRunOneSharedMacroAUC & \RCmpRunTwoSharedMacroAUC \\
+Shared sources only: accuracy & \RCmpRunOneSharedAcc & \RCmpRunTwoSharedAcc \\
+Discordant pairs (run 1 right only / run 2 right only) & \multicolumn{2}{c}{\RCmpMcNemarB{} / \RCmpMcNemarC} \\
+\midrule
+Own test split: $N$ & \RRunOneTestN & \RNTest \\
+Own test split: accuracy / macro-F1 & \RRunOneTestAcc{} / \RRunOneTestMacroFOne & \RTestAcc{} / \RTestMacroFOne \\
+Own test split: macro ROC-AUC & \RRunOneTestMacroAUC & \RTestMacroAUC \\
+External: sensitivity / specificity & \RRunOneExtSensK/\RExtSensN{} / \RRunOneExtSpecK/\RExtSpecN & \RExtSensK/\RExtSensN{} / \RExtSpecK/\RExtSpecN \\
+External: ROC-AUC of $1-p_{\text{Normal}}$ & \RRunOneExtAUC & \RExtAUC \\
+External: exact TB recall; COVID-19 calls & \RRunOneExtTBK/\RExtTBN; \RRunOneExtCovidCalls & \RExtTBK/\RExtTBN; \RExtCovidCalls \\
+\midrule
+Selected & & \checkmark{} (\RCmpSelected) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{S4. Follow-up runs and training configuration}
+
+\begin{table}[ht]
+\centering
+\caption{Follow-up runs, fixed before the run comparison. All use the build, architecture, class weights, optimiser schedule and early-stopping patience of the selected run. Hyper-parameters common to all runs: Adam, batch size 32, phase~1 learning rate $10^{-3}$ for two epochs with the backbone frozen, phase~2 learning rate $10^{-5}$ with the last 30 backbone layers unfrozen, early-stopping patience 3, dropout 0.3, 256-unit dense layer, balanced class weights.}
+\label{tab:followup}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+Run & Seed & Change from the selected recipe & Purpose \\
+\midrule
+Run 3 & 43 & none & Seed-to-seed variability \\
+Run 4 & 44 & none & Seed-to-seed variability \\
+Run 5 & \RSeed{} (as run 2) & no Gaussian pre-blur, CLAHE or low-pass filter & Preprocessing ablation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{S5. Preprocessing ablation}
+
+\begin{table}[ht]
+\centering
+\caption{Preprocessing ablation: full chain (run~2) versus no filtering (run~5), same seed (\RSeed), build, split and schedule. One run each; compare differences with the seed spread in the seed-variability table of the main text. Run~5 selected its last epoch (16 of 16). Percentages except ROC-AUC.}
+\label{tab:ablation}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Quantity & Run 2 (full chain) & Run 5 (no filters) \\
+\midrule
+Test accuracy & \RTestAcc & \RAblTestAcc \\
+Test macro-F1 & \RTestMacroFOne & \RAblTestMacroFOne \\
+Test macro ROC-AUC & \RTestMacroAUC & \RAblTestMacroAUC \\
+External sensitivity & \RExtSens & \RAblExtSens \\
+External specificity & \RExtSpec & \RAblExtSpec \\
+External exact TB recall & \RExtTB & \RAblExtTB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{S6. C1 band-pass profiles of the secondary extractor and the no-filter cache}
+
+\begin{table}[ht]
+\centering
+\caption{C1 band-pass profiles on the test sample (\RSpecMainTestN{} images) for the run-2 backbone (secondary; trained on all six sources, so not held-out) and for ImageNet features of the no-filter cache (sensitivity check). Source balanced accuracy and within-source disease macro-F1 in \%; chance for source accuracy is 16.7\%. Intervals are in the generated result file; they cover test-sample variation only.}
+\label{tab:c1sens}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+ & \multicolumn{2}{c}{Run-2 backbone} & \multicolumn{2}{c}{ImageNet, no-filter cache} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Band & Source acc. & Within-source F1 & Source acc. & Within-source F1 \\
+\midrule
+A & \RSpecServedTestPassASrcBA & \RSpecServedTestPassAFWs & \RSpecNofilterTestPassASrcBA & \RSpecNofilterTestPassAFWs \\
+B & \RSpecServedTestPassBSrcBA & \RSpecServedTestPassBFWs & \RSpecNofilterTestPassBSrcBA & \RSpecNofilterTestPassBFWs \\
+C & \RSpecServedTestPassCSrcBA & \RSpecServedTestPassCFWs & \RSpecNofilterTestPassCSrcBA & \RSpecNofilterTestPassCFWs \\
+D & \RSpecServedTestPassDSrcBA & \RSpecServedTestPassDFWs & \RSpecNofilterTestPassDSrcBA & \RSpecNofilterTestPassDFWs \\
+E & \RSpecServedTestPassESrcBA & \RSpecServedTestPassEFWs & \RSpecNofilterTestPassESrcBA & \RSpecNofilterTestPassEFWs \\
+F & \RSpecServedTestPassFSrcBA & \RSpecServedTestPassFFWs & \RSpecNofilterTestPassFSrcBA & \RSpecNofilterTestPassFFWs \\
+Full image & \RSpecServedTestFullSrcBA & \RSpecServedTestFullFWs & \RSpecNofilterTestFullSrcBA & \RSpecNofilterTestFullFWs \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

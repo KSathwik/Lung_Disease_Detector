@@ -1,0 +1,27 @@
+\section{Data}\label{sec:data}
+\subsection{Sources and label rules}
+The dataset is assembled from six public CXR sources, with label rules fixed before training. Each image
+receives one mutually exclusive class. NIH ChestX-ray14 \cite{wang2017chestxray8} supplies Normal (``No
+Finding''), Pleural Effusion, Pulmonary Nodule/Mass and Pneumonia, each only when no other finding is
+present. Shenzhen supplies Normal and Tuberculosis \cite{jaeger2014two}; Kermany supplies Normal and
+Pneumonia \cite{kermany2018identifying}. The Cohen collection contributes frontal COVID-19, Pneumonia,
+Normal and Tuberculosis images \cite{cohen2020covid}. TBX11K contributes healthy and active-TB images;
+its ``sick but non-TB'' class, latent-TB images and unlabelled images are excluded
+\cite{liu2020rethinking}. The COVID-19 Radiography Database contributes COVID-19 images
+\cite{chowdhury2020can,rahman2021exploring}. Lateral views and CT images are excluded, and
+per-source, per-class caps limit the influence of any one source.
+
+\subsection{Partitions and data-quality checks}
+The final build (\RDatasetBuild) contains \RNTrain{} training, \RNVal{} validation and \RNTest{}
+internal-test images, stratified by class and source. Where available, genuine or filename-derived
+patient identifiers group the images of one patient into one partition; exact and near-duplicate images
+are detected with MD5 hashes, perceptual hashes and thumbnail correlation and kept together. Patient
+identity is not available for TBX11K and the COVID-19 Radiography Database, so each of their images is
+its own group and residual patient overlap across partitions cannot be ruled out. Images matching the
+external cohort are excluded from development data.
+
+\subsection{External cohort}
+The Montgomery County set \cite{jaeger2014two} contains \RNExternal{} radiographs, \RExtSpecN{} labelled
+normal and \RExtTBN{} labelled tuberculosis. It is not used for training or checkpoint selection and is
+evaluated separately from the six-class internal test, as a binary abnormal-versus-normal task together
+with exact Tuberculosis-class recall.

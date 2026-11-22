@@ -1,0 +1,19 @@
+\begin{abstract}
+Chest X-ray (CXR) interpretation is an important part of respiratory disease assessment, and deep
+learning can support automated image classification. This paper presents the design and development of
+LungAI, a system that predicts one of six classes from a frontal CXR: COVID-19, Normal, Pleural
+Effusion, Pneumonia, Pulmonary Nodule/Mass or Tuberculosis. The system combines a data pipeline with
+source-specific label rules, duplicate screening and stratified partitions, an ImageNet-initialised
+DenseNet-121 classifier, and a web application (FastAPI backend, React frontend) that checks the input
+image, returns the class scores with a Grad-CAM overlay, marks low-confidence predictions as
+inconclusive and stores the result. The final build contains \RNTrain{} training, \RNVal{} validation
+and \RNTest{} internal-test images from six public sources. For seed \RSeed, internal-test accuracy was
+\RTestAcc\%, macro-F1 \RTestMacroFOne\% and macro ROC-AUC \RTestMacroAUC. Across \RMSNRuns{} seeds, mean
+accuracy was \RMSTestAccMean\% (SD \RMSTestAccSD), mean macro-F1 \RMSTestMacroFOneMean\% (SD
+\RMSTestMacroFOneSD) and mean macro ROC-AUC \RMSTestMacroAUCMean{} (SD \RMSTestMacroAUCSD). On
+\RNExternal{} external Montgomery County radiographs the system flagged \RExtSens\% of tuberculosis
+scans as abnormal, but specificity for normal scans was only \RExtSpec\% and exact Tuberculosis-class
+recall was \RExtTB\%. The system therefore shows promising internal classification performance and
+substantial limitations under external domain shift. It is an experimental research prototype, not a
+clinically validated diagnostic tool.
+\end{abstract}

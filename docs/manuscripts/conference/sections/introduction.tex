@@ -1,0 +1,26 @@
+\section{Introduction}
+Chest X-ray (CXR) imaging is widely used to assess respiratory conditions, but interpretation is
+difficult when workloads are high or specialist expertise is limited. Deep convolutional neural networks
+have therefore been investigated for the automated classification of findings such as pneumonia,
+tuberculosis and COVID-19 \cite{rajpurkar2017chexnet,wang2017chestxray8,jaeger2014two,cohen2020covid}.
+A useful automated system must do more than score well on a held-out sample: it has to accept an image
+from a user, reject unsuitable input, show what its prediction is based on, and be assessed across
+disease classes and on images from sources that differ from the training data \cite{zech2018variable}.
+
+This paper presents the design and development of LungAI, a deep-learning system for six-class CXR
+classification. Given one frontal radiograph, the system predicts one of six labels: COVID-19, Normal,
+Pleural Effusion, Pneumonia, Pulmonary Nodule/Mass or Tuberculosis. The classifier is an
+ImageNet-initialised DenseNet-121 with a task-specific head. Around it we built a data pipeline that
+assembles public collections under documented label rules, and a web application that serves the model
+with an input check, Grad-CAM overlays \cite{selvaraju2017gradcam}, a low-confidence ``inconclusive''
+outcome and a record of each prediction.
+
+The contributions are:
+(i) the design of an end-to-end system, from data acquisition to a served prediction, in which training,
+evaluation and deployment share one preprocessing implementation;
+(ii) its implementation as a tested web application with input checking, visual explanation and
+safeguards against showing a prediction the model did not compute; and
+(iii) an empirical assessment of the classifier on an internal test split, over three training seeds,
+and on a small external cohort, including the limitations that the external evaluation reveals.
+We do not introduce a new neural-network architecture and do not claim clinical readiness or
+state-of-the-art performance.

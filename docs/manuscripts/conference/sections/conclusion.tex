@@ -1,0 +1,11 @@
+\section{Conclusion}\label{sec:conclusion}
+This paper presented the design and development of LungAI, a DenseNet-121-based system for six-class
+lung disease classification from chest X-ray images, with a data pipeline, a trained classifier and a
+web application that checks its input, explains its output and records each prediction. The classifier
+reached \RTestAcc\% internal-test accuracy and \RTestMacroFOne\% macro-F1 for the reported seed, with
+similar results across three seeds. External evaluation showed low specificity for normal images and no
+exact Tuberculosis-class recognition in the Montgomery County cohort, so internal scores alone do not
+establish reliable performance on unseen data. Future work should add sources with patient-level
+metadata, evaluate further independent cohorts, validate the input check on real non-radiograph images
+and compare the explanation overlays with expert annotations. The system is a research prototype and is
+not clinically validated.

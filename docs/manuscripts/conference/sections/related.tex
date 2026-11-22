@@ -1,0 +1,13 @@
+\section{Related Work}\label{sec:related}
+Large public CXR collections have enabled research on automated thoracic-image analysis. NIH
+ChestX-ray14 provides labels extracted from reports \cite{wang2017chestxray8}; other datasets cover
+tuberculosis \cite{jaeger2014two,liu2020rethinking}, paediatric pneumonia \cite{kermany2018identifying}
+and COVID-19 \cite{cohen2020covid,chowdhury2020can}. DenseNet architectures \cite{huang2017densely} are a
+common choice for CXR classification, for example in CheXNet \cite{rajpurkar2017chexnet}. Published
+performance can change when a model is evaluated at another hospital \cite{zech2018variable}, and label
+noise, source-specific acquisition patterns and shortcut learning also influence image classifiers
+\cite{oakdenrayner2020exploring,degrave2021ai,geirhos2020shortcut}; COVID-19 studies made these concerns
+prominent \cite{roberts2021common,maguolo2020critic}. LungAI builds on established transfer learning and
+adds no new method. Its focus is a complete, working system and a transparent report of how it behaves.
+We do not compare our figures with those of other papers, because datasets, label definitions and test
+protocols differ.

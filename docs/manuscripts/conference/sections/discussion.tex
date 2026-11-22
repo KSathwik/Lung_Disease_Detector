@@ -1,0 +1,27 @@
+\section{Discussion}\label{sec:discussion}
+The system does what it was designed to do within its development data: it accepts a radiograph,
+returns a class with an explanation overlay, and distinguishes several CXR categories on the internal
+test set (\RTestAcc\% accuracy, macro ROC-AUC \RTestMacroAUC), with little variation across three seeds.
+Aggregate metrics hide differences between classes, however: Pulmonary Nodule/Mass and Normal are less
+reliable than COVID-19, Tuberculosis and Pneumonia.
+
+The external evaluation exposes the main limitation. Although \RExtSens\% of external TB images were
+flagged as abnormal, specificity for normal images was only \RExtSpec\% and none of the TB images was
+assigned to the Tuberculosis class, so a non-Normal prediction on a TB image cannot be treated as
+successful disease identification. The gap between internal and external behaviour is consistent with
+domain shift and possible source-related shortcuts, but these results do not show which visual cues the
+model uses \cite{zech2018variable,degrave2021ai,geirhos2020shortcut}. For this reason the application
+reports the external limitation with every prediction and returns low-confidence outputs as
+inconclusive.
+
+\emph{Limitations.}
+(i) The external cohort is small and contains only normal and TB images.
+(ii) NIH labels are mined from reports, not read from each image.
+(iii) Patient identity is unavailable for TBX11K and COVID-19 Radiography images, so residual patient
+overlap across partitions cannot be excluded.
+(iv) Kermany images are paediatric, while the other sources mainly contain adults.
+(v) Pleural Effusion and Pulmonary Nodule/Mass come from NIH only.
+(vi) The single-label design excludes images with several findings.
+(vii) Training was CPU-bound and time-budgeted, with three seeds and one ablation run.
+(viii) The input check is heuristic and Grad-CAM overlays were not compared with expert annotations.
+(ix) Retrospective evaluation on public data cannot establish clinical utility.
