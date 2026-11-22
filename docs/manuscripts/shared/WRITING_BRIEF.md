@@ -105,7 +105,7 @@ Refer to these exact file names (PNG at 300 dpi plus PDF for LaTeX). Caption tex
 | M.Tech report (generator + .docx) | `docs/thesis/` |
 | Presentation (generator + .pptx) | `docs/presentation/` |
 | Conference manuscript (IEEE LaTeX) | `docs/manuscripts/conference/` |
-| Journal manuscript (Elsevier elsarticle, BSPC) | `docs/manuscripts/journal_bspc/` |
+| Journal manuscript (Elsevier elsarticle, IMU) | `docs/manuscripts/journal_imu/` |
 | Shared macros, references, this brief | `docs/manuscripts/shared/` |
 | Figures | `docs/figures/` |
 | Venue comparison, submission tracker | `docs/publication/` |

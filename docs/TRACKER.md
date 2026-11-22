@@ -37,7 +37,7 @@ Since 2026-11-16 the thesis, the EMBC conference paper, the slides and the viva 
 | Viva guide (.md and .docx) | `docs/viva/` | DONE (story and Q3/Q4 aligned, rebuilt 2026-11-22) | Read it before the viva |
 | Conference paper, IEEE EMBC 2027 | `docs/manuscripts/conference/` | COMPLETE DRAFT (system framing) | Compile on Overleaf and confirm 4 pages; corresponding author; reciprocal reviewer; CRediT and approvals |
 | Journal paper, Informatics in Medicine Unlocked | `docs/manuscripts/journal_imu/` | COMPLETE DRAFT (source-shortcut framing) | Student decisions below; disclose overlap with the EMBC paper |
-| Journal paper, BSPC (fallback) | `docs/manuscripts/journal_bspc/` | FILLED (older framing) | Only if IMU is dropped |
+| Journal paper, BSPC (fallback venue) | none | Earlier BSPC draft superseded by the IMU draft and removed (in git history) | Adapt the IMU draft only if IMU is dropped |
 | Shared results macros, facts, bibliography | `docs/manuscripts/shared/` | DONE | 64 verified references; regenerate macros only if a model changes |
 | Figures | `docs/figures/` | DONE | Regenerate only if a model changes |
 

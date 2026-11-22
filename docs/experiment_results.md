@@ -158,4 +158,4 @@ No run classified any normal external scan as Normal.
 
 - **Comparator tables:** the benchmark table in earlier drafts differed from the result files in 13 of 35 cells, and every difference made the comparison runs look worse. The tables above come from the files.
 - **The "58/58 sensitivity" claim:** earlier drafts presented it as screening ability. It is a degenerate result, because specificity is 0/80.
-- **Thesis figures:** Figures 4, 6 and 7 in the archived thesis drafts show the ERM baseline but are captioned as the canonical model. See [docs/archive/README.md](archive/README.md).
+- **Thesis figures:** Figures 4, 6 and 7 in the V5 thesis drafts showed the ERM baseline but were captioned as the canonical model. Those drafts were superseded and removed; they remain in the git history.

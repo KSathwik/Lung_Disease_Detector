@@ -171,7 +171,7 @@ data/manifests/    historical V5 manifest (V6 builds live in data/derived/, giti
 artifacts/         generated data-quality, validation and evaluation reports (model_metrics.json is what the API serves)
 tests/             research-pipeline, data and repository-consistency tests
 scripts/           install_checkpoint.py, data/ (download, build), pipeline/ (unattended run)
-docs/              current documentation; docs/archive/ = historical drafts and audits
+docs/              current documentation (catalogue: docs/README.md); superseded versions are in git history only
 experiments/       HISTORICAL experiment scripts and results (not the canonical pipeline)
 ```
 

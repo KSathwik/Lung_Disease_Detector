@@ -68,4 +68,4 @@ For the next dataset version, [`lungai/data/splits.py`](../lungai/data/splits.py
 
 - **Included:** frontal chest radiographs whose source label maps to one of the six classes.
 - **Excluded:** NIH and VinDr images with more than one finding, which were filtered to single findings upstream (not re-verified, because the images are absent), and every Montgomery image.
-- **Lineage:** see `experiments/results/dataset_reconstruction_v5_report.md`.
+- **Lineage:** built in stages over dataset versions V1 to V5 by the scripts in `experiments/`; the per-version reports were superseded and remain in the git history.

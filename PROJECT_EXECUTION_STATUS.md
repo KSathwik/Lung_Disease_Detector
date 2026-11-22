@@ -4,7 +4,12 @@
 
 Read this file first in any new chat. It is the complete context needed to continue. Then read `docs/TRACKER.md`.
 
-## UPDATE — 2026-11-22, later (newest; read first)
+## UPDATE — 2026-11-22, cleanup (newest; read first)
+
+- **Only the latest version of each document is kept** (student request). Removed with `git rm` (159 files, still in the git history): `docs/archive/` (V5-era thesis drafts, papers, figures, screenshots, old audits), `docs/publication/archive/` (superseded plans), `docs/manuscripts/journal_bspc/` (earlier journal draft, replaced by `journal_imu`), and the 35 V1-V5 report files under `experiments/`. Code and data were not touched: `experiments/` scripts and result JSON stay because `lungai.evaluation.historical` reads them.
+- Current docs that linked to removed files now point to the git history or to the current equivalent. Dated records (audits, protocol, research brief, literature searches, reorganisation plan) still mention the old paths as history.
+
+## UPDATE — 2026-11-22, later
 
 - **Whole document set brought up to date.** `docs/README.md` is now a full catalogue of every document with its purpose and state (current / record / history). `docs/TRACKER.md` rewritten (was stale since 4 Nov).
 - **Slides** reframed to the designed-and-developed system (title, outline, objectives, positioning, conclusion, future scope, publications); the three source-analysis slides are now backup slides after "Thank you". Presentation .pptx and viva guide .docx rebuilt.

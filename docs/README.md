@@ -4,7 +4,9 @@ Every document in the repository, what it is for and its state on 2026-11-22. St
 
 **Framing.** Since 2026-11-16 the thesis, the EMBC conference paper, the slides and the viva guide present LungAI as a system designed and developed to predict lung disease. The source-information analyses are supplementary there (thesis Appendix G, backup slides). The IMU journal paper keeps the source-shortcut framing.
 
-State: **current** = up to date with the served model v6.1 and the system framing · **record** = a dated record kept as written (do not rewrite) · **history** = superseded, kept for reference only.
+State: **current** = up to date with the served model v6.1 and the system framing · **record** = a dated record kept as written (do not rewrite).
+
+Only the latest version of each document is kept. Superseded versions (V5-era thesis drafts, old papers and figures, old audits, the earlier BSPC journal draft, superseded planning notes and the V1-V5 experiment reports) were removed on 2026-11-22 and remain available in the git history. Some dated records below still mention those old paths.
 
 ## 1. Deliverables
 
@@ -18,7 +20,6 @@ State: **current** = up to date with the served model v6.1 and the system framin
 | [viva/LungAI_Viva_Guide.md](viva/LungAI_Viva_Guide.md) and `.docx` | Viva preparation: key numbers, story, about 70 expected questions | current (rebuilt 2026-11-22) |
 | [manuscripts/conference/](manuscripts/conference/) | IEEE EMBC 2027 paper "Deep Learning-Based Lung Disease Detection Using Chest X-Ray Images"; README and submission checklist | current; page count to confirm on Overleaf |
 | [manuscripts/journal_imu/](manuscripts/journal_imu/) | Journal paper for Informatics in Medicine Unlocked: the extended source-shortcut study, with supplementary, highlights, declarations, cover letter, reviewer-risk and AI-check notes | current draft (source-shortcut framing, unchanged) |
-| [manuscripts/journal_bspc/](manuscripts/journal_bspc/) | Fallback journal draft for Biomedical Signal Processing and Control | history unless IMU is dropped |
 | [manuscripts/shared/](manuscripts/shared/) | Generated results macros and JSON (do not edit), bibliography, `RESULTS_FACTS.md` (allowed wording per result), `WRITING_BRIEF.md` (rules for every writer), `REFERENCES_STATUS.md`, `LITERATURE_NOTES.md` | current |
 | [figures/](figures/README.md) | Generated figures (PNG and PDF) and app screenshots | current |
 
@@ -72,10 +73,8 @@ State: **current** = up to date with the served model v6.1 and the system framin
 | [publication/REPORT_TEMPLATE_FINDINGS.md](publication/REPORT_TEMPLATE_FINDINGS.md) | Report format used for the thesis | record |
 | [publication/lit_search/](publication/lit_search/) | Literature searches behind the novelty statement | record |
 
-## 6. History
+## 6. Historical code and data
 
 | Location | Contents |
 |---|---|
-| [publication/archive/](publication/archive/README.md) | Superseded planning notes |
-| [archive/](archive/README.md) | V5-era thesis, paper and audit material with known false or outdated claims; do not cite. [archive/DUPLICATES.md](archive/DUPLICATES.md) maps removed duplicates |
-| [../experiments/](../experiments/README.md) | V1-V5 experiment scripts and reports (historical archive) |
+| [../experiments/](../experiments/README.md) | V1-V5 experiment scripts and result files, kept because `lungai.evaluation.historical` (run in CI) reads them; not the current pipeline |

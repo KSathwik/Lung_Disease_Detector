@@ -1,58 +1,7 @@
-> **HISTORICAL ARCHIVE — not the canonical pipeline.**
-> This folder contains the original experiment scripts and their aggregate results. These scripts hardcode paths, reuse checkpoints and use earlier names ("Model A/D"). The canonical pipeline is the `lungai/` package; see the top-level README.
->
-> Claims in the text below ("leak-free", "0% patient leakage", "FINAL PRODUCTION MODEL") are **superseded**. See `docs/data_splits.md` and `docs/experiment_results.md`. The run in `densenet_frequency_v5/` is the run that produced the canonical model `lungai-densenet121-6class` v5.0.
+# experiments/ (historical, V1 to V5)
 
-# LUNGAI — MASTER THESIS EXPERIMENTAL INDEX
+This folder holds the scripts and result files of the earlier V1 to V5 experiments. It is **not** the current pipeline: the current system is the `lungai/` package, and its results are in `docs/results/current_model.md` and `docs/experiment_results.md`.
 
-This directory houses the complete scientific experimental series developed for the M.Tech thesis on multi-source domain generalization in chest radiography.
+The scripts and result files are kept because `python -m lungai.evaluation.historical` (run in CI) reads the V5 result files to verify the recorded history, and `artifacts/` cites them. The written reports of these experiments were superseded and removed on 2026-11-22; they remain available in the git history.
 
-All experiments use the identical leak-free unified cohort ($N=10,547$ scans, 10,270 patients, 0% patient leakage), identical DenseNet-121 backbone, 256-D latent embedding space, inverse-frequency class weighting, and 4-epoch schedule (2 epochs frozen base $\text{lr}=10^{-3}$, 2 epochs fine-tuning top 30 layers $\text{lr}=10^{-5}$, seed 42).
-
----
-
-## 1. Master 5-Paradigm Experimental Comparison
-
-| Phase | Scientific Paradigm | Model Architecture | Key Internal Metric | Montgomery External TB Recall | Primary Artifact Directory | Paradigm Role |
-| :---: | :--- | :--- | :---: | :---: | :--- | :--- |
-| **3A** | **Unified V5 Reconstruction** | Manifest Construction | 10,547 scans / 10,270 patients | — | [`experiments/data/`](../experiments/data/) | Leak-free data protocol |
-| **3B** | **ERM Baseline** | DenseNet-121 | 76.18% Acc / 72.63% F1 | 0.00% (0/58) | [`experiments/densenet_v5/`](../experiments/densenet_v5/) | Scientific baseline |
-| **4A** | **External Failure Analysis** | Biophysical Analysis | 4× Laplacian edge discrepancy | — | [`experiments/results/`](../experiments/results/) | Sensor shift root cause |
-| **4B** | **Deep CORAL** | DenseNet-121 + CORAL | 80.89% Acc / 76.85% F1 | 1.72% (1/58) | [`experiments/densenet_coral_v5/`](../experiments/densenet_coral_v5/) | Latent covariance alignment |
-| **4C** | **DANN Adversarial** | DenseNet-121 + DANN | 76.24% Acc / 72.99% F1 | 0.00% (0/58) | [`experiments/densenet_dann_v5/`](../experiments/densenet_dann_v5/) | Adversarial alignment study |
-| **4D** | **Frequency LP ($\sigma=1.0$)** | **DenseNet-121 + Gaussian LP** | **82.93% Acc / 78.35% F1** | **0.00% (0/58)** | [`experiments/densenet_frequency_v5/`](../experiments/densenet_frequency_v5/) | **FINAL PRODUCTION MODEL (MODEL D)** |
-| **4E** | **Hybrid Synthesis** | DenseNet-121 + LP + CORAL | 78.22% Acc / 73.95% F1 | 0.00% (0/58) | [`experiments/densenet_hybrid_v5/`](../experiments/densenet_hybrid_v5/) | Synthesis study; peak COVID-19 F1 (98.62%) |
-
----
-
-## 2. Final Production Model (Model D)
-
-The designated final inference model for the LungAI application is **Model D**:
-* **Checkpoint**: `experiments/densenet_frequency_v5/densenet121_frequency_v5.h5`
-* **Pre-processing**: Gaussian Low-Pass filter ($\sigma=1.0$) on standardized CIE LAB CLAHE enhanced scans
-* **Internal Test Performance**:
-  * Accuracy: **82.93%**
-  * Macro F1-Score: **78.35%** (+5.72% gain over ERM baseline)
-  * Macro ROC-AUC: **0.9755**
-  * Macro PR-AUC: **0.8391**
-* **Per-Class Metrics**:
-  * COVID-19: **97.01% F1**
-  * Normal: **89.58% F1**
-  * Pneumonia: **86.49% F1**
-  * Tuberculosis: **88.66% F1**
-  * Pulmonary Nodule / Mass: **53.03% F1**
-  * Pleural Effusion: **55.32% F1**
-
----
-
-## 3. Quarantined External Benchmark (Montgomery County)
-
-Across all five model paradigms, zero-shot evaluation on the untouched external Montgomery cohort ($N=138$) consistently collapsed toward *Pulmonary Nodule / Mass*:
-* Film-digitizer high-frequency noise and extreme dynamic range mismatch (analog film digitizer vs. digital detector) create an insurmountable sensor domain shift for blind models.
-* While Model D successfully eliminates internal sensor grain overfitting (lifting internal accuracy from 76.18% to 82.93%), zero-shot external transfer proves that sensor shift is multi-factorial, requiring target-domain calibration or lung-field anatomical segmentation.
-
----
-
-## 4. Preservation Directive
-
-All artifacts in this directory (metrics, reports, confusion matrices, ROC/PR curves, t-SNE feature plots, and Grad-CAM overlays) constitute empirical thesis evidence. They must remain preserved and reproducible.
+The V5 results must not be read as valid: the V5 dataset had patient leakage between training and test, proxy labels, and an external specificity of 0/80, and its checkpoint is lost. What was wrong and what replaced it is summarised in `docs/experiment_results.md` and in Appendix E of the M.Tech report.

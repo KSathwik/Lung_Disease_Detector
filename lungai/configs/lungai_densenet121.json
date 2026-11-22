@@ -33,7 +33,7 @@
       {"version": "v6.0", "filename": "densenet121_v6_seed42.h5", "sha256": "c51ed228455c2aab93b4b0220ee721443c3c0486eea961a242829ce68ee6c0e6",
        "dataset_version": "V6 (v6_build_001)", "status": "superseded by v6.1 on 2026-11-03 (run comparison); file in runs/v6_densenet121_seed42/model.h5, evaluation in artifacts/evaluation_reports/v6_*"},
       {"version": "v5.0", "filename": "densenet121_frequency_v5.h5", "sha256": "e2c95dc5eba588f877280948593f2965442d9950aa891ed5765eaf0117889022",
-       "dataset_version": "V5", "status": "lost (not in repository; SHA-256 recorded in docs/archive/historical_audits/END_TO_END_APPLICATION_TEST_REPORT.md)"}
+       "dataset_version": "V5", "status": "lost (not in repository; SHA-256 as recorded in the V5 end-to-end application test report, kept in the git history)"}
     ]
   },
   "classes": [
